@@ -8,6 +8,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/printer"
+	"go/token"
+	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -16,6 +21,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -27,6 +33,7 @@ import (
 	tpgprovider "github.com/hashicorp/terraform-provider-google-beta/google-beta/provider"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"gopkg.in/yaml.v3"
 
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
@@ -40,12 +47,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func IsVcrEnabled() bool {
 	envPath := os.Getenv("VCR_PATH")
 	vcrMode := os.Getenv("VCR_MODE")
 	return envPath != "" && vcrMode != ""
+}
+
+func IsRecordApiCreateGet() bool {
+	envPath := os.Getenv("RECORD_API")
+	return envPath != ""
 }
 
 var configsLock = sync.RWMutex{}
@@ -149,6 +162,12 @@ func VcrTest(t *testing.T, c resource.TestCase) {
 	} else if isReleaseDiffEnabled() {
 		c = initializeReleaseDiffTest(c, t.Name())
 	}
+
+	if IsRecordApiCreateGet() {
+		clearLogsForTest(t.Name())
+		c = addLoggingPrestep(c, t.Name())
+	}
+
 	resource.Test(t, c)
 }
 
@@ -224,6 +243,576 @@ func closeRecorder(t *testing.T) {
 func isReleaseDiffEnabled() bool {
 	releaseDiff := os.Getenv("RELEASE_DIFF")
 	return releaseDiff != ""
+}
+
+func createMinimalResourceSchema(resourceType, testName string) {
+	resourceSchema := resourceMetadata[resourceType].schema
+
+	yamlNode := &yaml.Node{}
+	err := schemaToYAMLHierarchy(yamlNode, resourceSchema)
+	if err != nil {
+		log.Fatalf("Error generating YAML hierarchy: %s", err)
+	}
+
+	yamlBytes, err := yaml.Marshal(yamlNode)
+	if err != nil {
+		log.Fatalf("Error marshaling YAML: %s", err)
+	}
+
+	logTestdata(testName, resourceType+".yaml", string(yamlBytes), resourceType)
+}
+
+func schemaToYAMLHierarchy(node *yaml.Node, schemaObj map[string]*schema.Schema) error {
+	node.Kind = yaml.MappingNode
+	node.Tag = "!!map"
+
+	for k, v := range schemaObj {
+		keyNode := &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Tag:   "!!str",
+			Value: k,
+		}
+		valueNode := &yaml.Node{
+			Kind: yaml.ScalarNode,
+			Tag:  "!!str",
+		}
+
+		if _, isResource := v.Elem.(*schema.Resource); isResource {
+			valueNode.Kind = yaml.MappingNode
+			valueNode.Tag = "!!map"
+			err := schemaToYAMLHierarchy(valueNode, v.Elem.(*schema.Resource).Schema)
+			if err != nil {
+				return err
+			}
+		} else if _, isSchema := v.Elem.(*schema.Resource); isSchema {
+			// The element is a *schema.Schema; we'll print a list or map of the schema's type
+			elemSchema, _ := v.Elem.(*schema.Schema)
+			switch v.Type {
+			case schema.TypeList, schema.TypeSet:
+				valueNode.Value = "List of " + schemaToString(elemSchema)
+			case schema.TypeMap:
+				valueNode.Value = "Map of " + schemaToString(elemSchema)
+			default:
+				// If it's not a list, set, or map, we use the default representation
+				valueNode.Value = schemaToString(v)
+			}
+		} else {
+			valueNode.Value = v.Type.String()
+		}
+
+		node.Content = append(node.Content, keyNode, valueNode)
+	}
+
+	return nil
+}
+
+func schemaToString(schema *schema.Schema) string {
+	if schema == nil {
+		return "nil"
+	}
+
+	typeString := schema.Type.String()
+
+	return typeString
+}
+
+// Ensure the specified directory exists
+func ensureDir(dirPath string) {
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		err := os.MkdirAll(dirPath, 0755)
+		if err != nil {
+			log.Fatalf("Failed to create directory: %v", err)
+		}
+	}
+}
+
+var functionDeclarations = make(map[string]*ast.FuncDecl)
+var functionCallOrder [][]string
+var packageVars = make(map[string]*ast.GenDecl)
+var accessedVars = make(map[string]bool)
+
+func createMasterFile(resourceType, testName string) {
+	createMinimalResourceSchema("google_container_cluster", "meep.txt")
+
+	resourceMD, ok := resourceMetadata[resourceType]
+	if !ok {
+		// resource not supported
+		return
+	}
+	fset := token.NewFileSet()
+
+	dir := filepath.Dir(resourceMD.createSourceFile)
+	functionNames := []string{resourceMD.createFuncName, resourceMD.readFuncName}
+
+	// Parse all files in the directory
+	pkgs, err := parser.ParseDir(fset, dir, nil, 0)
+	if err != nil {
+		panic(err)
+	}
+
+	// Since there's only one package in the directory, we directly access it.
+	pkg := pkgs[filepath.Base(dir)]
+	collectPackageVars(pkg)
+	for _, funcName := range functionNames {
+		collectFunction(pkg, funcName, 0)
+	}
+
+	buf := &bytes.Buffer{}
+
+	for varName, varDecl := range packageVars {
+		// Only print the variables that are accessed by the functions
+		if _, accessed := accessedVars[varName]; accessed {
+			printer.Fprint(buf, fset, varDecl)
+			buf.WriteString("\n")
+		}
+	}
+
+	printedFunctions := make(map[string]bool)
+	for _, funcs := range functionCallOrder {
+		for _, funcName := range funcs {
+			if funcDecl, exists := functionDeclarations[funcName]; exists {
+				printer.Fprint(buf, fset, funcDecl)
+				buf.WriteString("\n\n")
+				printedFunctions[funcName] = true
+			}
+		}
+	}
+
+	// print any un printed functions
+	for _, funcName := range functionNames {
+		if funcDecl, exists := functionDeclarations[funcName]; exists {
+			printer.Fprint(buf, fset, funcDecl)
+			buf.WriteString("\n\n")
+			printedFunctions[funcName] = true
+		}
+	}
+
+	for funcName, funcDecl := range functionDeclarations {
+		if !printedFunctions[funcName] {
+			printer.Fprint(buf, fset, funcDecl)
+			buf.WriteString("\n\n")
+			printedFunctions[funcName] = true
+		}
+	}
+
+	logTestdata(testName, "master_file.go", buf.String(), resourceType)
+}
+
+func collectFunction(pkg *ast.Package, funcName string, callLevel int) {
+	if _, exists := functionDeclarations[funcName]; exists {
+		return
+	}
+
+	// Ensure that the functionCallOrder is large enough to hold this call level.
+	// If it's not, grow it to the necessary size.
+	for len(functionCallOrder) <= callLevel {
+		functionCallOrder = append(functionCallOrder, nil)
+	}
+
+	for _, file := range pkg.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch fn := n.(type) {
+			case *ast.FuncDecl:
+				if fn.Name.Name == funcName {
+					functionDeclarations[fn.Name.Name] = fn
+					functionCallOrder[callLevel] = append(functionCallOrder[callLevel], fn.Name.Name)
+					for _, call := range collectCalledFunctions(pkg, fn.Body) {
+						collectFunction(pkg, call, callLevel+1)
+					}
+				}
+			}
+			return true
+		})
+	}
+}
+
+func inspectCallArg(pkg *ast.Package, arg ast.Expr) []string {
+	var calledFuncs []string
+	switch argExpr := arg.(type) {
+	case *ast.Ident:
+		// If the argument is an identifier, check if it's a global variable or function
+		if _, exists := packageVars[argExpr.Name]; exists {
+			markVarAccessed(pkg, argExpr.Name)
+		}
+	case *ast.CallExpr:
+		// If the argument is a call expression, inspect the function being called and its arguments
+		if funcIdent, ok := argExpr.Fun.(*ast.Ident); ok {
+			calledFuncs = append(calledFuncs, funcIdent.Name)
+			for _, nestedArg := range argExpr.Args {
+				inspectCallArg(pkg, nestedArg)
+			}
+		}
+	}
+	return calledFuncs
+}
+
+func collectCalledFunctions(pkg *ast.Package, body *ast.BlockStmt) []string {
+	var calledFuncs []string
+	ast.Inspect(body, func(n ast.Node) bool {
+		switch call := n.(type) {
+		case *ast.CallExpr:
+			if ident, ok := call.Fun.(*ast.Ident); ok {
+				calledFuncs = append(calledFuncs, ident.Name)
+			}
+
+			for _, arg := range call.Args {
+				calledFuncs = append(calledFuncs, inspectCallArg(pkg, arg)...)
+			}
+
+		case *ast.Ident:
+			// Check if the identifier is a package-level variable
+			if genDecl, exists := packageVars[call.Name]; exists {
+				if valueSpec, ok := genDecl.Specs[0].(*ast.ValueSpec); ok {
+					// Ensure that the identifier refers to the package-level variable and not a local variable
+					if valueSpec.Names[0].Obj == call.Obj {
+						markVarAccessed(pkg, call.Name)
+					}
+				}
+			}
+		}
+		return true
+	})
+	return calledFuncs
+}
+
+func markVarAccessed(pkg *ast.Package, accessed string) {
+	if _, exists := accessedVars[accessed]; exists {
+		return
+	}
+
+	accessedVars[accessed] = true
+
+	genDecl, ok := packageVars[accessed]
+	if !ok {
+		return
+	}
+
+	for _, spec := range genDecl.Specs {
+		if valueSpec, ok := spec.(*ast.ValueSpec); ok {
+			for _, value := range valueSpec.Values {
+				ast.Inspect(value, func(n ast.Node) bool {
+					switch v := n.(type) {
+					case *ast.Ident:
+						// Check if the identifier is a package-level variable
+						if _, exists := packageVars[v.Name]; exists {
+							markVarAccessed(pkg, v.Name)
+						}
+					case *ast.CallExpr:
+						// Inspect the arguments of the function call
+						if funIdent, ok := v.Fun.(*ast.Ident); ok {
+							// This is a call to a function; add it to the list of called functions
+							// We assume it's a top-level function for simplicity
+							collectFunction(pkg, funIdent.Name, 0)
+						}
+
+						for _, arg := range v.Args {
+							newFuncs := inspectCallArg(pkg, arg)
+							for _, f := range newFuncs {
+								collectFunction(pkg, f, 0)
+							}
+						}
+					}
+					return true
+				})
+			}
+		}
+	}
+}
+
+func collectPackageVars(pkg *ast.Package) {
+	for _, file := range pkg.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			if genDecl, ok := n.(*ast.GenDecl); ok && genDecl.Tok == token.VAR {
+				for _, spec := range genDecl.Specs {
+					if valueSpec, ok := spec.(*ast.ValueSpec); ok {
+						for _, name := range valueSpec.Names {
+							packageVars[name.Name] = genDecl
+						}
+					}
+				}
+			}
+			return true
+		})
+	}
+}
+
+// In certain scenarios, multiple resource types may share the same read file.
+// In this specific case, we choose to output logs only for the resource types
+// that are actively used in the test.
+func logTestdataMultiple(testName, fileName, data string, resourceTypes ...string) {
+	testStep := fmt.Sprint(testMetaData[testName])
+	paths := []string{"testdata", testName, testStep}
+
+	// Iterate over the subdirectories and append them to the paths if they exist
+	for _, resourceType := range resourceTypes {
+		pathsResource := append(paths, resourceType)
+		dirPath := filepath.Join(pathsResource...)
+		if _, err := os.Stat(dirPath); err == nil {
+			logTestdata(testName, fileName, data, resourceType)
+		}
+	}
+}
+
+// Log to a file in the testdata directory based on the test name, step, and desired file name
+func logTestdata(testName, fileName, data string, subDirs ...string) {
+	testStep := fmt.Sprint(testMetaData[testName])
+	paths := []string{"testdata", testName, testStep}
+	paths = append(paths, subDirs...) // append subdirectories if any
+	dirPath := filepath.Join(paths...)
+	ensureDir(dirPath)
+
+	filePath := filepath.Join(dirPath, fileName)
+
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open log file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = fmt.Fprintln(file, data)
+	if err != nil {
+		log.Fatalf("Failed to write to log file: %v", err)
+	}
+}
+
+func copyFile(src, testName string, subDirs ...string) error {
+	fileName := filepath.Base(src)
+
+	// Construct the directory path using testName and subDirs
+	testStep := fmt.Sprint(testMetaData[testName])
+	paths := []string{"testdata", testName, testStep}
+	paths = append(paths, subDirs...) // append subdirectories if any
+	dirPath := filepath.Join(paths...)
+	ensureDir(dirPath)
+
+	// Construct the full destination path for the file
+	destPath := filepath.Join(dirPath, fileName)
+
+	// Check if dest file already exists; if yes, just return
+	if _, err := os.Stat(destPath); err == nil {
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+
+	// Open source file for reading
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	// Create and open dest file for writing
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	// Copy from src to dest
+	if _, err := io.Copy(destFile, srcFile); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Clear all logs from the testdata/<testname> directory
+func clearLogsForTest(testName string) {
+	dirPath := filepath.Join("testdata", testName)
+	err := os.RemoveAll(dirPath)
+	if err != nil {
+		log.Fatalf("Failed to clear logs for test %s: %v", testName, err)
+	}
+}
+
+var testMetaData = map[string]int{}
+
+func safeGetAttribute(is map[string]string, testName string, key string) string {
+	v, ok := is[key]
+
+	if !ok {
+		logTestdata(testName, "errors", fmt.Sprintf("%s: Attribute '%s' not found\n\n", key))
+
+		return ""
+	}
+
+	return v
+}
+
+func findValuesWithPrefix(input, prefix string) ([]string, error) {
+	// Prepare a regex pattern that matches the prefix followed by a dot and a valid Terraform variable name
+	fmt.Println("searching for prefix - ", prefix)
+	pattern := regexp.QuoteMeta(prefix) + `\.([a-zA-Z0-9_\-\.]+)`
+	re := regexp.MustCompile(pattern)
+
+	// Find all matches in the input string
+	matches := re.FindAllStringSubmatch(input, -1)
+
+	// Extract the variable names from the matches and eliminate duplicates
+	valuesMap := make(map[string]bool)
+	var values []string
+	for _, match := range matches {
+		if len(match) > 1 {
+			fmt.Printf("found match %v\n", match)
+			valuesMap[match[1]] = true
+		}
+	}
+
+	for key := range valuesMap {
+		values = append(values, key)
+	}
+
+	if len(values) == 0 {
+		return nil, fmt.Errorf("%s not found in input\n %s \n\n", prefix, input)
+	}
+
+	return values, nil
+}
+
+func splitResourcesAndData(hclContent string) map[string]string {
+	blocks := make(map[string]string)
+	blockStartPattern := `^(resource|data)\s+"([^"]+)"\s+"([^"]+)"`
+	re := regexp.MustCompile(blockStartPattern)
+
+	var currentBlockKey string
+	var currentBlock strings.Builder
+	insideBlock := false
+	lines := strings.Split(hclContent, "\n")
+
+	for i, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+
+		matches := re.FindStringSubmatch(trimmedLine)
+		if len(matches) == 4 {
+			if insideBlock { // Finish the current block if we're inside one
+				blocks[currentBlockKey] = currentBlock.String()
+				currentBlock.Reset()
+			}
+			insideBlock = true
+			if matches[1] == "resource" {
+				currentBlockKey = fmt.Sprintf("%s.%s", matches[2], matches[3])
+			} else {
+				currentBlockKey = fmt.Sprintf("%s.%s.%s", matches[1], matches[2], matches[3])
+
+			}
+			currentBlock.WriteString(line + "\n")
+		} else if insideBlock {
+			currentBlock.WriteString(line + "\n")
+		}
+
+		if i == len(lines)-1 && insideBlock { // If it's the last line and we're inside a block
+			blocks[currentBlockKey] = currentBlock.String()
+			currentBlock.Reset()
+		}
+	}
+
+	return blocks
+}
+
+func encapsulateInQuotes(s string) string {
+	return "\"" + s + "\""
+}
+
+func addLoggingPrestep(c resource.TestCase, testName string) resource.TestCase {
+	var replacementSteps []resource.TestStep
+	populateResourceDataMaps()
+
+	for _, testStep := range c.Steps {
+		config := testStep.Config
+		splitConfig := splitResourcesAndData(config)
+
+		oldSkipFunc := testStep.SkipFunc
+		oldTestCheckFunc := testStep.Check
+		testStep.Check = func(state *terraform.State) error {
+			if config == "" {
+				return oldTestCheckFunc(state)
+			}
+
+			for resourceName, v := range splitConfig {
+				resourceType := resourceName[:strings.LastIndex(resourceName, ".")]
+				if !strings.HasPrefix(resourceType, "data.") {
+					createMasterFile(resourceType, testName)
+					// resourceReadSourceCode := resourceCreateSourceFileLocations[resourceType]
+					// copyFile(resourceReadSourceCode, testName, resourceType)
+					// resourceCreateSourceCode := resourceReadSourceFileLocations[resourceType]
+					// copyFile(resourceCreateSourceCode, testName, resourceType)
+				}
+				logTestdata(testName, resourceName+".tf", v, resourceType, "rawtf")
+			}
+			// dependency data.google_compute_image.my_image needed for resource google_compute_instance.foobar
+			for _, m := range state.Modules {
+				for resourceName, r := range m.Resources {
+					resourceType := resourceName[:strings.LastIndex(resourceName, ".")]
+					for _, d := range r.Dependencies {
+						fmt.Printf("dependency %s needed for %s \n", d, resourceName)
+						resourceConfig, ok := splitConfig[resourceName]
+						if !ok {
+							logTestdata(testName, "errors", fmt.Sprintf("%s not found in resourceConfig map\n\n", resourceName), resourceType)
+							logTestdata(testName, "split-config-dump.log", fmt.Sprintf("%v+ \n\n", splitConfig), resourceType)
+						}
+
+						dependency, ok := m.Resources[d]
+						if !ok {
+							logTestdata(testName, "errors", fmt.Sprintf("%s not found in resource map\n\n", d), resourceType)
+							logTestdata(testName, "resources-dump.log", fmt.Sprintf("%v+ \n\n", m.Resources), resourceType)
+						}
+						dependencyLookupsNeeded, err := findValuesWithPrefix(resourceConfig, d)
+						if err != nil {
+							logTestdata(testName, "errors", fmt.Sprintf("%s\n\n", err), resourceType)
+						}
+						for _, dpl := range dependencyLookupsNeeded {
+							dependencyValue := safeGetAttribute(dependency.Primary.Attributes, testName, dpl)
+							dependencyValue = encapsulateInQuotes(dependencyValue)
+							resourceConfig = strings.ReplaceAll(resourceConfig, d+"."+dpl, dependencyValue)
+						}
+						splitConfig[resourceName] = resourceConfig
+					}
+				}
+			}
+
+			for resourceName, v := range splitConfig {
+				resourceType := resourceName[:strings.LastIndex(resourceName, ".")]
+				logTestdata(testName, resourceName+".tf", v, resourceType)
+			}
+
+			if oldTestCheckFunc != nil {
+				return oldTestCheckFunc(state)
+			}
+			return nil
+		}
+
+		testStep.SkipFunc = func() (bool, error) {
+			if val, ok := testMetaData[testName]; ok && val > 0 {
+				testMetaData[testName] = val + 1
+			} else {
+				testMetaData[testName] = 1
+			}
+
+			if oldSkipFunc != nil {
+				return oldSkipFunc()
+			}
+
+			if config != "" {
+				logTestdata(testName, "config.tf", config)
+				for resourceName, v := range splitConfig {
+					resourceType := resourceName[:strings.LastIndex(resourceName, ".")]
+					if unsupportedResources[resourceType] {
+						logTestdata(testName, "notice.unsupported", fmt.Sprintf("This resource type %s, is in our unsupported resource list \n%v", resourceType, unsupportedResources))
+						logTestdata(testName, "notice.unsupported", fmt.Sprintf("This resource type %s, is in our unsupported resource list \n%v", resourceType, unsupportedResources), resourceType)
+					}
+					logTestdata(testName, resourceName+".tf", v, resourceType, "rawtf")
+				}
+			}
+			return false, nil
+		}
+
+		replacementSteps = append(replacementSteps, testStep)
+	}
+
+	c.Steps = replacementSteps
+
+	return c
 }
 
 func initializeReleaseDiffTest(c resource.TestCase, testName string) resource.TestCase {
@@ -438,7 +1027,7 @@ func configureApiClient(ctx context.Context, p *fwprovider.FrameworkProvider, di
 // GetSDKProvider gets the SDK provider with an overwritten configure function to be called by MuxedProviders
 func GetSDKProvider(testName string) *schema.Provider {
 	prov := tpgprovider.Provider()
-	if IsVcrEnabled() {
+	if IsVcrEnabled() || IsRecordApiCreateGet() {
 		old := prov.ConfigureContextFunc
 		prov.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 			return getCachedConfig(ctx, d, old, testName)
@@ -447,6 +1036,172 @@ func GetSDKProvider(testName string) *schema.Provider {
 		log.Print("[DEBUG] VCR_PATH or VCR_MODE not set, skipping VCR")
 	}
 	return prov
+}
+
+type resourceSourceMetadata struct {
+	createSourceFile string
+	readSourceFile   string
+	readFuncName     string
+	createFuncName   string
+	schema           map[string]*schema.Schema
+}
+
+var resourceMetadata map[string]resourceSourceMetadata
+var validReadFunctions map[string]string
+var unsupportedResources map[string]bool
+
+func FunctionDetails(fn interface{}) (funcName, file string, ok bool) {
+	val := reflect.ValueOf(fn)
+
+	if val.Kind() != reflect.Func {
+		return "", "", false
+	}
+
+	fnPtr := val.Pointer()
+	fnVal := runtime.FuncForPC(fnPtr)
+	if fnVal == nil {
+		return "", "", false
+	}
+
+	funcName = fnVal.Name()
+	file, _ = fnVal.FileLine(fnPtr)
+
+	return funcName, file, true
+}
+
+func isValidFunctionName(resolvedName string) bool {
+	return !strings.Contains(resolvedName, ".")
+}
+
+func getFunctionName(reflectedName string) string {
+	parts := strings.Split(reflectedName, "/")
+	lastPart := strings.SplitN(parts[len(parts)-1], ".", 2)
+	if len(lastPart) > 1 {
+		return lastPart[1]
+	} else {
+		return reflectedName
+	}
+}
+
+func populateResourceDataMaps() {
+	if validReadFunctions != nil {
+		// already populated
+		return
+	}
+	validReadFunctions = map[string]string{}
+	resourceMetadata = make(map[string]resourceSourceMetadata)
+	unsupportedResources = map[string]bool{}
+
+	prov := tpgprovider.Provider()
+	for resourceType, resource := range prov.ResourcesMap {
+		var funcName, file string
+		var ok bool
+		if resource.Read != nil {
+			funcName, file, ok = FunctionDetails(resource.Read)
+		} else if resource.ReadContext != nil {
+			funcName, file, ok = FunctionDetails(resource.ReadContext)
+		} else if resource.ReadWithoutTimeout != nil {
+			funcName, file, ok = FunctionDetails(resource.ReadWithoutTimeout)
+		}
+
+		var createFuncName, createFileSource string
+		var _ bool
+
+		if resource.Create != nil {
+			createFuncName, createFileSource, _ = FunctionDetails(resource.Create)
+		} else if resource.CreateContext != nil {
+			createFuncName, createFileSource, _ = FunctionDetails(resource.CreateContext)
+		} else if resource.CreateWithoutTimeout != nil {
+			createFuncName, createFileSource, _ = FunctionDetails(resource.CreateWithoutTimeout)
+		}
+
+		if ok {
+			fmt.Printf("%s - %s - %s \n", resourceType, funcName, file)
+		}
+
+		shortFuncName := getFunctionName(funcName)
+		if createFileSource != file || !isValidFunctionName(shortFuncName) {
+			fmt.Println("unsupported : ", shortFuncName, funcName)
+
+			unsupportedResources[resourceType] = true
+			continue
+		}
+
+		validReadFunctions[funcName] = resourceType
+		resourceMetadata[resourceType] = resourceSourceMetadata{
+			createSourceFile: createFileSource,
+			readSourceFile:   file,
+			createFuncName:   getFunctionName(createFuncName),
+			readFuncName:     getFunctionName(funcName),
+			schema:           resource.Schema,
+		}
+	}
+	for resource, _ := range unsupportedResources {
+		fmt.Println("unsupported : ", resource)
+	}
+}
+
+// Checks if the function is a read function, if so returns the resource
+// that this read function belongs to
+func isValidReadFunction(functionName string) (string, bool) {
+	if validReadFunctions == nil {
+		populateResourceDataMaps()
+	}
+	resourceType, exists := validReadFunctions[functionName]
+	return resourceType, exists
+}
+
+func findCallerWithSubstring() (resourceType string, found bool) {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(0, pc)
+	if n == 0 {
+		return
+	}
+
+	pc = pc[:n]
+	frames := runtime.CallersFrames(pc)
+
+	// Loop over the frames to find the desired function name substring
+	for {
+		frame, more := frames.Next()
+		resourceType, validReadFunction := isValidReadFunction(frame.Function)
+		if validReadFunction {
+			// Check next immediate parent
+			frame2, more2 := frames.Next()
+			// There are two functions that will call read.
+			// One is the Create function, the next is the SDK to refresh state. We only care about the
+			// sdk refresh.
+			if more2 && strings.Contains(frame2.Function, "schema.(*Resource).read") {
+				return resourceType, true
+			}
+		}
+		if !more {
+			break
+		}
+	}
+
+	return "", false
+}
+
+type loggingRoundTripper struct {
+	underlying http.RoundTripper
+	testName   string
+}
+
+// RoundTrip logs the request and then delegates to the underlying RoundTripper
+func (lrt *loggingRoundTripper) RoundTrip(r *http.Request) (*http.Response, error) {
+	startTime := time.Now()
+	resp, err := lrt.underlying.RoundTrip(r)
+	duration := time.Since(startTime)
+	resourceType, callerfound := findCallerWithSubstring()
+	if callerfound {
+		if err != nil {
+			logTestdataMultiple(lrt.testName, "requests.log", fmt.Sprintf("HTTP Request failed: %s %s. Duration: %v. Error: %s\n\n", r.Method, r.URL, duration, err), resourceType)
+		} else {
+			logTestdataMultiple(lrt.testName, "requests.log", fmt.Sprintf("HTTP Request: %s %s. Duration: %v. Response status: %d\n%s\n\n", r.Method, r.URL, duration, resp.StatusCode, resp.Body), resourceType)
+		}
+	}
+	return resp, err
 }
 
 // Returns a cached config if VCR testing is enabled. This enables us to use a single HTTP transport
@@ -469,7 +1224,17 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 
 	var fwD fwDiags.Diagnostics
 	config := c.(*transport_tpg.Config)
-	config.PollInterval, config.Client.Transport, fwD = HandleVCRConfiguration(ctx, testName, config.Client.Transport, config.PollInterval)
+	if IsVcrEnabled() {
+		config.PollInterval, config.Client.Transport, fwD = HandleVCRConfiguration(ctx, testName, config.Client.Transport, config.PollInterval)
+	}
+
+	if IsRecordApiCreateGet() {
+		tempClient := &http.Client{
+			Transport: &loggingRoundTripper{underlying: config.Client.Transport, testName: testName},
+		}
+		config.Client.Transport = tempClient.Transport
+	}
+
 	if fwD.HasError() {
 		diags = append(diags, *tpgresource.FrameworkDiagsToSdkDiags(fwD)...)
 		return nil, diags
