@@ -264,8 +264,10 @@ type Config struct {
 	LoggingBasePath                  string
 	LookerBasePath                   string
 	MemcacheBasePath                 string
+	MigrationCenterBasePath          string
 	MLEngineBasePath                 string
 	MonitoringBasePath               string
+	NetappBasePath                   string
 	NetworkConnectivityBasePath      string
 	NetworkManagementBasePath        string
 	NetworkSecurityBasePath          string
@@ -400,8 +402,10 @@ const KMSBasePathKey = "KMS"
 const LoggingBasePathKey = "Logging"
 const LookerBasePathKey = "Looker"
 const MemcacheBasePathKey = "Memcache"
+const MigrationCenterBasePathKey = "MigrationCenter"
 const MLEngineBasePathKey = "MLEngine"
 const MonitoringBasePathKey = "Monitoring"
+const NetappBasePathKey = "Netapp"
 const NetworkConnectivityBasePathKey = "NetworkConnectivity"
 const NetworkManagementBasePathKey = "NetworkManagement"
 const NetworkSecurityBasePathKey = "NetworkSecurity"
@@ -530,8 +534,10 @@ var DefaultBasePaths = map[string]string{
 	LoggingBasePathKey:                  "https://logging.googleapis.com/v2/",
 	LookerBasePathKey:                   "https://looker.googleapis.com/v1/",
 	MemcacheBasePathKey:                 "https://memcache.googleapis.com/v1beta2/",
+	MigrationCenterBasePathKey:          "https://migrationcenter.googleapis.com/v1/",
 	MLEngineBasePathKey:                 "https://ml.googleapis.com/v1/",
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
+	NetappBasePathKey:                   "https://netapp.googleapis.com/v1beta1/",
 	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1/",
 	NetworkManagementBasePathKey:        "https://networkmanagement.googleapis.com/v1/",
 	NetworkSecurityBasePathKey:          "https://networksecurity.googleapis.com/v1beta1/",
@@ -643,7 +649,10 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 			"CLOUDSDK_CORE_REQUEST_REASON",
 		}, nil))
 	}
+	return nil
+}
 
+func SetEndpointDefaults(d *schema.ResourceData) error {
 	// Generated Products
 	if d.Get("access_approval_custom_endpoint") == "" {
 		d.Set("access_approval_custom_endpoint", MultiEnvDefault([]string{
@@ -1035,6 +1044,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 			"GOOGLE_MEMCACHE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[MemcacheBasePathKey]))
 	}
+	if d.Get("migration_center_custom_endpoint") == "" {
+		d.Set("migration_center_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_MIGRATION_CENTER_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[MigrationCenterBasePathKey]))
+	}
 	if d.Get("ml_engine_custom_endpoint") == "" {
 		d.Set("ml_engine_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_ML_ENGINE_CUSTOM_ENDPOINT",
@@ -1044,6 +1058,11 @@ func HandleSDKDefaults(d *schema.ResourceData) error {
 		d.Set("monitoring_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_MONITORING_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[MonitoringBasePathKey]))
+	}
+	if d.Get("netapp_custom_endpoint") == "" {
+		d.Set("netapp_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_NETAPP_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[NetappBasePathKey]))
 	}
 	if d.Get("network_connectivity_custom_endpoint") == "" {
 		d.Set("network_connectivity_custom_endpoint", MultiEnvDefault([]string{
@@ -2178,8 +2197,10 @@ func ConfigureBasePaths(c *Config) {
 	c.LoggingBasePath = DefaultBasePaths[LoggingBasePathKey]
 	c.LookerBasePath = DefaultBasePaths[LookerBasePathKey]
 	c.MemcacheBasePath = DefaultBasePaths[MemcacheBasePathKey]
+	c.MigrationCenterBasePath = DefaultBasePaths[MigrationCenterBasePathKey]
 	c.MLEngineBasePath = DefaultBasePaths[MLEngineBasePathKey]
 	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
+	c.NetappBasePath = DefaultBasePaths[NetappBasePathKey]
 	c.NetworkConnectivityBasePath = DefaultBasePaths[NetworkConnectivityBasePathKey]
 	c.NetworkManagementBasePath = DefaultBasePaths[NetworkManagementBasePathKey]
 	c.NetworkSecurityBasePath = DefaultBasePaths[NetworkSecurityBasePathKey]

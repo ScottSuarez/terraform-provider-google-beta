@@ -18,20 +18,26 @@
 package firestore_test
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func TestAccFirestoreDatabase_firestoreDefaultDatabaseExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":              envvar.GetTestProjectFromEnv(),
+		"delete_protection_state": "DELETE_PROTECTION_DISABLED",
+		"random_suffix":           acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -41,6 +47,7 @@ func TestAccFirestoreDatabase_firestoreDefaultDatabaseExample(t *testing.T) {
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckFirestoreDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirestoreDatabase_firestoreDefaultDatabaseExample(context),
@@ -49,7 +56,7 @@ func TestAccFirestoreDatabase_firestoreDefaultDatabaseExample(t *testing.T) {
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag"},
+				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
 			},
 		},
 	})
@@ -57,32 +64,13 @@ func TestAccFirestoreDatabase_firestoreDefaultDatabaseExample(t *testing.T) {
 
 func testAccFirestoreDatabase_firestoreDefaultDatabaseExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = "tf-test-my-project%{random_suffix}"
-  name       = "tf-test-my-project%{random_suffix}"
-  org_id     = "%{org_id}"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
 resource "google_firestore_database" "database" {
-  project     = google_project.project.project_id
-  name        = "(default)"
-  location_id = "nam5"
-  type        = "FIRESTORE_NATIVE"
-
-  depends_on = [google_project_service.firestore]
+  project                 = "%{project_id}"
+  name                    = "(default)"
+  location_id             = "nam5"
+  type                    = "FIRESTORE_NATIVE"
+  delete_protection_state = "%{delete_protection_state}"
+  deletion_policy         = "DELETE"
 }
 `, context)
 }
@@ -91,18 +79,15 @@ func TestAccFirestoreDatabase_firestoreDatabaseExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":              envvar.GetTestProjectFromEnv(),
+		"delete_protection_state": "DELETE_PROTECTION_DISABLED",
+		"random_suffix":           acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-			"time":   {},
-		},
+		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirestoreDatabase_firestoreDatabaseExample(context),
@@ -111,7 +96,7 @@ func TestAccFirestoreDatabase_firestoreDatabaseExample(t *testing.T) {
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag"},
+				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
 			},
 		},
 	})
@@ -119,99 +104,16 @@ func TestAccFirestoreDatabase_firestoreDatabaseExample(t *testing.T) {
 
 func testAccFirestoreDatabase_firestoreDatabaseExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id      = "tf-test-my-project%{random_suffix}"
-  name            = "tf-test-my-project%{random_suffix}"
-  org_id          = "%{org_id}"
-  billing_account = "%{billing_account}"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
 resource "google_firestore_database" "database" {
-  project                           = google_project.project.project_id
-  name                              = "my-database"
+  project                           = "%{project_id}"
+  name                              = "tf-test-example-database-id%{random_suffix}"
   location_id                       = "nam5"
   type                              = "FIRESTORE_NATIVE"
   concurrency_mode                  = "OPTIMISTIC"
   app_engine_integration_mode       = "DISABLED"
   point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
-
-  depends_on = [google_project_service.firestore]
-}
-`, context)
-}
-
-func TestAccFirestoreDatabase_firestoreDefaultDatabaseInDatastoreModeExample(t *testing.T) {
-	t.Parallel()
-
-	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-			"time":   {},
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: testAccFirestoreDatabase_firestoreDefaultDatabaseInDatastoreModeExample(context),
-			},
-			{
-				ResourceName:            "google_firestore_database.datastore_mode_database",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag"},
-			},
-		},
-	})
-}
-
-func testAccFirestoreDatabase_firestoreDefaultDatabaseInDatastoreModeExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_project" "project" {
-	project_id = "tf-test%{random_suffix}"
-	name       = "tf-test%{random_suffix}"
-	org_id     = "%{org_id}"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
-resource "google_firestore_database" "datastore_mode_database" {
-    project = google_project.project.project_id
-
-    name = "(default)"
-
-    location_id = "nam5"
-    type        = "DATASTORE_MODE"
-
-    depends_on = [google_project_service.firestore]
+  delete_protection_state           = "%{delete_protection_state}"
+  deletion_policy                   = "DELETE"
 }
 `, context)
 }
@@ -220,27 +122,24 @@ func TestAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(t *testing
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":              envvar.GetTestProjectFromEnv(),
+		"delete_protection_state": "DELETE_PROTECTION_DISABLED",
+		"random_suffix":           acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-			"time":   {},
-		},
+		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(context),
 			},
 			{
-				ResourceName:            "google_firestore_database.database",
+				ResourceName:            "google_firestore_database.datastore_mode_database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag"},
+				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
 			},
 		},
 	})
@@ -248,36 +147,55 @@ func TestAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(t *testing
 
 func testAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id      = "tf-test-my-project%{random_suffix}"
-  name            = "tf-test-my-project%{random_suffix}"
-  org_id          = "%{org_id}"
-  billing_account = "%{billing_account}"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
-resource "google_firestore_database" "database" {
-  project                           = google_project.project.project_id
-  name                              = "datastore-mode-database"
+resource "google_firestore_database" "datastore_mode_database" {
+  project                           = "%{project_id}"
+  name                              = "tf-test-example-database-id%{random_suffix}"
   location_id                       = "nam5"
   type                              = "DATASTORE_MODE"
   concurrency_mode                  = "OPTIMISTIC"
   app_engine_integration_mode       = "DISABLED"
   point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
-
-  depends_on = [google_project_service.firestore]
+  delete_protection_state           = "%{delete_protection_state}"
+  deletion_policy                   = "DELETE"
 }
 `, context)
+}
+
+func testAccCheckFirestoreDatabaseDestroyProducer(t *testing.T) func(s *terraform.State) error {
+	return func(s *terraform.State) error {
+		for name, rs := range s.RootModule().Resources {
+			if rs.Type != "google_firestore_database" {
+				continue
+			}
+			if strings.HasPrefix(name, "data.") {
+				continue
+			}
+
+			config := acctest.GoogleProviderConfig(t)
+
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirestoreBasePath}}projects/{{project}}/databases/{{name}}")
+			if err != nil {
+				return err
+			}
+
+			billingProject := ""
+
+			if config.BillingProject != "" {
+				billingProject = config.BillingProject
+			}
+
+			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+				Config:    config,
+				Method:    "GET",
+				Project:   billingProject,
+				RawURL:    url,
+				UserAgent: config.UserAgent,
+			})
+			if err == nil {
+				return fmt.Errorf("FirestoreDatabase still exists at %s", url)
+			}
+		}
+
+		return nil
+	}
 }
