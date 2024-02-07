@@ -143,7 +143,7 @@ resource "google_gke_hub_feature" "feature" {
 resource "google_gke_hub_feature" "feature" {
   name = "servicemesh"
   location = "global"
-  fleetDefaultMemberConfig {
+  fleet_default_member_config {
     mesh {
       management = "MANAGEMENT_AUTOMATIC"
     }
@@ -157,7 +157,7 @@ resource "google_gke_hub_feature" "feature" {
 resource "google_gke_hub_feature" "feature" {
   name = "configmanagement"
   location = "global"
-  fleetDefaultMemberConfig {
+  fleet_default_member_config {
     configmanagement {
       config_sync {
         git {
@@ -196,7 +196,7 @@ resource "google_gke_hub_feature" "feature" {
   }
 }
 ```
-## Example Usage - Enable Fleet Default Member Config Policycontroller Update
+## Example Usage - Enable Fleet Default Member Config Policycontroller Full
 
 
 ```hcl
@@ -258,7 +258,7 @@ resource "google_gke_hub_feature" "feature" {
   }
 }
 ```
-## Example Usage - Enable Fleet Default Member Config Policycontroller Set Empty
+## Example Usage - Enable Fleet Default Member Config Policycontroller Minimal
 
 
 ```hcl
@@ -278,6 +278,23 @@ resource "google_gke_hub_feature" "feature" {
           component = "admission"
         }
         monitoring {}
+      }
+    }
+  }
+}
+```
+## Example Usage - Gkehub Feature Clusterupgrade
+
+
+```hcl
+resource "google_gke_hub_feature" "feature" {
+  name = "clusterupgrade"
+  location = "global"
+  spec {
+    clusterupgrade {
+      upstream_fleets = []
+      post_conditions {
+        soaking = "60s"
       }
     }
   }
@@ -333,6 +350,11 @@ The following arguments are supported:
   Fleet Observability feature spec.
   Structure is [documented below](#nested_fleetobservability).
 
+* `clusterupgrade` -
+  (Optional)
+  Clusterupgrade feature spec.
+  Structure is [documented below](#nested_clusterupgrade).
+
 
 <a name="nested_multiclusteringress"></a>The `multiclusteringress` block supports:
 
@@ -375,6 +397,58 @@ The following arguments are supported:
   Specified if fleet logging feature is enabled.
   Possible values are: `MODE_UNSPECIFIED`, `COPY`, `MOVE`.
 
+<a name="nested_clusterupgrade"></a>The `clusterupgrade` block supports:
+
+* `upstream_fleets` -
+  (Required)
+  Specified if other fleet should be considered as a source of upgrades. Currently, at most one upstream fleet is allowed. The fleet name should be either fleet project number or id.
+
+* `post_conditions` -
+  (Required)
+  Post conditions to override for the specified upgrade.
+  Structure is [documented below](#nested_post_conditions).
+
+* `gke_upgrade_overrides` -
+  (Optional)
+  Configuration overrides for individual upgrades.
+  Structure is [documented below](#nested_gke_upgrade_overrides).
+
+
+<a name="nested_post_conditions"></a>The `post_conditions` block supports:
+
+* `soaking` -
+  (Required)
+  Amount of time to "soak" after a rollout has been finished before marking it COMPLETE. Cannot exceed 30 days.
+
+<a name="nested_gke_upgrade_overrides"></a>The `gke_upgrade_overrides` block supports:
+
+* `upgrade` -
+  (Required)
+  Which upgrade to override.
+  Structure is [documented below](#nested_upgrade).
+
+* `post_conditions` -
+  (Required)
+  Post conditions to override for the specified upgrade.
+  Structure is [documented below](#nested_post_conditions).
+
+
+<a name="nested_upgrade"></a>The `upgrade` block supports:
+
+* `name` -
+  (Required)
+  Name of the upgrade, e.g., "k8s_control_plane". It should be a valid upgrade name. It must not exceet 99 characters.
+
+* `version` -
+  (Required)
+  Version of the upgrade, e.g., "1.22.1-gke.100". It should be a valid version. It must not exceet 99 characters.
+
+<a name="nested_post_conditions"></a>The `post_conditions` block supports:
+
+* `soaking` -
+  (Required)
+  Amount of time to "soak" after a rollout has been finished before marking it COMPLETE. Cannot exceed 30 days.
+
 <a name="nested_fleet_default_member_config"></a>The `fleet_default_member_config` block supports:
 
 * `mesh` -
@@ -401,6 +475,10 @@ The following arguments are supported:
   Possible values are: `MANAGEMENT_UNSPECIFIED`, `MANAGEMENT_AUTOMATIC`, `MANAGEMENT_MANUAL`.
 
 <a name="nested_configmanagement"></a>The `configmanagement` block supports:
+
+* `version` -
+  (Optional)
+  Version of ACM installed
 
 * `config_sync` -
   (Optional)
@@ -482,8 +560,10 @@ The following arguments are supported:
   Period in seconds between consecutive syncs. Default: 15
 
 * `version` -
-  (Optional)
+  (Optional, Deprecated)
   Version of ACM installed
+
+  ~> **Warning:** The `configmanagement.config_sync.oci.version` field is deprecated and will be removed in a future major release. Please use `configmanagement.version` field to specify the version of ACM installed instead.
 
 <a name="nested_policycontroller"></a>The `policycontroller` block supports:
 

@@ -134,6 +134,16 @@ func Provider() *schema.Provider {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
+			"add_terraform_attribution_label": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+
+			"terraform_attribution_label_addition_strategy": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
 			// Generated Products
 			"access_approval_custom_endpoint": {
 				Type:         schema.TypeString,
@@ -235,6 +245,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"blockchain_node_engine_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"certificate_manager_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -251,6 +266,16 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"cloudbuildv2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"clouddeploy_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"clouddomains_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -385,6 +410,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"discovery_engine_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"dns_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -421,6 +451,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"firebase_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"firebase_app_check_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -625,7 +660,17 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"secure_source_manager_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"security_center_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"securityposture_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -706,6 +751,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"vpc_access_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"workbench_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -859,10 +909,10 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		}
 	}
 
-	// Check if the user provided a value from the universe_domain field
-	if v, ok := d.GetOk("universe_domain"); ok {
+	// Check if the user provided a value from the universe_domain field other than the default
+	if v, ok := d.GetOk("universe_domain"); ok && v.(string) != "googleapis.com" {
 		if config.UniverseDomain == "" {
-			config.UniverseDomain = v.(string)
+			return nil, diag.FromErr(fmt.Errorf("Universe domain '%s' supplied directly to Terraform with no matching universe domain in credentials. Credentials with no 'universe_domain' set are assumed to be in the default universe.", v))
 		} else if v.(string) != config.UniverseDomain {
 			if _, err := os.Stat(config.Credentials); err == nil {
 				return nil, diag.FromErr(fmt.Errorf("'%s' does not match the universe domain '%s' already set in the credential file '%s'. The 'universe_domain' provider configuration can not be used to override the universe domain that is defined in the active credential.  Set the 'universe_domain' provider configuration when universe domain information is not already available in the credential, e.g. when authenticating with a JWT token.", v, config.UniverseDomain, config.Credentials))
@@ -914,6 +964,20 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		config.DefaultLabels[k] = v.(string)
 	}
 
+	// Attribution label is opt-in; if unset, the default for AddTerraformAttributionLabel is false.
+	config.AddTerraformAttributionLabel = d.Get("add_terraform_attribution_label").(bool)
+	if config.AddTerraformAttributionLabel {
+		config.TerraformAttributionLabelAdditionStrategy = transport_tpg.CreateOnlyAttributionStrategy
+		if v, ok := d.GetOk("terraform_attribution_label_addition_strategy"); ok {
+			config.TerraformAttributionLabelAdditionStrategy = v.(string)
+		}
+		switch config.TerraformAttributionLabelAdditionStrategy {
+		case transport_tpg.CreateOnlyAttributionStrategy, transport_tpg.ProactiveAttributionStrategy:
+		default:
+			return nil, diag.FromErr(fmt.Errorf("unrecognized terraform_attribution_label_addition_strategy %q", config.TerraformAttributionLabelAdditionStrategy))
+		}
+	}
+
 	batchCfg, err := transport_tpg.ExpandProviderBatchingConfig(d.Get("batching"))
 	if err != nil {
 		return nil, diag.FromErr(err)
@@ -941,10 +1005,13 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.BigtableBasePath = d.Get("bigtable_custom_endpoint").(string)
 	config.BillingBasePath = d.Get("billing_custom_endpoint").(string)
 	config.BinaryAuthorizationBasePath = d.Get("binary_authorization_custom_endpoint").(string)
+	config.BlockchainNodeEngineBasePath = d.Get("blockchain_node_engine_custom_endpoint").(string)
 	config.CertificateManagerBasePath = d.Get("certificate_manager_custom_endpoint").(string)
 	config.CloudAssetBasePath = d.Get("cloud_asset_custom_endpoint").(string)
 	config.CloudBuildBasePath = d.Get("cloud_build_custom_endpoint").(string)
 	config.Cloudbuildv2BasePath = d.Get("cloudbuildv2_custom_endpoint").(string)
+	config.ClouddeployBasePath = d.Get("clouddeploy_custom_endpoint").(string)
+	config.ClouddomainsBasePath = d.Get("clouddomains_custom_endpoint").(string)
 	config.CloudFunctionsBasePath = d.Get("cloud_functions_custom_endpoint").(string)
 	config.Cloudfunctions2BasePath = d.Get("cloudfunctions2_custom_endpoint").(string)
 	config.CloudIdentityBasePath = d.Get("cloud_identity_custom_endpoint").(string)
@@ -971,6 +1038,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.DeploymentManagerBasePath = d.Get("deployment_manager_custom_endpoint").(string)
 	config.DialogflowBasePath = d.Get("dialogflow_custom_endpoint").(string)
 	config.DialogflowCXBasePath = d.Get("dialogflow_cx_custom_endpoint").(string)
+	config.DiscoveryEngineBasePath = d.Get("discovery_engine_custom_endpoint").(string)
 	config.DNSBasePath = d.Get("dns_custom_endpoint").(string)
 	config.DocumentAIBasePath = d.Get("document_ai_custom_endpoint").(string)
 	config.DocumentAIWarehouseBasePath = d.Get("document_ai_warehouse_custom_endpoint").(string)
@@ -979,6 +1047,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.EssentialContactsBasePath = d.Get("essential_contacts_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
 	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
+	config.FirebaseAppCheckBasePath = d.Get("firebase_app_check_custom_endpoint").(string)
 	config.FirebaseDatabaseBasePath = d.Get("firebase_database_custom_endpoint").(string)
 	config.FirebaseExtensionsBasePath = d.Get("firebase_extensions_custom_endpoint").(string)
 	config.FirebaseHostingBasePath = d.Get("firebase_hosting_custom_endpoint").(string)
@@ -1019,7 +1088,9 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.ResourceManagerBasePath = d.Get("resource_manager_custom_endpoint").(string)
 	config.RuntimeConfigBasePath = d.Get("runtime_config_custom_endpoint").(string)
 	config.SecretManagerBasePath = d.Get("secret_manager_custom_endpoint").(string)
+	config.SecureSourceManagerBasePath = d.Get("secure_source_manager_custom_endpoint").(string)
 	config.SecurityCenterBasePath = d.Get("security_center_custom_endpoint").(string)
+	config.SecuritypostureBasePath = d.Get("securityposture_custom_endpoint").(string)
 	config.SecurityScannerBasePath = d.Get("security_scanner_custom_endpoint").(string)
 	config.ServiceDirectoryBasePath = d.Get("service_directory_custom_endpoint").(string)
 	config.ServiceManagementBasePath = d.Get("service_management_custom_endpoint").(string)
@@ -1036,6 +1107,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
 	config.VmwareengineBasePath = d.Get("vmwareengine_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
+	config.WorkbenchBasePath = d.Get("workbench_custom_endpoint").(string)
 	config.WorkflowsBasePath = d.Get("workflows_custom_endpoint").(string)
 	config.WorkstationsBasePath = d.Get("workstations_custom_endpoint").(string)
 

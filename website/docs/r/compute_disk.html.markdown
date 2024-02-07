@@ -228,7 +228,7 @@ The following arguments are supported:
   to allow for updating the resource policy attached to the disk.
 
 * `enable_confidential_compute` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   Whether this disk is using confidential compute mode.
   Note: Only supported on hyperdisk skus, disk_encryption_key is required when setting to true
 
@@ -431,6 +431,9 @@ In addition to the arguments listed above, the following computed attributes are
   The ID value of the disk used to create this image. This value may
   be used to determine whether the image was taken from the current
   or a previous instance of a given disk name.
+
+* `disk_id` -
+  The unique identifier for the resource. This identifier is defined by the server.
 
 * `terraform_labels` -
   The combination of labels configured directly on the resource

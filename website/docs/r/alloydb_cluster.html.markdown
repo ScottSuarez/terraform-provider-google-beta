@@ -28,6 +28,10 @@ To get more information about Cluster, see:
 * How-to Guides
     * [AlloyDB](https://cloud.google.com/alloydb/docs/)
 
+~> **Note:** Users can promote a secondary cluster to a primary cluster with the help of `cluster_type`.
+To promote, users have to set the `cluster_type` property as `PRIMARY` and remove the `secondary_config` field from cluster configuration.
+[See Example](https://github.com/hashicorp/terraform-provider-google/pull/16413).
+
 ~> **Warning:** All arguments including the following potentially sensitive
 values will be stored in the raw state as plain text: `initial_user.password`.
 [Read more about sensitive data in state](https://www.terraform.io/language/state/sensitive-data).
@@ -66,6 +70,7 @@ resource "google_alloydb_cluster" "full" {
   cluster_id   = "alloydb-cluster-full"
   location     = "us-central1"
   network      = google_compute_network.default.id
+  database_version = "POSTGRES_15"
 
   initial_user {
     user     = "alloydb-cluster-full"
@@ -302,6 +307,10 @@ The following arguments are supported:
 
   **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
   Please refer to the field `effective_annotations` for all of the annotations present on the resource.
+
+* `database_version` -
+  (Optional)
+  The database engine major version. This is an optional field and it's populated at the Cluster creation time. This field cannot be changed after cluster creation.
 
 * `initial_user` -
   (Optional)
@@ -541,9 +550,6 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `state` -
   Output only. The current serving state of the cluster.
-
-* `database_version` -
-  The database engine major version. This is an output-only field and it's populated at the Cluster creation time. This field cannot be changed after cluster creation.
 
 * `backup_source` -
   Cluster created from backup.

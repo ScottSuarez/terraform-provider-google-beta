@@ -9,21 +9,23 @@ import (
 
 // ProviderModel describes the provider config data model.
 type ProviderModel struct {
-	Credentials                        types.String `tfsdk:"credentials"`
-	AccessToken                        types.String `tfsdk:"access_token"`
-	ImpersonateServiceAccount          types.String `tfsdk:"impersonate_service_account"`
-	ImpersonateServiceAccountDelegates types.List   `tfsdk:"impersonate_service_account_delegates"`
-	Project                            types.String `tfsdk:"project"`
-	BillingProject                     types.String `tfsdk:"billing_project"`
-	Region                             types.String `tfsdk:"region"`
-	Zone                               types.String `tfsdk:"zone"`
-	Scopes                             types.List   `tfsdk:"scopes"`
-	Batching                           types.List   `tfsdk:"batching"`
-	UserProjectOverride                types.Bool   `tfsdk:"user_project_override"`
-	RequestTimeout                     types.String `tfsdk:"request_timeout"`
-	RequestReason                      types.String `tfsdk:"request_reason"`
-	UniverseDomain                     types.String `tfsdk:"universe_domain"`
-	DefaultLabels                      types.Map    `tfsdk:"default_labels"`
+	Credentials                               types.String `tfsdk:"credentials"`
+	AccessToken                               types.String `tfsdk:"access_token"`
+	ImpersonateServiceAccount                 types.String `tfsdk:"impersonate_service_account"`
+	ImpersonateServiceAccountDelegates        types.List   `tfsdk:"impersonate_service_account_delegates"`
+	Project                                   types.String `tfsdk:"project"`
+	BillingProject                            types.String `tfsdk:"billing_project"`
+	Region                                    types.String `tfsdk:"region"`
+	Zone                                      types.String `tfsdk:"zone"`
+	Scopes                                    types.List   `tfsdk:"scopes"`
+	Batching                                  types.List   `tfsdk:"batching"`
+	UserProjectOverride                       types.Bool   `tfsdk:"user_project_override"`
+	RequestTimeout                            types.String `tfsdk:"request_timeout"`
+	RequestReason                             types.String `tfsdk:"request_reason"`
+	UniverseDomain                            types.String `tfsdk:"universe_domain"`
+	DefaultLabels                             types.Map    `tfsdk:"default_labels"`
+	AddTerraformAttributionLabel              types.Bool   `tfsdk:"add_terraform_attribution_label"`
+	TerraformAttributionLabelAdditionStrategy types.String `tfsdk:"terraform_attribution_label_addition_strategy"`
 
 	// Generated Products
 	AccessApprovalCustomEndpoint           types.String `tfsdk:"access_approval_custom_endpoint"`
@@ -46,10 +48,13 @@ type ProviderModel struct {
 	BigtableCustomEndpoint                 types.String `tfsdk:"bigtable_custom_endpoint"`
 	BillingCustomEndpoint                  types.String `tfsdk:"billing_custom_endpoint"`
 	BinaryAuthorizationCustomEndpoint      types.String `tfsdk:"binary_authorization_custom_endpoint"`
+	BlockchainNodeEngineCustomEndpoint     types.String `tfsdk:"blockchain_node_engine_custom_endpoint"`
 	CertificateManagerCustomEndpoint       types.String `tfsdk:"certificate_manager_custom_endpoint"`
 	CloudAssetCustomEndpoint               types.String `tfsdk:"cloud_asset_custom_endpoint"`
 	CloudBuildCustomEndpoint               types.String `tfsdk:"cloud_build_custom_endpoint"`
 	Cloudbuildv2CustomEndpoint             types.String `tfsdk:"cloudbuildv2_custom_endpoint"`
+	ClouddeployCustomEndpoint              types.String `tfsdk:"clouddeploy_custom_endpoint"`
+	ClouddomainsCustomEndpoint             types.String `tfsdk:"clouddomains_custom_endpoint"`
 	CloudFunctionsCustomEndpoint           types.String `tfsdk:"cloud_functions_custom_endpoint"`
 	Cloudfunctions2CustomEndpoint          types.String `tfsdk:"cloudfunctions2_custom_endpoint"`
 	CloudIdentityCustomEndpoint            types.String `tfsdk:"cloud_identity_custom_endpoint"`
@@ -76,6 +81,7 @@ type ProviderModel struct {
 	DeploymentManagerCustomEndpoint        types.String `tfsdk:"deployment_manager_custom_endpoint"`
 	DialogflowCustomEndpoint               types.String `tfsdk:"dialogflow_custom_endpoint"`
 	DialogflowCXCustomEndpoint             types.String `tfsdk:"dialogflow_cx_custom_endpoint"`
+	DiscoveryEngineCustomEndpoint          types.String `tfsdk:"discovery_engine_custom_endpoint"`
 	DNSCustomEndpoint                      types.String `tfsdk:"dns_custom_endpoint"`
 	DocumentAICustomEndpoint               types.String `tfsdk:"document_ai_custom_endpoint"`
 	DocumentAIWarehouseCustomEndpoint      types.String `tfsdk:"document_ai_warehouse_custom_endpoint"`
@@ -84,6 +90,7 @@ type ProviderModel struct {
 	EssentialContactsCustomEndpoint        types.String `tfsdk:"essential_contacts_custom_endpoint"`
 	FilestoreCustomEndpoint                types.String `tfsdk:"filestore_custom_endpoint"`
 	FirebaseCustomEndpoint                 types.String `tfsdk:"firebase_custom_endpoint"`
+	FirebaseAppCheckCustomEndpoint         types.String `tfsdk:"firebase_app_check_custom_endpoint"`
 	FirebaseDatabaseCustomEndpoint         types.String `tfsdk:"firebase_database_custom_endpoint"`
 	FirebaseExtensionsCustomEndpoint       types.String `tfsdk:"firebase_extensions_custom_endpoint"`
 	FirebaseHostingCustomEndpoint          types.String `tfsdk:"firebase_hosting_custom_endpoint"`
@@ -124,7 +131,9 @@ type ProviderModel struct {
 	ResourceManagerCustomEndpoint          types.String `tfsdk:"resource_manager_custom_endpoint"`
 	RuntimeConfigCustomEndpoint            types.String `tfsdk:"runtime_config_custom_endpoint"`
 	SecretManagerCustomEndpoint            types.String `tfsdk:"secret_manager_custom_endpoint"`
+	SecureSourceManagerCustomEndpoint      types.String `tfsdk:"secure_source_manager_custom_endpoint"`
 	SecurityCenterCustomEndpoint           types.String `tfsdk:"security_center_custom_endpoint"`
+	SecuritypostureCustomEndpoint          types.String `tfsdk:"securityposture_custom_endpoint"`
 	SecurityScannerCustomEndpoint          types.String `tfsdk:"security_scanner_custom_endpoint"`
 	ServiceDirectoryCustomEndpoint         types.String `tfsdk:"service_directory_custom_endpoint"`
 	ServiceManagementCustomEndpoint        types.String `tfsdk:"service_management_custom_endpoint"`
@@ -141,6 +150,7 @@ type ProviderModel struct {
 	VertexAICustomEndpoint                 types.String `tfsdk:"vertex_ai_custom_endpoint"`
 	VmwareengineCustomEndpoint             types.String `tfsdk:"vmwareengine_custom_endpoint"`
 	VPCAccessCustomEndpoint                types.String `tfsdk:"vpc_access_custom_endpoint"`
+	WorkbenchCustomEndpoint                types.String `tfsdk:"workbench_custom_endpoint"`
 	WorkflowsCustomEndpoint                types.String `tfsdk:"workflows_custom_endpoint"`
 	WorkstationsCustomEndpoint             types.String `tfsdk:"workstations_custom_endpoint"`
 
@@ -164,7 +174,6 @@ type ProviderModel struct {
 	ApikeysCustomEndpoint              types.String `tfsdk:"apikeys_custom_endpoint"`
 	AssuredWorkloadsCustomEndpoint     types.String `tfsdk:"assured_workloads_custom_endpoint"`
 	CloudBuildWorkerPoolCustomEndpoint types.String `tfsdk:"cloud_build_worker_pool_custom_endpoint"`
-	CloudDeployCustomEndpoint          types.String `tfsdk:"clouddeploy_custom_endpoint"`
 	CloudResourceManagerCustomEndpoint types.String `tfsdk:"cloud_resource_manager_custom_endpoint"`
 	EventarcCustomEndpoint             types.String `tfsdk:"eventarc_custom_endpoint"`
 	FirebaserulesCustomEndpoint        types.String `tfsdk:"firebaserules_custom_endpoint"`

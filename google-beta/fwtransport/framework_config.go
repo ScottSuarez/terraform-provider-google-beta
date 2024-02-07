@@ -71,10 +71,13 @@ type FrameworkProviderConfig struct {
 	BigtableBasePath                 string
 	BillingBasePath                  string
 	BinaryAuthorizationBasePath      string
+	BlockchainNodeEngineBasePath     string
 	CertificateManagerBasePath       string
 	CloudAssetBasePath               string
 	CloudBuildBasePath               string
 	Cloudbuildv2BasePath             string
+	ClouddeployBasePath              string
+	ClouddomainsBasePath             string
 	CloudFunctionsBasePath           string
 	Cloudfunctions2BasePath          string
 	CloudIdentityBasePath            string
@@ -101,6 +104,7 @@ type FrameworkProviderConfig struct {
 	DeploymentManagerBasePath        string
 	DialogflowBasePath               string
 	DialogflowCXBasePath             string
+	DiscoveryEngineBasePath          string
 	DNSBasePath                      string
 	DocumentAIBasePath               string
 	DocumentAIWarehouseBasePath      string
@@ -109,6 +113,7 @@ type FrameworkProviderConfig struct {
 	EssentialContactsBasePath        string
 	FilestoreBasePath                string
 	FirebaseBasePath                 string
+	FirebaseAppCheckBasePath         string
 	FirebaseDatabaseBasePath         string
 	FirebaseExtensionsBasePath       string
 	FirebaseHostingBasePath          string
@@ -149,7 +154,9 @@ type FrameworkProviderConfig struct {
 	ResourceManagerBasePath          string
 	RuntimeConfigBasePath            string
 	SecretManagerBasePath            string
+	SecureSourceManagerBasePath      string
 	SecurityCenterBasePath           string
+	SecuritypostureBasePath          string
 	SecurityScannerBasePath          string
 	ServiceDirectoryBasePath         string
 	ServiceManagementBasePath        string
@@ -166,6 +173,7 @@ type FrameworkProviderConfig struct {
 	VertexAIBasePath                 string
 	VmwareengineBasePath             string
 	VPCAccessBasePath                string
+	WorkbenchBasePath                string
 	WorkflowsBasePath                string
 	WorkstationsBasePath             string
 }
@@ -227,10 +235,13 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.BigtableBasePath = data.BigtableCustomEndpoint.ValueString()
 	p.BillingBasePath = data.BillingCustomEndpoint.ValueString()
 	p.BinaryAuthorizationBasePath = data.BinaryAuthorizationCustomEndpoint.ValueString()
+	p.BlockchainNodeEngineBasePath = data.BlockchainNodeEngineCustomEndpoint.ValueString()
 	p.CertificateManagerBasePath = data.CertificateManagerCustomEndpoint.ValueString()
 	p.CloudAssetBasePath = data.CloudAssetCustomEndpoint.ValueString()
 	p.CloudBuildBasePath = data.CloudBuildCustomEndpoint.ValueString()
 	p.Cloudbuildv2BasePath = data.Cloudbuildv2CustomEndpoint.ValueString()
+	p.ClouddeployBasePath = data.ClouddeployCustomEndpoint.ValueString()
+	p.ClouddomainsBasePath = data.ClouddomainsCustomEndpoint.ValueString()
 	p.CloudFunctionsBasePath = data.CloudFunctionsCustomEndpoint.ValueString()
 	p.Cloudfunctions2BasePath = data.Cloudfunctions2CustomEndpoint.ValueString()
 	p.CloudIdentityBasePath = data.CloudIdentityCustomEndpoint.ValueString()
@@ -257,6 +268,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.DeploymentManagerBasePath = data.DeploymentManagerCustomEndpoint.ValueString()
 	p.DialogflowBasePath = data.DialogflowCustomEndpoint.ValueString()
 	p.DialogflowCXBasePath = data.DialogflowCXCustomEndpoint.ValueString()
+	p.DiscoveryEngineBasePath = data.DiscoveryEngineCustomEndpoint.ValueString()
 	p.DNSBasePath = data.DNSCustomEndpoint.ValueString()
 	p.DocumentAIBasePath = data.DocumentAICustomEndpoint.ValueString()
 	p.DocumentAIWarehouseBasePath = data.DocumentAIWarehouseCustomEndpoint.ValueString()
@@ -265,6 +277,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.EssentialContactsBasePath = data.EssentialContactsCustomEndpoint.ValueString()
 	p.FilestoreBasePath = data.FilestoreCustomEndpoint.ValueString()
 	p.FirebaseBasePath = data.FirebaseCustomEndpoint.ValueString()
+	p.FirebaseAppCheckBasePath = data.FirebaseAppCheckCustomEndpoint.ValueString()
 	p.FirebaseDatabaseBasePath = data.FirebaseDatabaseCustomEndpoint.ValueString()
 	p.FirebaseExtensionsBasePath = data.FirebaseExtensionsCustomEndpoint.ValueString()
 	p.FirebaseHostingBasePath = data.FirebaseHostingCustomEndpoint.ValueString()
@@ -305,7 +318,9 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.ResourceManagerBasePath = data.ResourceManagerCustomEndpoint.ValueString()
 	p.RuntimeConfigBasePath = data.RuntimeConfigCustomEndpoint.ValueString()
 	p.SecretManagerBasePath = data.SecretManagerCustomEndpoint.ValueString()
+	p.SecureSourceManagerBasePath = data.SecureSourceManagerCustomEndpoint.ValueString()
 	p.SecurityCenterBasePath = data.SecurityCenterCustomEndpoint.ValueString()
+	p.SecuritypostureBasePath = data.SecuritypostureCustomEndpoint.ValueString()
 	p.SecurityScannerBasePath = data.SecurityScannerCustomEndpoint.ValueString()
 	p.ServiceDirectoryBasePath = data.ServiceDirectoryCustomEndpoint.ValueString()
 	p.ServiceManagementBasePath = data.ServiceManagementCustomEndpoint.ValueString()
@@ -322,6 +337,7 @@ func (p *FrameworkProviderConfig) LoadAndValidateFramework(ctx context.Context, 
 	p.VertexAIBasePath = data.VertexAICustomEndpoint.ValueString()
 	p.VmwareengineBasePath = data.VmwareengineCustomEndpoint.ValueString()
 	p.VPCAccessBasePath = data.VPCAccessCustomEndpoint.ValueString()
+	p.WorkbenchBasePath = data.WorkbenchCustomEndpoint.ValueString()
 	p.WorkflowsBasePath = data.WorkflowsCustomEndpoint.ValueString()
 	p.WorkstationsBasePath = data.WorkstationsCustomEndpoint.ValueString()
 
@@ -611,6 +627,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 			data.BinaryAuthorizationCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
+	if data.BlockchainNodeEngineCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_BLOCKCHAIN_NODE_ENGINE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.BlockchainNodeEngineBasePathKey])
+		if customEndpoint != nil {
+			data.BlockchainNodeEngineCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
 	if data.CertificateManagerCustomEndpoint.IsNull() {
 		customEndpoint := transport_tpg.MultiEnvDefault([]string{
 			"GOOGLE_CERTIFICATE_MANAGER_CUSTOM_ENDPOINT",
@@ -641,6 +665,22 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.Cloudbuildv2BasePathKey])
 		if customEndpoint != nil {
 			data.Cloudbuildv2CustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.ClouddeployCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_CLOUDDEPLOY_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.ClouddeployBasePathKey])
+		if customEndpoint != nil {
+			data.ClouddeployCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.ClouddomainsCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_CLOUDDOMAINS_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.ClouddomainsBasePathKey])
+		if customEndpoint != nil {
+			data.ClouddomainsCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.CloudFunctionsCustomEndpoint.IsNull() {
@@ -851,6 +891,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 			data.DialogflowCXCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
+	if data.DiscoveryEngineCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_DISCOVERY_ENGINE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.DiscoveryEngineBasePathKey])
+		if customEndpoint != nil {
+			data.DiscoveryEngineCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
 	if data.DNSCustomEndpoint.IsNull() {
 		customEndpoint := transport_tpg.MultiEnvDefault([]string{
 			"GOOGLE_DNS_CUSTOM_ENDPOINT",
@@ -913,6 +961,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.FirebaseBasePathKey])
 		if customEndpoint != nil {
 			data.FirebaseCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.FirebaseAppCheckCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_FIREBASE_APP_CHECK_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.FirebaseAppCheckBasePathKey])
+		if customEndpoint != nil {
+			data.FirebaseAppCheckCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.FirebaseDatabaseCustomEndpoint.IsNull() {
@@ -1235,12 +1291,28 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 			data.SecretManagerCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
+	if data.SecureSourceManagerCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_SECURE_SOURCE_MANAGER_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.SecureSourceManagerBasePathKey])
+		if customEndpoint != nil {
+			data.SecureSourceManagerCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
 	if data.SecurityCenterCustomEndpoint.IsNull() {
 		customEndpoint := transport_tpg.MultiEnvDefault([]string{
 			"GOOGLE_SECURITY_CENTER_CUSTOM_ENDPOINT",
 		}, transport_tpg.DefaultBasePaths[transport_tpg.SecurityCenterBasePathKey])
 		if customEndpoint != nil {
 			data.SecurityCenterCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.SecuritypostureCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_SECURITYPOSTURE_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.SecuritypostureBasePathKey])
+		if customEndpoint != nil {
+			data.SecuritypostureCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.SecurityScannerCustomEndpoint.IsNull() {
@@ -1369,6 +1441,14 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, transport_tpg.DefaultBasePaths[transport_tpg.VPCAccessBasePathKey])
 		if customEndpoint != nil {
 			data.VPCAccessCustomEndpoint = types.StringValue(customEndpoint.(string))
+		}
+	}
+	if data.WorkbenchCustomEndpoint.IsNull() {
+		customEndpoint := transport_tpg.MultiEnvDefault([]string{
+			"GOOGLE_WORKBENCH_CUSTOM_ENDPOINT",
+		}, transport_tpg.DefaultBasePaths[transport_tpg.WorkbenchBasePathKey])
+		if customEndpoint != nil {
+			data.WorkbenchCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 	if data.WorkflowsCustomEndpoint.IsNull() {
@@ -1523,15 +1603,6 @@ func (p *FrameworkProviderConfig) HandleDefaults(ctx context.Context, data *fwmo
 		}, "")
 		if customEndpoint != nil {
 			data.CloudBuildWorkerPoolCustomEndpoint = types.StringValue(customEndpoint.(string))
-		}
-	}
-
-	if data.CloudDeployCustomEndpoint.IsNull() {
-		customEndpoint := transport_tpg.MultiEnvDefault([]string{
-			"GOOGLE_CLOUDDEPLOY_CUSTOM_ENDPOINT",
-		}, "")
-		if customEndpoint != nil {
-			data.CloudDeployCustomEndpoint = types.StringValue(customEndpoint.(string))
 		}
 	}
 

@@ -52,6 +52,7 @@ var (
 		"config.0.software_config.0.python_version",
 		"config.0.software_config.0.scheduler_count",
 		"config.0.software_config.0.cloud_data_lineage_integration",
+		"config.0.software_config.0.web_server_plugins_mode",
 	}
 
 	composerConfigKeys = []string{
@@ -69,6 +70,9 @@ var (
 		"config.0.environment_size",
 		"config.0.master_authorized_networks_config",
 		"config.0.resilience_mode",
+		"config.0.enable_private_environment",
+		"config.0.enable_private_builds_only",
+		"config.0.data_retention_config",
 	}
 
 	recoveryConfigKeys = []string{
@@ -80,6 +84,7 @@ var (
 		"config.0.workloads_config.0.triggerer",
 		"config.0.workloads_config.0.web_server",
 		"config.0.workloads_config.0.worker",
+		"config.0.workloads_config.0.dag_processor",
 	}
 
 	composerPrivateEnvironmentConfig = []string{
@@ -341,6 +346,13 @@ func ResourceComposerEnvironment() *schema.Resource {
 											},
 										},
 									},
+									"composer_internal_ipv4_cidr_block": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `IPv4 cidr range that will be used by Composer internal components.`,
+									},
 								},
 							},
 						},
@@ -459,6 +471,15 @@ func ResourceComposerEnvironment() *schema.Resource {
 											},
 										},
 									},
+									"web_server_plugins_mode": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Computed:     true,
+										ForceNew:     false,
+										AtLeastOneOf: composerSoftwareConfigKeys,
+										ValidateFunc: validation.StringInSlice([]string{"ENABLED", "DISABLED"}, false),
+										Description:  `Should be either 'ENABLED' or 'DISABLED'. Defaults to 'ENABLED'. Used in Composer 3.`,
+									},
 								},
 							},
 						},
@@ -541,13 +562,29 @@ func ResourceComposerEnvironment() *schema.Resource {
 								},
 							},
 						},
+						"enable_private_environment": {
+							Type:         schema.TypeBool,
+							Computed:     true,
+							Optional:     true,
+							ForceNew:     false,
+							AtLeastOneOf: composerConfigKeys,
+							Description:  `Optional. If true, a private Composer environment will be created.`,
+						},
+						"enable_private_builds_only": {
+							Type:         schema.TypeBool,
+							Computed:     true,
+							Optional:     true,
+							ForceNew:     false,
+							AtLeastOneOf: composerConfigKeys,
+							Description:  `Optional. If true, builds performed during operations that install Python packages have only private connectivity to Google services. If false, the builds also have access to the internet.`,
+						},
 						"web_server_network_access_control": {
 							Type:         schema.TypeList,
 							Optional:     true,
 							Computed:     true,
 							AtLeastOneOf: composerConfigKeys,
 							MaxItems:     1,
-							Description:  `The network-level access control policy for the Airflow web server. If unspecified, no network-level access restrictions will be applied. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.`,
+							Description:  `Network-level access control policy for the Airflow web server.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"allowed_ip_range": {
@@ -648,6 +685,34 @@ func ResourceComposerEnvironment() *schema.Resource {
 								},
 							},
 						},
+
+						"data_retention_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: composerConfigKeys,
+							MaxItems:     1,
+							Description:  `The configuration setting for Airflow data retention mechanism. This field is supported for Cloud Composer environments in versions composer-2.0.32-airflow-2.1.4. or newer`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"task_logs_retention_config": {
+										Type:        schema.TypeList,
+										Description: `Optional. The configuration setting for Task Logs.`,
+										Required:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"storage_mode": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"CLOUD_LOGGING_ONLY", "CLOUD_LOGGING_AND_CLOUD_STORAGE"}, false),
+													Description:  `Whether logs in cloud logging only is enabled or not. This field is supported for Cloud Composer environments in versions composer-2.0.32-airflow-2.1.4 and newer.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 						"workloads_config": {
 							Type:         schema.TypeList,
 							Optional:     true,
@@ -662,6 +727,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow schedulers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -670,6 +736,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for a single Airflow scheduler replica`,
 												},
@@ -677,6 +744,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for a single Airflow scheduler replica.`,
 												},
@@ -684,6 +752,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for a single Airflow scheduler replica.`,
 												},
@@ -691,6 +760,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `The number of schedulers.`,
 												},
@@ -701,6 +771,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Type:         schema.TypeList,
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow triggerers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -731,6 +802,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow web server.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -739,6 +811,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for Airflow web server.`,
 												},
@@ -746,6 +819,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for Airflow web server.`,
 												},
@@ -753,6 +827,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for Airflow web server.`,
 												},
@@ -764,6 +839,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: workloadsConfigKeys,
 										ForceNew:     false,
+										Computed:     true,
 										Description:  `Configuration for resources used by Airflow workers.`,
 										MaxItems:     1,
 										Elem: &schema.Resource{
@@ -772,6 +848,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `CPU request and limit for a single Airflow worker replica.`,
 												},
@@ -779,6 +856,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Memory (GB) request and limit for a single Airflow worker replica.`,
 												},
@@ -786,6 +864,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeFloat,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for a single Airflow worker replica.`,
 												},
@@ -793,6 +872,7 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `Minimum number of workers for autoscaling.`,
 												},
@@ -800,8 +880,46 @@ func ResourceComposerEnvironment() *schema.Resource {
 													Type:         schema.TypeInt,
 													Optional:     true,
 													ForceNew:     false,
+													Computed:     true,
 													ValidateFunc: validation.IntAtLeast(0),
 													Description:  `Maximum number of workers for autoscaling.`,
+												},
+											},
+										},
+									},
+									"dag_processor": {
+										Type:         schema.TypeList,
+										Optional:     true,
+										AtLeastOneOf: workloadsConfigKeys,
+										ForceNew:     false,
+										Computed:     true,
+										Description:  `Configuration for resources used by DAG processor.`,
+										MaxItems:     1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"cpu": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `CPU request and limit for DAG processor.`,
+												},
+												"memory_gb": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `Memory (GB) request and limit for DAG processor.`,
+												},
+												"storage_gb": {
+													Type:         schema.TypeFloat,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.FloatAtLeast(0),
+													Description:  `Storage (GB) request and limit for DAG processor.`,
 												},
 											},
 										},
@@ -1150,6 +1268,48 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			}
 		}
 
+		if d.HasChange("config.0.enable_private_environment") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					PrivateEnvironmentConfig: &composer.PrivateEnvironmentConfig{},
+				},
+			}
+			if config != nil && config.PrivateEnvironmentConfig != nil {
+				patchObj.Config.PrivateEnvironmentConfig.EnablePrivateEnvironment = config.PrivateEnvironmentConfig.EnablePrivateEnvironment
+			}
+			err = resourceComposerEnvironmentPatchField("config.PrivateEnvironmentConfig.EnablePrivateEnvironment", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
+
+		if d.HasChange("config.0.enable_private_builds_only") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					PrivateEnvironmentConfig: &composer.PrivateEnvironmentConfig{},
+				},
+			}
+			if config != nil && config.PrivateEnvironmentConfig != nil {
+				patchObj.Config.PrivateEnvironmentConfig.EnablePrivateBuildsOnly = config.PrivateEnvironmentConfig.EnablePrivateBuildsOnly
+			}
+			err = resourceComposerEnvironmentPatchField("config.PrivateEnvironmentConfig.EnablePrivateBuildsOnly", userAgent, patchObj, d, tfConfig)
+		}
+
+		if d.HasChange("config.0.software_config.0.web_server_plugins_mode") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					SoftwareConfig: &composer.SoftwareConfig{},
+				},
+			}
+			if config != nil && config.SoftwareConfig != nil {
+				patchObj.Config.SoftwareConfig.WebServerPluginsMode = config.SoftwareConfig.WebServerPluginsMode
+			}
+			err = resourceComposerEnvironmentPatchField("config.softwareConfig.webServerPluginsMode", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
+
 		if d.HasChange("config.0.node_count") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -1217,7 +1377,22 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			}
 		}
-
+		if d.HasChange("config.0.data_retention_config.0.task_logs_retention_config.0.storage_mode") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					DataRetentionConfig: &composer.DataRetentionConfig{
+						TaskLogsRetentionConfig: &composer.TaskLogsRetentionConfig{},
+					},
+				},
+			}
+			if config != nil && config.DataRetentionConfig != nil && config.DataRetentionConfig.TaskLogsRetentionConfig != nil {
+				patchObj.Config.DataRetentionConfig.TaskLogsRetentionConfig.StorageMode = config.DataRetentionConfig.TaskLogsRetentionConfig.StorageMode
+			}
+			err = resourceComposerEnvironmentPatchField("config.DataRetentionConfig.TaskLogsRetentionConfig.StorageMode", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
 		if d.HasChange("config.0.recovery_config.0.scheduled_snapshots_config") {
 			patchObj := &composer.Environment{Config: &composer.EnvironmentConfig{}}
 			if config != nil {
@@ -1390,11 +1565,14 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["node_config"] = flattenComposerEnvironmentConfigNodeConfig(envCfg.NodeConfig)
 	transformed["software_config"] = flattenComposerEnvironmentConfigSoftwareConfig(envCfg.SoftwareConfig)
 	transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
+	transformed["enable_private_environment"] = envCfg.PrivateEnvironmentConfig.EnablePrivateEnvironment
+	transformed["enable_private_builds_only"] = envCfg.PrivateEnvironmentConfig.EnablePrivateBuildsOnly
 	transformed["web_server_network_access_control"] = flattenComposerEnvironmentConfigWebServerNetworkAccessControl(envCfg.WebServerNetworkAccessControl)
 	transformed["database_config"] = flattenComposerEnvironmentConfigDatabaseConfig(envCfg.DatabaseConfig)
 	transformed["web_server_config"] = flattenComposerEnvironmentConfigWebServerConfig(envCfg.WebServerConfig)
 	transformed["encryption_config"] = flattenComposerEnvironmentConfigEncryptionConfig(envCfg.EncryptionConfig)
 	transformed["maintenance_window"] = flattenComposerEnvironmentConfigMaintenanceWindow(envCfg.MaintenanceWindow)
+	transformed["data_retention_config"] = flattenComposerEnvironmentConfigDataRetentionConfig(envCfg.DataRetentionConfig)
 	transformed["workloads_config"] = flattenComposerEnvironmentConfigWorkloadsConfig(envCfg.WorkloadsConfig)
 	transformed["recovery_config"] = flattenComposerEnvironmentConfigRecoveryConfig(envCfg.RecoveryConfig)
 	transformed["environment_size"] = envCfg.EnvironmentSize
@@ -1499,6 +1677,28 @@ func flattenComposerEnvironmentConfigMaintenanceWindow(maintenanceWindow *compos
 	return []interface{}{transformed}
 }
 
+func flattenComposerEnvironmentConfigDataRetentionConfig(dataRetentionConfig *composer.DataRetentionConfig) interface{} {
+	if dataRetentionConfig == nil {
+		return nil
+	}
+
+	transformed := make(map[string]interface{})
+	transformed["task_logs_retention_config"] = flattenComposerEnvironmentConfigDataRetentionConfigTaskLogsRetentionConfig(dataRetentionConfig.TaskLogsRetentionConfig)
+
+	return []interface{}{transformed}
+}
+
+func flattenComposerEnvironmentConfigDataRetentionConfigTaskLogsRetentionConfig(taskLogsRetentionConfig *composer.TaskLogsRetentionConfig) interface{} {
+	if taskLogsRetentionConfig == nil {
+		return nil
+	}
+
+	transformed := make(map[string]interface{})
+	transformed["storage_mode"] = taskLogsRetentionConfig.StorageMode
+
+	return []interface{}{transformed}
+}
+
 func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.WorkloadsConfig) interface{} {
 	if workloadsConfig == nil {
 		return nil
@@ -1509,11 +1709,13 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 	transformedTriggerer := make(map[string]interface{})
 	transformedWebServer := make(map[string]interface{})
 	transformedWorker := make(map[string]interface{})
+	transformedDagProcessor := make(map[string]interface{})
 
 	wlCfgScheduler := workloadsConfig.Scheduler
 	wlCfgTriggerer := workloadsConfig.Triggerer
 	wlCfgWebServer := workloadsConfig.WebServer
 	wlCfgWorker := workloadsConfig.Worker
+	wlCfgDagProcessor := workloadsConfig.DagProcessor
 
 	if wlCfgScheduler == nil {
 		transformedScheduler = nil
@@ -1550,12 +1752,21 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 		transformedWorker["max_count"] = wlCfgWorker.MaxCount
 	}
 
+	if wlCfgDagProcessor == nil {
+		transformedDagProcessor = nil
+	} else {
+		transformedDagProcessor["cpu"] = wlCfgDagProcessor.Cpu
+		transformedDagProcessor["memory_gb"] = wlCfgDagProcessor.MemoryGb
+		transformedDagProcessor["storage_gb"] = wlCfgDagProcessor.StorageGb
+	}
+
 	transformed["scheduler"] = []interface{}{transformedScheduler}
 	if transformedTriggerer != nil {
 		transformed["triggerer"] = []interface{}{transformedTriggerer}
 	}
 	transformed["web_server"] = []interface{}{transformedWebServer}
 	transformed["worker"] = []interface{}{transformedWorker}
+	transformed["dag_processor"] = []interface{}{transformedDagProcessor}
 
 	return []interface{}{transformed}
 }
@@ -1569,8 +1780,10 @@ func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.P
 	if envCfg.NetworkingConfig != nil {
 		transformed["connection_type"] = envCfg.NetworkingConfig.ConnectionType
 	}
-	transformed["enable_private_endpoint"] = envCfg.PrivateClusterConfig.EnablePrivateEndpoint
-	transformed["master_ipv4_cidr_block"] = envCfg.PrivateClusterConfig.MasterIpv4CidrBlock
+	if envCfg.PrivateClusterConfig != nil {
+		transformed["enable_private_endpoint"] = envCfg.PrivateClusterConfig.EnablePrivateEndpoint
+		transformed["master_ipv4_cidr_block"] = envCfg.PrivateClusterConfig.MasterIpv4CidrBlock
+	}
 	transformed["cloud_sql_ipv4_cidr_block"] = envCfg.CloudSqlIpv4CidrBlock
 	transformed["web_server_ipv4_cidr_block"] = envCfg.WebServerIpv4CidrBlock
 	transformed["cloud_composer_network_ipv4_cidr_block"] = envCfg.CloudComposerNetworkIpv4CidrBlock
@@ -1596,6 +1809,7 @@ func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig) in
 	transformed["enable_ip_masq_agent"] = nodeCfg.EnableIpMasqAgent
 	transformed["tags"] = flattenComposerEnvironmentConfigNodeConfigTags(nodeCfg.Tags)
 	transformed["ip_allocation_policy"] = flattenComposerEnvironmentConfigNodeConfigIPAllocationPolicy(nodeCfg.IpAllocationPolicy)
+	transformed["composer_internal_ipv4_cidr_block"] = nodeCfg.ComposerInternalIpv4CidrBlock
 	return []interface{}{transformed}
 }
 
@@ -1639,6 +1853,13 @@ func flattenComposerEnvironmentConfigSoftwareConfig(softwareCfg *composer.Softwa
 	transformed["env_variables"] = softwareCfg.EnvVariables
 	transformed["scheduler_count"] = softwareCfg.SchedulerCount
 	transformed["cloud_data_lineage_integration"] = flattenComposerEnvironmentConfigSoftwareConfigCloudDataLineageIntegration(softwareCfg.CloudDataLineageIntegration)
+	if softwareCfg.WebServerPluginsMode == "PLUGINS_DISABLED" {
+		transformed["web_server_plugins_mode"] = "DISABLED"
+	} else if softwareCfg.WebServerPluginsMode == "PLUGINS_ENABLED" {
+		transformed["web_server_plugins_mode"] = "ENABLED"
+	} else {
+		transformed["web_server_plugins_mode"] = softwareCfg.WebServerPluginsMode
+	}
 	return []interface{}{transformed}
 }
 
@@ -1708,6 +1929,21 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 	}
 	transformed.PrivateEnvironmentConfig = transformedPrivateEnvironmentConfig
 
+	/*
+		config.enable_private_environment in terraform maps to
+		composer.PrivateEnvironmentConfig.EnablePrivateEnvironment in API.
+		Check image version to avoid overriding EnablePrivateEnvironment in case of other versions.
+	*/
+	if isComposer3(d, config) {
+		transformed.PrivateEnvironmentConfig = &composer.PrivateEnvironmentConfig{}
+		if enablePrivateEnvironmentRaw, ok := original["enable_private_environment"]; ok {
+			transformed.PrivateEnvironmentConfig.EnablePrivateEnvironment = enablePrivateEnvironmentRaw.(bool)
+		}
+		if enablePrivateBuildsOnlyRaw, ok := original["enable_private_builds_only"]; ok {
+			transformed.PrivateEnvironmentConfig.EnablePrivateBuildsOnly = enablePrivateBuildsOnlyRaw.(bool)
+		}
+	}
+
 	transformedWebServerNetworkAccessControl, err := expandComposerEnvironmentConfigWebServerNetworkAccessControl(original["web_server_network_access_control"], d, config)
 	if err != nil {
 		return nil, err
@@ -1737,6 +1973,13 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 		return nil, err
 	}
 	transformed.MaintenanceWindow = transformedMaintenanceWindow
+
+	transformedDataRetentionConfig, err := expandComposerEnvironmentConfigDataRetentionConfig(original["data_retention_config"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.DataRetentionConfig = transformedDataRetentionConfig
+
 	transformedWorkloadsConfig, err := expandComposerEnvironmentConfigWorkloadsConfig(original["workloads_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1904,6 +2147,42 @@ func expandComposerEnvironmentConfigMaintenanceWindow(v interface{}, d *schema.R
 	return transformed, nil
 }
 
+func expandComposerEnvironmentConfigDataRetentionConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) (*composer.DataRetentionConfig, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := &composer.DataRetentionConfig{}
+
+	if taskLogsRetentionConfig, ok := original["task_logs_retention_config"]; ok {
+		transformedTaskLogsRetentionConfig, err := expandComposerEnvironmentConfigDataRetentionConfigTaskLogsRetentionConfig(taskLogsRetentionConfig, d, config)
+		if err != nil {
+			return nil, err
+		}
+		transformed.TaskLogsRetentionConfig = transformedTaskLogsRetentionConfig
+	}
+
+	return transformed, nil
+}
+
+func expandComposerEnvironmentConfigDataRetentionConfigTaskLogsRetentionConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) (*composer.TaskLogsRetentionConfig, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := &composer.TaskLogsRetentionConfig{}
+
+	if v, ok := original["storage_mode"]; ok {
+		transformed.StorageMode = v.(string)
+	}
+
+	return transformed, nil
+}
+
 func expandComposerEnvironmentConfigWorkloadsConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) (*composer.WorkloadsConfig, error) {
 	l := v.([]interface{})
 	if len(l) == 0 {
@@ -1957,6 +2236,17 @@ func expandComposerEnvironmentConfigWorkloadsConfig(v interface{}, d *schema.Res
 			transformedWorker.MinCount = int64(originalWorkerRaw["min_count"].(int))
 			transformedWorker.MaxCount = int64(originalWorkerRaw["max_count"].(int))
 			transformed.Worker = transformedWorker
+		}
+	}
+
+	if v, ok := original["dag_processor"]; ok {
+		if len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
+			transformedDagProcessor := &composer.DagProcessorResource{}
+			originalDagProcessorRaw := v.([]interface{})[0].(map[string]interface{})
+			transformedDagProcessor.Cpu = originalDagProcessorRaw["cpu"].(float64)
+			transformedDagProcessor.MemoryGb = originalDagProcessorRaw["memory_gb"].(float64)
+			transformedDagProcessor.StorageGb = originalDagProcessorRaw["storage_gb"].(float64)
+			transformed.DagProcessor = transformedDagProcessor
 		}
 	}
 
@@ -2130,6 +2420,10 @@ func expandComposerEnvironmentConfigNodeConfig(v interface{}, d *schema.Resource
 	}
 	transformed.Tags = transformedTags
 
+	if transformedComposerInternalIpv4CidrBlock, ok := original["composer_internal_ipv4_cidr_block"]; ok {
+		transformed.ComposerInternalIpv4CidrBlock = transformedComposerInternalIpv4CidrBlock.(string)
+	}
+
 	return transformed, nil
 }
 
@@ -2278,6 +2572,14 @@ func expandComposerEnvironmentConfigSoftwareConfig(v interface{}, d *schema.Reso
 		return nil, err
 	}
 	transformed.CloudDataLineageIntegration = transformedCloudDataLineageIntegration
+
+	if original["web_server_plugins_mode"].(string) == "DISABLED" {
+		transformed.WebServerPluginsMode = "PLUGINS_DISABLED"
+	} else if original["web_server_plugins_mode"].(string) == "ENABLED" {
+		transformed.WebServerPluginsMode = "PLUGINS_ENABLED"
+	} else {
+		transformed.WebServerPluginsMode = original["web_server_plugins_mode"].(string)
+	}
 
 	return transformed, nil
 }
@@ -2557,4 +2859,9 @@ func versionsEqual(old, new string) (bool, error) {
 		return false, err
 	}
 	return o.Equal(n), nil
+}
+
+func isComposer3(d *schema.ResourceData, config *transport_tpg.Config) bool {
+	image_version := d.Get("config.0.software_config.0.image_version").(string)
+	return strings.Contains(image_version, "composer-3")
 }

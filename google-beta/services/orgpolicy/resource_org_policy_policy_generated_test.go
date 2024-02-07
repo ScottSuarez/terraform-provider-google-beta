@@ -160,6 +160,31 @@ func TestAccOrgPolicyPolicy_ProjectPolicy(t *testing.T) {
 		},
 	})
 }
+func TestAccOrgPolicyPolicy_DryRunSpecHandWritten(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckOrgPolicyPolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOrgPolicyPolicy_DryRunSpecHandWritten(context),
+			},
+			{
+				ResourceName:            "google_org_policy_policy.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "spec.0.rules.0.condition.0.expression"},
+			},
+		},
+	})
+}
 
 func testAccOrgPolicyPolicy_EnforcePolicy(context map[string]interface{}) string {
 	return acctest.Nprintf(`
@@ -353,6 +378,41 @@ resource "google_project" "basic" {
 `, context)
 }
 
+func testAccOrgPolicyPolicy_DryRunSpecHandWritten(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_org_policy_custom_constraint" "constraint" {
+  name         = "custom.disableGkeAutoUpgrade%{random_suffix}"
+  parent       = "organizations/%{org_id}"
+  display_name = "Disable GKE auto upgrade"
+  description  = "Only allow GKE NodePool resource to be created or updated if AutoUpgrade is not enabled where this custom constraint is enforced."
+
+  action_type    = "ALLOW"
+  condition      = "resource.management.autoUpgrade == false"
+  method_types   = ["CREATE"]
+  resource_types = ["container.googleapis.com/NodePool"]
+}
+
+resource "google_org_policy_policy" "primary" {
+  name   = "organizations/%{org_id}/policies/${google_org_policy_custom_constraint.constraint.name}"
+  parent = "organizations/%{org_id}"
+
+  spec {
+    rules {
+      enforce = "FALSE"
+    }
+  }
+  dry_run_spec {
+    inherit_from_parent = false
+    reset               = false
+    rules {
+      enforce = "FALSE"
+    }
+  }
+}
+
+`, context)
+}
+
 func testAccCheckOrgPolicyPolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
@@ -373,6 +433,7 @@ func testAccCheckOrgPolicyPolicyDestroyProducer(t *testing.T) func(s *terraform.
 			obj := &orgpolicy.Policy{
 				Name:   dcl.String(rs.Primary.Attributes["name"]),
 				Parent: dcl.String(rs.Primary.Attributes["parent"]),
+				Etag:   dcl.StringOrNil(rs.Primary.Attributes["etag"]),
 			}
 
 			client := transport_tpg.NewDCLOrgPolicyClient(config, config.UserAgent, billingProject, 0)

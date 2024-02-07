@@ -50,6 +50,33 @@ resource "google_cloud_run_v2_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_limits&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloudrunv2 Service Limits
+
+
+```hcl
+resource "google_cloud_run_v2_service" "default" {
+  name     = "cloudrun-service"
+  location = "us-central1"
+  ingress = "INGRESS_TRAFFIC_ALL"
+
+  template {
+    containers {
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      resources {
+        limits = {
+          cpu    = "2"
+          memory = "1024Mi"
+        }
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
   <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_sql&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
@@ -344,11 +371,105 @@ resource "google_cloud_run_v2_service" "default" {
       }
     }
   }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_mount_gcs&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloudrunv2 Service Mount Gcs
 
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
+
+```hcl
+resource "google_cloud_run_v2_service" "default" {
+  name     = "cloudrun-service"
+
+  location     = "us-central1"
+  launch_stage = "BETA"
+
+  template {
+    execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
+
+    containers {
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      volume_mounts {
+        name       = "bucket"
+        mount_path = "/var/www"
+      }
+    }
+
+    volumes {
+      name = "bucket"
+      gcs {
+        bucket    = google_storage_bucket.default.name
+        read_only = false
+      }
+    }
+  }
+}
+
+resource "google_storage_bucket" "default" {
+    name     = "cloudrun-service"
+    location = "US"
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_mount_nfs&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloudrunv2 Service Mount Nfs
+
+
+```hcl
+resource "google_cloud_run_v2_service" "default" {
+  name     = "cloudrun-service"
+
+  location     = "us-central1"
+  ingress      = "INGRESS_TRAFFIC_ALL"
+  launch_stage = "BETA"
+
+  template {
+    execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
+    containers {
+      image = "us-docker.pkg.dev/cloudrun/container/hello:latest"
+      volume_mounts {
+        name       = "nfs"
+        mount_path = "/mnt/nfs/filestore"
+      }
+    }
+    vpc_access {
+      network_interfaces {
+        network    = "default"
+        subnetwork = "default"
+      }
+    }
+
+    volumes {
+      name = "nfs"
+      nfs {
+        server    = google_filestore_instance.default.networks[0].ip_addresses[0]
+        path      = "/share1"
+        read_only = false
+      }
+    }
+  }
+}
+
+resource "google_filestore_instance" "default" {
+  name     = "cloudrun-service"
+  location = "us-central1-b"
+  tier     = "BASIC_HDD"
+
+  file_shares {
+    capacity_gb = 1024
+    name        = "share1"
+  }
+
+  networks {
+    network = "default"
+    modes   = ["MODE_IPV4"]
   }
 }
 ```
@@ -580,7 +701,7 @@ The following arguments are supported:
 
 * `limits` -
   (Optional)
-  Only memory and CPU are supported. Note: The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. The values of the map is string form of the 'quantity' k8s type: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go
+  Only memory and CPU are supported. Use key `cpu` for CPU limit and `memory` for memory limit. Note: The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. The values of the map is string form of the 'quantity' k8s type: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go
 
 * `cpu_idle` -
   (Optional)
@@ -638,6 +759,11 @@ The following arguments are supported:
   GRPC specifies an action involving a GRPC port.
   Structure is [documented below](#nested_grpc).
 
+* `tcp_socket` -
+  (Optional)
+  TCPSocketAction describes an action based on opening a socket
+  Structure is [documented below](#nested_tcp_socket).
+
 
 <a name="nested_http_get"></a>The `http_get` block supports:
 
@@ -678,6 +804,14 @@ The following arguments are supported:
   The name of the service to place in the gRPC HealthCheckRequest
   (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).
   If this is not specified, the default behavior is defined by gRPC.
+
+<a name="nested_tcp_socket"></a>The `tcp_socket` block supports:
+
+* `port` -
+  (Required)
+  Port number to access on the container. Must be in the range 1 to 65535.
+  If not specified, defaults to the exposed port of the container, which
+  is the value of container.ports[0].containerPort.
 
 <a name="nested_startup_probe"></a>The `startup_probe` block supports:
 
@@ -781,6 +915,16 @@ The following arguments are supported:
   Ephemeral storage used as a shared volume.
   Structure is [documented below](#nested_empty_dir).
 
+* `gcs` -
+  (Optional)
+  Represents a GCS Bucket mounted as a volume.
+  Structure is [documented below](#nested_gcs).
+
+* `nfs` -
+  (Optional)
+  Represents an NFS mount.
+  Structure is [documented below](#nested_nfs).
+
 
 <a name="nested_secret"></a>The `secret` block supports:
 
@@ -829,6 +973,30 @@ The following arguments are supported:
 * `size_limit` -
   (Optional)
   Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir.
+
+<a name="nested_gcs"></a>The `gcs` block supports:
+
+* `bucket` -
+  (Required)
+  GCS Bucket name
+
+* `read_only` -
+  (Optional)
+  If true, mount the GCS bucket as read-only
+
+<a name="nested_nfs"></a>The `nfs` block supports:
+
+* `server` -
+  (Required)
+  Hostname or IP address of the NFS server
+
+* `path` -
+  (Required)
+  Path that is exported by the NFS server.
+
+* `read_only` -
+  (Optional)
+  If true, mount the NFS volume as read only
 
 - - -
 

@@ -19,6 +19,7 @@ package compute
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -682,6 +683,11 @@ create the disk. Provide this when creating the disk.`,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `A reference to the zone where the disk resides.`,
 			},
+			"disk_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The unique identifier for the resource. This identifier is defined by the server.`,
+			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -1069,6 +1075,9 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("source_disk_id", flattenComputeDiskSourceDiskId(res["sourceDiskId"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
+	if err := d.Set("disk_id", flattenComputeDiskDiskId(res["id"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Disk: %s", err)
+	}
 	if err := d.Set("type", flattenComputeDiskType(res["type"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Disk: %s", err)
 	}
@@ -1423,7 +1432,8 @@ func resourceComputeDiskDelete(d *schema.ResourceData, meta interface{}) error {
 			err = ComputeOperationWaitTime(config, op, call.project,
 				fmt.Sprintf("Detaching disk from %s/%s/%s", call.project, call.zone, call.instance), userAgent, d.Timeout(schema.TimeoutDelete))
 			if err != nil {
-				if opErr, ok := err.(ComputeOperationError); ok && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
+				var opErr ComputeOperationError
+				if errors.As(err, &opErr) && len(opErr.Errors) == 1 && opErr.Errors[0].Code == "RESOURCE_NOT_FOUND" {
 					log.Printf("[WARN] instance %q was deleted while awaiting detach", call.instance)
 					continue
 				}
@@ -1569,6 +1579,10 @@ func flattenComputeDiskSourceDisk(v interface{}, d *schema.ResourceData, config 
 }
 
 func flattenComputeDiskSourceDiskId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeDiskDiskId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

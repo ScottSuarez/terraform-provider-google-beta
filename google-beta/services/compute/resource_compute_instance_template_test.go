@@ -767,16 +767,31 @@ func TestAccComputeInstanceTemplate_ConfidentialInstanceConfigMain(t *testing.T)
 
 	var instanceTemplate compute.InstanceTemplate
 
+	var instanceTemplate2 compute.InstanceTemplate
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstanceTemplateConfidentialInstanceConfig(acctest.RandString(t, 10), true),
+				Config: testAccComputeInstanceTemplateConfidentialInstanceConfigEnable(acctest.RandString(t, 10), "SEV"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar", &instanceTemplate),
-					testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate, true),
+					testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate, true, "SEV"),
+
+					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar2", &instanceTemplate2),
+					testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate2, true, ""),
+				),
+			},
+
+			{
+				Config: testAccComputeInstanceTemplateConfidentialInstanceConfigNoEnable(acctest.RandString(t, 10), "AMD Milan", "SEV_SNP"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar3", &instanceTemplate),
+					testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate, false, "SEV_SNP"),
+					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar4", &instanceTemplate2),
+					testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(&instanceTemplate2, false, "SEV_SNP"),
 				),
 			},
 		},
@@ -1325,6 +1340,32 @@ func TestAccComputeInstanceTemplate_withLabels(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstanceTemplate_resourceManagerTags(t *testing.T) {
+	t.Parallel()
+
+	var instanceTemplate compute.InstanceTemplate
+	var instanceTemplateName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+		"instance_name": instanceTemplateName,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstanceTemplate_resourceManagerTags(context),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceTemplateExists(
+						t, "google_compute_instance_template.foobar", &instanceTemplate)),
+			},
+		},
+	})
+}
+
 func testAccCheckComputeInstanceTemplateDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := acctest.GoogleProviderConfig(t)
@@ -1728,11 +1769,15 @@ func testAccCheckComputeInstanceTemplateHasShieldedVmConfig(instanceTemplate *co
 	}
 }
 
-func testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(instanceTemplate *compute.InstanceTemplate, EnableConfidentialCompute bool) resource.TestCheckFunc {
+func testAccCheckComputeInstanceTemplateHasConfidentialInstanceConfig(instanceTemplate *compute.InstanceTemplate, EnableConfidentialCompute bool, ConfidentialInstanceType string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 		if instanceTemplate.Properties.ConfidentialInstanceConfig.EnableConfidentialCompute != EnableConfidentialCompute {
 			return fmt.Errorf("Wrong ConfidentialInstanceConfig EnableConfidentialCompute: expected %t, got, %t", EnableConfidentialCompute, instanceTemplate.Properties.ConfidentialInstanceConfig.EnableConfidentialCompute)
+		}
+
+		if instanceTemplate.Properties.ConfidentialInstanceConfig.ConfidentialInstanceType != ConfidentialInstanceType {
+			return fmt.Errorf("Wrong ConfidentialInstanceConfig ConfidentialInstanceType: expected %s, got, %s", ConfidentialInstanceType, instanceTemplate.Properties.ConfidentialInstanceConfig.ConfidentialInstanceType)
 		}
 
 		return nil
@@ -2351,7 +2396,7 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance_template" "foobar" {
   name           = "tf-test-instance-template-%s"
-  machine_type   = "n2-standard-16"
+  machine_type   = "n2-standard-64"
   can_ip_forward = false
   disk {
     source_image = data.google_compute_image.my_image.name
@@ -3029,7 +3074,7 @@ resource "google_compute_instance_template" "foobar" {
 `, suffix, enableSecureBoot, enableVtpm, enableIntegrityMonitoring)
 }
 
-func testAccComputeInstanceTemplateConfidentialInstanceConfig(suffix string, enableConfidentialCompute bool) string {
+func testAccComputeInstanceTemplateConfidentialInstanceConfigEnable(suffix string, confidentialInstanceType string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family  = "ubuntu-2004-lts"
@@ -3042,7 +3087,7 @@ resource "google_compute_instance_template" "foobar" {
 
   disk {
     source_image = data.google_compute_image.my_image.self_link
-	auto_delete  = true
+    auto_delete  = true
     boot         = true
   }
 
@@ -3051,15 +3096,106 @@ resource "google_compute_instance_template" "foobar" {
   }
 
   confidential_instance_config {
-    enable_confidential_compute       = %t
+    enable_confidential_compute       = true
+    
+    confidential_instance_type        = %q
+    
   }
 
   scheduling {
-	  on_host_maintenance = "TERMINATE"
+    on_host_maintenance = "TERMINATE"
   }
 
 }
-`, suffix, enableConfidentialCompute)
+
+resource "google_compute_instance_template" "foobar2" {
+  name         = "tf-test-instance2-template-%s"
+  machine_type = "n2d-standard-2"
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute       = true
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+
+
+`, suffix, confidentialInstanceType, suffix)
+
+}
+
+func testAccComputeInstanceTemplateConfidentialInstanceConfigNoEnable(suffix string, minCpuPlatform, confidentialInstanceType string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image2" {
+  family  = "ubuntu-2004-lts"
+  project = "ubuntu-os-cloud"
+}
+
+resource "google_compute_instance_template" "foobar3" {
+  name         = "tf-test-instance3-template-%s"
+  machine_type = "n2d-standard-2"
+
+  disk {
+    source_image = data.google_compute_image.my_image2.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  min_cpu_platform = %q
+
+  confidential_instance_config {
+    enable_confidential_compute       = false
+    confidential_instance_type        = %q
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+resource "google_compute_instance_template" "foobar4" {
+  name         = "tf-test-instance4-template-%s"
+  machine_type = "n2d-standard-2"
+
+  disk {
+    source_image = data.google_compute_image.my_image2.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  min_cpu_platform = %q
+
+  confidential_instance_config {
+    confidential_instance_type        = %q
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, suffix, minCpuPlatform, confidentialInstanceType, suffix, minCpuPlatform, confidentialInstanceType)
 }
 
 func testAccComputeInstanceTemplateAdvancedMachineFeatures(suffix string) string {
@@ -3565,6 +3701,10 @@ resource "google_compute_snapshot" "snapshot" {
     kms_key_self_link       = data.google_kms_crypto_key.key.id
     kms_key_service_account = google_service_account.test.email
   }
+
+  depends_on = [
+    google_kms_crypto_key_iam_member.crypto_key
+  ]
 }
 
 resource "google_compute_instance_template" "template" {
@@ -3584,6 +3724,10 @@ resource "google_compute_instance_template" "template" {
   network_interface {
     network = "default"
   }
+
+  depends_on = [
+    google_kms_crypto_key_iam_member.crypto_key
+  ]
 }
 `, context)
 }
@@ -3623,8 +3767,11 @@ resource "google_compute_image" "image" {
     kms_key_self_link       = data.google_kms_crypto_key.key.id
     kms_key_service_account = google_service_account.test.email
   }
-}
 
+  depends_on = [
+    google_kms_crypto_key_iam_member.crypto_key
+  ]
+}
 
 resource "google_compute_instance_template" "template" {
   name           = "tf-test-instance-template-%{random_suffix}"
@@ -3638,6 +3785,55 @@ resource "google_compute_instance_template" "template" {
     }
     auto_delete = true
     boot        = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  depends_on = [
+    google_kms_crypto_key_iam_member.crypto_key
+  ]
+}
+`, context)
+}
+
+func testAccComputeInstanceTemplate_resourceManagerTags(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_tags_tag_key" "key" {
+  parent = "projects/%{project}"
+  short_name = "foobarbaz%{random_suffix}"
+  description = "For foo/bar resources."
+}
+
+resource "google_tags_tag_value" "value" {
+  parent = "tagKeys/${google_tags_tag_key.key.name}"
+  short_name = "foo%{random_suffix}"
+  description = "For foo resources."
+}
+
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name         = "%{instance_name}"
+  machine_type = "e2-medium"
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    disk_size_gb = 10
+    boot         = true
+
+    resource_manager_tags = {
+      "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
+    }
+  }
+
+  resource_manager_tags = {
+    "tagKeys/${google_tags_tag_key.key.name}" = "tagValues/${google_tags_tag_value.value.name}"
   }
 
   network_interface {

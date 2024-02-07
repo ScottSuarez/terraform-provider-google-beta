@@ -68,6 +68,54 @@ resource "google_cloud_run_v2_job" "default" {
       }
     }
   }
+}
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobLimitsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobLimitsExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobLimitsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_job" "default" {
+  name     = "tf-test-cloudrun-job%{random_suffix}"
+  location = "us-central1"
+
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        resources {
+          limits = {
+            cpu    = "2"
+            memory = "1024Mi"
+          }
+        }
+      }
+    }
+  }
 
   lifecycle {
     ignore_changes = [
@@ -141,12 +189,6 @@ resource "google_cloud_run_v2_job" "default" {
         }
       }
     }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
   }
 }
 
@@ -227,12 +269,6 @@ resource "google_cloud_run_v2_job" "default" {
       }
     }
   }
-
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
-  }
 }
 
 resource "google_vpc_access_connector" "connector" {
@@ -304,12 +340,6 @@ resource "google_cloud_run_v2_job" "default" {
       }
     }
   }
-
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
-  }
 }
 `, context)
 }
@@ -367,12 +397,6 @@ resource "google_cloud_run_v2_job" "default" {
         }
       }
     }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
   }
 
   depends_on = [
@@ -454,12 +478,6 @@ resource "google_cloud_run_v2_job" "default" {
 	}
       }
     }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
   }
 }
 `, context)

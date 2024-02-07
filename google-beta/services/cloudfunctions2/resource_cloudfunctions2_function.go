@@ -78,6 +78,7 @@ from the given source.`,
 					Schema: map[string]*schema.Schema{
 						"docker_repository": {
 							Type:        schema.TypeString,
+							Computed:    true,
 							Optional:    true,
 							Description: `User managed repository created in Artifact Registry optionally with a customer managed encryption key.`,
 						},
@@ -247,10 +248,12 @@ as the transport topic for the event delivery.`,
 Retried execution is charged as any other execution. Possible values: ["RETRY_POLICY_UNSPECIFIED", "RETRY_POLICY_DO_NOT_RETRY", "RETRY_POLICY_RETRY"]`,
 						},
 						"service_account_email": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: `The email of the service account for this function.`,
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							Description: `Optional. The email of the trigger's service account. The service account
+must have permission to invoke Cloud Run services. If empty, defaults to the
+Compute Engine default service account: {project_number}-compute@developer.gserviceaccount.com.`,
 						},
 						"trigger_region": {
 							Type:     schema.TypeString,

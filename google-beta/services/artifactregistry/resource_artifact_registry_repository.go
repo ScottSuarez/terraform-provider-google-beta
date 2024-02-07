@@ -32,6 +32,40 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
+func upstreamPoliciesDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	o, n := d.GetChange("virtual_repository_config.0.upstream_policies")
+	oldPolicies, ok := o.([]any)
+	if !ok {
+		return false
+	}
+	newPolicies, ok := n.([]any)
+	if !ok {
+		return false
+	}
+
+	var oldHashes, newHashes []interface{}
+	for _, policy := range oldPolicies {
+		data, ok := policy.(map[string]any)
+		if !ok {
+			return false
+		}
+		hashStr := fmt.Sprintf("[id:%v priority:%v repository:%v]", data["id"], data["priority"], data["repository"])
+		oldHashes = append(oldHashes, hashStr)
+	}
+	for _, policy := range newPolicies {
+		data, ok := policy.(map[string]any)
+		if !ok {
+			return false
+		}
+		hashStr := fmt.Sprintf("[id:%v priority:%v repository:%v]", data["id"], data["priority"], data["repository"])
+		newHashes = append(newHashes, hashStr)
+	}
+
+	oldSet := schema.NewSet(schema.HashString, oldHashes)
+	newSet := schema.NewSet(schema.HashString, newHashes)
+	return oldSet.Equal(newSet)
+}
+
 func ResourceArtifactRegistryRepository() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArtifactRegistryRepositoryCreate,
@@ -59,7 +93,7 @@ func ResourceArtifactRegistryRepository() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareCaseInsensitive,
+				DiffSuppressFunc: tpgresource.CaseDiffSuppress,
 				Description: `The format of packages that are stored in the repository. Supported formats
 can be found [here](https://cloud.google.com/artifact-registry/docs/supported-formats).
 You can only create alpha formats if you are a member of the
@@ -480,8 +514,9 @@ remote repository. Must be in the format of
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upstream_policies": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Type:             schema.TypeList,
+							Optional:         true,
+							DiffSuppressFunc: upstreamPoliciesDiffSuppress,
 							Description: `Policies that configure the upstream artifacts distributed by the Virtual
 Repository. Upstream policies cannot be set on a standard repository.`,
 							Elem: &schema.Resource{

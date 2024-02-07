@@ -204,6 +204,24 @@ var schemaNodePool = map[string]*schema.Schema{
 		},
 	},
 
+	"queued_provisioning": {
+		Type:        schema.TypeList,
+		Optional:    true,
+		MaxItems:    1,
+		Description: `Specifies the configuration of queued provisioning`,
+		ForceNew:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"enabled": {
+					Type:        schema.TypeBool,
+					Required:    true,
+					ForceNew:    true,
+					Description: `Whether nodes in this node pool are obtainable solely through the ProvisioningRequest API`,
+				},
+			},
+		},
+	},
+
 	"max_pods_per_node": {
 		Type:        schema.TypeInt,
 		Optional:    true,
@@ -435,6 +453,21 @@ var schemaNodePool = map[string]*schema.Schema{
 							"disabled": {
 								Type:     schema.TypeBool,
 								Required: true,
+							},
+						},
+					},
+				},
+				"network_performance_config": {
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    1,
+					Description: `Network bandwidth tier configuration.`,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"total_egress_bandwidth_tier": {
+								Type:        schema.TypeString,
+								Required:    true,
+								Description: `Specifies the total network bandwidth tier for the NodePool.`,
 							},
 						},
 					},
@@ -947,6 +980,15 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 		}
 	}
 
+	if v, ok := d.GetOk(prefix + "queued_provisioning"); ok {
+		if v.([]interface{}) != nil && v.([]interface{})[0] != nil {
+			queued_provisioning := v.([]interface{})[0].(map[string]interface{})
+			np.QueuedProvisioning = &container.QueuedProvisioning{
+				Enabled: queued_provisioning["enabled"].(bool),
+			}
+		}
+	}
+
 	if v, ok := d.GetOk(prefix + "max_pods_per_node"); ok {
 		np.MaxPodsConstraint = &container.MaxPodsConstraint{
 			MaxPodsPerNode: int64(v.(int)),
@@ -1140,6 +1182,14 @@ func flattenNodePool(d *schema.ResourceData, config *transport_tpg.Config, np *c
 		}
 	}
 
+	if np.QueuedProvisioning != nil {
+		nodePool["queued_provisioning"] = []map[string]interface{}{
+			{
+				"enabled": np.QueuedProvisioning.Enabled,
+			},
+		}
+	}
+
 	if np.MaxPodsConstraint != nil {
 		nodePool["max_pods_per_node"] = np.MaxPodsConstraint.MaxPodsPerNode
 	}
@@ -1169,8 +1219,19 @@ func flattenNodeNetworkConfig(c *container.NodeNetworkConfig, d *schema.Resource
 			"pod_range":                       c.PodRange,
 			"enable_private_nodes":            c.EnablePrivateNodes,
 			"pod_cidr_overprovision_config":   flattenPodCidrOverprovisionConfig(c.PodCidrOverprovisionConfig),
+			"network_performance_config":      flattenNodeNetworkPerformanceConfig(c.NetworkPerformanceConfig),
 			"additional_node_network_configs": flattenAdditionalNodeNetworkConfig(c.AdditionalNodeNetworkConfigs),
 			"additional_pod_network_configs":  flattenAdditionalPodNetworkConfig(c.AdditionalPodNetworkConfigs),
+		})
+	}
+	return result
+}
+
+func flattenNodeNetworkPerformanceConfig(c *container.NetworkPerformanceConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"total_egress_bandwidth_tier": c.TotalEgressBandwidthTier,
 		})
 	}
 	return result
@@ -1267,6 +1328,14 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 	}
 
 	nnc.PodCidrOverprovisionConfig = expandPodCidrOverprovisionConfig(networkNodeConfig["pod_cidr_overprovision_config"])
+
+	if v, ok := networkNodeConfig["network_performance_config"]; ok && len(v.([]interface{})) > 0 {
+		nnc.NetworkPerformanceConfig = &container.NetworkPerformanceConfig{}
+		network_performance_config := v.([]interface{})[0].(map[string]interface{})
+		if total_egress_bandwidth_tier, ok := network_performance_config["total_egress_bandwidth_tier"]; ok {
+			nnc.NetworkPerformanceConfig.TotalEgressBandwidthTier = total_egress_bandwidth_tier.(string)
+		}
+	}
 
 	return nnc
 }
@@ -1374,6 +1443,39 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 				log.Printf("[INFO] Updated logging_variant for node pool %s", name)
 			}
+		}
+
+		if d.HasChange("node_config.0.disk_size_gb") ||
+			d.HasChange("node_config.0.disk_type") ||
+			d.HasChange("node_config.0.machine_type") {
+			req := &container.UpdateNodePoolRequest{
+				Name:        name,
+				DiskSizeGb:  int64(d.Get("node_config.0.disk_size_gb").(int)),
+				DiskType:    d.Get("node_config.0.disk_type").(string),
+				MachineType: d.Get("node_config.0.machine_type").(string),
+			}
+			updateF := func() error {
+				clusterNodePoolsUpdateCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.NodePools.Update(nodePoolInfo.fullyQualifiedName(name), req)
+				if config.UserProjectOverride {
+					clusterNodePoolsUpdateCall.Header().Add("X-Goog-User-Project", nodePoolInfo.project)
+				}
+				op, err := clusterNodePoolsUpdateCall.Do()
+				if err != nil {
+					return err
+				}
+
+				// Wait until it's updated
+				return ContainerOperationWait(config, op,
+					nodePoolInfo.project,
+					nodePoolInfo.location,
+					"updating GKE node pool disk_size_gb/disk_type/machine_type", userAgent,
+					timeout)
+			}
+
+			if err := retryWhileIncompatibleOperation(timeout, npLockKey, updateF); err != nil {
+				return err
+			}
+			log.Printf("[INFO] Updated disk disk_size_gb/disk_type/machine_type for Node Pool %s", d.Id())
 		}
 
 		if d.HasChange(prefix + "node_config.0.taint") {
@@ -1924,7 +2026,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 	}
 
 	if d.HasChange(prefix + "network_config") {
-		if d.HasChange(prefix + "network_config.0.enable_private_nodes") {
+		if d.HasChange(prefix+"network_config.0.enable_private_nodes") || d.HasChange(prefix+"network_config.0.network_performance_config") {
 			req := &container.UpdateNodePoolRequest{
 				NodePoolId:        name,
 				NodeNetworkConfig: expandNodeNetworkConfig(d.Get(prefix + "network_config")),
@@ -1944,7 +2046,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				return ContainerOperationWait(config, op,
 					nodePoolInfo.project,
 					nodePoolInfo.location,
-					"updating GKE node pool workload_metadata_config", userAgent,
+					"updating GKE node pool network_config", userAgent,
 					timeout)
 			}
 
@@ -1952,7 +2054,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				return err
 			}
 
-			log.Printf("[INFO] Updated workload_metadata_config for node pool %s", name)
+			log.Printf("[INFO] Updated network_config for node pool %s", name)
 		}
 	}
 

@@ -138,7 +138,8 @@ for not allowing root access. The default is NO_ROOT_SQUASH. Default value: "NO_
 						},
 						"source_backup": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
+							ForceNew: true,
 							Description: `The resource name of the backup, in the format
 projects/{projectId}/locations/{locationId}/backups/{backupId},
 that this file share has been restored from.`,
@@ -213,7 +214,7 @@ addresses reserved for this instance.`,
 				Required: true,
 				ForceNew: true,
 				Description: `The service tier of the instance.
-Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD, ZONAL and ENTERPRISE`,
+Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD, ZONAL, REGIONAL and ENTERPRISE`,
 			},
 			"description": {
 				Type:        schema.TypeString,

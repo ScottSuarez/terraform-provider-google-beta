@@ -14,15 +14,13 @@
 # ----------------------------------------------------------------------------
 subcategory: "Cloud VMware Engine"
 description: |-
-  / Represents a private cloud resource.
+  Represents a private cloud resource.
 ---
 
 # google\_vmwareengine\_private\_cloud
 
-/ Represents a private cloud resource. Private clouds are zonal resources.
+Represents a private cloud resource. Private clouds are zonal resources.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about PrivateCloud, see:
 
@@ -33,7 +31,6 @@ To get more information about PrivateCloud, see:
 
 ```hcl
 resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
-  provider    = google-beta
   location    = "us-west1-a"
   name        = "sample-pc"
   description = "Sample test PC."
@@ -52,10 +49,9 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
 }
 
 resource "google_vmwareengine_network" "pc-nw" {
-  provider    = google-beta
-  name        = "us-west1-default"
-  location    = "us-west1"
-  type        = "LEGACY"
+  name        = "pc-nw"
+  location    = "global"
+  type        = "STANDARD"
   description = "PC network description."
 }
 ```
@@ -64,10 +60,10 @@ resource "google_vmwareengine_network" "pc-nw" {
 
 ```hcl
 resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
-  provider    = google-beta
   location    = "us-west1-a"
   name        = "sample-pc"
   description = "Sample test PC."
+  type        = "TIME_LIMITED"
   network_config {
     management_cidr       = "192.168.30.0/24"
     vmware_engine_network = google_vmwareengine_network.pc-nw.id
@@ -77,17 +73,16 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
     cluster_id = "sample-mgmt-cluster"
     node_type_configs {
       node_type_id = "standard-72"
-      node_count   = 3
+      node_count   = 1
       custom_core_count = 32
     }
   }
 }
 
 resource "google_vmwareengine_network" "pc-nw" {
-  provider    = google-beta
-  name        = "us-west1-default"
-  location    = "us-west1"
-  type        = "LEGACY"
+  name        = "pc-nw"
+  location    = "global"
+  type        = "STANDARD"
   description = "PC network description."
 }
 ```
@@ -142,6 +137,10 @@ The following arguments are supported:
   * managementIpAddressLayoutVersion=2: Indicates the latest IP address layout
   used by all newly created private clouds. This version supports all current features.
 
+* `dns_server_ip` -
+  (Output)
+  DNS Server IP of the Private Cloud.
+
 <a name="nested_management_cluster"></a>The `management_cluster` block supports:
 
 * `cluster_id` -
@@ -181,6 +180,11 @@ The following arguments are supported:
 * `description` -
   (Optional)
   User-provided description for this private cloud.
+
+* `type` -
+  (Optional)
+  Initial type of the private cloud.
+  Possible values are: `STANDARD`, `TIME_LIMITED`.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

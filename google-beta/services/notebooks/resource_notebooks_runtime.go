@@ -72,6 +72,7 @@ func ResourceNotebooksRuntime() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -116,6 +117,21 @@ Currently supports one owner only.`,
 						},
 					},
 				},
+			},
+			"labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `The labels to associate with this runtime. Label **keys** must
+contain 1 to 63 characters, and must conform to [RFC 1035]
+(https://www.ietf.org/rfc/rfc1035.txt). Label **values** may be
+empty, but, if present, must contain 1 to 63 characters, and must
+conform to [RFC 1035](https://www.ietf.org/rfc/rfc1035.txt). No
+more than 32 labels can be associated with a cluster.
+
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"software_config": {
 				Type:        schema.TypeList,
@@ -594,6 +610,12 @@ storing-retrieving-metadata#guest_attributes)).`,
 				},
 				ExactlyOneOf: []string{"virtual_machine"},
 			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"health_state": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -622,6 +644,13 @@ sessions stats.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The state of this runtime.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -659,6 +688,12 @@ func resourceNotebooksRuntimeCreate(d *schema.ResourceData, meta interface{}) er
 		return err
 	} else if v, ok := d.GetOkExists("software_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(softwareConfigProp)) && (ok || !reflect.DeepEqual(v, softwareConfigProp)) {
 		obj["softwareConfig"] = softwareConfigProp
+	}
+	labelsProp, err := expandNotebooksRuntimeEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/runtimes?runtimeId={{name}}")
@@ -783,6 +818,15 @@ func resourceNotebooksRuntimeRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("metrics", flattenNotebooksRuntimeMetrics(res["metrics"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Runtime: %s", err)
 	}
+	if err := d.Set("labels", flattenNotebooksRuntimeLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Runtime: %s", err)
+	}
+	if err := d.Set("terraform_labels", flattenNotebooksRuntimeTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Runtime: %s", err)
+	}
+	if err := d.Set("effective_labels", flattenNotebooksRuntimeEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Runtime: %s", err)
+	}
 
 	return nil
 }
@@ -821,6 +865,12 @@ func resourceNotebooksRuntimeUpdate(d *schema.ResourceData, meta interface{}) er
 	} else if v, ok := d.GetOkExists("software_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, softwareConfigProp)) {
 		obj["softwareConfig"] = softwareConfigProp
 	}
+	labelsProp, err := expandNotebooksRuntimeEffectiveLabels(d.Get("effective_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
+		obj["labels"] = labelsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/runtimes/{{name}}")
 	if err != nil {
@@ -844,11 +894,81 @@ func resourceNotebooksRuntimeUpdate(d *schema.ResourceData, meta interface{}) er
 			"softwareConfig.customGpuDriverPath",
 			"softwareConfig.postStartupScript")
 	}
+
+	if d.HasChange("effective_labels") {
+		updateMask = append(updateMask, "labels")
+	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
+	}
+	// remove virtualMachine from updateMask
+	callSwitch := false
+	for i, field := range updateMask {
+		if field == "virtualMachine" {
+			callSwitch = true
+			updateMask = append(updateMask[:i], updateMask[i+1:]...)
+			break
+		}
+	}
+
+	if callSwitch {
+		// reconstruct url
+		url, err = tpgresource.ReplaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/runtimes/{{name}}")
+		if err != nil {
+			return err
+		}
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+		if err != nil {
+			return err
+		}
+
+		state := d.Get("state").(string)
+		if state == "INITIALIZING" {
+			time.Sleep(300 * time.Second)
+		}
+
+		switchURL, err := tpgresource.ReplaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/runtimes/{{name}}:switch")
+		if err != nil {
+			return err
+		}
+		log.Printf("[DEBUG] Switching Runtime: %q", d.Id())
+
+		switchObj := make(map[string]interface{})
+		machineType := d.Get("virtual_machine.0.virtual_machine_config.0.machine_type")
+		switchObj["machineType"] = machineType
+
+		acceleratorConfigInterface := make(map[string]interface{})
+		_, ok := d.GetOk("virtual_machine.0.virtual_machine_config.0.accelerator_config")
+		if ok {
+			acceleratorConfigInterface["coreCount"] = d.Get("virtual_machine.0.virtual_machine_config.0.accelerator_config.0.core_count")
+			acceleratorConfigInterface["type"] = d.Get("virtual_machine.0.virtual_machine_config.0.accelerator_config.0.type")
+		}
+		switchObj["acceleratorConfig"] = acceleratorConfigInterface
+
+		dRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			RawURL:    switchURL,
+			UserAgent: userAgent,
+			Body:      switchObj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+		})
+
+		if err != nil {
+			return fmt.Errorf("Error switching Runtime: %s", err)
+		}
+
+		var opRes map[string]interface{}
+		err = NotebooksOperationWaitTimeWithResponse(
+			config, dRes, &opRes, project, "Switching runtime", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return fmt.Errorf("Error switching runtime: %s", err)
+		}
+
 	}
 
 	// err == nil indicates that the billing_project value was found
@@ -1484,6 +1604,40 @@ func flattenNotebooksRuntimeMetrics(v interface{}, d *schema.ResourceData, confi
 	return []interface{}{transformed}
 }
 func flattenNotebooksRuntimeMetricsSystemMetrics(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNotebooksRuntimeLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenNotebooksRuntimeTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("terraform_labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
+}
+
+func flattenNotebooksRuntimeEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2268,4 +2422,15 @@ func expandNotebooksRuntimeSoftwareConfigKernelsRepository(v interface{}, d tpgr
 
 func expandNotebooksRuntimeSoftwareConfigKernelsTag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandNotebooksRuntimeEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

@@ -640,7 +640,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 }
 ```
-## Example Usage - Cloudfunctions2 Cmek
+## Example Usage - Cloudfunctions2 Cmek Docs
 
 
 ```hcl
@@ -659,7 +659,7 @@ resource "google_storage_bucket" "bucket" {
   location = "US"
   uniform_bucket_level_access = true
 }
- 
+
 resource "google_storage_bucket_object" "object" {
   provider = google-beta
 
@@ -1071,7 +1071,9 @@ The following arguments are supported:
 
 * `service_account_email` -
   (Optional)
-  The email of the service account for this function.
+  Optional. The email of the trigger's service account. The service account
+  must have permission to invoke Cloud Run services. If empty, defaults to the
+  Compute Engine default service account: {project_number}-compute@developer.gserviceaccount.com.
 
 * `retry_policy` -
   (Optional)

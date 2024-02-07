@@ -17,25 +17,28 @@ import (
 )
 
 func TestAccVmwareengineCluster_vmwareEngineClusterUpdate(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
 		"region":          "southamerica-west1", // using region with low node utilization.
+		"random_suffix":   acctest.RandString(t, 10),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckVmwareengineClusterDestroyProducer(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckVmwareengineClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testVmwareEngineClusterConfig(context, 3),
 				Check: resource.ComposeTestCheckFunc(
 					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores("data.google_vmwareengine_cluster.ds", "google_vmwareengine_cluster.vmw-engine-ext-cluster", map[string]struct{}{}),
-					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores("data.google_vmwareengine_private_cloud.ds", "google_vmwareengine_private_cloud.cluster-pc", map[string]struct{}{}),
 				),
 			},
 			{
@@ -69,64 +72,70 @@ func TestAccVmwareengineCluster_vmwareEngineClusterUpdate(t *testing.T) {
 func testVmwareEngineClusterConfig(context map[string]interface{}, nodeCount int) string {
 	context["node_count"] = nodeCount
 	return acctest.Nprintf(`
+resource "google_project" "project" {
+  project_id      = "tf-test%{random_suffix}"
+  name            = "tf-test%{random_suffix}"
+  org_id          = "%{org_id}"
+  billing_account = "%{billing_account}"
+}
+
+resource "google_project_service" "vmwareengine" {
+  project = google_project.project.project_id
+  service = "vmwareengine.googleapis.com"
+}
+
+resource "time_sleep" "sleep" {
+  create_duration = "1m"
+  depends_on = [
+    google_project_service.vmwareengine,
+  ]
+}
+
+resource "google_vmwareengine_network" "cluster-nw" {
+  project = google_project.project.project_id
+  name        = "tf-test-cluster-nw%{random_suffix}"
+  location    = "global"
+  type        = "STANDARD"
+  description = "PC network description."
+
+  depends_on = [
+    time_sleep.sleep # Sleep allows permissions in the new project to propagate
+  ]
+}
+
+resource "google_vmwareengine_private_cloud" "cluster-pc" {
+  project = google_project.project.project_id
+  location    = "%{region}-a"
+  name        = "tf-test-cluster-pc%{random_suffix}"
+  description = "Sample test PC."
+  network_config {
+    management_cidr       = "192.168.10.0/24"
+    vmware_engine_network = google_vmwareengine_network.cluster-nw.id
+  }
+
+  management_cluster {
+    cluster_id = "tf-test-mgmt-cluster%{random_suffix}"
+    node_type_configs {
+      node_type_id = "standard-72"
+      node_count   = 3
+    }
+  }
+}
 
 resource "google_vmwareengine_cluster" "vmw-engine-ext-cluster" {
-  provider = google-beta
   name = "tf-test-ext-cluster%{random_suffix}"
   parent =  google_vmwareengine_private_cloud.cluster-pc.id
   node_type_configs {
     node_type_id = "standard-72"
     node_count   = %{node_count}
-		custom_core_count = 32
+    custom_core_count = 32
   }
 }
 
-resource "google_vmwareengine_private_cloud" "cluster-pc" {
-  provider = google-beta
-  location = "%{region}-a"
-  name = "tf-test-sample-pc%{random_suffix}"
-  description = "Sample test PC."
-  network_config {
-    management_cidr = "192.168.30.0/24"
-    vmware_engine_network = google_vmwareengine_network.cluster-nw.id
-  }
-
-  management_cluster {
-    cluster_id = "tf-test-sample-mgmt-cluster%{random_suffix}"
-    node_type_configs {
-      node_type_id = "standard-72"
-      node_count   = 3
-			custom_core_count = 32
-    }
-  }
+data "google_vmwareengine_cluster" "ds" {
+  name = google_vmwareengine_cluster.vmw-engine-ext-cluster.name
+  parent = google_vmwareengine_private_cloud.cluster-pc.id
 }
-
-resource "google_vmwareengine_network" "cluster-nw" {
-  provider          = google-beta
-  name              = "%{region}-default"
-  location          = "%{region}"
-  type              = "LEGACY"
-  description       = "PC network description."
-}
-
-data "google_vmwareengine_cluster" ds {
-  name = "tf-test-ext-cluster%{random_suffix}"
-	provider = google-beta
-	parent = google_vmwareengine_private_cloud.cluster-pc.id
-	depends_on = [
-    google_vmwareengine_cluster.vmw-engine-ext-cluster,
-  ]
-}
-
-data "google_vmwareengine_private_cloud" ds {
-	location = "%{region}-a"
-	provider = google-beta
-  name = "tf-test-sample-pc%{random_suffix}"
-	depends_on = [
-   	google_vmwareengine_private_cloud.cluster-pc,
-  ]
-}
-
 `, context)
 }
 

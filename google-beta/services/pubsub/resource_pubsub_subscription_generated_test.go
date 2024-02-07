@@ -63,7 +63,7 @@ resource "google_pubsub_topic" "example" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   ack_deadline_seconds = 20
 
@@ -115,7 +115,7 @@ resource "google_pubsub_topic" "example" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   labels = {
     foo = "bar"
@@ -176,7 +176,7 @@ resource "google_pubsub_topic" "example_dead_letter" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   dead_letter_policy {
     dead_letter_topic = google_pubsub_topic.example_dead_letter.id
@@ -219,10 +219,91 @@ resource "google_pubsub_topic" "example" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   bigquery_config {
     table = "${google_bigquery_table.test.project}.${google_bigquery_table.test.dataset_id}.${google_bigquery_table.test.table_id}"
+  }
+
+  depends_on = [google_project_iam_member.viewer, google_project_iam_member.editor]
+}
+
+data "google_project" "project" {
+}
+
+resource "google_project_iam_member" "viewer" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.metadataViewer"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "editor" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.dataEditor"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
+resource "google_bigquery_dataset" "test" {
+  dataset_id = "tf_test_example_dataset%{random_suffix}"
+}
+
+resource "google_bigquery_table" "test" {
+  deletion_protection = false
+  table_id   = "tf_test_example_table%{random_suffix}"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+
+  schema = <<EOF
+[
+  {
+    "name": "data",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The data"
+  }
+]
+EOF
+}
+`, context)
+}
+
+func TestAccPubsubSubscription_pubsubSubscriptionPushBqTableSchemaExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckPubsubSubscriptionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPubsubSubscription_pubsubSubscriptionPushBqTableSchemaExample(context),
+			},
+			{
+				ResourceName:            "google_pubsub_subscription.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"topic", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccPubsubSubscription_pubsubSubscriptionPushBqTableSchemaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_pubsub_topic" "example" {
+  name = "tf-test-example-topic%{random_suffix}"
+}
+
+resource "google_pubsub_subscription" "example" {
+  name  = "tf-test-example-subscription%{random_suffix}"
+  topic = google_pubsub_topic.example.id
+
+  bigquery_config {
+    table = "${google_bigquery_table.test.project}.${google_bigquery_table.test.dataset_id}.${google_bigquery_table.test.table_id}"
+    use_table_schema = true
   }
 
   depends_on = [google_project_iam_member.viewer, google_project_iam_member.editor]
@@ -305,7 +386,7 @@ resource "google_pubsub_topic" "example" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   cloud_storage_config {
     bucket = google_storage_bucket.example.name
@@ -372,7 +453,7 @@ resource "google_pubsub_topic" "example" {
 
 resource "google_pubsub_subscription" "example" {
   name  = "tf-test-example-subscription%{random_suffix}"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.example.id
 
   cloud_storage_config {
     bucket = google_storage_bucket.example.name
