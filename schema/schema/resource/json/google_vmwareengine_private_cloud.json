@@ -1,0 +1,185 @@
+{
+    "description": {
+        "Description": "User-provided description for this private cloud.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "hcx": {
+        "Computed": true,
+        "Description": "Details about a HCX Cloud Manager appliance.",
+        "Properties": {
+            "fqdn": {
+                "Description": "Fully qualified domain name of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "internal_ip": {
+                "Description": "Internal IP address of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Description": "State of the appliance. Possible values: [\"ACTIVE\", \"CREATING\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "Version of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location where the PrivateCloud should reside.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "management_cluster": {
+        "Description": "The management cluster for this private cloud. This used for creating and managing the default cluster.",
+        "MaxItems": 1,
+        "Properties": {
+            "cluster_id": {
+                "Description": "The user-provided identifier of the new Cluster. The identifier must meet the following requirements:\n  * Only contains 1-63 alphanumeric characters and hyphens\n  * Begins with an alphabetical character\n  * Ends with a non-hyphen character\n  * Not formatted as a UUID\n  * Complies with RFC 1034 (https://datatracker.ietf.org/doc/html/rfc1034) (section 3.5)",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "node_type_configs": {
+                "Description": "The map of cluster node types in this cluster,\nwhere the key is canonical identifier of the node type (corresponds to the NodeType).",
+                "Optional": true,
+                "Properties": {
+                    "custom_core_count": {
+                        "Description": "Customized number of cores available to each node of the type.\nThis number must always be one of 'nodeType.availableCustomCoreCounts'.\nIf zero is provided max value from 'nodeType.availableCustomCoreCounts' will be used.\nThis cannot be changed once the PrivateCloud is created.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "node_count": {
+                        "Description": "The number of nodes of this type in the cluster.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "node_type_id": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The ID of the PrivateCloud.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network_config": {
+        "Description": "Network configuration in the consumer project with which the peering has to be done.",
+        "MaxItems": 1,
+        "Properties": {
+            "dns_server_ip": {
+                "Computed": true,
+                "Description": "DNS Server IP of the Private Cloud.",
+                "Type": "TypeString"
+            },
+            "management_cidr": {
+                "Description": "Management CIDR used by VMware management appliances.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "management_ip_address_layout_version": {
+                "Computed": true,
+                "Description": "The IP address layout version of the management IP address range.\nPossible versions include:\n* managementIpAddressLayoutVersion=1: Indicates the legacy IP address layout used by some existing private clouds. This is no longer supported for new private clouds\nas it does not support all features.\n* managementIpAddressLayoutVersion=2: Indicates the latest IP address layout\nused by all newly created private clouds. This version supports all current features.",
+                "Type": "TypeInt"
+            },
+            "vmware_engine_network": {
+                "Description": "The relative resource name of the VMware Engine network attached to the private cloud.\nSpecify the name in the following form: projects/{project}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId}\nwhere {project} can either be a project number or a project ID.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "vmware_engine_network_canonical": {
+                "Computed": true,
+                "Description": "The canonical name of the VMware Engine network in\nthe form: projects/{project_number}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId}",
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "nsx": {
+        "Computed": true,
+        "Description": "Details about a NSX Manager appliance.",
+        "Properties": {
+            "fqdn": {
+                "Description": "Fully qualified domain name of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "internal_ip": {
+                "Description": "Internal IP address of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Description": "State of the appliance. Possible values: [\"ACTIVE\", \"CREATING\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "Version of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the resource. New values may be added to this enum when appropriate.",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "Initial type of the private cloud. Possible values: [\"STANDARD\", \"TIME_LIMITED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "vcenter": {
+        "Computed": true,
+        "Description": "Details about a vCenter Server management appliance.",
+        "Properties": {
+            "fqdn": {
+                "Description": "Fully qualified domain name of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "internal_ip": {
+                "Description": "Internal IP address of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Description": "State of the appliance. Possible values: [\"ACTIVE\", \"CREATING\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "Version of the appliance.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

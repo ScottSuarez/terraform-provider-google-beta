@@ -1,0 +1,3 @@
+locations: TypeList(TypeString)
+project: TypeString
+

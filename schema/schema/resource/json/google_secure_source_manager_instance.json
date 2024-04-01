@@ -1,0 +1,117 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Instance was created in UTC.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "host_config": {
+        "Computed": true,
+        "Description": "A list of hostnames for this instance.",
+        "Properties": {
+            "api": {
+                "Computed": true,
+                "Description": "API hostname.",
+                "Type": "TypeString"
+            },
+            "git_http": {
+                "Computed": true,
+                "Description": "Git HTTP hostname.",
+                "Type": "TypeString"
+            },
+            "git_ssh": {
+                "Computed": true,
+                "Description": "Git SSH hostname.",
+                "Type": "TypeString"
+            },
+            "html": {
+                "Computed": true,
+                "Description": "HTML hostname.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "instance_id": {
+        "Description": "The name for the Instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "kms_key": {
+        "Description": "Customer-managed encryption key name, in the format projects/*/locations/*/keyRings/*/cryptoKeys/*.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels as key value pairs.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location for the Instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for the Instance.",
+        "Type": "TypeString"
+    },
+    "private_config": {
+        "Description": "Private settings for private instance.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "ca_pool": {
+                "Description": "CA pool resource, resource must in the format of 'projects/{project}/locations/{location}/caPools/{ca_pool}'.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "http_service_attachment": {
+                "Computed": true,
+                "Description": "Service Attachment for HTTP, resource is in the format of 'projects/{project}/regions/{region}/serviceAttachments/{service_attachment}'.",
+                "Type": "TypeString"
+            },
+            "is_private": {
+                "Description": "'Indicate if it's private instance.'",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "ssh_service_attachment": {
+                "Computed": true,
+                "Description": "Service Attachment for SSH, resource is in the format of 'projects/{project}/regions/{region}/serviceAttachments/{service_attachment}'.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the Instance.",
+        "Type": "TypeString"
+    },
+    "state_note": {
+        "Computed": true,
+        "Description": "Provides information about the current instance state.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Instance was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

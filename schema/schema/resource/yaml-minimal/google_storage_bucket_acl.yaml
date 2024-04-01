@@ -1,0 +1,5 @@
+bucket: TypeString
+default_acl: TypeString
+predefined_acl: TypeString
+role_entity: TypeList(TypeString)
+

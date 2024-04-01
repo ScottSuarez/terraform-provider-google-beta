@@ -1,0 +1,179 @@
+{
+    "drain_nat_ips": {
+        "Computed": true,
+        "Description": "A list of URLs of the IP resources to be drained. These IPs must be\nvalid static external IPs that have been assigned to the NAT.",
+        "Type": "TypeSet"
+    },
+    "enable_dynamic_port_allocation": {
+        "Computed": true,
+        "Description": "Enable Dynamic Port Allocation.\nIf minPortsPerVm is set, minPortsPerVm must be set to a power of two greater than or equal to 32.\nIf minPortsPerVm is not set, a minimum of 32 ports will be allocated to a VM from this NAT config.\nIf maxPortsPerVm is set, maxPortsPerVm must be set to a power of two greater than minPortsPerVm.\nIf maxPortsPerVm is not set, a maximum of 65536 ports will be allocated to a VM from this NAT config.\n\nMutually exclusive with enableEndpointIndependentMapping.",
+        "Type": "TypeBool"
+    },
+    "enable_endpoint_independent_mapping": {
+        "Computed": true,
+        "Description": "Enable endpoint independent mapping.\nFor more information see the [official documentation](https://cloud.google.com/nat/docs/overview#specs-rfcs).",
+        "Type": "TypeBool"
+    },
+    "icmp_idle_timeout_sec": {
+        "Computed": true,
+        "Description": "Timeout (in seconds) for ICMP connections. Defaults to 30s if not set.",
+        "Type": "TypeInt"
+    },
+    "log_config": {
+        "Computed": true,
+        "Description": "Configuration for logging on NAT",
+        "Properties": {
+            "enable": {
+                "Computed": true,
+                "Description": "Indicates whether or not to export logs.",
+                "Type": "TypeBool"
+            },
+            "filter": {
+                "Computed": true,
+                "Description": "Specifies the desired filtering of logs on this NAT. Possible values: [\"ERRORS_ONLY\", \"TRANSLATIONS_ONLY\", \"ALL\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "max_ports_per_vm": {
+        "Computed": true,
+        "Description": "Maximum number of ports allocated to a VM from this NAT.\nThis field can only be set when enableDynamicPortAllocation is enabled.",
+        "Type": "TypeInt"
+    },
+    "min_ports_per_vm": {
+        "Computed": true,
+        "Description": "Minimum number of ports allocated to a VM from this NAT.",
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "Name of the NAT service. The name must be 1-63 characters long and\ncomply with RFC1035.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "nat_ip_allocate_option": {
+        "Computed": true,
+        "Description": "How external IPs should be allocated for this NAT. Valid values are\n'AUTO_ONLY' for only allowing NAT IPs allocated by Google Cloud\nPlatform, or 'MANUAL_ONLY' for only user-allocated NAT IP addresses. Possible values: [\"MANUAL_ONLY\", \"AUTO_ONLY\"]",
+        "Type": "TypeString"
+    },
+    "nat_ips": {
+        "Computed": true,
+        "Description": "Self-links of NAT IPs. Only valid if natIpAllocateOption\nis set to MANUAL_ONLY.",
+        "Type": "TypeSet"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "Region where the router and NAT reside.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "router": {
+        "Description": "The name of the Cloud Router in which this NAT will be configured.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Computed": true,
+        "Description": "A list of rules associated with this NAT.",
+        "Properties": {
+            "action": {
+                "Computed": true,
+                "Description": "The action to be enforced for traffic that matches this rule.",
+                "Properties": {
+                    "source_nat_active_ips": {
+                        "Computed": true,
+                        "Description": "A list of URLs of the IP resources used for this NAT rule.\nThese IP addresses must be valid static external IP addresses assigned to the project.\nThis field is used for public NAT.",
+                        "Type": "TypeSet"
+                    },
+                    "source_nat_active_ranges": {
+                        "Computed": true,
+                        "Description": "A list of URLs of the subnetworks used as source ranges for this NAT Rule.\nThese subnetworks must have purpose set to PRIVATE_NAT.\nThis field is used for private NAT.",
+                        "Type": "TypeSet"
+                    },
+                    "source_nat_drain_ips": {
+                        "Computed": true,
+                        "Description": "A list of URLs of the IP resources to be drained.\nThese IPs must be valid static external IPs that have been assigned to the NAT.\nThese IPs should be used for updating/patching a NAT rule only.\nThis field is used for public NAT.",
+                        "Type": "TypeSet"
+                    },
+                    "source_nat_drain_ranges": {
+                        "Computed": true,
+                        "Description": "A list of URLs of subnetworks representing source ranges to be drained.\nThis is only supported on patch/update, and these subnetworks must have previously been used as active ranges in this NAT Rule.\nThis field is used for private NAT.",
+                        "Type": "TypeSet"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "description": {
+                "Computed": true,
+                "Description": "An optional description of this rule.",
+                "Type": "TypeString"
+            },
+            "match": {
+                "Computed": true,
+                "Description": "CEL expression that specifies the match condition that egress traffic from a VM is evaluated against.\nIf it evaluates to true, the corresponding action is enforced.\n\nThe following examples are valid match expressions for public NAT:\n\n\"inIpRange(destination.ip, '1.1.0.0/16') || inIpRange(destination.ip, '2.2.0.0/16')\"\n\n\"destination.ip == '1.1.0.1' || destination.ip == '8.8.8.8'\"\n\nThe following example is a valid match expression for private NAT:\n\n\"nexthop.hub == 'https://networkconnectivity.googleapis.com/v1alpha1/projects/my-project/global/hub/hub-1'\"",
+                "Type": "TypeString"
+            },
+            "rule_number": {
+                "Computed": true,
+                "Description": "An integer uniquely identifying a rule in the list.\nThe rule number must be a positive value between 0 and 65000, and must be unique among rules within a NAT.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "source_subnetwork_ip_ranges_to_nat": {
+        "Computed": true,
+        "Description": "How NAT should be configured per Subnetwork.\nIf 'ALL_SUBNETWORKS_ALL_IP_RANGES', all of the\nIP ranges in every Subnetwork are allowed to Nat.\nIf 'ALL_SUBNETWORKS_ALL_PRIMARY_IP_RANGES', all of the primary IP\nranges in every Subnetwork are allowed to Nat.\n'LIST_OF_SUBNETWORKS': A list of Subnetworks are allowed to Nat\n(specified in the field subnetwork below). Note that if this field\ncontains ALL_SUBNETWORKS_ALL_IP_RANGES or\nALL_SUBNETWORKS_ALL_PRIMARY_IP_RANGES, then there should not be any\nother RouterNat section in any Router for this network in this region. Possible values: [\"ALL_SUBNETWORKS_ALL_IP_RANGES\", \"ALL_SUBNETWORKS_ALL_PRIMARY_IP_RANGES\", \"LIST_OF_SUBNETWORKS\"]",
+        "Type": "TypeString"
+    },
+    "subnetwork": {
+        "Computed": true,
+        "Description": "One or more subnetwork NAT configurations. Only used if\n'source_subnetwork_ip_ranges_to_nat' is set to 'LIST_OF_SUBNETWORKS'",
+        "Properties": {
+            "name": {
+                "Computed": true,
+                "Description": "Self-link of subnetwork to NAT",
+                "Type": "TypeString"
+            },
+            "secondary_ip_range_names": {
+                "Computed": true,
+                "Description": "List of the secondary ranges of the subnetwork that are allowed\nto use NAT. This can be populated only if\n'LIST_OF_SECONDARY_IP_RANGES' is one of the values in\nsourceIpRangesToNat",
+                "Type": "TypeSet"
+            },
+            "source_ip_ranges_to_nat": {
+                "Computed": true,
+                "Description": "List of options for which source IPs in the subnetwork\nshould have NAT enabled. Supported values include:\n'ALL_IP_RANGES', 'LIST_OF_SECONDARY_IP_RANGES',\n'PRIMARY_IP_RANGE'.",
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "tcp_established_idle_timeout_sec": {
+        "Computed": true,
+        "Description": "Timeout (in seconds) for TCP established connections.\nDefaults to 1200s if not set.",
+        "Type": "TypeInt"
+    },
+    "tcp_time_wait_timeout_sec": {
+        "Computed": true,
+        "Description": "Timeout (in seconds) for TCP connections that are in TIME_WAIT state.\nDefaults to 120s if not set.",
+        "Type": "TypeInt"
+    },
+    "tcp_transitory_idle_timeout_sec": {
+        "Computed": true,
+        "Description": "Timeout (in seconds) for TCP transitory connections.\nDefaults to 30s if not set.",
+        "Type": "TypeInt"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "Indicates whether this NAT is used for public or private IP translation.\nIf unspecified, it defaults to PUBLIC.\nIf 'PUBLIC' NAT used for public IP translation.\nIf 'PRIVATE' NAT used for private IP translation. Default value: \"PUBLIC\" Possible values: [\"PUBLIC\", \"PRIVATE\"]",
+        "Type": "TypeString"
+    },
+    "udp_idle_timeout_sec": {
+        "Computed": true,
+        "Description": "Timeout (in seconds) for UDP connections. Defaults to 30s if not set.",
+        "Type": "TypeInt"
+    }
+}

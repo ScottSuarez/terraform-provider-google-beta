@@ -1,0 +1,17 @@
+display_name: TypeString
+enabled: TypeBool
+idp_config:
+    idp_certificates:
+        x509_certificate: TypeString
+    idp_entity_id: TypeString
+    sign_request: TypeBool
+    sso_url: TypeString
+name: TypeString
+project: TypeString
+sp_config:
+    callback_uri: TypeString
+    sp_certificates:
+        x509_certificate: TypeString
+    sp_entity_id: TypeString
+tenant: TypeString
+

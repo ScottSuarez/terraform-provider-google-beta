@@ -1,0 +1,245 @@
+{
+    "annotations": {
+        "Description": "Annotations on the node Pool.\nThis field has the same restrictions as Kubernetes annotations.\nThe total size of all keys and values combined is limited to 256k.\nKey can have 2 segments: prefix (optional) and name (required),\nseparated by a slash (/).\nPrefix must be a DNS subdomain.\nName must be 63 characters or less, begin and end with alphanumerics,\nwith dashes (-), underscores (_), dots (.), and alphanumerics between.\n\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "config": {
+        "Description": "The node configuration of the node pool.",
+        "MaxItems": 1,
+        "Properties": {
+            "boot_disk_size_gb": {
+                "Description": "VMware disk size to be used during creation.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "cpus": {
+                "Description": "The number of CPUs for each node in the node pool.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "enable_load_balancer": {
+                "Description": "Allow node pool traffic to be load balanced. Only works for clusters with\nMetalLB load balancers.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "image": {
+                "Description": "The OS image name in vCenter, only valid when using Windows.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "image_type": {
+                "Description": "The OS image to be used for each node in a node pool.\nCurrently 'cos', 'ubuntu', 'ubuntu_containerd' and 'windows' are supported.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "The map of Kubernetes labels (key/value pairs) to be applied to each node.\nThese will added in addition to any default label(s) that\nKubernetes may apply to the node.\nIn case of conflict in label keys, the applied set may differ depending on\nthe Kubernetes version -- it's best to assume the behavior is undefined\nand conflicts should be avoided.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "memory_mb": {
+                "Description": "The megabytes of memory for each node in the node pool.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "replicas": {
+                "Description": "The number of nodes in the node pool.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "taints": {
+                "Description": "The initial taints assigned to nodes of this node pool.",
+                "Optional": true,
+                "Properties": {
+                    "effect": {
+                        "Description": "Available taint effects. Possible values: [\"EFFECT_UNSPECIFIED\", \"NO_SCHEDULE\", \"PREFER_NO_SCHEDULE\", \"NO_EXECUTE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "key": {
+                        "Description": "Key associated with the effect.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "value": {
+                        "Description": "Value associated with the effect.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "vsphere_config": {
+                "Description": "Specifies the vSphere config for node pool.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "datastore": {
+                        "Description": "The name of the vCenter datastore. Inherited from the user cluster.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "host_groups": {
+                        "Description": "Vsphere host groups to apply to all VMs in the node pool",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "tags": {
+                        "Description": "Tags to apply to VMs.",
+                        "Optional": true,
+                        "Properties": {
+                            "category": {
+                                "Description": "The Vsphere tag category.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "tag": {
+                                "Description": "The Vsphere tag name.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time the cluster was created, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "The time the cluster was deleted, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The display name for the node pool.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other\nfields, and may be sent on update and delete requests to ensure the\nclient has an up-to-date value before proceeding.\nAllows clients to perform consistent read-modify-writes\nthrough optimistic concurrency control.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The vmware node pool name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_pool_autoscaling": {
+        "Description": "Node Pool autoscaling config for the node pool.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "max_replicas": {
+                "Description": "Maximum number of replicas in the NodePool.",
+                "Required": true,
+                "Type": "TypeInt"
+            },
+            "min_replicas": {
+                "Description": "Minimum number of replicas in the NodePool.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "on_prem_version": {
+        "Computed": true,
+        "Description": "Anthos version for the node pool. Defaults to the user cluster version.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "If set, there are currently changes in flight to the node pool.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of this cluster.",
+        "Type": "TypeString"
+    },
+    "status": {
+        "Computed": true,
+        "Description": "ResourceStatus representing detailed cluster state.",
+        "Properties": {
+            "conditions": {
+                "Computed": true,
+                "Description": "ResourceConditions provide a standard mechanism for higher-level status reporting from user cluster controller.",
+                "Properties": {
+                    "last_transition_time": {
+                        "Computed": true,
+                        "Description": "Last time the condition transit from one status to another.",
+                        "Type": "TypeString"
+                    },
+                    "message": {
+                        "Computed": true,
+                        "Description": "Human-readable message indicating details about last transition.",
+                        "Type": "TypeString"
+                    },
+                    "reason": {
+                        "Computed": true,
+                        "Description": "Machine-readable message indicating details about last transition.",
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Computed": true,
+                        "Description": "The lifecycle state of the condition.",
+                        "Type": "TypeString"
+                    },
+                    "type": {
+                        "Computed": true,
+                        "Description": "Type of the condition.\n(e.g., ClusterRunning, NodePoolRunning or ServerSidePreflightReady)",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "error_message": {
+                "Computed": true,
+                "Description": "Human-friendly representation of the error message from the user cluster\ncontroller. The error message can be temporary as the user cluster\ncontroller creates a cluster or node pool. If the error message persists\nfor a longer period of time, it can be used to surface error message to\nindicate real problems requiring user intervention.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "The unique identifier of the node pool.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time the cluster was last updated, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "vmware_cluster": {
+        "Description": "The cluster this node pool belongs to.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

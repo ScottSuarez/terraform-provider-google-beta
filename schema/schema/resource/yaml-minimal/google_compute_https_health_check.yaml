@@ -1,0 +1,13 @@
+check_interval_sec: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+healthy_threshold: TypeInt
+host: TypeString
+name: TypeString
+port: TypeInt
+project: TypeString
+request_path: TypeString
+self_link: TypeString
+timeout_sec: TypeInt
+unhealthy_threshold: TypeInt
+

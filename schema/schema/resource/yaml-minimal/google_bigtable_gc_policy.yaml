@@ -1,0 +1,13 @@
+column_family: TypeString
+deletion_policy: TypeString
+gc_rules: TypeString
+instance_name: TypeString
+max_age:
+    days: TypeInt
+    duration: TypeString
+max_version:
+    number: TypeInt
+mode: TypeString
+project: TypeString
+table: TypeString
+

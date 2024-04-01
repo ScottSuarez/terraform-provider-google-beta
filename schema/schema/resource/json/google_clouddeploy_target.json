@@ -1,0 +1,180 @@
+{
+    "annotations": {
+        "Description": "Optional. User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field `effective_annotations` for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "anthos_cluster": {
+        "ConflictsWith": "gke, run, multi_target",
+        "Description": "Information specifying an Anthos Cluster.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "membership": {
+                "Description": "Membership of the GKE Hub-registered cluster to which to apply the Skaffold configuration. Format is `projects/{project}/locations/{location}/memberships/{membership_name}`.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. Time at which the `Target` was created.",
+        "Type": "TypeString"
+    },
+    "deploy_parameters": {
+        "Description": "Optional. The deploy parameters to use for this target.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "description": {
+        "Description": "Optional. Description of the `Target`. Max length is 255 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "execution_configs": {
+        "Computed": true,
+        "Description": "Configurations for all execution that relates to this `Target`. Each `ExecutionEnvironmentUsage` value may only be used in a single configuration; using the same value multiple times is an error. When one or more configurations are specified, they must include the `RENDER` and `DEPLOY` `ExecutionEnvironmentUsage` values. When no configurations are specified, execution will use the default specified in `DefaultPool`.",
+        "Optional": true,
+        "Properties": {
+            "artifact_storage": {
+                "Computed": true,
+                "Description": "Optional. Cloud Storage location in which to store execution outputs. This can either be a bucket (\"gs://my-bucket\") or a path within a bucket (\"gs://my-bucket/my-dir\"). If unspecified, a default bucket located in the same region will be used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "execution_timeout": {
+                "Computed": true,
+                "Description": "Optional. Execution timeout for a Cloud Build Execution. This must be between 10m and 24h in seconds format. If unspecified, a default timeout of 1h is used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "service_account": {
+                "Computed": true,
+                "Description": "Optional. Google service account to use for execution. If unspecified, the project execution service account (-compute@developer.gserviceaccount.com) is used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "usages": {
+                "Description": "Required. Usages when this configuration should be applied.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "worker_pool": {
+                "Description": "Optional. The resource name of the `WorkerPool`, with the format `projects/{project}/locations/{location}/workerPools/{worker_pool}`. If this optional field is unspecified, the default Cloud Build pool will be used.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "gke": {
+        "ConflictsWith": "anthos_cluster, run, multi_target",
+        "Description": "Information specifying a GKE Cluster.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cluster": {
+                "Description": "Information specifying a GKE Cluster. Format is `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "internal_ip": {
+                "Description": "Optional. If true, `cluster` is accessed using the private IP address of the control plane endpoint. Otherwise, the default IP address of the control plane endpoint is used. The default IP address is the private IP address for clusters with private control-plane endpoints and the public IP address otherwise. Only specify this option when `cluster` is a [private GKE cluster](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept).",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Optional. Labels are attributes that can be set and used by both the user and by Google Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be \u003c= 128 bytes.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "multi_target": {
+        "ConflictsWith": "gke, anthos_cluster, run",
+        "Description": "Information specifying a multiTarget.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "target_ids": {
+                "Description": "Required. The target_ids of this multiTarget.",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the `Target`. Format is [a-z][a-z0-9\\-]{0,62}.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "require_approval": {
+        "Description": "Optional. Whether or not the `Target` requires approval.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "run": {
+        "ConflictsWith": "gke, anthos_cluster, multi_target",
+        "Description": "Information specifying a Cloud Run deployment target.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "location": {
+                "Description": "Required. The location where the Cloud Run Service should be located. Format is `projects/{project}/locations/{location}`.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "target_id": {
+        "Computed": true,
+        "Description": "Output only. Resource id of the `Target`.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. Unique identifier of the `Target`.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. Most recent time at which the `Target` was updated.",
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,101 @@
+display_name:
+    Type: TypeString
+    Description: Optional. The repository's user-friendly name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+git_remote_settings:
+    Type: TypeList
+    Description: Optional. If set, configures this repository to be linked to a Git remote.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        authentication_token_secret_version:
+            Type: TypeString
+            Description: The name of the Secret Manager secret version to use as an authentication token for Git operations. This secret is for assigning with HTTPS only(for SSH use 'ssh_authentication_config'). Must be in the format projects/*/secrets/*/versions/*.
+            Optional: "true"
+            ExactlyOneOf: git_remote_settings.0.authentication_token_secret_version, git_remote_settings.0.ssh_authentication_config
+        default_branch:
+            Type: TypeString
+            Description: The Git remote's default branch name.
+            Required: "true"
+        ssh_authentication_config:
+            Type: TypeList
+            Description: Authentication fields for remote uris using SSH protocol.
+            Optional: "true"
+            ExactlyOneOf: git_remote_settings.0.authentication_token_secret_version, git_remote_settings.0.ssh_authentication_config
+            MaxItems: "1"
+            Properties:
+                host_public_key:
+                    Type: TypeString
+                    Description: Content of a public SSH key to verify an identity of a remote Git host.
+                    Required: "true"
+                user_private_key_secret_version:
+                    Type: TypeString
+                    Description: The name of the Secret Manager secret version to use as a ssh private key for Git operations. Must be in the format projects/*/secrets/*/versions/*.
+                    Required: "true"
+        token_status:
+            Type: TypeString
+            Description: Indicates the status of the Git access token. https://cloud.google.com/dataform/reference/rest/v1beta1/projects.locations.repositories#TokenStatus
+            Computed: "true"
+        url:
+            Type: TypeString
+            Description: The Git remote's URL.
+            Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. Repository user labels.
+        An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The repository's name.
+    Required: "true"
+npmrc_environment_variables_secret_version:
+    Type: TypeString
+    Description: Optional. The name of the Secret Manager secret version to be used to interpolate variables into the .npmrc file for package installation operations. Must be in the format projects/*/secrets/*/versions/*. The file itself must be in a JSON format.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: A reference to the region
+    Optional: "true"
+service_account:
+    Type: TypeString
+    Description: The service account to run workflow invocations under.
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+workspace_compilation_overrides:
+    Type: TypeList
+    Description: If set, fields of workspaceCompilationOverrides override the default compilation settings that are specified in dataform.json when creating workspace-scoped compilation results.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        default_database:
+            Type: TypeString
+            Description: The default database (Google Cloud project ID).
+            Optional: "true"
+        schema_suffix:
+            Type: TypeString
+            Description: The suffix that should be appended to all schema (BigQuery dataset ID) names.
+            Optional: "true"
+        table_prefix:
+            Type: TypeString
+            Description: The prefix that should be prepended to all table names.
+            Optional: "true"
+

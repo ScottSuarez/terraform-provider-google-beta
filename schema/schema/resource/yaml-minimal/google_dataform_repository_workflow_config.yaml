@@ -1,0 +1,24 @@
+cron_schedule: TypeString
+invocation_config:
+    fully_refresh_incremental_tables_enabled: TypeBool
+    included_tags: TypeList(TypeString)
+    included_targets:
+        database: TypeString
+        name: TypeString
+        schema: TypeString
+    service_account: TypeString
+    transitive_dependencies_included: TypeBool
+    transitive_dependents_included: TypeBool
+name: TypeString
+project: TypeString
+recent_scheduled_execution_records:
+    error_status:
+        code: TypeInt
+        message: TypeString
+    execution_time: TypeString
+    workflow_invocation: TypeString
+region: TypeString
+release_config: TypeString
+repository: TypeString
+time_zone: TypeString
+

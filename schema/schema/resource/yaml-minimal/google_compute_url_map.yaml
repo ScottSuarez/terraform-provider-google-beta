@@ -1,0 +1,305 @@
+creation_timestamp: TypeString
+default_route_action:
+    cors_policy:
+        allow_credentials: TypeBool
+        allow_headers: TypeList(TypeString)
+        allow_methods: TypeList(TypeString)
+        allow_origin_regexes: TypeList(TypeString)
+        allow_origins: TypeList(TypeString)
+        disabled: TypeBool
+        expose_headers: TypeList(TypeString)
+        max_age: TypeInt
+    fault_injection_policy:
+        abort:
+            http_status: TypeInt
+            percentage: TypeFloat
+        delay:
+            fixed_delay:
+                nanos: TypeInt
+                seconds: TypeString
+            percentage: TypeFloat
+    request_mirror_policy:
+        backend_service: TypeString
+    retry_policy:
+        num_retries: TypeInt
+        per_try_timeout:
+            nanos: TypeInt
+            seconds: TypeString
+        retry_conditions: TypeList(TypeString)
+    timeout:
+        nanos: TypeInt
+        seconds: TypeString
+    url_rewrite:
+        host_rewrite: TypeString
+        path_prefix_rewrite: TypeString
+    weighted_backend_services:
+        backend_service: TypeString
+        header_action:
+            request_headers_to_add:
+                header_name: TypeString
+                header_value: TypeString
+                replace: TypeBool
+            request_headers_to_remove: TypeList(TypeString)
+            response_headers_to_add:
+                header_name: TypeString
+                header_value: TypeString
+                replace: TypeBool
+            response_headers_to_remove: TypeList(TypeString)
+        weight: TypeInt
+default_service: TypeString
+default_url_redirect:
+    host_redirect: TypeString
+    https_redirect: TypeBool
+    path_redirect: TypeString
+    prefix_redirect: TypeString
+    redirect_response_code: TypeString
+    strip_query: TypeBool
+description: TypeString
+fingerprint: TypeString
+header_action:
+    request_headers_to_add:
+        header_name: TypeString
+        header_value: TypeString
+        replace: TypeBool
+    request_headers_to_remove: TypeList(TypeString)
+    response_headers_to_add:
+        header_name: TypeString
+        header_value: TypeString
+        replace: TypeBool
+    response_headers_to_remove: TypeList(TypeString)
+host_rule:
+    description: TypeString
+    hosts: TypeSet(TypeString)
+    path_matcher: TypeString
+map_id: TypeInt
+name: TypeString
+path_matcher:
+    default_route_action:
+        cors_policy:
+            allow_credentials: TypeBool
+            allow_headers: TypeList(TypeString)
+            allow_methods: TypeList(TypeString)
+            allow_origin_regexes: TypeList(TypeString)
+            allow_origins: TypeList(TypeString)
+            disabled: TypeBool
+            expose_headers: TypeList(TypeString)
+            max_age: TypeInt
+        fault_injection_policy:
+            abort:
+                http_status: TypeInt
+                percentage: TypeFloat
+            delay:
+                fixed_delay:
+                    nanos: TypeInt
+                    seconds: TypeString
+                percentage: TypeFloat
+        request_mirror_policy:
+            backend_service: TypeString
+        retry_policy:
+            num_retries: TypeInt
+            per_try_timeout:
+                nanos: TypeInt
+                seconds: TypeString
+            retry_conditions: TypeList(TypeString)
+        timeout:
+            nanos: TypeInt
+            seconds: TypeString
+        url_rewrite:
+            host_rewrite: TypeString
+            path_prefix_rewrite: TypeString
+        weighted_backend_services:
+            backend_service: TypeString
+            header_action:
+                request_headers_to_add:
+                    header_name: TypeString
+                    header_value: TypeString
+                    replace: TypeBool
+                request_headers_to_remove: TypeList(TypeString)
+                response_headers_to_add:
+                    header_name: TypeString
+                    header_value: TypeString
+                    replace: TypeBool
+                response_headers_to_remove: TypeList(TypeString)
+            weight: TypeInt
+    default_service: TypeString
+    default_url_redirect:
+        host_redirect: TypeString
+        https_redirect: TypeBool
+        path_redirect: TypeString
+        prefix_redirect: TypeString
+        redirect_response_code: TypeString
+        strip_query: TypeBool
+    description: TypeString
+    header_action:
+        request_headers_to_add:
+            header_name: TypeString
+            header_value: TypeString
+            replace: TypeBool
+        request_headers_to_remove: TypeList(TypeString)
+        response_headers_to_add:
+            header_name: TypeString
+            header_value: TypeString
+            replace: TypeBool
+        response_headers_to_remove: TypeList(TypeString)
+    name: TypeString
+    path_rule:
+        paths: TypeSet(TypeString)
+        route_action:
+            cors_policy:
+                allow_credentials: TypeBool
+                allow_headers: TypeList(TypeString)
+                allow_methods: TypeList(TypeString)
+                allow_origin_regexes: TypeList(TypeString)
+                allow_origins: TypeList(TypeString)
+                disabled: TypeBool
+                expose_headers: TypeList(TypeString)
+                max_age: TypeInt
+            fault_injection_policy:
+                abort:
+                    http_status: TypeInt
+                    percentage: TypeFloat
+                delay:
+                    fixed_delay:
+                        nanos: TypeInt
+                        seconds: TypeString
+                    percentage: TypeFloat
+            request_mirror_policy:
+                backend_service: TypeString
+            retry_policy:
+                num_retries: TypeInt
+                per_try_timeout:
+                    nanos: TypeInt
+                    seconds: TypeString
+                retry_conditions: TypeList(TypeString)
+            timeout:
+                nanos: TypeInt
+                seconds: TypeString
+            url_rewrite:
+                host_rewrite: TypeString
+                path_prefix_rewrite: TypeString
+            weighted_backend_services:
+                backend_service: TypeString
+                header_action:
+                    request_headers_to_add:
+                        header_name: TypeString
+                        header_value: TypeString
+                        replace: TypeBool
+                    request_headers_to_remove: TypeList(TypeString)
+                    response_headers_to_add:
+                        header_name: TypeString
+                        header_value: TypeString
+                        replace: TypeBool
+                    response_headers_to_remove: TypeList(TypeString)
+                weight: TypeInt
+        service: TypeString
+        url_redirect:
+            host_redirect: TypeString
+            https_redirect: TypeBool
+            path_redirect: TypeString
+            prefix_redirect: TypeString
+            redirect_response_code: TypeString
+            strip_query: TypeBool
+    route_rules:
+        header_action:
+            request_headers_to_add:
+                header_name: TypeString
+                header_value: TypeString
+                replace: TypeBool
+            request_headers_to_remove: TypeList(TypeString)
+            response_headers_to_add:
+                header_name: TypeString
+                header_value: TypeString
+                replace: TypeBool
+            response_headers_to_remove: TypeList(TypeString)
+        match_rules:
+            full_path_match: TypeString
+            header_matches:
+                exact_match: TypeString
+                header_name: TypeString
+                invert_match: TypeBool
+                prefix_match: TypeString
+                present_match: TypeBool
+                range_match:
+                    range_end: TypeInt
+                    range_start: TypeInt
+                regex_match: TypeString
+                suffix_match: TypeString
+            ignore_case: TypeBool
+            metadata_filters:
+                filter_labels:
+                    name: TypeString
+                    value: TypeString
+                filter_match_criteria: TypeString
+            path_template_match: TypeString
+            prefix_match: TypeString
+            query_parameter_matches:
+                exact_match: TypeString
+                name: TypeString
+                present_match: TypeBool
+                regex_match: TypeString
+            regex_match: TypeString
+        priority: TypeInt
+        route_action:
+            cors_policy:
+                allow_credentials: TypeBool
+                allow_headers: TypeList(TypeString)
+                allow_methods: TypeList(TypeString)
+                allow_origin_regexes: TypeList(TypeString)
+                allow_origins: TypeList(TypeString)
+                disabled: TypeBool
+                expose_headers: TypeList(TypeString)
+                max_age: TypeInt
+            fault_injection_policy:
+                abort:
+                    http_status: TypeInt
+                    percentage: TypeFloat
+                delay:
+                    fixed_delay:
+                        nanos: TypeInt
+                        seconds: TypeString
+                    percentage: TypeFloat
+            request_mirror_policy:
+                backend_service: TypeString
+            retry_policy:
+                num_retries: TypeInt
+                per_try_timeout:
+                    nanos: TypeInt
+                    seconds: TypeString
+                retry_conditions: TypeList(TypeString)
+            timeout:
+                nanos: TypeInt
+                seconds: TypeString
+            url_rewrite:
+                host_rewrite: TypeString
+                path_prefix_rewrite: TypeString
+                path_template_rewrite: TypeString
+            weighted_backend_services:
+                backend_service: TypeString
+                header_action:
+                    request_headers_to_add:
+                        header_name: TypeString
+                        header_value: TypeString
+                        replace: TypeBool
+                    request_headers_to_remove: TypeList(TypeString)
+                    response_headers_to_add:
+                        header_name: TypeString
+                        header_value: TypeString
+                        replace: TypeBool
+                    response_headers_to_remove: TypeList(TypeString)
+                weight: TypeInt
+        service: TypeString
+        url_redirect:
+            host_redirect: TypeString
+            https_redirect: TypeBool
+            path_redirect: TypeString
+            prefix_redirect: TypeString
+            redirect_response_code: TypeString
+            strip_query: TypeBool
+project: TypeString
+self_link: TypeString
+test:
+    description: TypeString
+    host: TypeString
+    path: TypeString
+    service: TypeString
+

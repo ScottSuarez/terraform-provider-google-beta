@@ -1,0 +1,184 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Annotations on the Bare Metal Node Pool.
+        This field has the same restrictions as Kubernetes annotations.
+        The total size of all keys and values combined is limited to 256k.
+        Key can have 2 segments: prefix (optional) and name (required),
+        separated by a slash (/).
+        Prefix must be a DNS subdomain.
+        Name must be 63 characters or less, begin and end with alphanumerics,
+        with dashes (-), underscores (_), dots (.), and alphanumerics between.
+
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+bare_metal_cluster:
+    Type: TypeString
+    Description: The cluster this node pool belongs to.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: The time the cluster was created, in RFC3339 text format.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: The time the cluster was deleted, in RFC3339 text format.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: The display name for the Bare Metal Node Pool.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        This checksum is computed by the server based on the value of other
+        fields, and may be sent on update and delete requests to ensure the
+        client has an up-to-date value before proceeding.
+        Allows clients to perform consistent read-modify-writes
+        through optimistic concurrency control.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The bare metal node pool name.
+    Required: "true"
+node_pool_config:
+    Type: TypeList
+    Description: Node pool configuration.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        labels:
+            Type: TypeMap
+            Description: |-
+                The map of Kubernetes labels (key/value pairs) to be applied to
+                each node. These will added in addition to any default label(s)
+                that Kubernetes may apply to the node. In case of conflict in
+                label keys, the applied set may differ depending on the Kubernetes
+                version -- it's best to assume the behavior is undefined and
+                conflicts should be avoided. For more information, including usage
+                and the valid values, see:
+                  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+                An object containing a list of "key": value pairs.
+                Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+            Computed: "true"
+            Optional: "true"
+        node_configs:
+            Type: TypeList
+            Description: The list of machine addresses in the Bare Metal Node Pool.
+            Required: "true"
+            Properties:
+                labels:
+                    Type: TypeMap
+                    Description: |-
+                        The map of Kubernetes labels (key/value pairs) to be applied to
+                        each node. These will added in addition to any default label(s)
+                        that Kubernetes may apply to the node. In case of conflict in
+                        label keys, the applied set may differ depending on the Kubernetes
+                        version -- it's best to assume the behavior is undefined and
+                        conflicts should be avoided. For more information, including usage
+                        and the valid values, see:
+                          http://kubernetes.io/v1.1/docs/user-guide/labels.html
+                        An object containing a list of "key": value pairs.
+                        Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+                    Optional: "true"
+                node_ip:
+                    Type: TypeString
+                    Description: |-
+                        The default IPv4 address for SSH access and Kubernetes node.
+                        Example: 192.168.0.1
+                    Optional: "true"
+        operating_system:
+            Type: TypeString
+            Description: 'Specifies the nodes operating system (default: LINUX).'
+            Computed: "true"
+            Optional: "true"
+        taints:
+            Type: TypeList
+            Description: The initial taints assigned to nodes of this node pool.
+            Computed: "true"
+            Optional: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: 'Specifies the nodes operating system (default: LINUX). Possible values: ["EFFECT_UNSPECIFIED", "PREFER_NO_SCHEDULE", "NO_EXECUTE"]'
+                    Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key associated with the effect.
+                    Optional: "true"
+                value:
+                    Type: TypeString
+                    Description: Value associated with the effect.
+                    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the Bare Metal User Cluster.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of this cluster.
+    Computed: "true"
+status:
+    Type: TypeList
+    Description: Specifies detailed node pool status.
+    Computed: "true"
+    Properties:
+        conditions:
+            Type: TypeList
+            Description: ResourceConditions provide a standard mechanism for higher-level status reporting from user cluster controller.
+            Computed: "true"
+            Properties:
+                last_transition_time:
+                    Type: TypeString
+                    Description: Last time the condition transit from one status to another.
+                    Computed: "true"
+                message:
+                    Type: TypeString
+                    Description: Human-readable message indicating details about last transition.
+                    Optional: "true"
+                reason:
+                    Type: TypeString
+                    Description: Machine-readable message indicating details about last transition.
+                    Optional: "true"
+                state:
+                    Type: TypeString
+                    Description: The lifecycle state of the condition.
+                    Computed: "true"
+                type:
+                    Type: TypeString
+                    Description: |-
+                        Type of the condition.
+                        (e.g., ClusterRunning, NodePoolRunning or ServerSidePreflightReady)
+                    Optional: "true"
+        error_message:
+            Type: TypeString
+            Description: |-
+                Human-friendly representation of the error message from the user cluster
+                controller. The error message can be temporary as the user cluster
+                controller creates a cluster or node pool. If the error message persists
+                for a longer period of time, it can be used to surface error message to
+                indicate real problems requiring user intervention.
+            Computed: "true"
+uid:
+    Type: TypeString
+    Description: The unique identifier of the Bare Metal Node Pool.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time the cluster was last updated, in RFC3339 text format.
+    Computed: "true"
+

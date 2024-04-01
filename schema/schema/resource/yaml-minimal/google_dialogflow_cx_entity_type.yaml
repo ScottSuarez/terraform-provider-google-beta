@@ -1,0 +1,14 @@
+auto_expansion_mode: TypeString
+display_name: TypeString
+enable_fuzzy_extraction: TypeBool
+entities:
+    synonyms: TypeList(TypeString)
+    value: TypeString
+excluded_phrases:
+    value: TypeString
+kind: TypeString
+language_code: TypeString
+name: TypeString
+parent: TypeString
+redact: TypeBool
+

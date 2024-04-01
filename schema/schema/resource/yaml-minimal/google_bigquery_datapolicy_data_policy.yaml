@@ -1,0 +1,9 @@
+data_masking_policy:
+    predefined_expression: TypeString
+data_policy_id: TypeString
+data_policy_type: TypeString
+location: TypeString
+name: TypeString
+policy_tag: TypeString
+project: TypeString
+

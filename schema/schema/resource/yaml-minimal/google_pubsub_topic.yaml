@@ -1,0 +1,13 @@
+effective_labels: TypeMap(TypeString)
+kms_key_name: TypeString
+labels: TypeMap(TypeString)
+message_retention_duration: TypeString
+message_storage_policy:
+    allowed_persistence_regions: TypeList(TypeString)
+name: TypeString
+project: TypeString
+schema_settings:
+    encoding: TypeString
+    schema: TypeString
+terraform_labels: TypeMap(TypeString)
+

@@ -1,0 +1,52 @@
+display_name:
+    Type: TypeString
+    Description: The human-readable name of the fulfillment, unique within the agent.
+    Required: "true"
+enabled:
+    Type: TypeBool
+    Description: Whether fulfillment is enabled.
+    Optional: "true"
+features:
+    Type: TypeList
+    Description: The field defines whether the fulfillment is enabled for certain features.
+    Optional: "true"
+    Properties:
+        type:
+            Type: TypeString
+            Description: |-
+                The type of the feature that enabled for fulfillment.
+                * SMALLTALK: Fulfillment is enabled for SmallTalk. Possible values: ["SMALLTALK"]
+            Required: "true"
+generic_web_service:
+    Type: TypeList
+    Description: 'Represents configuration for a generic web service. Dialogflow supports two mechanisms for authentications: - Basic authentication with username and password. - Authentication with additional authentication headers.'
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        password:
+            Type: TypeString
+            Description: The password for HTTP Basic authentication.
+            Optional: "true"
+        request_headers:
+            Type: TypeMap
+            Description: The HTTP request headers to send together with fulfillment requests.
+            Optional: "true"
+        uri:
+            Type: TypeString
+            Description: The fulfillment URI for receiving POST requests. It must use https protocol.
+            Required: "true"
+        username:
+            Type: TypeString
+            Description: The user name for HTTP Basic authentication.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the fulfillment.
+        Format: projects/<Project ID>/agent/fulfillment - projects/<Project ID>/locations/<Location ID>/agent/fulfillment
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

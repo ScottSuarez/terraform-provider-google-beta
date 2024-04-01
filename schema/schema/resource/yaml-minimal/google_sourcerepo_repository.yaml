@@ -1,0 +1,9 @@
+name: TypeString
+project: TypeString
+pubsub_configs:
+    message_format: TypeString
+    service_account_email: TypeString
+    topic: TypeString
+size: TypeInt
+url: TypeString
+

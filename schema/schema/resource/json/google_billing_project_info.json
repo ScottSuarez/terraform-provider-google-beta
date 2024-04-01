@@ -1,0 +1,12 @@
+{
+    "billing_account": {
+        "Description": "The ID of the billing account associated with the project, if\nany. Set to empty string to disable billing for the project.\nFor example, '\"012345-567890-ABCDEF\"' or '\"\"'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

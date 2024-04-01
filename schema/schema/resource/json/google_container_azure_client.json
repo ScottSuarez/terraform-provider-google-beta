@@ -1,0 +1,43 @@
+{
+    "application_id": {
+        "Description": "The Azure Active Directory Application ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "certificate": {
+        "Computed": true,
+        "Description": "Output only. The PEM encoded x509 certificate.",
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time at which this resource was created.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of this resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "tenant_id": {
+        "Description": "The Azure Active Directory Tenant ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. A globally unique identifier for the client.",
+        "Type": "TypeString"
+    }
+}

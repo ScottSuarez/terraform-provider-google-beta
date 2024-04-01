@@ -1,0 +1,4 @@
+project: TypeString
+versions: TypeList(TypeString)
+zone: TypeString
+

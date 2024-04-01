@@ -1,0 +1,10 @@
+etag:
+    Type: TypeString
+    Computed: "true"
+folder:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+

@@ -1,0 +1,39 @@
+accelerators:
+    accelerator_type: TypeString
+    state: TypeString
+api_endpoint: TypeString
+create_time: TypeString
+crypto_key_config:
+    key_reference: TypeString
+dataproc_service_account: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+enable_rbac: TypeBool
+enable_stackdriver_logging: TypeBool
+enable_stackdriver_monitoring: TypeBool
+event_publish_config:
+    enabled: TypeBool
+    topic: TypeString
+gcs_bucket: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+network_config:
+    ip_allocation: TypeString
+    network: TypeString
+options: TypeMap(TypeString)
+p4_service_account: TypeString
+private_instance: TypeBool
+project: TypeString
+region: TypeString
+service_account: TypeString
+service_endpoint: TypeString
+state: TypeString
+state_message: TypeString
+tenant_project_id: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+update_time: TypeString
+version: TypeString
+zone: TypeString
+

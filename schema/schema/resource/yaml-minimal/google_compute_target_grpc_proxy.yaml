@@ -1,0 +1,10 @@
+creation_timestamp: TypeString
+description: TypeString
+fingerprint: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+self_link_with_id: TypeString
+url_map: TypeString
+validate_for_proxyless: TypeBool
+

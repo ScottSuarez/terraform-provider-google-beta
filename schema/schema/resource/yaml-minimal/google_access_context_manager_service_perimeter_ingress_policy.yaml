@@ -1,0 +1,15 @@
+ingress_from:
+    identities: TypeList(TypeString)
+    identity_type: TypeString
+    sources:
+        access_level: TypeString
+        resource: TypeString
+ingress_to:
+    operations:
+        method_selectors:
+            method: TypeString
+            permission: TypeString
+        service_name: TypeString
+    resources: TypeList(TypeString)
+perimeter: TypeString
+

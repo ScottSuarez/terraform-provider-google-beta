@@ -1,0 +1,10 @@
+create_time: TypeString
+description: TypeString
+external_ip: TypeString
+internal_ip: TypeString
+name: TypeString
+parent: TypeString
+state: TypeString
+uid: TypeString
+update_time: TypeString
+

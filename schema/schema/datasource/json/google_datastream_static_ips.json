@@ -1,0 +1,14 @@
+{
+    "location": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "static_ips": {
+        "Computed": true,
+        "Type": "TypeList"
+    }
+}

@@ -1,0 +1,7 @@
+billing_account_id: TypeString
+deletion_policy: TypeString
+display_name: TypeString
+master_billing_account: TypeString
+name: TypeString
+open: TypeBool
+

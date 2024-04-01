@@ -1,0 +1,17 @@
+create_time: TypeString
+default_cluster_config:
+    binary_authorization_config:
+        evaluation_mode: TypeString
+        policy_bindings:
+            name: TypeString
+    security_posture_config:
+        mode: TypeString
+        vulnerability_mode: TypeString
+delete_time: TypeString
+display_name: TypeString
+project: TypeString
+state:
+    code: TypeString
+uid: TypeString
+update_time: TypeString
+

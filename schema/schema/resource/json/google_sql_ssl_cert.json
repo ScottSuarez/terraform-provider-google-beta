@@ -1,0 +1,53 @@
+{
+    "cert": {
+        "Computed": true,
+        "Description": "The actual certificate data for this client certificate.",
+        "Type": "TypeString"
+    },
+    "cert_serial_number": {
+        "Computed": true,
+        "Description": "The serial number extracted from the certificate data.",
+        "Type": "TypeString"
+    },
+    "common_name": {
+        "Description": "The common name to be used in the certificate to identify the client. Constrained to [a-zA-Z.-_ ]+. Changing this forces a new resource to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time when the certificate was created in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.",
+        "Type": "TypeString"
+    },
+    "expiration_time": {
+        "Computed": true,
+        "Description": "The time when the certificate expires in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.",
+        "Type": "TypeString"
+    },
+    "instance": {
+        "Description": "The name of the Cloud SQL instance. Changing this forces a new resource to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "private_key": {
+        "Computed": true,
+        "Description": "The private key associated with the client certificate.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "server_ca_cert": {
+        "Computed": true,
+        "Description": "The CA cert of the server this client cert was generated from.",
+        "Type": "TypeString"
+    },
+    "sha1_fingerprint": {
+        "Computed": true,
+        "Description": "The SHA1 Fingerprint of the certificate.",
+        "Type": "TypeString"
+    }
+}

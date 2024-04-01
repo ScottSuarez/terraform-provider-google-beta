@@ -1,0 +1,13 @@
+consumer_project:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+service_name:
+    Type: TypeString
+    Required: "true"
+

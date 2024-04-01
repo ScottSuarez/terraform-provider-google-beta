@@ -1,0 +1,12 @@
+alternative_name_server_config:
+    target_name_servers:
+        forwarding_path: TypeString
+        ipv4_address: TypeString
+description: TypeString
+enable_inbound_forwarding: TypeBool
+enable_logging: TypeBool
+name: TypeString
+networks:
+    network_url: TypeString
+project: TypeString
+

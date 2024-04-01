@@ -1,0 +1,28 @@
+create_time:
+    Type: TypeString
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Computed: "true"
+folder:
+    Type: TypeString
+    Required: "true"
+folder_id:
+    Type: TypeString
+    Computed: "true"
+lifecycle_state:
+    Type: TypeString
+    Computed: "true"
+lookup_organization:
+    Type: TypeBool
+    Optional: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+organization:
+    Type: TypeString
+    Computed: "true"
+parent:
+    Type: TypeString
+    Computed: "true"
+

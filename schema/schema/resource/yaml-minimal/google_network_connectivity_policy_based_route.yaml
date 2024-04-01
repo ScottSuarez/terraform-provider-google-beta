@@ -1,0 +1,27 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+filter:
+    dest_range: TypeString
+    ip_protocol: TypeString
+    protocol_version: TypeString
+    src_range: TypeString
+interconnect_attachment:
+    region: TypeString
+kind: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+next_hop_ilb_ip: TypeString
+next_hop_other_routes: TypeString
+priority: TypeInt
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+virtual_machine:
+    tags: TypeList(TypeString)
+warnings:
+    code: TypeString
+    data: TypeMap(TypeString)
+    warning_message: TypeString
+

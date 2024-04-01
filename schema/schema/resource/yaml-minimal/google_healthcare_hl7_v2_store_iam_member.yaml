@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+hl7_v2_store_id: TypeString
+member: TypeString
+role: TypeString
+

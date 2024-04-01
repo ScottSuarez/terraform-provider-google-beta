@@ -1,0 +1,20 @@
+display_name: TypeString
+key_string: TypeString
+name: TypeString
+project: TypeString
+restrictions:
+    android_key_restrictions:
+        allowed_applications:
+            package_name: TypeString
+            sha1_fingerprint: TypeString
+    api_targets:
+        methods: TypeList(TypeString)
+        service: TypeString
+    browser_key_restrictions:
+        allowed_referrers: TypeList(TypeString)
+    ios_key_restrictions:
+        allowed_bundle_ids: TypeList(TypeString)
+    server_key_restrictions:
+        allowed_ips: TypeList(TypeString)
+uid: TypeString
+

@@ -1,0 +1,5 @@
+brand: TypeString
+client_id: TypeString
+display_name: TypeString
+secret: TypeString
+

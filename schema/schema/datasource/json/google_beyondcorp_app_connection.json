@@ -1,0 +1,90 @@
+{
+    "application_endpoint": {
+        "Computed": true,
+        "Description": "Address of the remote application endpoint for the BeyondCorp AppConnection.",
+        "Properties": {
+            "host": {
+                "Computed": true,
+                "Description": "Hostname or IP address of the remote application endpoint.",
+                "Type": "TypeString"
+            },
+            "port": {
+                "Computed": true,
+                "Description": "Port of the remote application endpoint.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "connectors": {
+        "Computed": true,
+        "Description": "List of AppConnectors that are authorised to be associated with this AppConnection",
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "An arbitrary user-provided name for the AppConnection.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gateway": {
+        "Computed": true,
+        "Description": "Gateway used by the AppConnection.",
+        "Properties": {
+            "app_gateway": {
+                "Computed": true,
+                "Description": "AppGateway name in following format: projects/{project_id}/locations/{locationId}/appgateways/{gateway_id}.",
+                "Type": "TypeString"
+            },
+            "ingress_port": {
+                "Computed": true,
+                "Description": "Ingress port reserved on the gateways for this AppConnection, if not specified or zero, the default port is 19443.",
+                "Type": "TypeInt"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The type of hosting used by the gateway. Refer to\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#Type_1\nfor a list of possible values.",
+                "Type": "TypeString"
+            },
+            "uri": {
+                "Computed": true,
+                "Description": "Server-defined URI for this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Resource labels to represent user provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "ID of the AppConnection.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region of the AppConnection.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "The type of network connectivity used by the AppConnection. Refer to\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type\nfor a list of possible values.",
+        "Type": "TypeString"
+    }
+}

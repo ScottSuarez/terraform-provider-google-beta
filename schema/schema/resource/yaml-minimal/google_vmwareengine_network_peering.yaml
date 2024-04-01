@@ -1,0 +1,17 @@
+create_time: TypeString
+description: TypeString
+export_custom_routes: TypeBool
+export_custom_routes_with_public_ip: TypeBool
+import_custom_routes: TypeBool
+import_custom_routes_with_public_ip: TypeBool
+name: TypeString
+peer_network: TypeString
+peer_network_type: TypeString
+project: TypeString
+state: TypeString
+state_details: TypeString
+uid: TypeString
+update_time: TypeString
+vmware_engine_network: TypeString
+vmware_engine_network_canonical: TypeString
+

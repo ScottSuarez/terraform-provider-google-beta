@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+dicom_store_id: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+role: TypeString
+

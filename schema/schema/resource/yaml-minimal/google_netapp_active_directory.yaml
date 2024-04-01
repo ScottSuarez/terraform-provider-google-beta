@@ -1,0 +1,26 @@
+aes_encryption: TypeBool
+backup_operators: TypeList(TypeString)
+create_time: TypeString
+description: TypeString
+dns: TypeString
+domain: TypeString
+effective_labels: TypeMap(TypeString)
+encrypt_dc_connections: TypeBool
+kdc_hostname: TypeString
+kdc_ip: TypeString
+labels: TypeMap(TypeString)
+ldap_signing: TypeBool
+location: TypeString
+name: TypeString
+net_bios_prefix: TypeString
+nfs_users_with_ldap: TypeBool
+organizational_unit: TypeString
+password: TypeString
+project: TypeString
+security_operators: TypeList(TypeString)
+site: TypeString
+state: TypeString
+state_details: TypeString
+terraform_labels: TypeMap(TypeString)
+username: TypeString
+

@@ -1,0 +1,135 @@
+action:
+    Type: TypeString
+    Description: The Action to perform when the client connection triggers the rule. Valid actions are "allow", "deny" and "goto_next".
+    Required: "true"
+description:
+    Type: TypeString
+    Description: An optional description for this resource.
+    Optional: "true"
+direction:
+    Type: TypeString
+    Description: 'The direction in which this rule applies. Possible values: INGRESS, EGRESS'
+    Required: "true"
+disabled:
+    Type: TypeBool
+    Description: Denotes whether the firewall policy rule is disabled. When set to true, the firewall policy rule is not enforced and traffic behaves as if it did not exist. If this is unspecified, the firewall policy rule will be enabled.
+    Optional: "true"
+enable_logging:
+    Type: TypeBool
+    Description: 'Denotes whether to enable logging for a particular rule. If logging is enabled, logs will be exported to the configured export destination in Stackdriver. Logs may be exported to BigQuery or Pub/Sub. Note: you cannot enable logging on "goto_next" rules.'
+    Optional: "true"
+firewall_policy:
+    Type: TypeString
+    Description: The firewall policy of the resource.
+    Required: "true"
+kind:
+    Type: TypeString
+    Description: Type of the resource. Always `compute#firewallPolicyRule` for firewall policy rules
+    Computed: "true"
+match:
+    Type: TypeList
+    Description: A match condition that incoming traffic is evaluated against. If it evaluates to true, the corresponding 'action' is enforced.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        dest_address_groups:
+            Type: TypeList
+            Description: Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10. Destination address groups is only supported in Egress rules.
+            Optional: "true"
+        dest_fqdns:
+            Type: TypeList
+            Description: Domain names that will be used to match against the resolved domain name of destination of traffic. Can only be specified if DIRECTION is egress.
+            Optional: "true"
+        dest_ip_ranges:
+            Type: TypeList
+            Description: CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 5000.
+            Optional: "true"
+        dest_region_codes:
+            Type: TypeList
+            Description: The Unicode country codes whose IP addresses will be used to match against the source of traffic. Can only be specified if DIRECTION is egress.
+            Optional: "true"
+        dest_threat_intelligences:
+            Type: TypeList
+            Description: Name of the Google Cloud Threat Intelligence list.
+            Optional: "true"
+        layer4_configs:
+            Type: TypeList
+            Description: Pairs of IP protocols and ports that the rule should match.
+            Required: "true"
+            Properties:
+                ip_protocol:
+                    Type: TypeString
+                    Description: The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (`tcp`, `udp`, `icmp`, `esp`, `ah`, `ipip`, `sctp`), or the IP protocol number.
+                    Required: "true"
+                ports:
+                    Type: TypeList
+                    Description: 'An optional list of ports to which this rule applies. This field is only applicable for UDP or TCP protocol. Each entry must be either an integer or a range. If not specified, this rule applies to connections through any port. Example inputs include: ``.'
+                    Optional: "true"
+        src_address_groups:
+            Type: TypeList
+            Description: Address groups which should be matched against the traffic source. Maximum number of source address groups is 10. Source address groups is only supported in Ingress rules.
+            Optional: "true"
+        src_fqdns:
+            Type: TypeList
+            Description: Domain names that will be used to match against the resolved domain name of source of traffic. Can only be specified if DIRECTION is ingress.
+            Optional: "true"
+        src_ip_ranges:
+            Type: TypeList
+            Description: CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 5000.
+            Optional: "true"
+        src_region_codes:
+            Type: TypeList
+            Description: The Unicode country codes whose IP addresses will be used to match against the source of traffic. Can only be specified if DIRECTION is ingress.
+            Optional: "true"
+        src_secure_tags:
+            Type: TypeList
+            Description: List of secure tag values, which should be matched at the source of the traffic. For INGRESS rule, if all the <code>srcSecureTag</code> are INEFFECTIVE, and there is no <code>srcIpRange</code>, this rule will be ignored. Maximum number of source tag values allowed is 256.
+            Optional: "true"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: Name of the secure tag, created with TagManager's TagValue API. @pattern tagValues/[0-9]+
+                    Required: "true"
+                state:
+                    Type: TypeString
+                    Description: '[Output Only] State of the secure tag, either `EFFECTIVE` or `INEFFECTIVE`. A secure tag is `INEFFECTIVE` when it is deleted or its network is deleted.'
+                    Computed: "true"
+        src_threat_intelligences:
+            Type: TypeList
+            Description: Name of the Google Cloud Threat Intelligence list.
+            Optional: "true"
+priority:
+    Type: TypeInt
+    Description: An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest prority.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+rule_name:
+    Type: TypeString
+    Description: An optional name for the rule. This field is not a unique identifier and can be updated.
+    Optional: "true"
+rule_tuple_count:
+    Type: TypeInt
+    Description: Calculation of the complexity of a single firewall policy rule.
+    Computed: "true"
+target_secure_tags:
+    Type: TypeList
+    Description: A list of secure tags that controls which instances the firewall rule applies to. If <code>targetSecureTag</code> are specified, then the firewall rule applies only to instances in the VPC network that have one of those EFFECTIVE secure tags, if all the target_secure_tag are in INEFFECTIVE state, then this rule will be ignored. <code>targetSecureTag</code> may not be set at the same time as <code>targetServiceAccounts</code>. If neither <code>targetServiceAccounts</code> nor <code>targetSecureTag</code> are specified, the firewall rule applies to all instances on the specified network. Maximum number of target label tags allowed is 256.
+    Optional: "true"
+    Properties:
+        name:
+            Type: TypeString
+            Description: Name of the secure tag, created with TagManager's TagValue API. @pattern tagValues/[0-9]+
+            Required: "true"
+        state:
+            Type: TypeString
+            Description: '[Output Only] State of the secure tag, either `EFFECTIVE` or `INEFFECTIVE`. A secure tag is `INEFFECTIVE` when it is deleted or its network is deleted.'
+            Computed: "true"
+target_service_accounts:
+    Type: TypeList
+    Description: A list of service accounts indicating the sets of instances that are applied with this rule.
+    Optional: "true"
+

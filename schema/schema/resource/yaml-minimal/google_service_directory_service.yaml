@@ -1,0 +1,5 @@
+metadata: TypeMap(TypeString)
+name: TypeString
+namespace: TypeString
+service_id: TypeString
+

@@ -1,0 +1,32 @@
+aws_v4_authentication:
+    access_key_id: TypeString
+    origin_region: TypeString
+    secret_access_key_version: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+failover_origin: TypeString
+labels: TypeMap(TypeString)
+max_attempts: TypeInt
+name: TypeString
+origin_address: TypeString
+origin_override_action:
+    header_action:
+        request_headers_to_add:
+            header_name: TypeString
+            header_value: TypeString
+            replace: TypeBool
+    url_rewrite:
+        host_rewrite: TypeString
+origin_redirect:
+    redirect_conditions: TypeList(TypeString)
+port: TypeInt
+project: TypeString
+protocol: TypeString
+retry_conditions: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+timeout:
+    connect_timeout: TypeString
+    max_attempts_timeout: TypeString
+    read_timeout: TypeString
+    response_timeout: TypeString
+

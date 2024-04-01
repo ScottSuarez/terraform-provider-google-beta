@@ -1,0 +1,5 @@
+instance_id: TypeString
+ip_address: TypeString
+name: TypeString
+state: TypeString
+

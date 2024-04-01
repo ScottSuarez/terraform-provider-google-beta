@@ -1,0 +1,63 @@
+description:
+    Type: TypeString
+    Description: A text description of the resource.
+    Optional: "true"
+guest_flush:
+    Type: TypeBool
+    Description: |-
+        Specify this to create an application consistent machine image by informing the OS to prepare for the snapshot process.
+        Currently only supported on Windows instances using the Volume Shadow Copy Service (VSS).
+    Optional: "true"
+machine_image_encryption_key:
+    Type: TypeList
+    Description: |-
+        Encrypts the machine image using a customer-supplied encryption key.
+
+        After you encrypt a machine image with a customer-supplied key, you must
+        provide the same key if you use the machine image later (e.g. to create a
+        instance from the image)
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key_name:
+            Type: TypeString
+            Description: The name of the encryption key that is stored in Google Cloud KMS.
+            Optional: "true"
+        kms_key_service_account:
+            Type: TypeString
+            Description: |-
+                The service account used for the encryption request for the given KMS key.
+                If absent, the Compute Engine Service Agent service account is used.
+            Optional: "true"
+        raw_key:
+            Type: TypeString
+            Description: |-
+                Specifies a 256-bit customer-supplied encryption key, encoded in
+                RFC 4648 base64 to either encrypt or decrypt this resource.
+            Optional: "true"
+        sha256:
+            Type: TypeString
+            Description: |-
+                The RFC 4648 base64 encoded SHA-256 hash of the
+                customer-supplied encryption key that protects this resource.
+            Computed: "true"
+name:
+    Type: TypeString
+    Description: Name of the resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+source_instance:
+    Type: TypeString
+    Description: The source instance used to create the machine image. You can provide this as a partial or full URL to the resource.
+    Required: "true"
+storage_locations:
+    Type: TypeList
+    Description: The regional or multi-regional Cloud Storage bucket location where the machine image is stored.
+    Computed: "true"
+

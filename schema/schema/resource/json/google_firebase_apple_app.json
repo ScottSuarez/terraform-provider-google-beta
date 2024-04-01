@@ -1,0 +1,48 @@
+{
+    "api_key_id": {
+        "Computed": true,
+        "Description": "The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the AppleApp.\nIf apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the AppleApp.\nThis auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "app_id": {
+        "Computed": true,
+        "Description": "The globally unique, Firebase-assigned identifier of the App.\nThis identifier should be treated as an opaque token, as the data format is not specified.",
+        "Type": "TypeString"
+    },
+    "app_store_id": {
+        "Description": "The automatically generated Apple ID assigned to the Apple app by Apple in the Apple App Store.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "bundle_id": {
+        "Description": "The canonical bundle ID of the Apple app as it would appear in the Apple AppStore.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Description": "(Optional) Set to 'ABANDON' to allow the Apple to be untracked from terraform state\nrather than deleted upon 'terraform destroy'. This is useful because the Apple may be\nserving traffic. Set to 'DELETE' to delete the Apple. Defaults to 'DELETE'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The user-assigned display name of the App.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully qualified resource name of the App, for example:\nprojects/projectId/iosApps/appId",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "team_id": {
+        "Description": "The Apple Developer Team ID associated with the App in the App Store.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

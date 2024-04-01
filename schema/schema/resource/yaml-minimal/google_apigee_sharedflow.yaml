@@ -1,0 +1,12 @@
+config_bundle: TypeString
+detect_md5hash: TypeString
+latest_revision_id: TypeString
+md5hash: TypeString
+meta_data:
+    created_at: TypeString
+    last_modified_at: TypeString
+    sub_type: TypeString
+name: TypeString
+org_id: TypeString
+revision: TypeList(TypeString)
+

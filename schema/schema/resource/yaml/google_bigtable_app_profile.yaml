@@ -1,0 +1,66 @@
+app_profile_id:
+    Type: TypeString
+    Description: The unique name of the app profile in the form '[_a-zA-Z0-9][-_.a-zA-Z0-9]*'.
+    Required: "true"
+description:
+    Type: TypeString
+    Description: Long form description of the use case for this app profile.
+    Optional: "true"
+ignore_warnings:
+    Type: TypeBool
+    Description: If true, ignore safety checks when deleting/updating the app profile.
+    Optional: "true"
+instance:
+    Type: TypeString
+    Description: The name of the instance to create the app profile within.
+    Optional: "true"
+multi_cluster_routing_cluster_ids:
+    Type: TypeList
+    Description: The set of clusters to route to. The order is ignored; clusters will be tried in order of distance. If left empty, all clusters are eligible.
+    Optional: "true"
+    ConflictsWith: single_cluster_routing
+multi_cluster_routing_use_any:
+    Type: TypeBool
+    Description: |-
+        If true, read/write requests are routed to the nearest cluster in the instance, and will fail over to the nearest cluster that is available
+        in the event of transient errors or delays. Clusters in a region are considered equidistant. Choosing this option sacrifices read-your-writes
+        consistency to improve availability.
+    Optional: "true"
+    ExactlyOneOf: single_cluster_routing, multi_cluster_routing_use_any
+name:
+    Type: TypeString
+    Description: The unique name of the requested app profile. Values are of the form 'projects/<project>/instances/<instance>/appProfiles/<appProfileId>'.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+single_cluster_routing:
+    Type: TypeList
+    Description: Use a single-cluster routing policy.
+    Optional: "true"
+    ExactlyOneOf: single_cluster_routing, multi_cluster_routing_use_any
+    MaxItems: "1"
+    Properties:
+        allow_transactional_writes:
+            Type: TypeBool
+            Description: |-
+                If true, CheckAndMutateRow and ReadModifyWriteRow requests are allowed by this app profile.
+                It is unsafe to send these requests to the same table/row/column in multiple clusters.
+            Optional: "true"
+        cluster_id:
+            Type: TypeString
+            Description: The cluster to which read/write requests should be routed.
+            Required: "true"
+standard_isolation:
+    Type: TypeList
+    Description: The standard options used for isolating this app profile's traffic from other use cases.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        priority:
+            Type: TypeString
+            Description: 'The priority of requests sent using this app profile. Possible values: ["PRIORITY_LOW", "PRIORITY_MEDIUM", "PRIORITY_HIGH"]'
+            Required: "true"
+

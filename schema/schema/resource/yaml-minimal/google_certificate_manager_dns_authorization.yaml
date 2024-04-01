@@ -1,0 +1,12 @@
+description: TypeString
+dns_resource_record:
+    data: TypeString
+    name: TypeString
+    type: TypeString
+domain: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

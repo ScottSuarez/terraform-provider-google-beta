@@ -1,0 +1,18 @@
+application_endpoint:
+    host: TypeString
+    port: TypeInt
+connectors: TypeList(TypeString)
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+gateway:
+    app_gateway: TypeString
+    ingress_port: TypeInt
+    type: TypeString
+    uri: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+

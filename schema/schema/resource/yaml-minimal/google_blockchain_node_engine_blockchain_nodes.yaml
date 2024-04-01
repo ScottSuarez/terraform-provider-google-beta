@@ -1,0 +1,31 @@
+blockchain_node_id: TypeString
+blockchain_type: TypeString
+connection_info:
+    endpoint_info:
+        json_rpc_api_endpoint: TypeString
+        websockets_api_endpoint: TypeString
+    service_attachment: TypeString
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+ethereum_details:
+    additional_endpoints:
+        beacon_api_endpoint: TypeString
+        beacon_prometheus_metrics_api_endpoint: TypeString
+        execution_client_prometheus_metrics_api_endpoint: TypeString
+    api_enable_admin: TypeBool
+    api_enable_debug: TypeBool
+    consensus_client: TypeString
+    execution_client: TypeString
+    geth_details:
+        garbage_collection_mode: TypeString
+    network: TypeString
+    node_type: TypeString
+    validator_config:
+        mev_relay_urls: TypeList(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

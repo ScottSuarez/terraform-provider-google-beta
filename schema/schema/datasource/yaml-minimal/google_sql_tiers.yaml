@@ -1,0 +1,7 @@
+project: TypeString
+tiers:
+    disk_quota: TypeInt
+    ram: TypeInt
+    region: TypeList(TypeString)
+    tier: TypeString
+

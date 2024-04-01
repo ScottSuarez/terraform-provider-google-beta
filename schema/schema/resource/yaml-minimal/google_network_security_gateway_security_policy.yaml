@@ -1,0 +1,9 @@
+create_time: TypeString
+description: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+tls_inspection_policy: TypeString
+update_time: TypeString
+

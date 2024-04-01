@@ -1,0 +1,20 @@
+bucket:
+    Type: TypeString
+    Description: The name of the bucket it applies to.
+    Required: "true"
+default_acl:
+    Type: TypeString
+    Description: Configure this ACL to be the default ACL.
+    Optional: "true"
+predefined_acl:
+    Type: TypeString
+    Description: The canned GCS ACL to apply. Must be set if role_entity is not.
+    Optional: "true"
+    ConflictsWith: role_entity
+role_entity:
+    Type: TypeList
+    Description: List of role/entity pairs in the form ROLE:entity. See GCS Bucket ACL documentation  for more details. Must be set if predefined_acl is not.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: predefined_acl
+

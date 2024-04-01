@@ -1,0 +1,64 @@
+{
+    "description": {
+        "Description": "A text description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "guest_flush": {
+        "Description": "Specify this to create an application consistent machine image by informing the OS to prepare for the snapshot process.\nCurrently only supported on Windows instances using the Volume Shadow Copy Service (VSS).",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "machine_image_encryption_key": {
+        "Description": "Encrypts the machine image using a customer-supplied encryption key.\n\nAfter you encrypt a machine image with a customer-supplied key, you must\nprovide the same key if you use the machine image later (e.g. to create a\ninstance from the image)",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "kms_key_name": {
+                "Description": "The name of the encryption key that is stored in Google Cloud KMS.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "kms_key_service_account": {
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the\ncustomer-supplied encryption key that protects this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "source_instance": {
+        "Description": "The source instance used to create the machine image. You can provide this as a partial or full URL to the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "storage_locations": {
+        "Computed": true,
+        "Description": "The regional or multi-regional Cloud Storage bucket location where the machine image is stored.",
+        "Type": "TypeList"
+    }
+}

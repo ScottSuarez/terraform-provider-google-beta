@@ -1,0 +1,55 @@
+create_time:
+    Type: TypeString
+    Description: Output only. The time the hub was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of the hub.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional labels in key:value format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: 'Immutable. The name of the hub. Hub names must be unique. They use the following form: `projects/{project_number}/locations/global/hubs/{hub_id}`'
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+routing_vpcs:
+    Type: TypeList
+    Description: The VPC network associated with this hub's spokes. All of the VPN tunnels, VLAN attachments, and router appliance instances referenced by this hub's spokes must belong to this VPC network. This field is read-only. Network Connectivity Center automatically populates it based on the set of spokes attached to the hub.
+    Computed: "true"
+    Properties:
+        uri:
+            Type: TypeString
+            Description: The URI of the VPC network.
+            Computed: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. The current lifecycle state of this hub. Possible values: STATE_UNSPECIFIED, CREATING, ACTIVE, DELETING'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+unique_id:
+    Type: TypeString
+    Description: Output only. The Google-generated UUID for the hub. This value is unique across all hub resources. If a hub is deleted and another with the same name is created, the new hub is assigned a different unique_id.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The time the hub was last updated.
+    Computed: "true"
+

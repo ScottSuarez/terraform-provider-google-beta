@@ -1,0 +1,11 @@
+creation_timestamp: TypeString
+description: TypeString
+fingerprint: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+security_policy: TypeString
+self_link: TypeString
+self_link_with_service_id: TypeString
+service_id: TypeString
+

@@ -1,0 +1,90 @@
+{
+    "addons_config": {
+        "Description": "Addon configurations of the Apigee organization.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "advanced_api_ops_config": {
+                "Description": "Configuration for the Monetization add-on.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "api_security_config": {
+                "Description": "Configuration for the Monetization add-on.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "expires_at": {
+                        "Computed": true,
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "connectors_platform_config": {
+                "Description": "Configuration for the Monetization add-on.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "expires_at": {
+                        "Computed": true,
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "integration_config": {
+                "Description": "Configuration for the Monetization add-on.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "monetization_config": {
+                "Description": "Configuration for the Monetization add-on.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Flag that specifies whether the Advanced API Ops add-on is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "org": {
+        "Description": "Name of the Apigee organization.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

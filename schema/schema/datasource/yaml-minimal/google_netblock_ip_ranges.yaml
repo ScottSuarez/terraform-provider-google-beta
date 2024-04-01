@@ -1,0 +1,5 @@
+cidr_blocks: TypeList(TypeString)
+cidr_blocks_ipv4: TypeList(TypeString)
+cidr_blocks_ipv6: TypeList(TypeString)
+range_type: TypeString
+

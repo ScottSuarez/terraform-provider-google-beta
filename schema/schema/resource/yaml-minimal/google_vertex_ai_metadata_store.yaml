@@ -1,0 +1,11 @@
+create_time: TypeString
+description: TypeString
+encryption_spec:
+    kms_key_name: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+state:
+    disk_utilization_bytes: TypeString
+update_time: TypeString
+

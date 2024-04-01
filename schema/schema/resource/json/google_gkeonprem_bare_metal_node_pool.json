@@ -1,0 +1,176 @@
+{
+    "annotations": {
+        "Description": "Annotations on the Bare Metal Node Pool.\nThis field has the same restrictions as Kubernetes annotations.\nThe total size of all keys and values combined is limited to 256k.\nKey can have 2 segments: prefix (optional) and name (required),\nseparated by a slash (/).\nPrefix must be a DNS subdomain.\nName must be 63 characters or less, begin and end with alphanumerics,\nwith dashes (-), underscores (_), dots (.), and alphanumerics between.\n\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "bare_metal_cluster": {
+        "Description": "The cluster this node pool belongs to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time the cluster was created, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "The time the cluster was deleted, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The display name for the Bare Metal Node Pool.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other\nfields, and may be sent on update and delete requests to ensure the\nclient has an up-to-date value before proceeding.\nAllows clients to perform consistent read-modify-writes\nthrough optimistic concurrency control.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The bare metal node pool name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_pool_config": {
+        "Description": "Node pool configuration.",
+        "MaxItems": 1,
+        "Properties": {
+            "labels": {
+                "Computed": true,
+                "Description": "The map of Kubernetes labels (key/value pairs) to be applied to\neach node. These will added in addition to any default label(s)\nthat Kubernetes may apply to the node. In case of conflict in\nlabel keys, the applied set may differ depending on the Kubernetes\nversion -- it's best to assume the behavior is undefined and\nconflicts should be avoided. For more information, including usage\nand the valid values, see:\n  http://kubernetes.io/v1.1/docs/user-guide/labels.html\nAn object containing a list of \"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "node_configs": {
+                "Description": "The list of machine addresses in the Bare Metal Node Pool.",
+                "Properties": {
+                    "labels": {
+                        "Description": "The map of Kubernetes labels (key/value pairs) to be applied to\neach node. These will added in addition to any default label(s)\nthat Kubernetes may apply to the node. In case of conflict in\nlabel keys, the applied set may differ depending on the Kubernetes\nversion -- it's best to assume the behavior is undefined and\nconflicts should be avoided. For more information, including usage\nand the valid values, see:\n  http://kubernetes.io/v1.1/docs/user-guide/labels.html\nAn object containing a list of \"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    },
+                    "node_ip": {
+                        "Description": "The default IPv4 address for SSH access and Kubernetes node.\nExample: 192.168.0.1",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "operating_system": {
+                "Computed": true,
+                "Description": "Specifies the nodes operating system (default: LINUX).",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "taints": {
+                "Computed": true,
+                "Description": "The initial taints assigned to nodes of this node pool.",
+                "Optional": true,
+                "Properties": {
+                    "effect": {
+                        "Description": "Specifies the nodes operating system (default: LINUX). Possible values: [\"EFFECT_UNSPECIFIED\", \"PREFER_NO_SCHEDULE\", \"NO_EXECUTE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "key": {
+                        "Description": "Key associated with the effect.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "value": {
+                        "Description": "Value associated with the effect.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "If set, there are currently changes in flight to the Bare Metal User Cluster.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of this cluster.",
+        "Type": "TypeString"
+    },
+    "status": {
+        "Computed": true,
+        "Description": "Specifies detailed node pool status.",
+        "Properties": {
+            "conditions": {
+                "Computed": true,
+                "Description": "ResourceConditions provide a standard mechanism for higher-level status reporting from user cluster controller.",
+                "Properties": {
+                    "last_transition_time": {
+                        "Computed": true,
+                        "Description": "Last time the condition transit from one status to another.",
+                        "Type": "TypeString"
+                    },
+                    "message": {
+                        "Description": "Human-readable message indicating details about last transition.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "reason": {
+                        "Description": "Machine-readable message indicating details about last transition.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Computed": true,
+                        "Description": "The lifecycle state of the condition.",
+                        "Type": "TypeString"
+                    },
+                    "type": {
+                        "Description": "Type of the condition.\n(e.g., ClusterRunning, NodePoolRunning or ServerSidePreflightReady)",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "error_message": {
+                "Computed": true,
+                "Description": "Human-friendly representation of the error message from the user cluster\ncontroller. The error message can be temporary as the user cluster\ncontroller creates a cluster or node pool. If the error message persists\nfor a longer period of time, it can be used to surface error message to\nindicate real problems requiring user intervention.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "The unique identifier of the Bare Metal Node Pool.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time the cluster was last updated, in RFC3339 text format.",
+        "Type": "TypeString"
+    }
+}

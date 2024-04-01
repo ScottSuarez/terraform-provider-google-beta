@@ -1,0 +1,14 @@
+auto_create_subnetworks: TypeBool
+delete_default_routes_on_create: TypeBool
+description: TypeString
+enable_ula_internal_ipv6: TypeBool
+gateway_ipv4: TypeString
+internal_ipv6_range: TypeString
+mtu: TypeInt
+name: TypeString
+network_firewall_policy_enforcement_order: TypeString
+numeric_id: TypeString
+project: TypeString
+routing_mode: TypeString
+self_link: TypeString
+

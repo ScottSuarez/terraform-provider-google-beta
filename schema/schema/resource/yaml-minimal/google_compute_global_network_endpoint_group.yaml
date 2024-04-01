@@ -1,0 +1,7 @@
+default_port: TypeInt
+description: TypeString
+name: TypeString
+network_endpoint_type: TypeString
+project: TypeString
+self_link: TypeString
+

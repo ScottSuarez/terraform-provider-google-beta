@@ -1,0 +1,67 @@
+collection:
+    Type: TypeString
+    Description: The id of the collection group to configure.
+    Required: "true"
+database:
+    Type: TypeString
+    Description: The Firestore database id. Defaults to '"(default)"'.
+    Optional: "true"
+field:
+    Type: TypeString
+    Description: The id of the field to configure.
+    Required: "true"
+index_config:
+    Type: TypeList
+    Description: |-
+        The single field index configuration for this field.
+        Creating an index configuration for this field will override any inherited configuration with the
+        indexes specified. Configuring the index configuration with an empty block disables all indexes on
+        the field.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        indexes:
+            Type: TypeSet
+            Description: The indexes to configure on the field. Order or array contains must be specified.
+            Optional: "true"
+            Properties:
+                array_config:
+                    Type: TypeString
+                    Description: |-
+                        Indicates that this field supports operations on arrayValues. Only one of 'order' and 'arrayConfig' can
+                        be specified. Possible values: ["CONTAINS"]
+                    Optional: "true"
+                order:
+                    Type: TypeString
+                    Description: |-
+                        Indicates that this field supports ordering by the specified order or comparing using =, <, <=, >, >=, !=.
+                        Only one of 'order' and 'arrayConfig' can be specified. Possible values: ["ASCENDING", "DESCENDING"]
+                    Optional: "true"
+                query_scope:
+                    Type: TypeString
+                    Description: |-
+                        The scope at which a query is run. Collection scoped queries require you specify
+                        the collection at query time. Collection group scope allows queries across all
+                        collections with the same id. Default value: "COLLECTION" Possible values: ["COLLECTION", "COLLECTION_GROUP"]
+                    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name of this field. Format:
+        'projects/{{project}}/databases/{{database}}/collectionGroups/{{collection}}/fields/{{field}}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+ttl_config:
+    Type: TypeList
+    Description: The TTL configuration for this Field. If set to an empty block (i.e. 'ttl_config {}'), a TTL policy is configured based on the field. If unset, a TTL policy is not configured (or will be disabled upon updating the resource).
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        state:
+            Type: TypeString
+            Description: The state of TTL (time-to-live) configuration for documents that have this Field set.
+            Computed: "true"
+

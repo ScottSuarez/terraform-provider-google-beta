@@ -1,0 +1,11 @@
+creation_timestamp: TypeString
+description: TypeString
+name: TypeString
+project: TypeString
+proxy_id: TypeInt
+region: TypeString
+self_link: TypeString
+ssl_certificates: TypeList(TypeString)
+ssl_policy: TypeString
+url_map: TypeString
+

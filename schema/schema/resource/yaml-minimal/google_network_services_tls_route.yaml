@@ -1,0 +1,17 @@
+create_time: TypeString
+description: TypeString
+gateways: TypeList(TypeString)
+meshes: TypeList(TypeString)
+name: TypeString
+project: TypeString
+rules:
+    action:
+        destinations:
+            service_name: TypeString
+            weight: TypeInt
+    matches:
+        alpn: TypeList(TypeString)
+        sni_host: TypeList(TypeString)
+self_link: TypeString
+update_time: TypeString
+

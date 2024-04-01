@@ -1,0 +1,106 @@
+certificate_manager_certificates:
+    Type: TypeList
+    Description: |-
+        URLs to certificate manager certificate resources that are used to authenticate connections between users and the load balancer.
+        Currently, you may specify up to 15 certificates. Certificate manager certificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.
+        sslCertificates and certificateManagerCertificates fields can not be defined together.
+        Accepted format is '//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificates/{resourceName}' or just the self_link 'projects/{project}/locations/{location}/certificates/{resourceName}'
+    Optional: "true"
+    ConflictsWith: ssl_certificates
+certificate_map:
+    Type: TypeString
+    Description: |-
+        A reference to the CertificateMap resource uri that identifies a certificate map
+        associated with the given target proxy. This field can only be set for global target proxies.
+        Accepted format is '//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}'.
+    Optional: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource.
+    Optional: "true"
+http_keep_alive_timeout_sec:
+    Type: TypeInt
+    Description: |-
+        Specifies how long to keep a connection open, after completing a response,
+        while there is no matching traffic (in seconds). If an HTTP keepalive is
+        not specified, a default value (610 seconds) will be used. For Global
+        external HTTP(S) load balancer, the minimum allowed value is 5 seconds and
+        the maximum allowed value is 1200 seconds. For Global external HTTP(S)
+        load balancer (classic), this option is not available publicly.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. Provided by the client when the resource is
+        created. The name must be 1-63 characters long, and comply with
+        RFC1035. Specifically, the name must be 1-63 characters long and match
+        the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+        first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the last
+        character, which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+proxy_bind:
+    Type: TypeBool
+    Description: |-
+        This field only applies when the forwarding rule that references
+        this target proxy has a loadBalancingScheme set to INTERNAL_SELF_MANAGED.
+    Computed: "true"
+    Optional: "true"
+proxy_id:
+    Type: TypeInt
+    Description: The unique identifier for the resource.
+    Computed: "true"
+quic_override:
+    Type: TypeString
+    Description: |-
+        Specifies the QUIC override policy for this resource. This determines
+        whether the load balancer will attempt to negotiate QUIC with clients
+        or not. Can specify one of NONE, ENABLE, or DISABLE. If NONE is
+        specified, Google manages whether QUIC is used. Default value: "NONE" Possible values: ["NONE", "ENABLE", "DISABLE"]
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+server_tls_policy:
+    Type: TypeString
+    Description: |-
+        A URL referring to a networksecurity.ServerTlsPolicy
+        resource that describes how the proxy should authenticate inbound
+        traffic. serverTlsPolicy only applies to a global TargetHttpsProxy
+        attached to globalForwardingRules with the loadBalancingScheme
+        set to INTERNAL_SELF_MANAGED or EXTERNAL or EXTERNAL_MANAGED.
+        For details which ServerTlsPolicy resources are accepted with
+        INTERNAL_SELF_MANAGED and which with EXTERNAL, EXTERNAL_MANAGED
+        loadBalancingScheme consult ServerTlsPolicy documentation.
+        If left blank, communications are not encrypted.
+    Optional: "true"
+ssl_certificates:
+    Type: TypeList
+    Description: |-
+        URLs to SslCertificate resources that are used to authenticate connections between users and the load balancer.
+        Currently, you may specify up to 15 SSL certificates. sslCertificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.
+        sslCertificates and certificateManagerCertificates can not be defined together.
+    Optional: "true"
+    ConflictsWith: certificate_manager_certificates
+ssl_policy:
+    Type: TypeString
+    Description: |-
+        A reference to the SslPolicy resource that will be associated with
+        the TargetHttpsProxy resource. If not set, the TargetHttpsProxy
+        resource will not have any SSL policy configured.
+    Optional: "true"
+url_map:
+    Type: TypeString
+    Description: |-
+        A reference to the UrlMap resource that defines the mapping from URL
+        to the BackendService.
+    Required: "true"
+

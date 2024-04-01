@@ -1,0 +1,67 @@
+big_query:
+    Type: TypeList
+    Description: Indicates that features for this group come from BigQuery Table/View. By default treats the source as a sparse time series source, which is required to have an entityId and a feature_timestamp column in the source.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        big_query_source:
+            Type: TypeList
+            Description: The BigQuery source URI that points to either a BigQuery Table or View.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                input_uri:
+                    Type: TypeString
+                    Description: 'BigQuery URI to a table, up to 2000 characters long. For example: ''bq://projectId.bqDatasetId.bqTableId.'''
+                    Required: "true"
+        entity_id_columns:
+            Type: TypeList
+            Description: Columns to construct entityId / row keys. Currently only supports 1 entity_id_column. If not provided defaults to entityId.
+            Optional: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the FeatureGroup was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: The description of the FeatureGroup.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: Used to perform consistent read-modify-write updates.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        The labels with user-defined metadata to organize your FeatureGroup.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the Feature Group.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of feature group. eg us-central1
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the FeatureGroup was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+

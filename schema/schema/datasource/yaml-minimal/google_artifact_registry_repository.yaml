@@ -1,0 +1,60 @@
+cleanup_policies:
+    action: TypeString
+    condition:
+        newer_than: TypeString
+        older_than: TypeString
+        package_name_prefixes: TypeList(TypeString)
+        tag_prefixes: TypeList(TypeString)
+        tag_state: TypeString
+        version_name_prefixes: TypeList(TypeString)
+    id: TypeString
+    most_recent_versions:
+        keep_count: TypeInt
+        package_name_prefixes: TypeList(TypeString)
+cleanup_policy_dry_run: TypeBool
+create_time: TypeString
+description: TypeString
+docker_config:
+    immutable_tags: TypeBool
+effective_labels: TypeMap(TypeString)
+format: TypeString
+kms_key_name: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+maven_config:
+    allow_snapshot_overwrites: TypeBool
+    version_policy: TypeString
+mode: TypeString
+name: TypeString
+project: TypeString
+remote_repository_config:
+    apt_repository:
+        public_repository:
+            repository_base: TypeString
+            repository_path: TypeString
+    description: TypeString
+    docker_repository:
+        public_repository: TypeString
+    maven_repository:
+        public_repository: TypeString
+    npm_repository:
+        public_repository: TypeString
+    python_repository:
+        public_repository: TypeString
+    upstream_credentials:
+        username_password_credentials:
+            password_secret_version: TypeString
+            username: TypeString
+    yum_repository:
+        public_repository:
+            repository_base: TypeString
+            repository_path: TypeString
+repository_id: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+virtual_repository_config:
+    upstream_policies:
+        id: TypeString
+        priority: TypeInt
+        repository: TypeString
+

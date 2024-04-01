@@ -1,0 +1,21 @@
+etag:
+    Type: TypeString
+    Computed: "true"
+location:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+policy_data:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+workstation_cluster_id:
+    Type: TypeString
+    Required: "true"
+workstation_config_id:
+    Type: TypeString
+    Required: "true"
+

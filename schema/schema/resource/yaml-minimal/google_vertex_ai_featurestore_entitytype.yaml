@@ -1,0 +1,25 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+featurestore: TypeString
+labels: TypeMap(TypeString)
+monitoring_config:
+    categorical_threshold_config:
+        value: TypeFloat
+    import_features_analysis:
+        anomaly_detection_baseline: TypeString
+        state: TypeString
+    numerical_threshold_config:
+        value: TypeFloat
+    snapshot_analysis:
+        disabled: TypeBool
+        monitoring_interval: TypeString
+        monitoring_interval_days: TypeInt
+        staleness_days: TypeInt
+name: TypeString
+offline_storage_ttl_days: TypeInt
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

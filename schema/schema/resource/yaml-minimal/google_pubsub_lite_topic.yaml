@@ -1,0 +1,15 @@
+name: TypeString
+partition_config:
+    capacity:
+        publish_mib_per_sec: TypeInt
+        subscribe_mib_per_sec: TypeInt
+    count: TypeInt
+project: TypeString
+region: TypeString
+reservation_config:
+    throughput_reservation: TypeString
+retention_config:
+    per_partition_bytes: TypeString
+    period: TypeString
+zone: TypeString
+

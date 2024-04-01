@@ -1,0 +1,9 @@
+billing_account_id: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+member: TypeString
+role: TypeString
+

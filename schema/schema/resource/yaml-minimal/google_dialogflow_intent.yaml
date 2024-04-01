@@ -1,0 +1,18 @@
+action: TypeString
+default_response_platforms: TypeList(TypeString)
+display_name: TypeString
+events: TypeList(TypeString)
+followup_intent_info:
+    followup_intent_name: TypeString
+    parent_followup_intent_name: TypeString
+input_context_names: TypeList(TypeString)
+is_fallback: TypeBool
+ml_disabled: TypeBool
+name: TypeString
+parent_followup_intent_name: TypeString
+priority: TypeInt
+project: TypeString
+reset_contexts: TypeBool
+root_followup_intent_name: TypeString
+webhook_state: TypeString
+

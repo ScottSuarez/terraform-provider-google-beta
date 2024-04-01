@@ -1,0 +1,10 @@
+api_key_id: TypeString
+app_id: TypeString
+app_store_id: TypeString
+bundle_id: TypeString
+deletion_policy: TypeString
+display_name: TypeString
+name: TypeString
+project: TypeString
+team_id: TypeString
+

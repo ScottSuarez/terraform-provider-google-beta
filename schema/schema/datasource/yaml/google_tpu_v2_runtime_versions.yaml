@@ -1,0 +1,12 @@
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+versions:
+    Type: TypeList
+    Computed: "true"
+zone:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,69 @@
+addons_config:
+    Type: TypeList
+    Description: Addon configurations of the Apigee organization.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        advanced_api_ops_config:
+            Type: TypeList
+            Description: Configuration for the Monetization add-on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Optional: "true"
+        api_security_config:
+            Type: TypeList
+            Description: Configuration for the Monetization add-on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Optional: "true"
+                expires_at:
+                    Type: TypeString
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Computed: "true"
+        connectors_platform_config:
+            Type: TypeList
+            Description: Configuration for the Monetization add-on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Optional: "true"
+                expires_at:
+                    Type: TypeString
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Computed: "true"
+        integration_config:
+            Type: TypeList
+            Description: Configuration for the Monetization add-on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Optional: "true"
+        monetization_config:
+            Type: TypeList
+            Description: Configuration for the Monetization add-on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Flag that specifies whether the Advanced API Ops add-on is enabled.
+                    Optional: "true"
+org:
+    Type: TypeString
+    Description: Name of the Apigee organization.
+    Required: "true"
+

@@ -1,0 +1,3 @@
+billing_account: TypeString
+project: TypeString
+

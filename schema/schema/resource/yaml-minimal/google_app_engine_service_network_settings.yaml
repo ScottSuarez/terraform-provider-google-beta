@@ -1,0 +1,5 @@
+network_settings:
+    ingress_traffic_allowed: TypeString
+project: TypeString
+service: TypeString
+

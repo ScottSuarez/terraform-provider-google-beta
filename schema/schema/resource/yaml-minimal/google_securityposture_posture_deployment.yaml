@@ -1,0 +1,17 @@
+create_time: TypeString
+description: TypeString
+desired_posture_id: TypeString
+desired_posture_revision_id: TypeString
+etag: TypeString
+failure_message: TypeString
+location: TypeString
+name: TypeString
+parent: TypeString
+posture_deployment_id: TypeString
+posture_id: TypeString
+posture_revision_id: TypeString
+reconciling: TypeBool
+state: TypeString
+target_resource: TypeString
+update_time: TypeString
+

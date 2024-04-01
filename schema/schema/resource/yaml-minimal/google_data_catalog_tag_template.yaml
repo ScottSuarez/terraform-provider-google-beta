@@ -1,0 +1,19 @@
+display_name: TypeString
+fields:
+    description: TypeString
+    display_name: TypeString
+    field_id: TypeString
+    is_required: TypeBool
+    name: TypeString
+    order: TypeInt
+    type:
+        enum_type:
+            allowed_values:
+                display_name: TypeString
+        primitive_type: TypeString
+force_delete: TypeBool
+name: TypeString
+project: TypeString
+region: TypeString
+tag_template_id: TypeString
+

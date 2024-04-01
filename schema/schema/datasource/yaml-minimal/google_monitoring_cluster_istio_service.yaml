@@ -1,0 +1,12 @@
+cluster_name: TypeString
+display_name: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+service_id: TypeString
+service_name: TypeString
+service_namespace: TypeString
+telemetry:
+    resource_name: TypeString
+user_labels: TypeMap(TypeString)
+

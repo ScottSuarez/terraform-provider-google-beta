@@ -1,0 +1,10 @@
+location:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Required: "true"
+valid_versions:
+    Type: TypeList
+    Computed: "true"
+

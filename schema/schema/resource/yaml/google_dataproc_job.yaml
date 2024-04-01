@@ -1,0 +1,402 @@
+driver_controls_files_uri:
+    Type: TypeString
+    Description: Output-only. If present, the location of miscellaneous control files which may be used as part of job setup and handling. If not present, control files may be placed in the same location as driver_output_uri.
+    Computed: "true"
+driver_output_resource_uri:
+    Type: TypeString
+    Description: Output-only. A URI pointing to the location of the stdout of the job's driver program
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+force_delete:
+    Type: TypeBool
+    Description: By default, you can only delete inactive jobs within Dataproc. Setting this to true, and calling destroy, will ensure that the job is first cancelled before issuing the delete.
+    Optional: "true"
+hadoop_config:
+    Type: TypeList
+    Description: The config of Hadoop job
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        archive_uris:
+            Type: TypeList
+            Description: HCFS URIs of archives to be extracted in the working directory of .jar, .tar, .tar.gz, .tgz, and .zip.
+            Optional: "true"
+        args:
+            Type: TypeList
+            Description: The arguments to pass to the driver.
+            Optional: "true"
+        file_uris:
+            Type: TypeList
+            Description: HCFS URIs of files to be copied to the working directory of Spark drivers and distributed tasks. Useful for naively parallel tasks.
+            Optional: "true"
+        jar_file_uris:
+            Type: TypeList
+            Description: HCFS URIs of jar files to add to the CLASSPATHs of the Spark driver and tasks.
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        main_class:
+            Type: TypeString
+            Description: The class containing the main method of the driver. Must be in a provided jar or jar that is already on the classpath. Conflicts with main_jar_file_uri
+            Optional: "true"
+            ExactlyOneOf: hadoop_config.0.main_jar_file_uri, hadoop_config.0.main_class
+        main_jar_file_uri:
+            Type: TypeString
+            Description: The HCFS URI of jar file containing the driver jar. Conflicts with main_class
+            Optional: "true"
+            ExactlyOneOf: hadoop_config.0.main_jar_file_uri, hadoop_config.0.main_class
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names to values, used to configure Spark. Properties that conflict with values set by the Cloud Dataproc API may be overwritten. Can include properties set in /etc/spark/conf/spark-defaults.conf and classes in user code.
+            Optional: "true"
+hive_config:
+    Type: TypeList
+    Description: The config of hive job
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        continue_on_failure:
+            Type: TypeBool
+            Description: Whether to continue executing queries if a query fails. The default value is false. Setting to true can be useful when executing independent parallel queries. Defaults to false.
+            Optional: "true"
+        jar_file_uris:
+            Type: TypeList
+            Description: HCFS URIs of jar files to add to the CLASSPATH of the Hive server and Hadoop MapReduce (MR) tasks. Can contain Hive SerDes and UDFs.
+            Optional: "true"
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names and values, used to configure Hive. Properties that conflict with values set by the Cloud Dataproc API may be overwritten. Can include properties set in /etc/hadoop/conf/*-site.xml, /etc/hive/conf/hive-site.xml, and classes in user code.
+            Optional: "true"
+        query_file_uri:
+            Type: TypeString
+            Description: HCFS URI of file containing Hive script to execute as the job. Conflicts with query_list
+            Optional: "true"
+            ExactlyOneOf: hive_config.0.query_file_uri, hive_config.0.query_list
+        query_list:
+            Type: TypeList
+            Description: The list of Hive queries or statements to execute as part of the job. Conflicts with query_file_uri
+            Optional: "true"
+            ExactlyOneOf: hive_config.0.query_file_uri, hive_config.0.query_list
+        script_variables:
+            Type: TypeMap
+            Description: 'Mapping of query variable names to values (equivalent to the Hive command: SET name="value";).'
+            Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. The labels to associate with this job.
+
+        				**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        				Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+pig_config:
+    Type: TypeList
+    Description: The config of pag job.
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        continue_on_failure:
+            Type: TypeBool
+            Description: Whether to continue executing queries if a query fails. The default value is false. Setting to true can be useful when executing independent parallel queries. Defaults to false.
+            Optional: "true"
+        jar_file_uris:
+            Type: TypeList
+            Description: HCFS URIs of jar files to add to the CLASSPATH of the Pig Client and Hadoop MapReduce (MR) tasks. Can contain Pig UDFs.
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names to values, used to configure Pig. Properties that conflict with values set by the Cloud Dataproc API may be overwritten. Can include properties set in /etc/hadoop/conf/*-site.xml, /etc/pig/conf/pig.properties, and classes in user code.
+            Optional: "true"
+        query_file_uri:
+            Type: TypeString
+            Description: HCFS URI of file containing Hive script to execute as the job. Conflicts with query_list
+            Optional: "true"
+            ExactlyOneOf: pig_config.0.query_file_uri, pig_config.0.query_list
+        query_list:
+            Type: TypeList
+            Description: The list of Hive queries or statements to execute as part of the job. Conflicts with query_file_uri
+            Optional: "true"
+            ExactlyOneOf: pig_config.0.query_file_uri, pig_config.0.query_list
+        script_variables:
+            Type: TypeMap
+            Description: 'Mapping of query variable names to values (equivalent to the Pig command: name=[value]).'
+            Optional: "true"
+placement:
+    Type: TypeList
+    Description: The config of job placement.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        cluster_name:
+            Type: TypeString
+            Description: The name of the cluster where the job will be submitted
+            Required: "true"
+        cluster_uuid:
+            Type: TypeString
+            Description: Output-only. A cluster UUID generated by the Cloud Dataproc service when the job is submitted
+            Computed: "true"
+presto_config:
+    Type: TypeList
+    Description: The config of presto job
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        client_tags:
+            Type: TypeList
+            Description: Presto client tags to attach to this query.
+            Optional: "true"
+        continue_on_failure:
+            Type: TypeBool
+            Description: Whether to continue executing queries if a query fails. Setting to true can be useful when executing independent parallel queries. Defaults to false.
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        output_format:
+            Type: TypeString
+            Description: The format in which query output will be displayed. See the Presto documentation for supported output formats.
+            Optional: "true"
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names to values. Used to set Presto session properties Equivalent to using the --session flag in the Presto CLI.
+            Optional: "true"
+        query_file_uri:
+            Type: TypeString
+            Description: The HCFS URI of the script that contains SQL queries. Conflicts with query_list
+            Optional: "true"
+            ExactlyOneOf: presto_config.0.query_file_uri, presto_config.0.query_list
+        query_list:
+            Type: TypeList
+            Description: The list of SQL queries or statements to execute as part of the job. Conflicts with query_file_uri
+            Optional: "true"
+            ExactlyOneOf: presto_config.0.query_file_uri, presto_config.0.query_list
+project:
+    Type: TypeString
+    Description: The project in which the cluster can be found and jobs subsequently run against. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+pyspark_config:
+    Type: TypeList
+    Description: The config of pySpark job.
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        archive_uris:
+            Type: TypeList
+            Description: Optional. HCFS URIs of archives to be extracted in the working directory of .jar, .tar, .tar.gz, .tgz, and .zip
+            Optional: "true"
+        args:
+            Type: TypeList
+            Description: Optional. The arguments to pass to the driver. Do not include arguments, such as --conf, that can be set as job properties, since a collision may occur that causes an incorrect job submission
+            Optional: "true"
+        file_uris:
+            Type: TypeList
+            Description: Optional. HCFS URIs of files to be copied to the working directory of Python drivers and distributed tasks. Useful for naively parallel tasks
+            Optional: "true"
+        jar_file_uris:
+            Type: TypeList
+            Description: Optional. HCFS URIs of jar files to add to the CLASSPATHs of the Python driver and tasks
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        main_python_file_uri:
+            Type: TypeString
+            Description: Required. The HCFS URI of the main Python file to use as the driver. Must be a .py file
+            Required: "true"
+        properties:
+            Type: TypeMap
+            Description: Optional. A mapping of property names to values, used to configure PySpark. Properties that conflict with values set by the Cloud Dataproc API may be overwritten. Can include properties set in /etc/spark/conf/spark-defaults.conf and classes in user code
+            Optional: "true"
+        python_file_uris:
+            Type: TypeList
+            Description: 'Optional. HCFS file URIs of Python files to pass to the PySpark framework. Supported file types: .py, .egg, and .zip'
+            Optional: "true"
+reference:
+    Type: TypeList
+    Description: The reference of the job
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        job_id:
+            Type: TypeString
+            Description: The job ID, which must be unique within the project. The job ID is generated by the server upon job submission or provided by the user as a means to perform retries without creating duplicate jobs
+            Computed: "true"
+            Optional: "true"
+region:
+    Type: TypeString
+    Description: The Cloud Dataproc region. This essentially determines which clusters are available for this job to be submitted to. If not specified, defaults to global.
+    Optional: "true"
+scheduling:
+    Type: TypeList
+    Description: Optional. Job scheduling configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        max_failures_per_hour:
+            Type: TypeInt
+            Description: Maximum number of times per hour a driver may be restarted as a result of driver exiting with non-zero code before job is reported failed.
+            Required: "true"
+        max_failures_total:
+            Type: TypeInt
+            Description: Maximum number of times in total a driver may be restarted as a result of driver exiting with non-zero code before job is reported failed.
+            Required: "true"
+spark_config:
+    Type: TypeList
+    Description: The config of the Spark job.
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        archive_uris:
+            Type: TypeList
+            Description: HCFS URIs of archives to be extracted in the working directory of .jar, .tar, .tar.gz, .tgz, and .zip.
+            Optional: "true"
+        args:
+            Type: TypeList
+            Description: The arguments to pass to the driver.
+            Optional: "true"
+        file_uris:
+            Type: TypeList
+            Description: HCFS URIs of files to be copied to the working directory of Spark drivers and distributed tasks. Useful for naively parallel tasks.
+            Optional: "true"
+        jar_file_uris:
+            Type: TypeList
+            Description: HCFS URIs of jar files to add to the CLASSPATHs of the Spark driver and tasks.
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        main_class:
+            Type: TypeString
+            Description: The class containing the main method of the driver. Must be in a provided jar or jar that is already on the classpath. Conflicts with main_jar_file_uri
+            Optional: "true"
+            ExactlyOneOf: spark_config.0.main_class, spark_config.0.main_jar_file_uri
+        main_jar_file_uri:
+            Type: TypeString
+            Description: The HCFS URI of jar file containing the driver jar. Conflicts with main_class
+            Optional: "true"
+            ExactlyOneOf: spark_config.0.main_jar_file_uri, spark_config.0.main_class
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names to values, used to configure Spark. Properties that conflict with values set by the Cloud Dataproc API may be overwritten. Can include properties set in /etc/spark/conf/spark-defaults.conf and classes in user code.
+            Optional: "true"
+sparksql_config:
+    Type: TypeList
+    Description: The config of SparkSql job
+    Optional: "true"
+    ExactlyOneOf: pyspark_config, spark_config, hadoop_config, hive_config, pig_config, sparksql_config, presto_config
+    MaxItems: "1"
+    Properties:
+        jar_file_uris:
+            Type: TypeList
+            Description: HCFS URIs of jar files to be added to the Spark CLASSPATH.
+            Optional: "true"
+        logging_config:
+            Type: TypeList
+            Description: The runtime logging config of the job
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                driver_log_levels:
+                    Type: TypeMap
+                    Description: 'Optional. The per-package log levels for the driver. This may include ''root'' package name to configure rootLogger. Examples: ''com.google = FATAL'', ''root = INFO'', ''org.apache = DEBUG''.'
+                    Required: "true"
+        properties:
+            Type: TypeMap
+            Description: A mapping of property names to values, used to configure Spark SQL's SparkConf. Properties that conflict with values set by the Cloud Dataproc API may be overwritten.
+            Optional: "true"
+        query_file_uri:
+            Type: TypeString
+            Description: The HCFS URI of the script that contains SQL queries. Conflicts with query_list
+            Optional: "true"
+            ExactlyOneOf: sparksql_config.0.query_file_uri, sparksql_config.0.query_list
+        query_list:
+            Type: TypeList
+            Description: The list of SQL queries or statements to execute as part of the job. Conflicts with query_file_uri
+            Optional: "true"
+            ExactlyOneOf: sparksql_config.0.query_file_uri, sparksql_config.0.query_list
+        script_variables:
+            Type: TypeMap
+            Description: 'Mapping of query variable names to values (equivalent to the Spark SQL command: SET name="value";).'
+            Optional: "true"
+status:
+    Type: TypeList
+    Description: The status of the job.
+    Computed: "true"
+    Properties:
+        details:
+            Type: TypeString
+            Description: Output-only. Optional job state details, such as an error description if the state is ERROR
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: Output-only. A state message specifying the overall job state
+            Computed: "true"
+        state_start_time:
+            Type: TypeString
+            Description: Output-only. The time when this state was entered
+            Computed: "true"
+        substate:
+            Type: TypeString
+            Description: Output-only. Additional state information, which includes status reported by the agent
+            Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+

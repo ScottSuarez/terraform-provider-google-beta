@@ -1,0 +1,14 @@
+api_version: TypeString
+avatar_uri: TypeString
+avatar_uri_backend: TypeString
+classification_threshold: TypeFloat
+default_language_code: TypeString
+description: TypeString
+display_name: TypeString
+enable_logging: TypeBool
+match_mode: TypeString
+project: TypeString
+supported_language_codes: TypeList(TypeString)
+tier: TypeString
+time_zone: TypeString
+

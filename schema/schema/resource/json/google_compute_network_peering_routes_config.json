@@ -1,0 +1,27 @@
+{
+    "export_custom_routes": {
+        "Description": "Whether to export the custom routes to the peer network.",
+        "Required": true,
+        "Type": "TypeBool"
+    },
+    "import_custom_routes": {
+        "Description": "Whether to import the custom routes to the peer network.",
+        "Required": true,
+        "Type": "TypeBool"
+    },
+    "network": {
+        "Description": "The name of the primary network for the peering.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peering": {
+        "Description": "Name of the peering.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

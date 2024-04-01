@@ -1,0 +1,144 @@
+authorization_mode:
+    Type: TypeString
+    Description: 'Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster. Default value: "AUTH_MODE_DISABLED" Possible values: ["AUTH_MODE_UNSPECIFIED", "AUTH_MODE_IAM_AUTH", "AUTH_MODE_DISABLED"]'
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        The timestamp associated with the cluster creation request. A timestamp in
+        RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional
+        digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+discovery_endpoints:
+    Type: TypeList
+    Description: |-
+        Output only. Endpoints created on each given network,
+        for Redis clients to connect to the cluster.
+        Currently only one endpoint is supported.
+    Computed: "true"
+    Properties:
+        address:
+            Type: TypeString
+            Description: Output only. Network address of the exposed Redis endpoint used by clients to connect to the service.
+            Optional: "true"
+        port:
+            Type: TypeInt
+            Description: Output only. The port number of the exposed Redis endpoint.
+            Optional: "true"
+        psc_config:
+            Type: TypeList
+            Description: |-
+                Output only. Customer configuration for where the endpoint
+                is created and accessed from.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                network:
+                    Type: TypeString
+                    Description: |-
+                        The consumer network where the network address of the discovery
+                        endpoint will be reserved, in the form of
+                        projects/{network_project_id}/global/networks/{network_id}.
+                    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Unique name of the resource in this scope including project and location using the form:
+        projects/{projectId}/locations/{locationId}/clusters/{clusterId}
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+psc_configs:
+    Type: TypeList
+    Description: |-
+        Required. Each PscConfig configures the consumer network where two
+        network addresses will be designated to the cluster for client access.
+        Currently, only one PscConfig is supported.
+    Required: "true"
+    Properties:
+        network:
+            Type: TypeString
+            Description: |-
+                Required. The consumer network where the network address of
+                the discovery endpoint will be reserved, in the form of
+                projects/{network_project_id_or_number}/global/networks/{network_id}.
+            Required: "true"
+psc_connections:
+    Type: TypeList
+    Description: Output only. PSC connections for discovery of the cluster topology and accessing the cluster.
+    Computed: "true"
+    Properties:
+        address:
+            Type: TypeString
+            Description: Output only. The IP allocated on the consumer network for the PSC forwarding rule.
+            Optional: "true"
+        forwarding_rule:
+            Type: TypeString
+            Description: 'Output only. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.'
+            Optional: "true"
+        network:
+            Type: TypeString
+            Description: The consumer network where the IP address resides, in the form of projects/{projectId}/global/networks/{network_id}.
+            Optional: "true"
+        project_id:
+            Type: TypeString
+            Description: Output only. The consumer projectId where the forwarding rule is created from.
+            Optional: "true"
+        psc_connection_id:
+            Type: TypeString
+            Description: Output only. The PSC connection id of the forwarding rule connected to the service attachment.
+            Optional: "true"
+region:
+    Type: TypeString
+    Description: The name of the region of the Redis cluster.
+    Computed: "true"
+    Optional: "true"
+replica_count:
+    Type: TypeInt
+    Description: Optional. The number of replica nodes per shard.
+    Optional: "true"
+shard_count:
+    Type: TypeInt
+    Description: Required. Number of shards for the Redis cluster.
+    Required: "true"
+size_gb:
+    Type: TypeInt
+    Description: Output only. Redis memory size in GB for the entire cluster.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED
+    Computed: "true"
+state_info:
+    Type: TypeList
+    Description: Output only. Additional information about the current state of the cluster.
+    Computed: "true"
+    Properties:
+        update_info:
+            Type: TypeList
+            Description: A nested object resource
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                target_replica_count:
+                    Type: TypeInt
+                    Description: Target number of replica nodes per shard.
+                    Optional: "true"
+                target_shard_count:
+                    Type: TypeInt
+                    Description: Target number of shards for redis cluster.
+                    Optional: "true"
+transit_encryption_mode:
+    Type: TypeString
+    Description: |-
+        Optional. The in-transit encryption for the Redis cluster.
+        If not provided, encryption is disabled for the cluster. Default value: "TRANSIT_ENCRYPTION_MODE_DISABLED" Possible values: ["TRANSIT_ENCRYPTION_MODE_UNSPECIFIED", "TRANSIT_ENCRYPTION_MODE_DISABLED", "TRANSIT_ENCRYPTION_MODE_SERVER_AUTHENTICATION"]
+    Optional: "true"
+uid:
+    Type: TypeString
+    Description: System assigned, unique identifier for the cluster.
+    Computed: "true"
+

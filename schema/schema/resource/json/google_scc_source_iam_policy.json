@@ -1,0 +1,18 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "organization": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "source": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "hostnames": {
+        "Description": "Hostnames of the environment group.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The resource ID of the environment group.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The Apigee Organization associated with the Apigee environment group,\nin the format 'organizations/{{org_name}}'.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

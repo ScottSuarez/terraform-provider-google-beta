@@ -1,0 +1,6 @@
+etag: TypeString
+federation_id: TypeString
+location: TypeString
+policy_data: TypeString
+project: TypeString
+

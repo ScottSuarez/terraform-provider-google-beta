@@ -1,0 +1,26 @@
+creation_timestamp: TypeString
+description: TypeString
+detailed_status: TypeString
+effective_labels: TypeMap(TypeString)
+ike_version: TypeInt
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+local_traffic_selector: TypeSet(TypeString)
+name: TypeString
+peer_external_gateway: TypeString
+peer_external_gateway_interface: TypeInt
+peer_gcp_gateway: TypeString
+peer_ip: TypeString
+project: TypeString
+region: TypeString
+remote_traffic_selector: TypeSet(TypeString)
+router: TypeString
+self_link: TypeString
+shared_secret: TypeString
+shared_secret_hash: TypeString
+target_vpn_gateway: TypeString
+terraform_labels: TypeMap(TypeString)
+tunnel_id: TypeString
+vpn_gateway: TypeString
+vpn_gateway_interface: TypeInt
+

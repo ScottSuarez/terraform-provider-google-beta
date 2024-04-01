@@ -1,0 +1,20 @@
+connected_endpoints:
+    endpoint: TypeString
+    status: TypeString
+connection_preference: TypeString
+consumer_accept_lists:
+    connection_limit: TypeInt
+    project_id_or_num: TypeString
+consumer_reject_lists: TypeList(TypeString)
+description: TypeString
+domain_names: TypeList(TypeString)
+enable_proxy_protocol: TypeBool
+fingerprint: TypeString
+name: TypeString
+nat_subnets: TypeList(TypeString)
+project: TypeString
+reconcile_connections: TypeBool
+region: TypeString
+self_link: TypeString
+target_service: TypeString
+

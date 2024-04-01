@@ -1,0 +1,52 @@
+auto_create_network:
+    Type: TypeBool
+    Description: Create the 'default' network automatically.  Default true. If set to false, the default network will be deleted.  Note that, for quota purposes, you will still need to have 1 network slot available to create the project successfully, even if you set auto_create_network to false, since the network will exist momentarily.
+    Optional: "true"
+billing_account:
+    Type: TypeString
+    Description: The alphanumeric ID of the billing account this project belongs to. The user or service account performing this operation with Terraform must have Billing Account Administrator privileges (roles/billing.admin) in the organization. See Google Cloud Billing API Access Control for more details.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+folder_id:
+    Type: TypeString
+    Description: The numeric ID of the folder this project should be created under. Only one of org_id or folder_id may be specified. If the folder_id is specified, then the project is created under the specified folder. Changing this forces the project to be migrated to the newly specified folder.
+    Optional: "true"
+    ConflictsWith: org_id
+labels:
+    Type: TypeMap
+    Description: |-
+        A set of key/value label pairs to assign to the project.
+        				
+        				**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        				Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The display name of the project.
+    Required: "true"
+number:
+    Type: TypeString
+    Description: The numeric identifier of the project.
+    Computed: "true"
+org_id:
+    Type: TypeString
+    Description: The numeric ID of the organization this project belongs to. Changing this forces a new project to be created.  Only one of org_id or folder_id may be specified. If the org_id is specified then the project is created at the top level. Changing this forces the project to be migrated to the newly specified organization.
+    Optional: "true"
+    ConflictsWith: folder_id
+project_id:
+    Type: TypeString
+    Description: The project ID. Changing this forces a new project to be created.
+    Required: "true"
+skip_delete:
+    Type: TypeBool
+    Description: If true, the Terraform resource can be deleted without deleting the Project via the Google API.
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+

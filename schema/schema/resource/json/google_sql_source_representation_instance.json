@@ -1,0 +1,63 @@
+{
+    "ca_certificate": {
+        "Description": "The CA certificate on the external server. Include only if SSL/TLS is used on the external server.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "client_certificate": {
+        "Description": "The client certificate on the external server. Required only for server-client authentication. Include only if SSL/TLS is used on the external server.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "client_key": {
+        "Description": "The private key file for the client certificate on the external server. Required only for server-client authentication. Include only if SSL/TLS is used on the external server.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "database_version": {
+        "Description": "The MySQL version running on your source database server. Possible values: [\"MYSQL_5_6\", \"MYSQL_5_7\", \"MYSQL_8_0\", \"POSTGRES_9_6\", \"POSTGRES_10\", \"POSTGRES_11\", \"POSTGRES_12\", \"POSTGRES_13\", \"POSTGRES_14\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "dump_file_path": {
+        "Description": "A file in the bucket that contains the data from the external server.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "host": {
+        "Description": "The IPv4 address and port for the external server, or the the DNS address for the external server. If the external server is hosted on Cloud SQL, the port is 5432.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the source representation instance. Use any valid Cloud SQL instance name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "password": {
+        "Description": "The password for the replication user account.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "port": {
+        "Description": "The externally accessible port for the source database server.\nDefaults to 3306.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The Region in which the created instance should reside.\nIf it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "username": {
+        "Description": "The replication user account on the external server.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

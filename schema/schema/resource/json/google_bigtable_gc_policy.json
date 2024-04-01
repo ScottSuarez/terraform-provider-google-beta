@@ -1,0 +1,76 @@
+{
+    "column_family": {
+        "Description": "The name of the column family.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Description": "The deletion policy for the GC policy. Setting ABANDON allows the resource\n\t\t\t\tto be abandoned rather than deleted. This is useful for GC policy as it cannot be deleted\n\t\t\t\tin a replicated instance. Possible values are: \"ABANDON\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "gc_rules": {
+        "ConflictsWith": "mode, max_age, max_version",
+        "Description": "Serialized JSON string for garbage collection policy. Conflicts with \"mode\", \"max_age\" and \"max_version\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "instance_name": {
+        "Description": "The name of the Bigtable instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "max_age": {
+        "ConflictsWith": "gc_rules",
+        "Description": "NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all cells older than the given age.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "days": {
+                "Computed": true,
+                "Description": "Number of days before applying GC policy.",
+                "ExactlyOneOf": "max_age.0.days, max_age.0.duration",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "duration": {
+                "Computed": true,
+                "Description": "Duration before applying GC policy",
+                "ExactlyOneOf": "max_age.0.days, max_age.0.duration",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "max_version": {
+        "ConflictsWith": "gc_rules",
+        "Description": "NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all versions of a cell except for the most recent.",
+        "Optional": true,
+        "Properties": {
+            "number": {
+                "Description": "Number of version before applying the GC policy.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "mode": {
+        "ConflictsWith": "gc_rules",
+        "Description": "NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. If multiple policies are set, you should choose between UNION OR INTERSECTION.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "table": {
+        "Description": "The name of the table.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

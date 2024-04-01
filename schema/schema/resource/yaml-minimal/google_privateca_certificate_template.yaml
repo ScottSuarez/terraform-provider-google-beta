@@ -1,0 +1,54 @@
+create_time: TypeString
+description: TypeString
+effective_labels: unknown
+identity_constraints:
+    allow_subject_alt_names_passthrough: TypeBool
+    allow_subject_passthrough: TypeBool
+    cel_expression:
+        description: TypeString
+        expression: TypeString
+        location: TypeString
+        title: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+passthrough_extensions:
+    additional_extensions:
+        object_id_path: TypeList(TypeInt)
+    known_extensions: TypeList(TypeString)
+predefined_values:
+    additional_extensions:
+        critical: TypeBool
+        object_id:
+            object_id_path: TypeList(TypeInt)
+        value: TypeString
+    aia_ocsp_servers: TypeList(TypeString)
+    ca_options:
+        is_ca: TypeBool
+        max_issuer_path_length: TypeInt
+    key_usage:
+        base_key_usage:
+            cert_sign: TypeBool
+            content_commitment: TypeBool
+            crl_sign: TypeBool
+            data_encipherment: TypeBool
+            decipher_only: TypeBool
+            digital_signature: TypeBool
+            encipher_only: TypeBool
+            key_agreement: TypeBool
+            key_encipherment: TypeBool
+        extended_key_usage:
+            client_auth: TypeBool
+            code_signing: TypeBool
+            email_protection: TypeBool
+            ocsp_signing: TypeBool
+            server_auth: TypeBool
+            time_stamping: TypeBool
+        unknown_extended_key_usages:
+            object_id_path: TypeList(TypeInt)
+    policy_ids:
+        object_id_path: TypeList(TypeInt)
+project: TypeString
+terraform_labels: unknown
+update_time: TypeString
+

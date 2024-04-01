@@ -1,0 +1,27 @@
+{
+    "expiration_time_usec": {
+        "Description": "An expiration time in microseconds since epoch.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "fingerprint": {
+        "Computed": true,
+        "Description": "The SHA-256 fingerprint of the SSH public key.",
+        "Type": "TypeString"
+    },
+    "key": {
+        "Description": "Public key text in SSH format, defined by RFC4253 section 6.6.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Description": "The project ID of the Google Cloud Platform project.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "user": {
+        "Description": "The user email.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

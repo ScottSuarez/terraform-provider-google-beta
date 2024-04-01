@@ -1,0 +1,116 @@
+big_query_source:
+    Type: TypeList
+    Description: Configures how data is supposed to be extracted from a BigQuery source to be loaded onto the FeatureOnlineStore.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        entity_id_columns:
+            Type: TypeList
+            Description: Columns to construct entityId / row keys. Start by supporting 1 only.
+            Required: "true"
+        uri:
+            Type: TypeString
+            Description: The BigQuery view URI that will be materialized on each sync trigger based on FeatureView.SyncConfig.
+            Required: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the featureOnlinestore was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+feature_online_store:
+    Type: TypeString
+    Description: The name of the FeatureOnlineStore to use for the featureview.
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        A set of key/value label pairs to assign to this FeatureView.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the FeatureView. This value may be up to 60 characters, and valid characters are [a-z0-9_]. The first character cannot be a number.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region for the resource. It should be the same as the featureonlinestore region.
+    Required: "true"
+sync_config:
+    Type: TypeList
+    Description: Configures when data is to be synced/updated for this FeatureView. At the end of the sync the latest featureValues for each entityId of this FeatureView are made ready for online serving.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cron:
+            Type: TypeString
+            Description: |-
+                Cron schedule (https://en.wikipedia.org/wiki/Cron) to launch scheduled runs.
+                To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "CRON_TZ=${IANA_TIME_ZONE}" or "TZ=${IANA_TIME_ZONE}".
+            Computed: "true"
+            Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the featureOnlinestore was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+vector_search_config:
+    Type: TypeList
+    Description: Configuration for vector search. It contains the required configurations to create an index from source data, so that approximate nearest neighbor (a.k.a ANN) algorithms search can be performed during online serving.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        brute_force_config:
+            Type: TypeList
+            Description: Configuration options for using brute force search, which simply implements the standard linear search in the database for each query. It is primarily meant for benchmarking and to generate the ground truth for approximate search.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        crowding_column:
+            Type: TypeString
+            Description: Column of crowding. This column contains crowding attribute which is a constraint on a neighbor list produced by nearest neighbor search requiring that no more than some value k' of the k neighbors returned have the same value of crowdingAttribute.
+            Optional: "true"
+        distance_measure_type:
+            Type: TypeString
+            Description: |-
+                The distance measure used in nearest neighbor search.
+                For details on allowed values, see the [API documentation](https://cloud.google.com/vertex-ai/docs/reference/rest/v1beta1/projects.locations.featureOnlineStores.featureViews#DistanceMeasureType). Possible values: ["SQUARED_L2_DISTANCE", "COSINE_DISTANCE", "DOT_PRODUCT_DISTANCE"]
+            Optional: "true"
+        embedding_column:
+            Type: TypeString
+            Description: Column of embedding. This column contains the source data to create index for vector search.
+            Required: "true"
+        embedding_dimension:
+            Type: TypeInt
+            Description: The number of dimensions of the input embedding.
+            Optional: "true"
+        filter_columns:
+            Type: TypeList
+            Description: Columns of features that are used to filter vector search results.
+            Optional: "true"
+        tree_ah_config:
+            Type: TypeList
+            Description: 'Configuration options for the tree-AH algorithm (Shallow tree + Asymmetric Hashing). Please refer to this paper for more details: https://arxiv.org/abs/1908.10396'
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                leaf_node_embedding_count:
+                    Type: TypeString
+                    Description: Number of embeddings on each leaf node. The default value is 1000 if not set.
+                    Computed: "true"
+                    Optional: "true"
+

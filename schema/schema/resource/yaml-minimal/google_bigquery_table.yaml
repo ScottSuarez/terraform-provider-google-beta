@@ -1,0 +1,97 @@
+clustering: TypeList(TypeString)
+creation_time: TypeInt
+dataset_id: TypeString
+deletion_protection: TypeBool
+description: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_configuration:
+    kms_key_name: TypeString
+    kms_key_version: TypeString
+etag: TypeString
+expiration_time: TypeInt
+external_data_configuration:
+    autodetect: TypeBool
+    avro_options:
+        use_avro_logical_types: TypeBool
+    compression: TypeString
+    connection_id: TypeString
+    csv_options:
+        allow_jagged_rows: TypeBool
+        allow_quoted_newlines: TypeBool
+        encoding: TypeString
+        field_delimiter: TypeString
+        quote: TypeString
+        skip_leading_rows: TypeInt
+    file_set_spec_type: TypeString
+    google_sheets_options:
+        range: TypeString
+        skip_leading_rows: TypeInt
+    hive_partitioning_options:
+        mode: TypeString
+        require_partition_filter: TypeBool
+        source_uri_prefix: TypeString
+    ignore_unknown_values: TypeBool
+    json_options:
+        encoding: TypeString
+    max_bad_records: TypeInt
+    metadata_cache_mode: TypeString
+    object_metadata: TypeString
+    parquet_options:
+        enable_list_inference: TypeBool
+        enum_as_string: TypeBool
+    reference_file_schema_uri: TypeString
+    schema: TypeString
+    source_format: TypeString
+    source_uris: TypeList(TypeString)
+friendly_name: TypeString
+labels: TypeMap(TypeString)
+last_modified_time: TypeInt
+location: TypeString
+materialized_view:
+    allow_non_incremental_definition: TypeBool
+    enable_refresh: TypeBool
+    query: TypeString
+    refresh_interval_ms: TypeInt
+max_staleness: TypeString
+num_bytes: TypeInt
+num_long_term_bytes: TypeInt
+num_rows: TypeInt
+project: TypeString
+range_partitioning:
+    field: TypeString
+    range:
+        end: TypeInt
+        interval: TypeInt
+        start: TypeInt
+require_partition_filter: TypeBool
+schema: TypeString
+self_link: TypeString
+table_constraints:
+    foreign_keys:
+        column_references:
+            referenced_column: TypeString
+            referencing_column: TypeString
+        name: TypeString
+        referenced_table:
+            dataset_id: TypeString
+            project_id: TypeString
+            table_id: TypeString
+    primary_key:
+        columns: TypeList(TypeString)
+table_id: TypeString
+table_replication_info:
+    replication_interval_ms: TypeInt
+    source_dataset_id: TypeString
+    source_project_id: TypeString
+    source_table_id: TypeString
+terraform_labels: TypeMap(TypeString)
+time_partitioning:
+    expiration_ms: TypeInt
+    field: TypeString
+    require_partition_filter: TypeBool
+    type: TypeString
+type: TypeString
+view:
+    query: TypeString
+    use_legacy_sql: TypeBool
+

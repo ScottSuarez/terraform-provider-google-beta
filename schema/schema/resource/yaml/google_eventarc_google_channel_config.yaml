@@ -1,0 +1,22 @@
+crypto_key_name:
+    Type: TypeString
+    Description: Optional. Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt their event data. It must match the pattern `projects/*/locations/*/keyRings/*/cryptoKeys/*`.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Required. The resource name of the config. Must be in the format of, `projects/{project}/locations/{location}/googleChannelConfig`.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The last-modified time.
+    Computed: "true"
+

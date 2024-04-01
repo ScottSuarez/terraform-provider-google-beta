@@ -1,0 +1,19 @@
+boolean_policy:
+    enforced: TypeBool
+constraint: TypeString
+etag: TypeString
+list_policy:
+    allow:
+        all: TypeBool
+        values: TypeSet(TypeString)
+    deny:
+        all: TypeBool
+        values: TypeSet(TypeString)
+    inherit_from_parent: TypeBool
+    suggested_value: TypeString
+org_id: TypeString
+restore_policy:
+    default: TypeBool
+update_time: TypeString
+version: TypeInt
+

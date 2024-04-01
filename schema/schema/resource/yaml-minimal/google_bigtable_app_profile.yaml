@@ -1,0 +1,14 @@
+app_profile_id: TypeString
+description: TypeString
+ignore_warnings: TypeBool
+instance: TypeString
+multi_cluster_routing_cluster_ids: TypeList(TypeString)
+multi_cluster_routing_use_any: TypeBool
+name: TypeString
+project: TypeString
+single_cluster_routing:
+    allow_transactional_writes: TypeBool
+    cluster_id: TypeString
+standard_isolation:
+    priority: TypeString
+

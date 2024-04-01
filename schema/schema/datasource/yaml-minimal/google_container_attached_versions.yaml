@@ -1,0 +1,4 @@
+location: TypeString
+project: TypeString
+valid_versions: TypeList(TypeString)
+

@@ -1,0 +1,23 @@
+action: TypeString
+description: TypeString
+match:
+    config:
+        src_ip_ranges: TypeList(TypeString)
+    versioned_expr: TypeString
+network_match:
+    dest_ip_ranges: TypeList(TypeString)
+    dest_ports: TypeList(TypeString)
+    ip_protocols: TypeList(TypeString)
+    src_asns: TypeList(TypeInt)
+    src_ip_ranges: TypeList(TypeString)
+    src_ports: TypeList(TypeString)
+    src_region_codes: TypeList(TypeString)
+    user_defined_fields:
+        name: TypeString
+        values: TypeList(TypeString)
+preview: TypeBool
+priority: TypeInt
+project: TypeString
+region: TypeString
+security_policy: TypeString
+

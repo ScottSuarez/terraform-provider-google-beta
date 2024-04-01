@@ -1,0 +1,15 @@
+hostnames:
+    Type: TypeList
+    Description: Hostnames of the environment group.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource ID of the environment group.
+    Required: "true"
+org_id:
+    Type: TypeString
+    Description: |-
+        The Apigee Organization associated with the Apigee environment group,
+        in the format 'organizations/{{org_name}}'.
+    Required: "true"
+

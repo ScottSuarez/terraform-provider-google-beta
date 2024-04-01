@@ -1,0 +1,6 @@
+deletion_policy: TypeString
+network: TypeString
+peering: TypeString
+reserved_peering_ranges: TypeList(TypeString)
+service: TypeString
+

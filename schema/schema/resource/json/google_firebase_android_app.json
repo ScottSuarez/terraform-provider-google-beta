@@ -1,0 +1,53 @@
+{
+    "api_key_id": {
+        "Computed": true,
+        "Description": "The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the AndroidApp.\nIf apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the AndroidApp.\nThis auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "app_id": {
+        "Computed": true,
+        "Description": "The globally unique, Firebase-assigned identifier of the AndroidApp.\nThis identifier should be treated as an opaque token, as the data format is not specified.",
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Description": "(Optional) Set to 'ABANDON' to allow the AndroidApp to be untracked from terraform state\nrather than deleted upon 'terraform destroy'. This is useful because the AndroidApp may be\nserving traffic. Set to 'DELETE' to delete the AndroidApp. Defaults to 'DELETE'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The user-assigned display name of the AndroidApp.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other fields, and it may be sent\nwith update requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully qualified resource name of the AndroidApp, for example:\nprojects/projectId/androidApps/appId",
+        "Type": "TypeString"
+    },
+    "package_name": {
+        "Description": "Immutable. The canonical package name of the Android app as would appear in the Google Play\nDeveloper Console.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "sha1_hashes": {
+        "Description": "The SHA1 certificate hashes for the AndroidApp.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "sha256_hashes": {
+        "Description": "The SHA256 certificate hashes for the AndroidApp.",
+        "Optional": true,
+        "Type": "TypeList"
+    }
+}

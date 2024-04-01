@@ -1,0 +1,11 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+lake: TypeString
+location: TypeString
+member: TypeString
+project: TypeString
+role: TypeString
+

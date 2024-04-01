@@ -1,0 +1,11 @@
+api_key_id: TypeString
+app_id: TypeString
+deletion_policy: TypeString
+display_name: TypeString
+etag: TypeString
+name: TypeString
+package_name: TypeString
+project: TypeString
+sha1_hashes: TypeList(TypeString)
+sha256_hashes: TypeList(TypeString)
+

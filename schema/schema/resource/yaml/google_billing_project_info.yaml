@@ -1,0 +1,12 @@
+billing_account:
+    Type: TypeString
+    Description: |-
+        The ID of the billing account associated with the project, if
+        any. Set to empty string to disable billing for the project.
+        For example, '"012345-567890-ABCDEF"' or '""'.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

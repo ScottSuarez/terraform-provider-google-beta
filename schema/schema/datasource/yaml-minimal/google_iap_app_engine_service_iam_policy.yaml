@@ -1,0 +1,6 @@
+app_id: TypeString
+etag: TypeString
+policy_data: TypeString
+project: TypeString
+service: TypeString
+

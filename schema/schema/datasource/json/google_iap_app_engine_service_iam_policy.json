@@ -1,0 +1,23 @@
+{
+    "app_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

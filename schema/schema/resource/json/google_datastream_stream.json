@@ -1,0 +1,1032 @@
+{
+    "backfill_all": {
+        "Description": "Backfill strategy to automatically backfill the Stream's objects. Specific objects can be excluded.",
+        "ExactlyOneOf": "backfill_all, backfill_none",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "mysql_excluded_objects": {
+                "Description": "MySQL data source objects to avoid backfilling.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "mysql_databases": {
+                        "Description": "MySQL databases on the server",
+                        "MinItems": 1,
+                        "Properties": {
+                            "database": {
+                                "Description": "Database name.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "mysql_tables": {
+                                "Description": "Tables in the database.",
+                                "MinItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "mysql_columns": {
+                                        "Description": "MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "collation": {
+                                                "Description": "Column collation.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "column": {
+                                                "Description": "Column name.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "data_type": {
+                                                "Description": "The MySQL data type. Full data types list can be found here:\nhttps://dev.mysql.com/doc/refman/8.0/en/data-types.html",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "length": {
+                                                "Computed": true,
+                                                "Description": "Column length.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "nullable": {
+                                                "Description": "Whether or not the column can accept a null value.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "ordinal_position": {
+                                                "Description": "The ordinal position of the column in the table.",
+                                                "Optional": true,
+                                                "Type": "TypeInt"
+                                            },
+                                            "primary_key": {
+                                                "Description": "Whether or not the column represents a primary key.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "table": {
+                                        "Description": "Table name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "oracle_excluded_objects": {
+                "Description": "PostgreSQL data source objects to avoid backfilling.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "oracle_schemas": {
+                        "Description": "Oracle schemas/databases in the database server",
+                        "MinItems": 1,
+                        "Properties": {
+                            "oracle_tables": {
+                                "Description": "Tables in the database.",
+                                "MinItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "oracle_columns": {
+                                        "Description": "Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "column": {
+                                                "Description": "Column name.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "data_type": {
+                                                "Description": "The Oracle data type. Full data types list can be found here:\nhttps://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "encoding": {
+                                                "Computed": true,
+                                                "Description": "Column encoding.",
+                                                "Type": "TypeString"
+                                            },
+                                            "length": {
+                                                "Computed": true,
+                                                "Description": "Column length.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "nullable": {
+                                                "Computed": true,
+                                                "Description": "Whether or not the column can accept a null value.",
+                                                "Type": "TypeBool"
+                                            },
+                                            "ordinal_position": {
+                                                "Computed": true,
+                                                "Description": "The ordinal position of the column in the table.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "precision": {
+                                                "Computed": true,
+                                                "Description": "Column precision.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "primary_key": {
+                                                "Computed": true,
+                                                "Description": "Whether or not the column represents a primary key.",
+                                                "Type": "TypeBool"
+                                            },
+                                            "scale": {
+                                                "Computed": true,
+                                                "Description": "Column scale.",
+                                                "Type": "TypeInt"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "table": {
+                                        "Description": "Table name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "schema": {
+                                "Description": "Schema name.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "postgresql_excluded_objects": {
+                "Description": "PostgreSQL data source objects to avoid backfilling.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "postgresql_schemas": {
+                        "Description": "PostgreSQL schemas on the server",
+                        "MinItems": 1,
+                        "Properties": {
+                            "postgresql_tables": {
+                                "Description": "Tables in the schema.",
+                                "MinItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "postgresql_columns": {
+                                        "Description": "PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "column": {
+                                                "Description": "Column name.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "data_type": {
+                                                "Description": "The PostgreSQL data type. Full data types list can be found here:\nhttps://www.postgresql.org/docs/current/datatype.html",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "length": {
+                                                "Computed": true,
+                                                "Description": "Column length.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "nullable": {
+                                                "Description": "Whether or not the column can accept a null value.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "ordinal_position": {
+                                                "Description": "The ordinal position of the column in the table.",
+                                                "Optional": true,
+                                                "Type": "TypeInt"
+                                            },
+                                            "precision": {
+                                                "Computed": true,
+                                                "Description": "Column precision.",
+                                                "Type": "TypeInt"
+                                            },
+                                            "primary_key": {
+                                                "Description": "Whether or not the column represents a primary key.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "scale": {
+                                                "Computed": true,
+                                                "Description": "Column scale.",
+                                                "Type": "TypeInt"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "table": {
+                                        "Description": "Table name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "schema": {
+                                "Description": "Database name.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "backfill_none": {
+        "Description": "Backfill strategy to disable automatic backfill for the Stream's objects.",
+        "ExactlyOneOf": "backfill_all, backfill_none",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {},
+        "Type": "TypeList"
+    },
+    "customer_managed_encryption_key": {
+        "Description": "A reference to a KMS encryption key. If provided, it will be used to encrypt the data. If left blank, data\nwill be encrypted using an internal Stream-specific encryption key provisioned through KMS.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "desired_state": {
+        "Description": "Desired state of the Stream. Set this field to 'RUNNING' to start the stream, and 'PAUSED' to pause the stream.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "destination_config": {
+        "Description": "Destination connection profile configuration.",
+        "MaxItems": 1,
+        "Properties": {
+            "bigquery_destination_config": {
+                "Description": "A configuration for how data should be loaded to Cloud Storage.",
+                "ExactlyOneOf": "destination_config.0.gcs_destination_config, destination_config.0.bigquery_destination_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "data_freshness": {
+                        "Description": "The guaranteed data freshness (in seconds) when querying tables created by the stream.\nEditing this field will only affect new tables created in the future, but existing tables\nwill not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\". Defaults to 900s.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "single_target_dataset": {
+                        "Description": "A single target dataset to which all data will be streamed.",
+                        "ExactlyOneOf": "destination_config.0.bigquery_destination_config.0.single_target_dataset, destination_config.0.bigquery_destination_config.0.source_hierarchy_datasets",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "dataset_id": {
+                                "Description": "Dataset ID in the format projects/{project}/datasets/{dataset_id} or\n{project}:{dataset_id}",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "source_hierarchy_datasets": {
+                        "Description": "Destination datasets are created so that hierarchy of the destination data objects matches the source hierarchy.",
+                        "ExactlyOneOf": "destination_config.0.bigquery_destination_config.0.single_target_dataset, destination_config.0.bigquery_destination_config.0.source_hierarchy_datasets",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "dataset_template": {
+                                "Description": "Dataset template used for dynamic dataset creation.",
+                                "MaxItems": 1,
+                                "Properties": {
+                                    "dataset_id_prefix": {
+                                        "Description": "If supplied, every created dataset will have its name prefixed by the provided value.\nThe prefix and name will be separated by an underscore. i.e. _.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "kms_key_name": {
+                                        "Description": "Describes the Cloud KMS encryption key that will be used to protect destination BigQuery\ntable. The BigQuery Service Account associated with your project requires access to this\nencryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}.\nSee https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "location": {
+                                        "Description": "The geographic location where the dataset should reside.\nSee https://cloud.google.com/bigquery/docs/locations for supported locations.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "destination_connection_profile": {
+                "Description": "Destination connection profile resource. Format: projects/{project}/locations/{location}/connectionProfiles/{name}",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "gcs_destination_config": {
+                "Description": "A configuration for how data should be loaded to Cloud Storage.",
+                "ExactlyOneOf": "destination_config.0.gcs_destination_config, destination_config.0.bigquery_destination_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "avro_file_format": {
+                        "Description": "AVRO file format configuration.",
+                        "ExactlyOneOf": "destination_config.0.gcs_destination_config.0.avro_file_format, destination_config.0.gcs_destination_config.0.json_file_format",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {},
+                        "Type": "TypeList"
+                    },
+                    "file_rotation_interval": {
+                        "Computed": true,
+                        "Description": "The maximum duration for which new events are added before a file is closed and a new file is created.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\". Defaults to 900s.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "file_rotation_mb": {
+                        "Computed": true,
+                        "Description": "The maximum file size to be saved in the bucket.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "json_file_format": {
+                        "Description": "JSON file format configuration.",
+                        "ExactlyOneOf": "destination_config.0.gcs_destination_config.0.avro_file_format, destination_config.0.gcs_destination_config.0.json_file_format",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "compression": {
+                                "Description": "Compression of the loaded JSON file. Possible values: [\"NO_COMPRESSION\", \"GZIP\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "schema_file_format": {
+                                "Description": "The schema file format along JSON data files. Possible values: [\"NO_SCHEMA_FILE\", \"AVRO_SCHEMA_FILE\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "path": {
+                        "Description": "Path inside the Cloud Storage bucket to write data to.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "Display name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Labels.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The name of the location this stream is located in.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The stream's name.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "source_config": {
+        "Description": "Source connection profile configuration.",
+        "MaxItems": 1,
+        "Properties": {
+            "mysql_source_config": {
+                "Description": "MySQL data source configuration.",
+                "ExactlyOneOf": "source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "exclude_objects": {
+                        "Description": "MySQL objects to exclude from the stream.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "mysql_databases": {
+                                "Description": "MySQL databases on the server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "database": {
+                                        "Description": "Database name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "mysql_tables": {
+                                        "Description": "Tables in the database.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "mysql_columns": {
+                                                "Description": "MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "collation": {
+                                                        "Description": "Column collation.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The MySQL data type. Full data types list can be found here:\nhttps://dev.mysql.com/doc/refman/8.0/en/data-types.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "include_objects": {
+                        "Description": "MySQL objects to retrieve from the source.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "mysql_databases": {
+                                "Description": "MySQL databases on the server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "database": {
+                                        "Description": "Database name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "mysql_tables": {
+                                        "Description": "Tables in the database.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "mysql_columns": {
+                                                "Description": "MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "collation": {
+                                                        "Description": "Column collation.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The MySQL data type. Full data types list can be found here:\nhttps://dev.mysql.com/doc/refman/8.0/en/data-types.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "max_concurrent_backfill_tasks": {
+                        "Computed": true,
+                        "Description": "Maximum number of concurrent backfill tasks. The number should be non negative.\nIf not set (or set to 0), the system's default value will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "max_concurrent_cdc_tasks": {
+                        "Computed": true,
+                        "Description": "Maximum number of concurrent CDC tasks. The number should be non negative.\nIf not set (or set to 0), the system's default value will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "oracle_source_config": {
+                "Description": "MySQL data source configuration.",
+                "ExactlyOneOf": "source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "drop_large_objects": {
+                        "Description": "Configuration to drop large object values.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {},
+                        "Type": "TypeList"
+                    },
+                    "exclude_objects": {
+                        "Description": "Oracle objects to exclude from the stream.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "oracle_schemas": {
+                                "Description": "Oracle schemas/databases in the database server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "oracle_tables": {
+                                        "Description": "Tables in the database.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "oracle_columns": {
+                                                "Description": "Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The Oracle data type. Full data types list can be found here:\nhttps://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "encoding": {
+                                                        "Computed": true,
+                                                        "Description": "Column encoding.",
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Computed": true,
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Computed": true,
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "precision": {
+                                                        "Computed": true,
+                                                        "Description": "Column precision.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Computed": true,
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "scale": {
+                                                        "Computed": true,
+                                                        "Description": "Column scale.",
+                                                        "Type": "TypeInt"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "schema": {
+                                        "Description": "Schema name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "include_objects": {
+                        "Description": "Oracle objects to retrieve from the source.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "oracle_schemas": {
+                                "Description": "Oracle schemas/databases in the database server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "oracle_tables": {
+                                        "Description": "Tables in the database.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "oracle_columns": {
+                                                "Description": "Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The Oracle data type. Full data types list can be found here:\nhttps://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "encoding": {
+                                                        "Computed": true,
+                                                        "Description": "Column encoding.",
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Computed": true,
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Computed": true,
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "precision": {
+                                                        "Computed": true,
+                                                        "Description": "Column precision.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Computed": true,
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "scale": {
+                                                        "Computed": true,
+                                                        "Description": "Column scale.",
+                                                        "Type": "TypeInt"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "schema": {
+                                        "Description": "Schema name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "max_concurrent_backfill_tasks": {
+                        "Computed": true,
+                        "Description": "Maximum number of concurrent backfill tasks. The number should be non negative.\nIf not set (or set to 0), the system's default value will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "max_concurrent_cdc_tasks": {
+                        "Computed": true,
+                        "Description": "Maximum number of concurrent CDC tasks. The number should be non negative.\nIf not set (or set to 0), the system's default value will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "stream_large_objects": {
+                        "Description": "Configuration to drop large object values.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {},
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "postgresql_source_config": {
+                "Description": "PostgreSQL data source configuration.",
+                "ExactlyOneOf": "source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "exclude_objects": {
+                        "Description": "PostgreSQL objects to exclude from the stream.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "postgresql_schemas": {
+                                "Description": "PostgreSQL schemas on the server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "postgresql_tables": {
+                                        "Description": "Tables in the schema.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "postgresql_columns": {
+                                                "Description": "PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The PostgreSQL data type. Full data types list can be found here:\nhttps://www.postgresql.org/docs/current/datatype.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "precision": {
+                                                        "Computed": true,
+                                                        "Description": "Column precision.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "scale": {
+                                                        "Computed": true,
+                                                        "Description": "Column scale.",
+                                                        "Type": "TypeInt"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "schema": {
+                                        "Description": "Database name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "include_objects": {
+                        "Description": "PostgreSQL objects to retrieve from the source.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "postgresql_schemas": {
+                                "Description": "PostgreSQL schemas on the server",
+                                "MinItems": 1,
+                                "Properties": {
+                                    "postgresql_tables": {
+                                        "Description": "Tables in the schema.",
+                                        "MinItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "postgresql_columns": {
+                                                "Description": "PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.",
+                                                "MinItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "column": {
+                                                        "Description": "Column name.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "data_type": {
+                                                        "Description": "The PostgreSQL data type. Full data types list can be found here:\nhttps://www.postgresql.org/docs/current/datatype.html",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "length": {
+                                                        "Computed": true,
+                                                        "Description": "Column length.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "nullable": {
+                                                        "Description": "Whether or not the column can accept a null value.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "ordinal_position": {
+                                                        "Description": "The ordinal position of the column in the table.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "precision": {
+                                                        "Computed": true,
+                                                        "Description": "Column precision.",
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "primary_key": {
+                                                        "Description": "Whether or not the column represents a primary key.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "scale": {
+                                                        "Computed": true,
+                                                        "Description": "Column scale.",
+                                                        "Type": "TypeInt"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "table": {
+                                                "Description": "Table name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "schema": {
+                                        "Description": "Database name.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "max_concurrent_backfill_tasks": {
+                        "Computed": true,
+                        "Description": "Maximum number of concurrent backfill tasks. The number should be non\nnegative. If not set (or set to 0), the system's default value will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "publication": {
+                        "Description": "The name of the publication that includes the set of all tables\nthat are defined in the stream's include_objects.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "replication_slot": {
+                        "Description": "The name of the logical replication slot that's configured with\nthe pgoutput plugin.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "source_connection_profile": {
+                "Description": "Source connection profile resource. Format: projects/{project}/locations/{location}/connectionProfiles/{name}",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The state of the stream.",
+        "Type": "TypeString"
+    },
+    "stream_id": {
+        "Description": "The stream identifier.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

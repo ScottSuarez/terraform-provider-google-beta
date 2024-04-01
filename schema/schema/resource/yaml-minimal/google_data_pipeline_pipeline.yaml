@@ -1,0 +1,72 @@
+create_time: TypeString
+display_name: TypeString
+job_count: TypeInt
+last_update_time: TypeString
+name: TypeString
+pipeline_sources: TypeMap(TypeString)
+project: TypeString
+region: TypeString
+schedule_info:
+    next_job_time: TypeString
+    schedule: TypeString
+    time_zone: TypeString
+scheduler_service_account_email: TypeString
+state: TypeString
+type: TypeString
+workload:
+    dataflow_flex_template_request:
+        launch_parameter:
+            container_spec_gcs_path: TypeString
+            environment:
+                additional_experiments: TypeList(TypeString)
+                additional_user_labels: TypeMap(TypeString)
+                enable_streaming_engine: TypeBool
+                flexrs_goal: TypeString
+                ip_configuration: TypeString
+                kms_key_name: TypeString
+                machine_type: TypeString
+                max_workers: TypeInt
+                network: TypeString
+                num_workers: TypeInt
+                service_account_email: TypeString
+                subnetwork: TypeString
+                temp_location: TypeString
+                worker_region: TypeString
+                worker_zone: TypeString
+                zone: TypeString
+            job_name: TypeString
+            launch_options: TypeMap(TypeString)
+            parameters: TypeMap(TypeString)
+            transform_name_mappings: TypeMap(TypeString)
+            update: TypeBool
+        location: TypeString
+        project_id: TypeString
+        validate_only: TypeBool
+    dataflow_launch_template_request:
+        gcs_path: TypeString
+        launch_parameters:
+            environment:
+                additional_experiments: TypeList(TypeString)
+                additional_user_labels: TypeMap(TypeString)
+                bypass_temp_dir_validation: TypeBool
+                enable_streaming_engine: TypeBool
+                ip_configuration: TypeString
+                kms_key_name: TypeString
+                machine_type: TypeString
+                max_workers: TypeInt
+                network: TypeString
+                num_workers: TypeInt
+                service_account_email: TypeString
+                subnetwork: TypeString
+                temp_location: TypeString
+                worker_region: TypeString
+                worker_zone: TypeString
+                zone: TypeString
+            job_name: TypeString
+            parameters: TypeMap(TypeString)
+            transform_name_mapping: TypeMap(TypeString)
+            update: TypeBool
+        location: TypeString
+        project_id: TypeString
+        validate_only: TypeBool
+

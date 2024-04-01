@@ -1,0 +1,37 @@
+bandwidth_limit:
+    Type: TypeList
+    Description: Specifies the bandwidth limit details. If this field is unspecified, the default value is set as 'No Limit'.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        limit_mbps:
+            Type: TypeString
+            Description: Bandwidth rate in megabytes per second, distributed across all the agents in the pool.
+            Required: "true"
+display_name:
+    Type: TypeString
+    Description: Specifies the client-specified AgentPool description.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The ID of the agent pool to create.
+
+        The agentPoolId must meet the following requirements:
+        * Length of 128 characters or less.
+        * Not start with the string goog.
+        * Start with a lowercase ASCII character, followed by:
+          * Zero or more: lowercase Latin alphabet characters, numerals, hyphens (-), periods (.), underscores (_), or tildes (~).
+          * One or more numerals or lowercase ASCII characters.
+
+        As expressed by the regular expression: ^(?!goog)[a-z]([a-z0-9-._~]*[a-z0-9])?$.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: Specifies the state of the AgentPool.
+    Computed: "true"
+

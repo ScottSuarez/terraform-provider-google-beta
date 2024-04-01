@@ -1,0 +1,8 @@
+ancestor: TypeString
+index_id: TypeString
+kind: TypeString
+project: TypeString
+properties:
+    direction: TypeString
+    name: TypeString
+

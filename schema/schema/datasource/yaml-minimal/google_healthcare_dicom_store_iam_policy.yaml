@@ -1,0 +1,4 @@
+dicom_store_id: TypeString
+etag: TypeString
+policy_data: TypeString
+

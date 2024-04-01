@@ -1,0 +1,491 @@
+{
+    "access_urls": {
+        "Computed": true,
+        "Description": "URLs for accessing content published by this CA, such as the CA certificate and CRLs.",
+        "Properties": {
+            "ca_certificate_access_url": {
+                "Computed": true,
+                "Description": "The URL where this CertificateAuthority's CA certificate is published. This will only be\nset for CAs that have been activated.",
+                "Type": "TypeString"
+            },
+            "crl_access_urls": {
+                "Computed": true,
+                "Description": "The URL where this CertificateAuthority's CRLs are published. This will only be set for\nCAs that have been activated.",
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "certificate_authority_id": {
+        "Description": "The user provided Resource ID for this Certificate Authority.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "config": {
+        "Computed": true,
+        "Description": "The config used to create a self-signed X.509 certificate or CSR.",
+        "Properties": {
+            "subject_config": {
+                "Computed": true,
+                "Description": "Specifies some of the values in a certificate that are related to the subject.",
+                "Properties": {
+                    "subject": {
+                        "Computed": true,
+                        "Description": "Contains distinguished name fields such as the location and organization.",
+                        "Properties": {
+                            "common_name": {
+                                "Computed": true,
+                                "Description": "The common name of the distinguished name.",
+                                "Type": "TypeString"
+                            },
+                            "country_code": {
+                                "Computed": true,
+                                "Description": "The country code of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "locality": {
+                                "Computed": true,
+                                "Description": "The locality or city of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "organization": {
+                                "Computed": true,
+                                "Description": "The organization of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "organizational_unit": {
+                                "Computed": true,
+                                "Description": "The organizational unit of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "postal_code": {
+                                "Computed": true,
+                                "Description": "The postal code of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "province": {
+                                "Computed": true,
+                                "Description": "The province, territory, or regional state of the subject.",
+                                "Type": "TypeString"
+                            },
+                            "street_address": {
+                                "Computed": true,
+                                "Description": "The street address of the subject.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "subject_alt_name": {
+                        "Computed": true,
+                        "Description": "The subject alternative name fields.",
+                        "Properties": {
+                            "dns_names": {
+                                "Computed": true,
+                                "Description": "Contains only valid, fully-qualified host names.",
+                                "Type": "TypeList"
+                            },
+                            "email_addresses": {
+                                "Computed": true,
+                                "Description": "Contains only valid RFC 2822 E-mail addresses.",
+                                "Type": "TypeList"
+                            },
+                            "ip_addresses": {
+                                "Computed": true,
+                                "Description": "Contains only valid 32-bit IPv4 addresses or RFC 4291 IPv6 addresses.",
+                                "Type": "TypeList"
+                            },
+                            "uris": {
+                                "Computed": true,
+                                "Description": "Contains only valid RFC 3986 URIs.",
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "x509_config": {
+                "Computed": true,
+                "Description": "Describes how some of the technical X.509 fields in a certificate should be populated.",
+                "Properties": {
+                    "additional_extensions": {
+                        "Computed": true,
+                        "Description": "Specifies an X.509 extension, which may be used in different parts of X.509 objects like certificates, CSRs, and CRLs.",
+                        "Properties": {
+                            "critical": {
+                                "Computed": true,
+                                "Description": "Indicates whether or not this extension is critical (i.e., if the client does not know how to\nhandle this extension, the client should consider this to be an error).",
+                                "Type": "TypeBool"
+                            },
+                            "object_id": {
+                                "Computed": true,
+                                "Description": "Describes values that are relevant in a CA certificate.",
+                                "Properties": {
+                                    "object_id_path": {
+                                        "Computed": true,
+                                        "Description": "An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.",
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "value": {
+                                "Computed": true,
+                                "Description": "The value of this X.509 extension. A base64-encoded string.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "aia_ocsp_servers": {
+                        "Computed": true,
+                        "Description": "Describes Online Certificate Status Protocol (OCSP) endpoint addresses that appear in the\n\"Authority Information Access\" extension in the certificate.",
+                        "Type": "TypeList"
+                    },
+                    "ca_options": {
+                        "Computed": true,
+                        "Description": "Describes values that are relevant in a CA certificate.",
+                        "Properties": {
+                            "is_ca": {
+                                "Computed": true,
+                                "Description": "When true, the \"CA\" in Basic Constraints extension will be set to true.",
+                                "Type": "TypeBool"
+                            },
+                            "max_issuer_path_length": {
+                                "Computed": true,
+                                "Description": "Refers to the \"path length constraint\" in Basic Constraints extension. For a CA certificate, this value describes the depth of\nsubordinate CA certificates that are allowed. If this value is less than 0, the request will fail. Setting the value to 0\nrequires setting 'zero_max_issuer_path_length = true'.",
+                                "Type": "TypeInt"
+                            },
+                            "non_ca": {
+                                "Computed": true,
+                                "Description": "When true, the \"CA\" in Basic Constraints extension will be set to false.\nIf both 'is_ca' and 'non_ca' are unset, the extension will be omitted from the CA certificate.",
+                                "Type": "TypeBool"
+                            },
+                            "zero_max_issuer_path_length": {
+                                "Computed": true,
+                                "Description": "When true, the \"path length constraint\" in Basic Constraints extension will be set to 0.\nIf both 'max_issuer_path_length' and 'zero_max_issuer_path_length' are unset,\nthe max path length will be omitted from the CA certificate.",
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "key_usage": {
+                        "Computed": true,
+                        "Description": "Indicates the intended use for keys that correspond to a certificate.",
+                        "Properties": {
+                            "base_key_usage": {
+                                "Computed": true,
+                                "Description": "Describes high-level ways in which a key may be used.",
+                                "Properties": {
+                                    "cert_sign": {
+                                        "Computed": true,
+                                        "Description": "The key may be used to sign certificates.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "content_commitment": {
+                                        "Computed": true,
+                                        "Description": "The key may be used for cryptographic commitments. Note that this may also be referred to as \"non-repudiation\".",
+                                        "Type": "TypeBool"
+                                    },
+                                    "crl_sign": {
+                                        "Computed": true,
+                                        "Description": "The key may be used sign certificate revocation lists.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "data_encipherment": {
+                                        "Computed": true,
+                                        "Description": "The key may be used to encipher data.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "decipher_only": {
+                                        "Computed": true,
+                                        "Description": "The key may be used to decipher only.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "digital_signature": {
+                                        "Computed": true,
+                                        "Description": "The key may be used for digital signatures.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "encipher_only": {
+                                        "Computed": true,
+                                        "Description": "The key may be used to encipher only.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "key_agreement": {
+                                        "Computed": true,
+                                        "Description": "The key may be used in a key agreement protocol.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "key_encipherment": {
+                                        "Computed": true,
+                                        "Description": "The key may be used to encipher other keys.",
+                                        "Type": "TypeBool"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "extended_key_usage": {
+                                "Computed": true,
+                                "Description": "Describes high-level ways in which a key may be used.",
+                                "Properties": {
+                                    "client_auth": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.2. Officially described as \"TLS WWW client authentication\", though regularly used for non-WWW TLS.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "code_signing": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.3. Officially described as \"Signing of downloadable executable code client authentication\".",
+                                        "Type": "TypeBool"
+                                    },
+                                    "email_protection": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.4. Officially described as \"Email protection\".",
+                                        "Type": "TypeBool"
+                                    },
+                                    "ocsp_signing": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.9. Officially described as \"Signing OCSP responses\".",
+                                        "Type": "TypeBool"
+                                    },
+                                    "server_auth": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.1. Officially described as \"TLS WWW server authentication\", though regularly used for non-WWW TLS.",
+                                        "Type": "TypeBool"
+                                    },
+                                    "time_stamping": {
+                                        "Computed": true,
+                                        "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.8. Officially described as \"Binding the hash of an object to a time\".",
+                                        "Type": "TypeBool"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "unknown_extended_key_usages": {
+                                "Computed": true,
+                                "Description": "An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.",
+                                "Properties": {
+                                    "object_id_path": {
+                                        "Computed": true,
+                                        "Description": "An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.",
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "name_constraints": {
+                        "Computed": true,
+                        "Description": "Describes the X.509 name constraints extension.",
+                        "Properties": {
+                            "critical": {
+                                "Computed": true,
+                                "Description": "Indicates whether or not the name constraints are marked critical.",
+                                "Type": "TypeBool"
+                            },
+                            "excluded_dns_names": {
+                                "Computed": true,
+                                "Description": "Contains excluded DNS names. Any DNS name that can be\nconstructed by simply adding zero or more labels to\nthe left-hand side of the name satisfies the name constraint.\nFor example, 'example.com', 'www.example.com', 'www.sub.example.com'\nwould satisfy 'example.com' while 'example1.com' does not.",
+                                "Type": "TypeList"
+                            },
+                            "excluded_email_addresses": {
+                                "Computed": true,
+                                "Description": "Contains the excluded email addresses. The value can be a particular\nemail address, a hostname to indicate all email addresses on that host or\na domain with a leading period (e.g. '.example.com') to indicate\nall email addresses in that domain.",
+                                "Type": "TypeList"
+                            },
+                            "excluded_ip_ranges": {
+                                "Computed": true,
+                                "Description": "Contains the excluded IP ranges. For IPv4 addresses, the ranges\nare expressed using CIDR notation as specified in RFC 4632.\nFor IPv6 addresses, the ranges are expressed in similar encoding as IPv4\naddresses.",
+                                "Type": "TypeList"
+                            },
+                            "excluded_uris": {
+                                "Computed": true,
+                                "Description": "Contains the excluded URIs that apply to the host part of the name.\nThe value can be a hostname or a domain with a\nleading period (like '.example.com')",
+                                "Type": "TypeList"
+                            },
+                            "permitted_dns_names": {
+                                "Computed": true,
+                                "Description": "Contains permitted DNS names. Any DNS name that can be\nconstructed by simply adding zero or more labels to\nthe left-hand side of the name satisfies the name constraint.\nFor example, 'example.com', 'www.example.com', 'www.sub.example.com'\nwould satisfy 'example.com' while 'example1.com' does not.",
+                                "Type": "TypeList"
+                            },
+                            "permitted_email_addresses": {
+                                "Computed": true,
+                                "Description": "Contains the permitted email addresses. The value can be a particular\nemail address, a hostname to indicate all email addresses on that host or\na domain with a leading period (e.g. '.example.com') to indicate\nall email addresses in that domain.",
+                                "Type": "TypeList"
+                            },
+                            "permitted_ip_ranges": {
+                                "Computed": true,
+                                "Description": "Contains the permitted IP ranges. For IPv4 addresses, the ranges\nare expressed using CIDR notation as specified in RFC 4632.\nFor IPv6 addresses, the ranges are expressed in similar encoding as IPv4\naddresses.",
+                                "Type": "TypeList"
+                            },
+                            "permitted_uris": {
+                                "Computed": true,
+                                "Description": "Contains the permitted URIs that apply to the host part of the name.\nThe value can be a hostname or a domain with a\nleading period (like '.example.com')",
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "policy_ids": {
+                        "Computed": true,
+                        "Description": "Describes the X.509 certificate policy object identifiers, per https://tools.ietf.org/html/rfc5280#section-4.2.1.4.",
+                        "Properties": {
+                            "object_id_path": {
+                                "Computed": true,
+                                "Description": "An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.",
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time at which this CertificateAuthority was created.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "deletion_protection": {
+        "Computed": true,
+        "Description": "Whether or not to allow Terraform to destroy the CertificateAuthority. Unless this field is set to false\nin Terraform state, a 'terraform destroy' or 'terraform apply' that would delete the instance will fail.",
+        "Type": "TypeBool"
+    },
+    "desired_state": {
+        "Computed": true,
+        "Description": "Desired state of the CertificateAuthority. Set this field to 'STAGED' to create a 'STAGED' root CA.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gcs_bucket": {
+        "Computed": true,
+        "Description": "The name of a Cloud Storage bucket where this CertificateAuthority will publish content,\nsuch as the CA certificate and CRLs. This must be a bucket name, without any prefixes\n(such as 'gs://') or suffixes (such as '.googleapis.com'). For example, to use a bucket named\nmy-bucket, you would simply specify 'my-bucket'. If not specified, a managed bucket will be\ncreated.",
+        "Type": "TypeString"
+    },
+    "ignore_active_certificates_on_deletion": {
+        "Computed": true,
+        "Description": "This field allows the CA to be deleted even if the CA has active certs. Active certs include both unrevoked and unexpired certs.\nUse with care. Defaults to 'false'.",
+        "Type": "TypeBool"
+    },
+    "key_spec": {
+        "Computed": true,
+        "Description": "Used when issuing certificates for this CertificateAuthority. If this CertificateAuthority\nis a self-signed CertificateAuthority, this key is also used to sign the self-signed CA\ncertificate. Otherwise, it is used to sign a CSR.",
+        "Properties": {
+            "algorithm": {
+                "Computed": true,
+                "Description": "The algorithm to use for creating a managed Cloud KMS key for a for a simplified\nexperience. All managed keys will be have their ProtectionLevel as HSM. Possible values: [\"SIGN_HASH_ALGORITHM_UNSPECIFIED\", \"RSA_PSS_2048_SHA256\", \"RSA_PSS_3072_SHA256\", \"RSA_PSS_4096_SHA256\", \"RSA_PKCS1_2048_SHA256\", \"RSA_PKCS1_3072_SHA256\", \"RSA_PKCS1_4096_SHA256\", \"EC_P256_SHA256\", \"EC_P384_SHA384\"]",
+                "Type": "TypeString"
+            },
+            "cloud_kms_key_version": {
+                "Computed": true,
+                "Description": "The resource name for an existing Cloud KMS CryptoKeyVersion in the format\n'projects/*/locations/*/keyRings/*/cryptoKeys/*/cryptoKeyVersions/*'.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Labels with user-defined metadata.\n\nAn object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\":\n\"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "lifetime": {
+        "Computed": true,
+        "Description": "The desired lifetime of the CA certificate. Used to create the \"notBeforeTime\" and\n\"notAfterTime\" fields inside an X.509 certificate. A duration in seconds with up to nine\nfractional digits, terminated by 's'. Example: \"3.5s\".",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "Location of the CertificateAuthority. A full list of valid locations can be found by\nrunning 'gcloud privateca locations list'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for this CertificateAuthority in the format\nprojects/*/locations/*/certificateAuthorities/*.",
+        "Type": "TypeString"
+    },
+    "pem_ca_certificate": {
+        "Computed": true,
+        "Description": "The signed CA certificate issued from the subordinated CA's CSR. This is needed when activating the subordiante CA with a third party issuer.",
+        "Type": "TypeString"
+    },
+    "pem_ca_certificates": {
+        "Computed": true,
+        "Description": "This CertificateAuthority's certificate chain, including the current\nCertificateAuthority's certificate. Ordered such that the root issuer is the final\nelement (consistent with RFC 5246). For a self-signed CA, this will only list the current\nCertificateAuthority's certificate.",
+        "Type": "TypeList"
+    },
+    "pem_csr": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "pool": {
+        "Description": "The name of the CaPool this Certificate Authority belongs to.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "skip_grace_period": {
+        "Computed": true,
+        "Description": "If this flag is set, the Certificate Authority will be deleted as soon as\npossible without a 30-day grace period where undeletion would have been\nallowed. If you proceed, there will be no way to recover this CA.\nUse with care. Defaults to 'false'.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The State for this CertificateAuthority.",
+        "Type": "TypeString"
+    },
+    "subordinate_config": {
+        "Computed": true,
+        "Description": "If this is a subordinate CertificateAuthority, this field will be set\nwith the subordinate configuration, which describes its issuers.",
+        "Properties": {
+            "certificate_authority": {
+                "Computed": true,
+                "Description": "This can refer to a CertificateAuthority that was used to create a\nsubordinate CertificateAuthority. This field is used for information\nand usability purposes only. The resource name is in the format\n'projects/*/locations/*/caPools/*/certificateAuthorities/*'.",
+                "Type": "TypeString"
+            },
+            "pem_issuer_chain": {
+                "Computed": true,
+                "Description": "Contains the PEM certificate chain for the issuers of this CertificateAuthority,\nbut not pem certificate for this CA itself.",
+                "Properties": {
+                    "pem_certificates": {
+                        "Computed": true,
+                        "Description": "Expected to be in leaf-to-root order according to RFC 5246.",
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "The Type of this CertificateAuthority.\n\n~\u003e **Note:** For 'SUBORDINATE' Certificate Authorities, they need to\nbe activated before they can issue certificates. Default value: \"SELF_SIGNED\" Possible values: [\"SELF_SIGNED\", \"SUBORDINATE\"]",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time at which this CertificateAuthority was updated.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

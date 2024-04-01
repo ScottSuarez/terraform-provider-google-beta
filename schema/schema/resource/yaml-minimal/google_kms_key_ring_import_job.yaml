@@ -1,0 +1,13 @@
+attestation:
+    content: TypeString
+    format: TypeString
+expire_time: TypeString
+import_job_id: TypeString
+import_method: TypeString
+key_ring: TypeString
+name: TypeString
+protection_level: TypeString
+public_key:
+    pem: TypeString
+state: TypeString
+

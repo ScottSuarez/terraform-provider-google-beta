@@ -1,0 +1,61 @@
+configmanagement:
+    binauthz:
+        enabled: TypeBool
+    config_sync:
+        git:
+            gcp_service_account_email: TypeString
+            https_proxy: TypeString
+            policy_dir: TypeString
+            secret_type: TypeString
+            sync_branch: TypeString
+            sync_repo: TypeString
+            sync_rev: TypeString
+            sync_wait_secs: TypeString
+        metrics_gcp_service_account_email: TypeString
+        oci:
+            gcp_service_account_email: TypeString
+            policy_dir: TypeString
+            secret_type: TypeString
+            sync_repo: TypeString
+            sync_wait_secs: TypeString
+        prevent_drift: TypeBool
+        source_format: TypeString
+    hierarchy_controller:
+        enable_hierarchical_resource_quota: TypeBool
+        enable_pod_tree_labels: TypeBool
+        enabled: TypeBool
+    policy_controller:
+        audit_interval_seconds: TypeString
+        enabled: TypeBool
+        exemptable_namespaces: TypeList(TypeString)
+        log_denies_enabled: TypeBool
+        monitoring:
+            backends: TypeList(TypeString)
+        mutation_enabled: TypeBool
+        referential_rules_enabled: TypeBool
+        template_library_installed: TypeBool
+    version: TypeString
+feature: TypeString
+location: TypeString
+membership: TypeString
+membership_location: TypeString
+mesh:
+    control_plane: TypeString
+    management: TypeString
+policycontroller:
+    policy_controller_hub_config:
+        audit_interval_seconds: TypeInt
+        constraint_violation_limit: TypeInt
+        exemptable_namespaces: TypeList(TypeString)
+        install_spec: TypeString
+        log_denies_enabled: TypeBool
+        monitoring:
+            backends: TypeList(TypeString)
+        mutation_enabled: TypeBool
+        policy_content:
+            template_library:
+                installation: TypeString
+        referential_rules_enabled: TypeBool
+    version: TypeString
+project: TypeString
+

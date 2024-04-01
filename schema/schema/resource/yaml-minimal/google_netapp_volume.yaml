@@ -1,0 +1,65 @@
+active_directory: TypeString
+capacity_gib: TypeString
+deletion_policy: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_type: TypeString
+export_policy:
+    rules:
+        access_type: TypeString
+        allowed_clients: TypeString
+        has_root_access: TypeString
+        kerberos5_read_only: TypeBool
+        kerberos5_read_write: TypeBool
+        kerberos5i_read_only: TypeBool
+        kerberos5i_read_write: TypeBool
+        kerberos5p_read_only: TypeBool
+        kerberos5p_read_write: TypeBool
+        nfsv3: TypeBool
+        nfsv4: TypeBool
+has_replication: TypeBool
+kerberos_enabled: TypeBool
+kms_config: TypeString
+labels: TypeMap(TypeString)
+ldap_enabled: TypeBool
+location: TypeString
+mount_options:
+    export: TypeString
+    export_full: TypeString
+    instructions: TypeString
+    protocol: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+protocols: TypeList(TypeString)
+psa_range: TypeString
+restricted_actions: TypeList(TypeString)
+security_style: TypeString
+service_level: TypeString
+share_name: TypeString
+smb_settings: TypeList(TypeString)
+snapshot_directory: TypeBool
+snapshot_policy:
+    daily_schedule:
+        hour: TypeInt
+        minute: TypeInt
+        snapshots_to_keep: TypeInt
+    enabled: TypeBool
+    hourly_schedule:
+        minute: TypeInt
+        snapshots_to_keep: TypeInt
+    monthly_schedule:
+        days_of_month: TypeString
+        hour: TypeInt
+        minute: TypeInt
+        snapshots_to_keep: TypeInt
+    weekly_schedule:
+        day: TypeString
+        hour: TypeInt
+        minute: TypeInt
+        snapshots_to_keep: TypeInt
+storage_pool: TypeString
+terraform_labels: TypeMap(TypeString)
+unix_permissions: TypeString
+used_gib: TypeString
+

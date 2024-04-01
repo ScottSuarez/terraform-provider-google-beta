@@ -1,0 +1,12 @@
+dataset: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+notification_config:
+    pubsub_topic: TypeString
+self_link: TypeString
+stream_configs:
+    bigquery_destination:
+        table_uri: TypeString
+terraform_labels: TypeMap(TypeString)
+

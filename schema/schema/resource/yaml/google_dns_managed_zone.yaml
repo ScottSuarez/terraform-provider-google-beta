@@ -1,0 +1,246 @@
+cloud_logging_config:
+    Type: TypeList
+    Description: Cloud logging configuration
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enable_logging:
+            Type: TypeBool
+            Description: If set, enable query logging for this ManagedZone. False by default, making logging opt-in.
+            Required: "true"
+creation_time:
+    Type: TypeString
+    Description: |-
+        The time that this resource was created on the server.
+        This is in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A textual description field. Defaults to 'Managed by Terraform'.
+    Optional: "true"
+dns_name:
+    Type: TypeString
+    Description: The DNS name of this managed zone, for instance "example.com.".
+    Required: "true"
+dnssec_config:
+    Type: TypeList
+    Description: DNSSEC configuration
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        default_key_specs:
+            Type: TypeList
+            Description: |-
+                Specifies parameters that will be used for generating initial DnsKeys
+                for this ManagedZone. If you provide a spec for keySigning or zoneSigning,
+                you must also provide one for the other.
+                default_key_specs can only be updated when the state is 'off'.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs
+            Properties:
+                algorithm:
+                    Type: TypeString
+                    Description: 'String mnemonic specifying the DNSSEC algorithm of this key Possible values: ["ecdsap256sha256", "ecdsap384sha384", "rsasha1", "rsasha256", "rsasha512"]'
+                    Optional: "true"
+                key_length:
+                    Type: TypeInt
+                    Description: Length of the keys in bits
+                    Optional: "true"
+                key_type:
+                    Type: TypeString
+                    Description: |-
+                        Specifies whether this is a key signing key (KSK) or a zone
+                        signing key (ZSK). Key signing keys have the Secure Entry
+                        Point flag set and, when active, will only be used to sign
+                        resource record sets of type DNSKEY. Zone signing keys do
+                        not have the Secure Entry Point flag set and will be used
+                        to sign all other types of resource record sets. Possible values: ["keySigning", "zoneSigning"]
+                    Optional: "true"
+                kind:
+                    Type: TypeString
+                    Description: Identifies what kind of resource this is
+                    Optional: "true"
+        kind:
+            Type: TypeString
+            Description: Identifies what kind of resource this is
+            Optional: "true"
+            AtLeastOneOf: dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs
+        non_existence:
+            Type: TypeString
+            Description: |-
+                Specifies the mechanism used to provide authenticated denial-of-existence responses.
+                non_existence can only be updated when the state is 'off'. Possible values: ["nsec", "nsec3"]
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs
+        state:
+            Type: TypeString
+            Description: 'Specifies whether DNSSEC is enabled, and what mode it is in Possible values: ["off", "on", "transfer"]'
+            Optional: "true"
+            AtLeastOneOf: dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+force_destroy:
+    Type: TypeBool
+    Description: Set this true to delete all records in the zone.
+    Optional: "true"
+forwarding_config:
+    Type: TypeList
+    Description: |-
+        The presence for this field indicates that outbound forwarding is enabled
+        for this zone. The value of this field contains the set of destinations
+        to forward to.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        target_name_servers:
+            Type: TypeSet
+            Description: |-
+                List of target name servers to forward to. Cloud DNS will
+                select the best available name server if more than
+                one target is given.
+            Required: "true"
+            Properties:
+                forwarding_path:
+                    Type: TypeString
+                    Description: |-
+                        Forwarding path for this TargetNameServer. If unset or 'default' Cloud DNS will make forwarding
+                        decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
+                        to the Internet. When set to 'private', Cloud DNS will always send queries through VPC for this target Possible values: ["default", "private"]
+                    Optional: "true"
+                ipv4_address:
+                    Type: TypeString
+                    Description: IPv4 address of a target name server.
+                    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        A set of key/value label pairs to assign to this ManagedZone.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+managed_zone_id:
+    Type: TypeInt
+    Description: Unique identifier for the resource; defined by the server.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: |-
+        User assigned name for this resource.
+        Must be unique within the project.
+    Required: "true"
+name_servers:
+    Type: TypeList
+    Description: |-
+        Delegate your managed_zone to these virtual name servers;
+        defined by the server
+    Computed: "true"
+peering_config:
+    Type: TypeList
+    Description: |-
+        The presence of this field indicates that DNS Peering is enabled for this
+        zone. The value of this field contains the network to peer with.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        target_network:
+            Type: TypeList
+            Description: The network with which to peer.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                network_url:
+                    Type: TypeString
+                    Description: |-
+                        The id or fully qualified URL of the VPC network to forward queries to.
+                        This should be formatted like 'projects/{project}/global/networks/{network}' or
+                        'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'
+                    Required: "true"
+private_visibility_config:
+    Type: TypeList
+    Description: |-
+        For privately visible zones, the set of Virtual Private Cloud
+        resources that the zone is visible from. At least one of 'gke_clusters' or 'networks' must be specified.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        gke_clusters:
+            Type: TypeList
+            Description: The list of Google Kubernetes Engine clusters that can see this zone.
+            Optional: "true"
+            Properties:
+                gke_cluster_name:
+                    Type: TypeString
+                    Description: |-
+                        The resource name of the cluster to bind this ManagedZone to.
+                        This should be specified in the format like
+                        'projects/*/locations/*/clusters/*'
+                    Required: "true"
+        networks:
+            Type: TypeSet
+            Description: |-
+                The list of VPC networks that can see this zone. Until the provider updates to use the Terraform 0.12 SDK in a future release, you
+                may experience issues with this resource while updating. If you've defined a 'networks' block and
+                add another 'networks' block while keeping the old block, Terraform will see an incorrect diff
+                and apply an incorrect update to the resource. If you encounter this issue, remove all 'networks'
+                blocks in an update and then apply another update adding all of them back simultaneously.
+            Optional: "true"
+            Properties:
+                network_url:
+                    Type: TypeString
+                    Description: |-
+                        The id or fully qualified URL of the VPC network to bind to.
+                        This should be formatted like 'projects/{project}/global/networks/{network}' or
+                        'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'
+                    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reverse_lookup:
+    Type: TypeBool
+    Description: |-
+        Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse
+        lookup queries using automatically configured records for VPC resources. This only applies
+        to networks listed under 'private_visibility_config'.
+    Optional: "true"
+service_directory_config:
+    Type: TypeList
+    Description: The presence of this field indicates that this zone is backed by Service Directory. The value of this field contains information related to the namespace associated with the zone.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        namespace:
+            Type: TypeList
+            Description: The namespace associated with the zone.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                namespace_url:
+                    Type: TypeString
+                    Description: |-
+                        The fully qualified or partial URL of the service directory namespace that should be
+                        associated with the zone. This should be formatted like
+                        'https://servicedirectory.googleapis.com/v1/projects/{project}/locations/{location}/namespaces/{namespace_id}'
+                        or simply 'projects/{project}/locations/{location}/namespaces/{namespace_id}'
+                        Ignored for 'public' visibility zones.
+                    Required: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+visibility:
+    Type: TypeString
+    Description: |-
+        The zone's visibility: public zones are exposed to the Internet,
+        while private zones are visible only to Virtual Private Cloud resources. Default value: "public" Possible values: ["private", "public"]
+    Optional: "true"
+

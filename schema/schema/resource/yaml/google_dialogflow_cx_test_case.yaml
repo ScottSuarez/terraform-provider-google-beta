@@ -1,0 +1,360 @@
+creation_time:
+    Type: TypeString
+    Description: When the test was created. A timestamp in RFC3339 text format.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: The human-readable name of the test case, unique within the agent. Limit of 200 characters.
+    Required: "true"
+last_test_result:
+    Type: TypeList
+    Description: The latest test result.
+    Computed: "true"
+    Properties:
+        conversation_turns:
+            Type: TypeList
+            Description: The conversation turns uttered during the test case replay in chronological order.
+            Optional: "true"
+            Properties:
+                user_input:
+                    Type: TypeList
+                    Description: The user input.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enable_sentiment_analysis:
+                            Type: TypeBool
+                            Description: Whether sentiment analysis is enabled.
+                            Optional: "true"
+                        injected_parameters:
+                            Type: TypeString
+                            Description: Parameters that need to be injected into the conversation during intent detection.
+                            Optional: "true"
+                        input:
+                            Type: TypeList
+                            Description: User input. Supports text input, event input, dtmf input in the test case.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                dtmf:
+                                    Type: TypeList
+                                    Description: The DTMF event to be handled.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        digits:
+                                            Type: TypeString
+                                            Description: The dtmf digits.
+                                            Optional: "true"
+                                        finish_digit:
+                                            Type: TypeString
+                                            Description: The finish digit (if any).
+                                            Optional: "true"
+                                event:
+                                    Type: TypeList
+                                    Description: The event to be triggered.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        event:
+                                            Type: TypeString
+                                            Description: Name of the event.
+                                            Required: "true"
+                                language_code:
+                                    Type: TypeString
+                                    Description: |-
+                                        The language of the input. See [Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language) for a list of the currently supported language codes.
+                                        Note that queries in the same session do not necessarily need to specify the same language.
+                                    Optional: "true"
+                                text:
+                                    Type: TypeList
+                                    Description: The natural language text to be processed.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        text:
+                                            Type: TypeString
+                                            Description: The natural language text to be processed. Text length must not exceed 256 characters.
+                                            Required: "true"
+                        is_webhook_enabled:
+                            Type: TypeBool
+                            Description: If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.
+                            Optional: "true"
+                virtual_agent_output:
+                    Type: TypeList
+                    Description: The virtual agent output.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        current_page:
+                            Type: TypeList
+                            Description: The [Page](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.flows.pages#Page) on which the utterance was spoken.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                display_name:
+                                    Type: TypeString
+                                    Description: The human-readable name of the page, unique within the flow.
+                                    Optional: "true"
+                                name:
+                                    Type: TypeString
+                                    Description: |-
+                                        The unique identifier of the page.
+                                        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/pages/<Page ID>.
+                                    Optional: "true"
+                        differences:
+                            Type: TypeList
+                            Description: The list of differences between the original run and the replay for this output, if any.
+                            Optional: "true"
+                            Properties:
+                                description:
+                                    Type: TypeString
+                                    Description: A human readable description of the diff, showing the actual output vs expected output.
+                                    Optional: "true"
+                                type:
+                                    Type: TypeString
+                                    Description: |-
+                                        The type of diff.
+                                        * INTENT: The intent.
+                                        * PAGE: The page.
+                                        * PARAMETERS: The parameters.
+                                        * UTTERANCE: The message utterance.
+                                        * FLOW: The flow. Possible values: ["INTENT", "PAGE", "PARAMETERS", "UTTERANCE", "FLOW"]
+                                    Optional: "true"
+                        session_parameters:
+                            Type: TypeString
+                            Description: The session parameters available to the bot at this point.
+                            Optional: "true"
+                        status:
+                            Type: TypeList
+                            Description: Response error from the agent in the test result. If set, other output is empty.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                code:
+                                    Type: TypeInt
+                                    Description: The status code, which should be an enum value of google.rpc.Code.
+                                    Optional: "true"
+                                details:
+                                    Type: TypeString
+                                    Description: A JSON encoded list of messages that carry the error details.
+                                    Optional: "true"
+                                message:
+                                    Type: TypeString
+                                    Description: A developer-facing error message.
+                                    Optional: "true"
+                        text_responses:
+                            Type: TypeList
+                            Description: The text responses from the agent for the turn.
+                            Optional: "true"
+                            Properties:
+                                text:
+                                    Type: TypeList
+                                    Description: A collection of text responses.
+                                    Optional: "true"
+                        triggered_intent:
+                            Type: TypeList
+                            Description: The [Intent](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.intents#Intent) that triggered the response.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                display_name:
+                                    Type: TypeString
+                                    Description: The human-readable name of the intent, unique within the agent.
+                                    Optional: "true"
+                                name:
+                                    Type: TypeString
+                                    Description: |-
+                                        The unique identifier of the intent.
+                                        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/intents/<Intent ID>.
+                                    Optional: "true"
+        environment:
+            Type: TypeString
+            Description: Environment where the test was run. If not set, it indicates the draft environment.
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: |-
+                The resource name for the test case result.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/testCases/<TestCase ID>/results/<TestCaseResult ID>.
+            Optional: "true"
+        test_result:
+            Type: TypeString
+            Description: |-
+                Whether the test case passed in the agent environment.
+                * PASSED: The test passed.
+                * FAILED: The test did not pass. Possible values: ["PASSED", "FAILED"]
+            Optional: "true"
+        test_time:
+            Type: TypeString
+            Description: The time that the test was run. A timestamp in RFC3339 text format.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the test case.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/testCases/<TestCase ID>.
+    Computed: "true"
+notes:
+    Type: TypeString
+    Description: Additional freeform notes about the test case. Limit of 400 characters.
+    Optional: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The agent to create the test case for.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>.
+    Optional: "true"
+tags:
+    Type: TypeList
+    Description: |-
+        Tags are short descriptions that users may apply to test cases for organizational and filtering purposes.
+        Each tag should start with "#" and has a limit of 30 characters
+    Optional: "true"
+test_case_conversation_turns:
+    Type: TypeList
+    Description: The conversation turns uttered when the test case was created, in chronological order. These include the canonical set of agent utterances that should occur when the agent is working properly.
+    Optional: "true"
+    Properties:
+        user_input:
+            Type: TypeList
+            Description: The user input.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enable_sentiment_analysis:
+                    Type: TypeBool
+                    Description: Whether sentiment analysis is enabled.
+                    Optional: "true"
+                injected_parameters:
+                    Type: TypeString
+                    Description: Parameters that need to be injected into the conversation during intent detection.
+                    Optional: "true"
+                input:
+                    Type: TypeList
+                    Description: User input. Supports text input, event input, dtmf input in the test case.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        dtmf:
+                            Type: TypeList
+                            Description: The DTMF event to be handled.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                digits:
+                                    Type: TypeString
+                                    Description: The dtmf digits.
+                                    Optional: "true"
+                                finish_digit:
+                                    Type: TypeString
+                                    Description: The finish digit (if any).
+                                    Optional: "true"
+                        event:
+                            Type: TypeList
+                            Description: The event to be triggered.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                event:
+                                    Type: TypeString
+                                    Description: Name of the event.
+                                    Required: "true"
+                        language_code:
+                            Type: TypeString
+                            Description: |-
+                                The language of the input. See [Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language) for a list of the currently supported language codes.
+                                Note that queries in the same session do not necessarily need to specify the same language.
+                            Optional: "true"
+                        text:
+                            Type: TypeList
+                            Description: The natural language text to be processed.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                text:
+                                    Type: TypeString
+                                    Description: The natural language text to be processed. Text length must not exceed 256 characters.
+                                    Required: "true"
+                is_webhook_enabled:
+                    Type: TypeBool
+                    Description: If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.
+                    Optional: "true"
+        virtual_agent_output:
+            Type: TypeList
+            Description: The virtual agent output.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                current_page:
+                    Type: TypeList
+                    Description: The [Page](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.flows.pages#Page) on which the utterance was spoken.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        display_name:
+                            Type: TypeString
+                            Description: The human-readable name of the page, unique within the flow.
+                            Computed: "true"
+                        name:
+                            Type: TypeString
+                            Description: |-
+                                The unique identifier of the page.
+                                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/pages/<Page ID>.
+                            Optional: "true"
+                session_parameters:
+                    Type: TypeString
+                    Description: The session parameters available to the bot at this point.
+                    Optional: "true"
+                text_responses:
+                    Type: TypeList
+                    Description: The text responses from the agent for the turn.
+                    Optional: "true"
+                    Properties:
+                        text:
+                            Type: TypeList
+                            Description: A collection of text responses.
+                            Optional: "true"
+                triggered_intent:
+                    Type: TypeList
+                    Description: The [Intent](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.intents#Intent) that triggered the response.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        display_name:
+                            Type: TypeString
+                            Description: The human-readable name of the intent, unique within the agent.
+                            Computed: "true"
+                        name:
+                            Type: TypeString
+                            Description: |-
+                                The unique identifier of the intent.
+                                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/intents/<Intent ID>.
+                            Optional: "true"
+test_config:
+    Type: TypeList
+    Description: Config for the test case.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        flow:
+            Type: TypeString
+            Description: |-
+                Flow name to start the test case with.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>.
+                Only one of flow and page should be set to indicate the starting point of the test case. If neither is set, the test case will start with start page on the default start flow.
+            Optional: "true"
+            ConflictsWith: test_config.0.page
+        page:
+            Type: TypeString
+            Description: |-
+                The page to start the test case with.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/pages/<Page ID>.
+                Only one of flow and page should be set to indicate the starting point of the test case. If neither is set, the test case will start with start page on the default start flow.
+            Optional: "true"
+            ConflictsWith: test_config.0.flow
+        tracking_parameters:
+            Type: TypeList
+            Description: Session parameters to be compared when calculating differences.
+            Optional: "true"
+

@@ -1,0 +1,115 @@
+addresses:
+    Type: TypeList
+    Description: |-
+        Zero or one IPv4-address on which the Gateway will receive the traffic. When no address is provided,
+        an IP from the subnetwork is allocated This field only applies to gateways of type 'SECURE_WEB_GATEWAY'.
+        Gateways of type 'OPEN_MESH' listen on 0.0.0.0.
+    Computed: "true"
+    Optional: "true"
+certificate_urls:
+    Type: TypeList
+    Description: |-
+        A fully-qualified Certificates URL reference. The proxy presents a Certificate (selected based on SNI) when establishing a TLS connection.
+        This feature only applies to gateways of type 'SECURE_WEB_GATEWAY'.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Time the AccessPolicy was created in UTC.
+    Computed: "true"
+delete_swg_autogen_router_on_destroy:
+    Type: TypeBool
+    Description: |-
+        When deleting a gateway of type 'SECURE_WEB_GATEWAY', this boolean option will also delete auto generated router by the gateway creation.
+        If there is no other gateway of type 'SECURE_WEB_GATEWAY' remaining for that region and network it will be deleted.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gateway_security_policy:
+    Type: TypeString
+    Description: |-
+        A fully-qualified GatewaySecurityPolicy URL reference. Defines how a server should apply security policy to inbound (VM to Proxy) initiated connections.
+        For example: 'projects/*/locations/*/gatewaySecurityPolicies/swg-policy'.
+        This policy is specific to gateways of type 'SECURE_WEB_GATEWAY'.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of label tags associated with the Gateway resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The location of the gateway.
+        The default value is 'global'.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Short name of the Gateway resource to be created.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: |-
+        The relative resource name identifying the VPC network that is using this configuration.
+        For example: 'projects/*/global/networks/network-1'.
+        Currently, this field is specific to gateways of type 'SECURE_WEB_GATEWAY'.
+    Optional: "true"
+ports:
+    Type: TypeList
+    Description: |-
+        One or more port numbers (1-65535), on which the Gateway will receive traffic.
+        The proxy binds to the specified ports. Gateways of type 'SECURE_WEB_GATEWAY' are
+        limited to 1 port. Gateways of type 'OPEN_MESH' listen on 0.0.0.0 and support multiple ports.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+scope:
+    Type: TypeString
+    Description: |-
+        Immutable. Scope determines how configuration across multiple Gateway instances are merged.
+        The configuration for multiple Gateway instances with the same scope will be merged as presented as
+        a single coniguration to the proxy/load balancer.
+        Max length 64 characters. Scope should start with a letter and can only have letters, numbers, hyphens.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+server_tls_policy:
+    Type: TypeString
+    Description: |-
+        A fully-qualified ServerTLSPolicy URL reference. Specifies how TLS traffic is terminated.
+        If empty, TLS termination is disabled.
+    Optional: "true"
+subnetwork:
+    Type: TypeString
+    Description: |-
+        The relative resource name identifying the subnetwork in which this SWG is allocated.
+        For example: 'projects/*/regions/us-central1/subnetworks/network-1'.
+        Currently, this field is specific to gateways of type 'SECURE_WEB_GATEWAY.
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'Immutable. The type of the customer-managed gateway. Possible values are: * OPEN_MESH * SECURE_WEB_GATEWAY. Possible values: ["TYPE_UNSPECIFIED", "OPEN_MESH", "SECURE_WEB_GATEWAY"]'
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Time the AccessPolicy was updated in UTC.
+    Computed: "true"
+

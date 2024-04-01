@@ -1,0 +1,17 @@
+bigquery_options:
+    use_partitioned_tables: TypeBool
+custom_writer_identity: TypeString
+description: TypeString
+destination: TypeString
+disabled: TypeBool
+exclusions:
+    description: TypeString
+    disabled: TypeBool
+    filter: TypeString
+    name: TypeString
+filter: TypeString
+name: TypeString
+project: TypeString
+unique_writer_identity: TypeBool
+writer_identity: TypeString
+

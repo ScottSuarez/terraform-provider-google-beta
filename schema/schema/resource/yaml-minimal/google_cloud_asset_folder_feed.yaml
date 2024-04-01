@@ -1,0 +1,17 @@
+asset_names: TypeList(TypeString)
+asset_types: TypeList(TypeString)
+billing_project: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    location: TypeString
+    title: TypeString
+content_type: TypeString
+feed_id: TypeString
+feed_output_config:
+    pubsub_destination:
+        topic: TypeString
+folder: TypeString
+folder_id: TypeString
+name: TypeString
+

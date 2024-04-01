@@ -1,0 +1,32 @@
+{
+    "display_name": {
+        "Description": "The display name. Must be unique.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "kms_key_name": {
+        "Description": "The KMS key used for encryption/decryption in CMEK scenarios. See https://cloud.google.com/security-key-management.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the processor.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type of processor. For possible types see the [official list](https://cloud.google.com/document-ai/docs/reference/rest/v1/projects.locations/fetchProcessorTypes#google.cloud.documentai.v1.DocumentProcessorService.FetchProcessorTypes)",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

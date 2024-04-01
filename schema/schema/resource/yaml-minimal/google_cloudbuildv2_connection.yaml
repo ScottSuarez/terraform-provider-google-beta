@@ -1,0 +1,43 @@
+annotations: TypeMap(TypeString)
+create_time: TypeString
+disabled: TypeBool
+effective_annotations: unknown
+etag: TypeString
+github_config:
+    app_installation_id: TypeInt
+    authorizer_credential:
+        oauth_token_secret_version: TypeString
+        username: TypeString
+github_enterprise_config:
+    app_id: TypeInt
+    app_installation_id: TypeInt
+    app_slug: TypeString
+    host_uri: TypeString
+    private_key_secret_version: TypeString
+    service_directory_config:
+        service: TypeString
+    ssl_ca: TypeString
+    webhook_secret_secret_version: TypeString
+gitlab_config:
+    authorizer_credential:
+        user_token_secret_version: TypeString
+        username: TypeString
+    host_uri: TypeString
+    read_authorizer_credential:
+        user_token_secret_version: TypeString
+        username: TypeString
+    server_version: TypeString
+    service_directory_config:
+        service: TypeString
+    ssl_ca: TypeString
+    webhook_secret_secret_version: TypeString
+installation_state:
+    action_uri: TypeString
+    message: TypeString
+    stage: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+reconciling: TypeBool
+update_time: TypeString
+

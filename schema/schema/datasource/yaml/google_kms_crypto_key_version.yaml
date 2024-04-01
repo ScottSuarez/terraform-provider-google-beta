@@ -1,0 +1,29 @@
+algorithm:
+    Type: TypeString
+    Computed: "true"
+crypto_key:
+    Type: TypeString
+    Required: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+protection_level:
+    Type: TypeString
+    Computed: "true"
+public_key:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        algorithm:
+            Type: TypeString
+            Computed: "true"
+        pem:
+            Type: TypeString
+            Computed: "true"
+state:
+    Type: TypeString
+    Computed: "true"
+version:
+    Type: TypeInt
+    Optional: "true"
+

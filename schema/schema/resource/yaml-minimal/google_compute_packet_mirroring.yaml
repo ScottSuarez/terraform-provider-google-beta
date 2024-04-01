@@ -1,0 +1,20 @@
+collector_ilb:
+    url: TypeString
+description: TypeString
+filter:
+    cidr_ranges: TypeList(TypeString)
+    direction: TypeString
+    ip_protocols: TypeList(TypeString)
+mirrored_resources:
+    instances:
+        url: TypeString
+    subnetworks:
+        url: TypeString
+    tags: TypeList(TypeString)
+name: TypeString
+network:
+    url: TypeString
+priority: TypeInt
+project: TypeString
+region: TypeString
+

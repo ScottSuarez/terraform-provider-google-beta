@@ -1,0 +1,111 @@
+accelerator_type:
+    Type: TypeString
+    Description: The type of hardware accelerators associated with this node.
+    Required: "true"
+cidr_block:
+    Type: TypeString
+    Description: |-
+        The CIDR block that the TPU node will use when selecting an IP
+        address. This CIDR block must be a /29 block; the Compute Engine
+        networks API forbids a smaller block, and using a larger block would
+        be wasteful (a node can only consume one IP address).
+
+        Errors will occur if the CIDR block has already been used for a
+        currently existing TPU node, the CIDR block conflicts with any
+        subnetworks in the user's provided network, or the provided network
+        is peered with another network that is using that CIDR block.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: use_service_networking
+description:
+    Type: TypeString
+    Description: The user-supplied description of the TPU. Maximum of 512 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user provided metadata.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The immutable name of the TPU.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: |-
+        The name of a network to peer the TPU node to. It must be a
+        preexisting Compute Engine network inside of the project on which
+        this API has been activated. If none is provided, "default" will be
+        used.
+    Computed: "true"
+    Optional: "true"
+network_endpoints:
+    Type: TypeList
+    Description: |-
+        The network endpoints where TPU workers can be accessed and sent work.
+        It is recommended that Tensorflow clients of the node first reach out
+        to the first (index 0) entry.
+    Computed: "true"
+    Properties:
+        ip_address:
+            Type: TypeString
+            Description: The IP address of this network endpoint.
+            Computed: "true"
+        port:
+            Type: TypeInt
+            Description: The port of this network endpoint.
+            Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+scheduling_config:
+    Type: TypeList
+    Description: Sets the scheduling options for this TPU instance.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        preemptible:
+            Type: TypeBool
+            Description: Defines whether the TPU instance is preemptible.
+            Required: "true"
+service_account:
+    Type: TypeString
+    Description: |-
+        The service account used to run the tensor flow services within the
+        node. To share resources, including Google Cloud Storage data, with
+        the Tensorflow job running in the Node, this account must have
+        permissions to that data.
+    Computed: "true"
+tensorflow_version:
+    Type: TypeString
+    Description: The version of Tensorflow running in the Node.
+    Required: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+use_service_networking:
+    Type: TypeBool
+    Description: |-
+        Whether the VPC peering for the node is set up through Service Networking API.
+        The VPC Peering should be set up before provisioning the node. If this field is set,
+        cidr_block field should not be specified. If the network that you want to peer the
+        TPU Node to is a Shared VPC network, the node must be created with this this field enabled.
+    Optional: "true"
+    ConflictsWith: cidr_block
+zone:
+    Type: TypeString
+    Description: The GCP location for the TPU. If it is not provided, the provider zone is used.
+    Computed: "true"
+    Optional: "true"
+

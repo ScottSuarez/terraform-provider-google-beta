@@ -1,0 +1,20 @@
+brand:
+    Type: TypeString
+    Description: |-
+        Identifier of the brand to which this client
+        is attached to. The format is
+        'projects/{project_number}/brands/{brand_id}/identityAwareProxyClients/{client_id}'.
+    Required: "true"
+client_id:
+    Type: TypeString
+    Description: Output only. Unique identifier of the OAuth client.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: Human-friendly name given to the OAuth client.
+    Required: "true"
+secret:
+    Type: TypeString
+    Description: Output only. Client secret of the OAuth client.
+    Computed: "true"
+

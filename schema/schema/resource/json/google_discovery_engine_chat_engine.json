@@ -1,0 +1,114 @@
+{
+    "chat_engine_config": {
+        "Description": "Configurations for a chat Engine.",
+        "MaxItems": 1,
+        "Properties": {
+            "agent_creation_config": {
+                "Description": "The configuration to generate the Dialogflow agent that is associated to this Engine.",
+                "MaxItems": 1,
+                "Properties": {
+                    "business": {
+                        "Description": "Name of the company, organization or other entity that the agent represents. Used for knowledge connector LLM prompt and for knowledge search.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "default_language_code": {
+                        "Description": "The default language of the agent as a language tag. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "location": {
+                        "Description": "Agent location for Agent creation, currently supported values: global/us/eu, it needs to be the same region as the Chat Engine.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "time_zone": {
+                        "Description": "The time zone of the agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York, Europe/Paris.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "chat_engine_metadata": {
+        "Computed": true,
+        "Description": "Additional information of the Chat Engine.",
+        "Properties": {
+            "dialogflow_agent": {
+                "Computed": true,
+                "Description": "The resource name of a Dialogflow agent, that this Chat Engine refers to.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "collection_id": {
+        "Description": "The collection ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "common_config": {
+        "Description": "Common config spec that specifies the metadata of the engine.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "company_name": {
+                "Description": "The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Timestamp the Engine was created at.",
+        "Type": "TypeString"
+    },
+    "data_store_ids": {
+        "Description": "The data stores associated with this engine. Multiple DataStores in the same Collection can be associated here. All listed DataStores must be 'SOLUTION_TYPE_CHAT'. Adding or removing data stores will force recreation.",
+        "MinItems": 1,
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "engine_id": {
+        "Description": "The ID to use for chat engine.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "industry_vertical": {
+        "Description": "The industry vertical that the chat engine registers. Vertical on Engine has to match vertical of the DataStore linked to the engine. Default value: \"GENERIC\" Possible values: [\"GENERIC\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "Location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique full resource name of the chat engine. Values are of the format\n'projects/{project}/locations/{location}/collections/{collection_id}/engines/{engine_id}'.\nThis field must be a UTF-8 encoded string with a length limit of 1024\ncharacters.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Timestamp the Engine was last updated.",
+        "Type": "TypeString"
+    }
+}

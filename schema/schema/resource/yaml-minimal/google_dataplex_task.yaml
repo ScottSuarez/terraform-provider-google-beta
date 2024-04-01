@@ -1,0 +1,77 @@
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+execution_spec:
+    args: TypeMap(TypeString)
+    kms_key: TypeString
+    max_job_execution_lifetime: TypeString
+    project: TypeString
+    service_account: TypeString
+execution_status:
+    latest_job:
+        end_time: TypeString
+        message: TypeString
+        name: TypeString
+        retry_count: TypeInt
+        service: TypeString
+        service_job: TypeString
+        start_time: TypeString
+        state: TypeString
+        uid: TypeString
+    update_time: TypeString
+labels: TypeMap(TypeString)
+lake: TypeString
+location: TypeString
+name: TypeString
+notebook:
+    archive_uris: TypeList(TypeString)
+    file_uris: TypeList(TypeString)
+    infrastructure_spec:
+        batch:
+            executors_count: TypeInt
+            max_executors_count: TypeInt
+        container_image:
+            image: TypeString
+            java_jars: TypeList(TypeString)
+            properties: TypeMap(TypeString)
+            python_packages: TypeList(TypeString)
+        vpc_network:
+            network: TypeString
+            network_tags: TypeList(TypeString)
+            sub_network: TypeString
+    notebook: TypeString
+project: TypeString
+spark:
+    archive_uris: TypeList(TypeString)
+    file_uris: TypeList(TypeString)
+    infrastructure_spec:
+        batch:
+            executors_count: TypeInt
+            max_executors_count: TypeInt
+        container_image:
+            image: TypeString
+            java_jars: TypeList(TypeString)
+            properties: TypeMap(TypeString)
+            python_packages: TypeList(TypeString)
+        vpc_network:
+            network: TypeString
+            network_tags: TypeList(TypeString)
+            sub_network: TypeString
+    main_class: TypeString
+    main_jar_file_uri: TypeString
+    python_script_file: TypeString
+    sql_script: TypeString
+    sql_script_file: TypeString
+state: TypeString
+task_id: TypeString
+terraform_labels: TypeMap(TypeString)
+trigger_spec:
+    disabled: TypeBool
+    max_retries: TypeInt
+    schedule: TypeString
+    start_time: TypeString
+    type: TypeString
+uid: TypeString
+update_time: TypeString
+

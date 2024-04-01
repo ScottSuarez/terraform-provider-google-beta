@@ -1,0 +1,34 @@
+{
+    "fqdn": {
+        "AtLeastOneOf": "fqdn, ip_address",
+        "Description": "Fully qualified domain name of network endpoint.\n\nThis can only be specified when network_endpoint_type of the NEG is INTERNET_FQDN_PORT.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ip_address": {
+        "Description": "IPv4 address external endpoint.\n\nThis can only be specified when network_endpoint_type of the NEG is INTERNET_IP_PORT.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "port": {
+        "Description": "Port number of network endpoint.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "Region where the containing network endpoint group is located.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region_network_endpoint_group": {
+        "Description": "The network endpoint group this endpoint is part of.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,6 @@
+cluster_id: TypeString
+location: TypeString
+manifest: TypeString
+platform_version: TypeString
+project: TypeString
+

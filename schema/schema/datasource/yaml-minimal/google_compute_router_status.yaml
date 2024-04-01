@@ -1,0 +1,37 @@
+best_routes:
+    description: TypeString
+    dest_range: TypeString
+    name: TypeString
+    network: TypeString
+    next_hop_gateway: TypeString
+    next_hop_ilb: TypeString
+    next_hop_instance: TypeString
+    next_hop_instance_zone: TypeString
+    next_hop_ip: TypeString
+    next_hop_network: TypeString
+    next_hop_vpn_tunnel: TypeString
+    priority: TypeInt
+    project: TypeString
+    self_link: TypeString
+    tags: TypeSet(TypeString)
+best_routes_for_router:
+    description: TypeString
+    dest_range: TypeString
+    name: TypeString
+    network: TypeString
+    next_hop_gateway: TypeString
+    next_hop_ilb: TypeString
+    next_hop_instance: TypeString
+    next_hop_instance_zone: TypeString
+    next_hop_ip: TypeString
+    next_hop_network: TypeString
+    next_hop_vpn_tunnel: TypeString
+    priority: TypeInt
+    project: TypeString
+    self_link: TypeString
+    tags: TypeSet(TypeString)
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+

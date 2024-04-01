@@ -1,0 +1,361 @@
+{
+    "cleanup_policies": {
+        "Description": "Cleanup policies for this repository. Cleanup policies indicate when\ncertain package versions can be automatically deleted.\nMap keys are policy IDs supplied by users during policy creation. They must\nunique within a repository and be under 128 characters in length.",
+        "Optional": true,
+        "Properties": {
+            "action": {
+                "Description": "Policy action. Possible values: [\"DELETE\", \"KEEP\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "condition": {
+                "Description": "Policy condition for matching versions.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "newer_than": {
+                        "Description": "Match versions newer than a duration.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "older_than": {
+                        "Description": "Match versions older than a duration.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "package_name_prefixes": {
+                        "Description": "Match versions by package prefix. Applied on any prefix match.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "tag_prefixes": {
+                        "Description": "Match versions by tag prefix. Applied on any prefix match.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "tag_state": {
+                        "Description": "Match versions by tag status. Default value: \"ANY\" Possible values: [\"TAGGED\", \"UNTAGGED\", \"ANY\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "version_name_prefixes": {
+                        "Description": "Match versions by version name prefix. Applied on any prefix match.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "id": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "most_recent_versions": {
+                "Description": "Policy condition for retaining a minimum number of versions. May only be\nspecified with a Keep action.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "keep_count": {
+                        "Description": "Minimum number of versions to keep.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "package_name_prefixes": {
+                        "Description": "Match versions by package prefix. Applied on any prefix match.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "cleanup_policy_dry_run": {
+        "Description": "If true, the cleanup pipeline is prevented from deleting versions in this\nrepository.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time when the repository was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "The user-provided description of the repository.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "docker_config": {
+        "Description": "Docker repository config contains repository level configuration for the repositories of docker type.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "immutable_tags": {
+                "Description": "The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "format": {
+        "Description": "The format of packages that are stored in the repository. Supported formats\ncan be found [here](https://cloud.google.com/artifact-registry/docs/supported-formats).\nYou can only create alpha formats if you are a member of the\n[alpha user group](https://cloud.google.com/artifact-registry/docs/supported-formats#alpha-access).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "kms_key_name": {
+        "Description": "The Cloud KMS resource name of the customer managed encryption key that’s\nused to encrypt the contents of the Repository. Has the form:\n'projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key'.\nThis value may not be changed after the Repository has been created.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels with user-defined metadata.\nThis field may contain up to 64 entries. Label keys and values may be no\nlonger than 63 characters. Label keys must begin with a lowercase letter\nand may only contain lowercase letters, numeric characters, underscores,\nand dashes.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Computed": true,
+        "Description": "The name of the location this repository is located in.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "maven_config": {
+        "Description": "MavenRepositoryConfig is maven related repository details.\nProvides additional configuration details for repositories of the maven\nformat type.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_snapshot_overwrites": {
+                "Description": "The repository with this flag will allow publishing the same\nsnapshot versions.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "version_policy": {
+                "Description": "Version policy defines the versions that the registry will accept. Default value: \"VERSION_POLICY_UNSPECIFIED\" Possible values: [\"VERSION_POLICY_UNSPECIFIED\", \"RELEASE\", \"SNAPSHOT\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "mode": {
+        "Description": "The mode configures the repository to serve artifacts from different sources. Default value: \"STANDARD_REPOSITORY\" Possible values: [\"STANDARD_REPOSITORY\", \"VIRTUAL_REPOSITORY\", \"REMOTE_REPOSITORY\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of the repository, for example:\n\"repo1\"",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "remote_repository_config": {
+        "ConflictsWith": "virtual_repository_config",
+        "Description": "Configuration specific for a Remote Repository.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "apt_repository": {
+                "Description": "Specific settings for an Apt remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "One of the publicly available Apt repositories supported by Artifact Registry.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "repository_base": {
+                                "Description": "A common public repository base for Apt, e.g. '\"debian/dists/buster\"' Possible values: [\"DEBIAN\", \"UBUNTU\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "repository_path": {
+                                "Description": "Specific repository from the base.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "description": {
+                "Description": "The description of the remote source.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "docker_repository": {
+                "Description": "Specific settings for a Docker remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "Address of the remote repository. Default value: \"DOCKER_HUB\" Possible values: [\"DOCKER_HUB\"]",
+                        "ExactlyOneOf": "remote_repository_config.0.docker_repository.0.public_repository",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "maven_repository": {
+                "Description": "Specific settings for a Maven remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "Address of the remote repository. Default value: \"MAVEN_CENTRAL\" Possible values: [\"MAVEN_CENTRAL\"]",
+                        "ExactlyOneOf": "remote_repository_config.0.maven_repository.0.public_repository",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "npm_repository": {
+                "Description": "Specific settings for an Npm remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "Address of the remote repository. Default value: \"NPMJS\" Possible values: [\"NPMJS\"]",
+                        "ExactlyOneOf": "remote_repository_config.0.npm_repository.0.public_repository",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "python_repository": {
+                "Description": "Specific settings for a Python remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "Address of the remote repository. Default value: \"PYPI\" Possible values: [\"PYPI\"]",
+                        "ExactlyOneOf": "remote_repository_config.0.python_repository.0.public_repository",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "upstream_credentials": {
+                "Description": "The credentials used to access the remote repository.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "username_password_credentials": {
+                        "Description": "Use username and password to access the remote repository.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "password_secret_version": {
+                                "Description": "The Secret Manager key version that holds the password to access the\nremote repository. Must be in the format of\n'projects/{project}/secrets/{secret}/versions/{version}'.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "username": {
+                                "Description": "The username to access the remote repository.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "yum_repository": {
+                "Description": "Specific settings for an Yum remote repository.",
+                "ExactlyOneOf": "remote_repository_config.0.apt_repository, remote_repository_config.0.docker_repository, remote_repository_config.0.maven_repository, remote_repository_config.0.npm_repository, remote_repository_config.0.python_repository, remote_repository_config.0.yum_repository",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "public_repository": {
+                        "Description": "One of the publicly available Yum repositories supported by Artifact Registry.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "repository_base": {
+                                "Description": "A common public repository base for Yum. Possible values: [\"CENTOS\", \"CENTOS_DEBUG\", \"CENTOS_VAULT\", \"CENTOS_STREAM\", \"ROCKY\", \"EPEL\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "repository_path": {
+                                "Description": "Specific repository from the base, e.g. '\"centos/8-stream/BaseOS/x86_64/os\"'",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "repository_id": {
+        "Description": "The last part of the repository name, for example:\n\"repo1\"",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time when the repository was last updated.",
+        "Type": "TypeString"
+    },
+    "virtual_repository_config": {
+        "ConflictsWith": "remote_repository_config",
+        "Description": "Configuration specific for a Virtual Repository.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "upstream_policies": {
+                "Description": "Policies that configure the upstream artifacts distributed by the Virtual\nRepository. Upstream policies cannot be set on a standard repository.",
+                "Optional": true,
+                "Properties": {
+                    "id": {
+                        "Description": "The user-provided ID of the upstream policy.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "priority": {
+                        "Description": "Entries with a greater priority value take precedence in the pull order.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "repository": {
+                        "Description": "A reference to the repository resource, for example:\n\"projects/p1/locations/us-central1/repository/repo1\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

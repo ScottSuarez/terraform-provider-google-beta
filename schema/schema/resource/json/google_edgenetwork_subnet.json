@@ -1,0 +1,73 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The time when the subnet was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ipv4_cidr": {
+        "Description": "The ranges of ipv4 addresses that are owned by this subnetwork, in CIDR format.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "ipv6_cidr": {
+        "Description": "The ranges of ipv6 addresses that are owned by this subnetwork, in CIDR format.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Labels associated with this resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The Google Cloud region to which the target Distributed Cloud Edge zone belongs.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The canonical name of this resource, with format\n'projects/{{project}}/locations/{{location}}/zones/{{zone}}/subnets/{{subnet_id}}'",
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "The ID of the network to which this router belongs.\nMust be of the form: 'projects/{{project}}/locations/{{location}}/zones/{{zone}}/networks/{{network_id}}'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Current stage of the resource to the device by config push.",
+        "Type": "TypeString"
+    },
+    "subnet_id": {
+        "Description": "A unique ID that identifies this subnet.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time when the subnet was last updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.",
+        "Type": "TypeString"
+    },
+    "vlan_id": {
+        "Computed": true,
+        "Description": "VLAN ID for this subnetwork. If not specified, one is assigned automatically.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "zone": {
+        "Description": "The name of the target Distributed Cloud Edge zone.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

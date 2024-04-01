@@ -1,0 +1,227 @@
+display_name:
+    Type: TypeString
+    Description: Name of the schema given by the user.
+    Required: "true"
+document_is_folder:
+    Type: TypeBool
+    Description: Tells whether the document is a folder or a typical document.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the document schema.
+    Computed: "true"
+project_number:
+    Type: TypeString
+    Description: The unique identifier of the project.
+    Required: "true"
+property_definitions:
+    Type: TypeList
+    Description: Defines the metadata for a schema property.
+    Required: "true"
+    Properties:
+        date_time_type_options:
+            Type: TypeList
+            Description: Date time property. Not supported by CMEK compliant deployment.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        display_name:
+            Type: TypeString
+            Description: The display-name for the property, used for front-end.
+            Optional: "true"
+        enum_type_options:
+            Type: TypeList
+            Description: Enum/categorical property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                possible_values:
+                    Type: TypeList
+                    Description: List of possible enum values.
+                    Required: "true"
+                validation_check_disabled:
+                    Type: TypeBool
+                    Description: Make sure the enum property value provided in the document is in the possile value list during document creation. The validation check runs by default.
+                    Optional: "true"
+        float_type_options:
+            Type: TypeList
+            Description: Float property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        integer_type_options:
+            Type: TypeList
+            Description: Integer property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        is_filterable:
+            Type: TypeBool
+            Description: Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
+            Optional: "true"
+        is_metadata:
+            Type: TypeBool
+            Description: Whether the property is user supplied metadata.
+            Optional: "true"
+        is_repeatable:
+            Type: TypeBool
+            Description: Whether the property can have multiple values.
+            Optional: "true"
+        is_required:
+            Type: TypeBool
+            Description: Whether the property is mandatory.
+            Optional: "true"
+        is_searchable:
+            Type: TypeBool
+            Description: Indicates that the property should be included in a global search.
+            Optional: "true"
+        map_type_options:
+            Type: TypeList
+            Description: Map property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        name:
+            Type: TypeString
+            Description: The name of the metadata property.
+            Required: "true"
+        property_type_options:
+            Type: TypeList
+            Description: Nested structured data property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                property_definitions:
+                    Type: TypeList
+                    Description: Defines the metadata for a schema property.
+                    Required: "true"
+                    Properties:
+                        date_time_type_options:
+                            Type: TypeList
+                            Description: Date time property. Not supported by CMEK compliant deployment.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+                        display_name:
+                            Type: TypeString
+                            Description: The display-name for the property, used for front-end.
+                            Optional: "true"
+                        enum_type_options:
+                            Type: TypeList
+                            Description: Enum/categorical property.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                possible_values:
+                                    Type: TypeList
+                                    Description: List of possible enum values.
+                                    Required: "true"
+                                validation_check_disabled:
+                                    Type: TypeBool
+                                    Description: Make sure the enum property value provided in the document is in the possile value list during document creation. The validation check runs by default.
+                                    Optional: "true"
+                        float_type_options:
+                            Type: TypeList
+                            Description: Float property.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+                        integer_type_options:
+                            Type: TypeList
+                            Description: Integer property.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+                        is_filterable:
+                            Type: TypeBool
+                            Description: Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
+                            Optional: "true"
+                        is_metadata:
+                            Type: TypeBool
+                            Description: Whether the property is user supplied metadata.
+                            Optional: "true"
+                        is_repeatable:
+                            Type: TypeBool
+                            Description: Whether the property can have multiple values.
+                            Optional: "true"
+                        is_required:
+                            Type: TypeBool
+                            Description: Whether the property is mandatory.
+                            Optional: "true"
+                        is_searchable:
+                            Type: TypeBool
+                            Description: Indicates that the property should be included in a global search.
+                            Optional: "true"
+                        map_type_options:
+                            Type: TypeList
+                            Description: Map property.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+                        name:
+                            Type: TypeString
+                            Description: The name of the metadata property.
+                            Required: "true"
+                        retrieval_importance:
+                            Type: TypeString
+                            Description: 'Stores the retrieval importance. Possible values: ["HIGHEST", "HIGHER", "HIGH", "MEDIUM", "LOW", "LOWEST"]'
+                            Optional: "true"
+                        schema_sources:
+                            Type: TypeList
+                            Description: The schema source information.
+                            Optional: "true"
+                            Properties:
+                                name:
+                                    Type: TypeString
+                                    Description: The schema name in the source.
+                                    Optional: "true"
+                                processor_type:
+                                    Type: TypeString
+                                    Description: The Doc AI processor type name.
+                                    Optional: "true"
+                        text_type_options:
+                            Type: TypeList
+                            Description: Text property.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+                        timestamp_type_options:
+                            Type: TypeList
+                            Description: Timestamp property. Not supported by CMEK compliant deployment.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties: {}
+        retrieval_importance:
+            Type: TypeString
+            Description: 'Stores the retrieval importance. Possible values: ["HIGHEST", "HIGHER", "HIGH", "MEDIUM", "LOW", "LOWEST"]'
+            Optional: "true"
+        schema_sources:
+            Type: TypeList
+            Description: The schema source information.
+            Optional: "true"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: The schema name in the source.
+                    Optional: "true"
+                processor_type:
+                    Type: TypeString
+                    Description: The Doc AI processor type name.
+                    Optional: "true"
+        text_type_options:
+            Type: TypeList
+            Description: Text/string property.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        timestamp_type_options:
+            Type: TypeList
+            Description: Timestamp property. Not supported by CMEK compliant deployment.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+

@@ -1,0 +1,30 @@
+arguments:
+    argument_kind: TypeString
+    data_type: TypeString
+    mode: TypeString
+    name: TypeString
+creation_time: TypeInt
+dataset_id: TypeString
+definition_body: TypeString
+description: TypeString
+determinism_level: TypeString
+imported_libraries: TypeList(TypeString)
+language: TypeString
+last_modified_time: TypeInt
+project: TypeString
+return_table_type: TypeString
+return_type: TypeString
+routine_id: TypeString
+routine_type: TypeString
+spark_options:
+    archive_uris: TypeList(TypeString)
+    connection: TypeString
+    container_image: TypeString
+    file_uris: TypeList(TypeString)
+    jar_uris: TypeList(TypeString)
+    main_class: TypeString
+    main_file_uri: TypeString
+    properties: TypeMap(TypeString)
+    py_file_uris: TypeList(TypeString)
+    runtime_version: TypeString
+

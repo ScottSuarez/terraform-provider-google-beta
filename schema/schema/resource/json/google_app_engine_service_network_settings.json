@@ -1,0 +1,25 @@
+{
+    "network_settings": {
+        "Description": "Ingress settings for this service. Will apply to all versions.",
+        "MaxItems": 1,
+        "Properties": {
+            "ingress_traffic_allowed": {
+                "Description": "The ingress settings for version or service. Default value: \"INGRESS_TRAFFIC_ALLOWED_UNSPECIFIED\" Possible values: [\"INGRESS_TRAFFIC_ALLOWED_UNSPECIFIED\", \"INGRESS_TRAFFIC_ALLOWED_ALL\", \"INGRESS_TRAFFIC_ALLOWED_INTERNAL_ONLY\", \"INGRESS_TRAFFIC_ALLOWED_INTERNAL_AND_LB\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Description": "The name of the service these settings apply to.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

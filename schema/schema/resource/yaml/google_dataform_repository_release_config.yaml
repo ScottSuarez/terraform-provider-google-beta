@@ -1,0 +1,98 @@
+code_compilation_config:
+    Type: TypeList
+    Description: Optional. If set, fields of codeCompilationConfig override the default compilation settings that are specified in dataform.json.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        assertion_schema:
+            Type: TypeString
+            Description: Optional. The default schema (BigQuery dataset ID) for assertions.
+            Optional: "true"
+        database_suffix:
+            Type: TypeString
+            Description: Optional. The suffix that should be appended to all database (Google Cloud project ID) names.
+            Optional: "true"
+        default_database:
+            Type: TypeString
+            Description: Optional. The default database (Google Cloud project ID).
+            Optional: "true"
+        default_location:
+            Type: TypeString
+            Description: |-
+                Optional. The default BigQuery location to use. Defaults to "US".
+                See the BigQuery docs for a full list of locations: https://cloud.google.com/bigquery/docs/locations.
+            Optional: "true"
+        default_schema:
+            Type: TypeString
+            Description: Optional. The default schema (BigQuery dataset ID).
+            Optional: "true"
+        schema_suffix:
+            Type: TypeString
+            Description: Optional. The suffix that should be appended to all schema (BigQuery dataset ID) names.
+            Optional: "true"
+        table_prefix:
+            Type: TypeString
+            Description: Optional. The prefix that should be prepended to all table names.
+            Optional: "true"
+        vars:
+            Type: TypeMap
+            Description: |-
+                Optional. User-defined variables that are made available to project code during compilation.
+                An object containing a list of "key": value pairs.
+                Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+            Optional: "true"
+cron_schedule:
+    Type: TypeString
+    Description: Optional. Optional schedule (in cron format) for automatic creation of compilation results.
+    Optional: "true"
+git_commitish:
+    Type: TypeString
+    Description: Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The release's name.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+recent_scheduled_release_records:
+    Type: TypeList
+    Description: Records of the 10 most recent scheduled release attempts, ordered in in descending order of releaseTime. Updated whenever automatic creation of a compilation result is triggered by cronSchedule.
+    Computed: "true"
+    Properties:
+        compilation_result:
+            Type: TypeString
+            Description: The name of the created compilation result, if one was successfully created. Must be in the format projects/*/locations/*/repositories/*/compilationResults/*.
+            Computed: "true"
+        error_status:
+            Type: TypeList
+            Description: The error status encountered upon this attempt to create the compilation result, if the attempt was unsuccessful.
+            Computed: "true"
+            Properties:
+                code:
+                    Type: TypeInt
+                    Description: The status code, which should be an enum value of google.rpc.Code.
+                    Computed: "true"
+                message:
+                    Type: TypeString
+                    Description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+                    Computed: "true"
+        release_time:
+            Type: TypeString
+            Description: The timestamp of this release attempt.
+            Computed: "true"
+region:
+    Type: TypeString
+    Description: A reference to the region
+    Optional: "true"
+repository:
+    Type: TypeString
+    Description: A reference to the Dataform repository
+    Optional: "true"
+time_zone:
+    Type: TypeString
+    Description: Optional. Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If left unspecified, the default is UTC.
+    Optional: "true"
+

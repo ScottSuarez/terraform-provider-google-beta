@@ -1,0 +1,13 @@
+location:
+    Type: TypeString
+    Optional: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+supported_regions:
+    Type: TypeList
+    Computed: "true"
+valid_versions:
+    Type: TypeList
+    Computed: "true"
+

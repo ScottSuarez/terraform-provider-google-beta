@@ -1,0 +1,13 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+location: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+workstation_cluster_id: TypeString
+workstation_config_id: TypeString
+workstation_id: TypeString
+

@@ -1,0 +1,26 @@
+app_engine:
+    service: TypeString
+    url_mask: TypeString
+    version: TypeString
+cloud_function:
+    function: TypeString
+    url_mask: TypeString
+cloud_run:
+    service: TypeString
+    tag: TypeString
+    url_mask: TypeString
+description: TypeString
+name: TypeString
+network: TypeString
+network_endpoint_type: TypeString
+project: TypeString
+psc_target_service: TypeString
+region: TypeString
+self_link: TypeString
+serverless_deployment:
+    platform: TypeString
+    resource: TypeString
+    url_mask: TypeString
+    version: TypeString
+subnetwork: TypeString
+

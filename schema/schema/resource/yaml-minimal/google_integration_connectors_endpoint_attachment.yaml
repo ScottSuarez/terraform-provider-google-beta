@@ -1,0 +1,12 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+endpoint_ip: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+service_attachment: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

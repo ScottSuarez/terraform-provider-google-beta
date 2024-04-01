@@ -1,0 +1,60 @@
+create_time:
+    Type: TypeString
+    Description: The time when the snapshot was created in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A description of the snapshot with 2048 characters or less. Requests with longer descriptions will be rejected.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+filesystem_used_bytes:
+    Type: TypeString
+    Description: The amount of bytes needed to allocate a full copy of the snapshot content.
+    Computed: "true"
+instance:
+    Type: TypeString
+    Description: The resource name of the filestore instance.
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user-provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The name of the location of the instance. This can be a region for ENTERPRISE tier instances.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name of the snapshot. The name must be unique within the specified instance.
+
+        The name must be 1-63 characters long, and comply with
+        RFC1035. Specifically, the name must be 1-63 characters long and match
+        the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+        first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the last
+        character, which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The snapshot state.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

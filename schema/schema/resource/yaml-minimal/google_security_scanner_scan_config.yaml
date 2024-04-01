@@ -1,0 +1,21 @@
+authentication:
+    custom_account:
+        login_url: TypeString
+        password: TypeString
+        username: TypeString
+    google_account:
+        password: TypeString
+        username: TypeString
+blacklist_patterns: TypeList(TypeString)
+display_name: TypeString
+export_to_security_command_center: TypeString
+max_qps: TypeInt
+name: TypeString
+project: TypeString
+schedule:
+    interval_duration_days: TypeInt
+    schedule_time: TypeString
+starting_urls: TypeList(TypeString)
+target_platforms: TypeList(TypeString)
+user_agent: TypeString
+

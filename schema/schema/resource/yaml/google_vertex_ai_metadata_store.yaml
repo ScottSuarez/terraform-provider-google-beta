@@ -1,0 +1,47 @@
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the MetadataStore was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Description of the MetadataStore.
+    Optional: "true"
+encryption_spec:
+    Type: TypeList
+    Description: Customer-managed encryption key spec for a MetadataStore. If set, this MetadataStore and all sub-resources of this MetadataStore will be secured by this key.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key_name:
+            Type: TypeString
+            Description: |-
+                Required. The Cloud KMS resource identifier of the customer managed encryption key used to protect a resource.
+                Has the form: projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key. The key needs to be in the same region as where the resource is created.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the MetadataStore. This value may be up to 60 characters, and valid characters are [a-z0-9_]. The first character cannot be a number.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the Metadata Store. eg us-central1
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeList
+    Description: State information of the MetadataStore.
+    Computed: "true"
+    Properties:
+        disk_utilization_bytes:
+            Type: TypeString
+            Description: The disk utilization of the MetadataStore in bytes.
+            Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the MetadataStore was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+

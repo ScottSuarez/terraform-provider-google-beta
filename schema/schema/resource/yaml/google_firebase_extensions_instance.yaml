@@ -1,0 +1,180 @@
+config:
+    Type: TypeList
+    Description: The current Config of the Extension Instance.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        allowed_event_types:
+            Type: TypeList
+            Description: |-
+                List of extension events selected by consumer that extension is allowed to
+                emit, identified by their types.
+            Optional: "true"
+        create_time:
+            Type: TypeString
+            Description: The time at which the Extension Instance Config was created.
+            Computed: "true"
+        eventarc_channel:
+            Type: TypeString
+            Description: Fully qualified Eventarc resource name that consumers should use for event triggers.
+            Computed: "true"
+            Optional: "true"
+        extension_ref:
+            Type: TypeString
+            Description: The ref of the Extension from the Registry (e.g. publisher-id/awesome-extension)
+            Required: "true"
+        extension_version:
+            Type: TypeString
+            Description: The version of the Extension from the Registry (e.g. 1.0.3). If left blank, latest is assumed.
+            Computed: "true"
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: The unique identifier for this configuration.
+            Computed: "true"
+        params:
+            Type: TypeMap
+            Description: Environment variables that may be configured for the Extension
+            Required: "true"
+        populated_postinstall_content:
+            Type: TypeString
+            Description: |-
+                Postinstall instructions to be shown for this Extension, with
+                template strings representing function and parameter values substituted
+                with actual values. These strings include: ${param:FOO},
+                ${function:myFunc.url},
+                ${function:myFunc.name}, and ${function:myFunc.location}
+            Computed: "true"
+        system_params:
+            Type: TypeMap
+            Description: |-
+                Params whose values are only available at deployment time.
+                Unlike other params, these will not be set as environment variables on
+                functions. See a full list of system parameters at
+                https://firebase.google.com/docs/extensions/publishers/parameters#system_parameters
+            Computed: "true"
+            Optional: "true"
+create_time:
+    Type: TypeString
+    Description: The time at which the Extension Instance was created.
+    Computed: "true"
+error_status:
+    Type: TypeList
+    Description: |-
+        If this Instance has 'state: ERRORED', the error messages
+        will be found here.
+    Computed: "true"
+    Properties:
+        code:
+            Type: TypeInt
+            Description: The status code, which should be an enum value of google.rpc.Code.
+            Optional: "true"
+        details:
+            Type: TypeList
+            Description: A list of messages that carry the error details.
+            Optional: "true"
+        message:
+            Type: TypeString
+            Description: A developer-facing error message, which should be in English.
+            Optional: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        A weak etag that is computed by the server based on other configuration
+        values and may be sent on update and delete requests to ensure the
+        client has an up-to-date value before proceeding.
+    Computed: "true"
+instance_id:
+    Type: TypeString
+    Description: |-
+        The ID to use for the Extension Instance, which will become the final
+        component of the instance's name.
+    Required: "true"
+last_operation_name:
+    Type: TypeString
+    Description: |-
+        The name of the last operation that acted on this Extension
+        Instance
+    Computed: "true"
+last_operation_type:
+    Type: TypeString
+    Description: The type of the last operation that acted on the Extension Instance.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The fully-qualified resource name of the Extension Instance.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+runtime_data:
+    Type: TypeList
+    Description: Data set by the extension instance at runtime.
+    Computed: "true"
+    Properties:
+        fatal_error:
+            Type: TypeList
+            Description: The fatal error state for the extension instance
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                error_message:
+                    Type: TypeString
+                    Description: |-
+                        The error message. This is set by the extension developer to give
+                        more detail on why the extension is unusable and must be re-installed
+                        or reconfigured.
+                    Optional: "true"
+        processing_state:
+            Type: TypeList
+            Description: The processing state for the extension instance
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                detail_message:
+                    Type: TypeString
+                    Description: |-
+                        Details about the processing. e.g. This could include the type of
+                        processing in progress or it could list errors or failures.
+                        This information will be shown in the console on the detail page
+                        for the extension instance.
+                    Optional: "true"
+                state:
+                    Type: TypeString
+                    Description: The processing state of the extension instance.
+                    Optional: "true"
+        state_update_time:
+            Type: TypeString
+            Description: The time of the last state update.
+            Optional: "true"
+service_account_email:
+    Type: TypeString
+    Description: |-
+        The email of the service account to be used at runtime by compute resources
+        created for the operation of the Extension instance.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: |-
+        The current state of the Extension Instance.
+          DEPLOYING:
+            The Extension Instance is waiting on an Operation to complete. Could
+            resolve to 'ACTIVE', 'PAUSED', 'ERRORED'.
+          UNINSTALLING:
+            The Extension Instance is being removed from the project. Could resolve
+            to 'ERRORED', but more likely the instance will soon cease to exist.
+          ACTIVE:
+            The Extension Instance is installed and ready.
+          ERRORED:
+            The Extension Instance encountered an error while 'DEPLOYING' or
+            'UNINSTALLING'.
+          PAUSED:
+            The Extension's resources have been removed from the project, but the
+            Config remains so the Instance can be restored.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time at which the Extension Instance was updated.
+    Computed: "true"
+

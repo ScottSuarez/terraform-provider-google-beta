@@ -1,0 +1,23 @@
+app_id: TypeString
+auth_domain: TypeString
+code_bucket: TypeString
+database_type: TypeString
+default_bucket: TypeString
+default_hostname: TypeString
+feature_settings:
+    split_health_checks: TypeBool
+gcr_domain: TypeString
+iap:
+    enabled: TypeBool
+    oauth2_client_id: TypeString
+    oauth2_client_secret: TypeString
+    oauth2_client_secret_sha256: TypeString
+location_id: TypeString
+name: TypeString
+project: TypeString
+serving_status: TypeString
+url_dispatch_rule:
+    domain: TypeString
+    path: TypeString
+    service: TypeString
+

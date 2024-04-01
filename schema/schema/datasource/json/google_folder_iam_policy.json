@@ -1,0 +1,14 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "folder": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

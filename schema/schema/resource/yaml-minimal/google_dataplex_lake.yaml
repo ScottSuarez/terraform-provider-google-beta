@@ -1,0 +1,25 @@
+asset_status:
+    active_assets: TypeInt
+    security_policy_applying_assets: TypeInt
+    update_time: TypeString
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: unknown
+labels: TypeMap(TypeString)
+location: TypeString
+metastore:
+    service: TypeString
+metastore_status:
+    endpoint: TypeString
+    message: TypeString
+    state: TypeString
+    update_time: TypeString
+name: TypeString
+project: TypeString
+service_account: TypeString
+state: TypeString
+terraform_labels: unknown
+uid: TypeString
+update_time: TypeString
+

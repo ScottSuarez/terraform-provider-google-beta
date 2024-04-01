@@ -1,0 +1,10 @@
+collection: TypeString
+create_time: TypeString
+database: TypeString
+document_id: TypeString
+fields: TypeString
+name: TypeString
+path: TypeString
+project: TypeString
+update_time: TypeString
+

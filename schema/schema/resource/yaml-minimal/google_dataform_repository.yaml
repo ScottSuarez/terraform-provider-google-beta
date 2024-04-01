@@ -1,0 +1,22 @@
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+git_remote_settings:
+    authentication_token_secret_version: TypeString
+    default_branch: TypeString
+    ssh_authentication_config:
+        host_public_key: TypeString
+        user_private_key_secret_version: TypeString
+    token_status: TypeString
+    url: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+npmrc_environment_variables_secret_version: TypeString
+project: TypeString
+region: TypeString
+service_account: TypeString
+terraform_labels: TypeMap(TypeString)
+workspace_compilation_overrides:
+    default_database: TypeString
+    schema_suffix: TypeString
+    table_prefix: TypeString
+

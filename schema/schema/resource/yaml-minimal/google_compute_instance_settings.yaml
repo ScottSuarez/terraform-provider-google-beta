@@ -1,0 +1,6 @@
+fingerprint: TypeString
+metadata:
+    items: TypeMap(TypeString)
+project: TypeString
+zone: TypeString
+

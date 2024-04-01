@@ -1,0 +1,60 @@
+{
+    "display_name": {
+        "Computed": true,
+        "Description": "An arbitrary user-provided name for the AppConnector.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Resource labels to represent user provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "ID of the AppConnector.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "principal_info": {
+        "Computed": true,
+        "Description": "Principal information about the Identity of the AppConnector.",
+        "Properties": {
+            "service_account": {
+                "Computed": true,
+                "Description": "ServiceAccount represents a GCP service account.",
+                "Properties": {
+                    "email": {
+                        "Computed": true,
+                        "Description": "Email address of the service account.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region of the AppConnector.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Represents the different states of a AppConnector.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

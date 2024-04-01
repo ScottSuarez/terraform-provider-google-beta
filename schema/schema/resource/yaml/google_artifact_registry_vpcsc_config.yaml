@@ -1,0 +1,20 @@
+location:
+    Type: TypeString
+    Description: The name of the location this config is located in.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name of the project's VPC SC Config.
+        Always of the form: projects/{project}/location/{location}/vpcscConfig
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+vpcsc_policy:
+    Type: TypeString
+    Description: 'The VPC SC policy for project and location. Possible values: ["DENY", "ALLOW"]'
+    Optional: "true"
+

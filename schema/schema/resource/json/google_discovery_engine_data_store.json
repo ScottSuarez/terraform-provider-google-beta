@@ -1,0 +1,57 @@
+{
+    "content_config": {
+        "Description": "The content config of the data store. Possible values: [\"NO_CONTENT\", \"CONTENT_REQUIRED\", \"PUBLIC_WEBSITE\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_advanced_site_search": {
+        "Description": "If true, an advanced data store for site search will be created. If the\ndata store is not configured as site search (GENERIC vertical and\nPUBLIC_WEBSITE contentConfig), this flag will be ignored.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Timestamp when the DataStore was created.",
+        "Type": "TypeString"
+    },
+    "data_store_id": {
+        "Description": "The unique id of the data store.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "default_schema_id": {
+        "Computed": true,
+        "Description": "The id of the default Schema associated with this data store.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The display name of the data store. This field must be a UTF-8 encoded\nstring with a length limit of 128 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "industry_vertical": {
+        "Description": "The industry vertical that the data store registers. Possible values: [\"GENERIC\", \"MEDIA\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The geographic location where the data store should reside. The value can\nonly be one of \"global\", \"us\" and \"eu\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique full resource name of the data store. Values are of the format\n'projects/{project}/locations/{location}/collections/{collection_id}/dataStores/{data_store_id}'.\nThis field must be a UTF-8 encoded string with a length limit of 1024\ncharacters.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "solution_types": {
+        "Description": "The solutions that the data store enrolls. Possible values: [\"SOLUTION_TYPE_RECOMMENDATION\", \"SOLUTION_TYPE_SEARCH\", \"SOLUTION_TYPE_CHAT\"]",
+        "Optional": true,
+        "Type": "TypeList"
+    }
+}

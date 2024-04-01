@@ -1,0 +1,55 @@
+bucket:
+    Type: TypeString
+    Description: The name of the bucket.
+    Required: "true"
+domain:
+    Type: TypeString
+    Description: The domain associated with the entity.
+    Computed: "true"
+email:
+    Type: TypeString
+    Description: The email address associated with the entity.
+    Computed: "true"
+entity:
+    Type: TypeString
+    Description: |-
+        The entity holding the permission, in one of the following forms:
+          * user-{{userId}}
+          * user-{{email}} (such as "user-liz@example.com")
+          * group-{{groupId}}
+          * group-{{email}} (such as "group-example@googlegroups.com")
+          * domain-{{domain}} (such as "domain-example.com")
+          * project-team-{{projectId}}
+          * allUsers
+          * allAuthenticatedUsers
+    Required: "true"
+entity_id:
+    Type: TypeString
+    Description: The ID for the entity
+    Computed: "true"
+generation:
+    Type: TypeInt
+    Description: The content generation of the object, if applied to an object.
+    Computed: "true"
+object:
+    Type: TypeString
+    Description: The name of the object, if applied to an object.
+    Optional: "true"
+project_team:
+    Type: TypeList
+    Description: The project team associated with the entity
+    Computed: "true"
+    Properties:
+        project_number:
+            Type: TypeString
+            Description: The project team associated with the entity
+            Optional: "true"
+        team:
+            Type: TypeString
+            Description: 'The team. Possible values: ["editors", "owners", "viewers"]'
+            Optional: "true"
+role:
+    Type: TypeString
+    Description: 'The access permission for the entity. Possible values: ["OWNER", "READER"]'
+    Required: "true"
+

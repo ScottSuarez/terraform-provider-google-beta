@@ -1,0 +1,21 @@
+description:
+    Type: TypeString
+    Description: A human-readable description.
+    Optional: "true"
+disabled:
+    Type: TypeBool
+    Description: Whether this exclusion rule should be disabled or not. This defaults to false.
+    Optional: "true"
+filter:
+    Type: TypeString
+    Description: The filter to apply when excluding logs. Only log entries that match the filter are excluded.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the logging exclusion.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

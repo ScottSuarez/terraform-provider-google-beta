@@ -1,0 +1,50 @@
+{
+    "app_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "condition": {
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "expression": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "title": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "members": {
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "version_id": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

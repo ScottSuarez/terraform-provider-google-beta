@@ -1,0 +1,213 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the GrpcRoute was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gateways": {
+        "Description": "List of gateways this GrpcRoute is attached to, as one of the routing rules to route the requests served by the gateway.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "hostnames": {
+        "Description": "Required. Service hostnames with an optional port for which this route describes traffic.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the GrpcRoute resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "meshes": {
+        "Description": "List of meshes this GrpcRoute is attached to, as one of the routing rules to route the requests served by the mesh.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the GrpcRoute resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Description": "Rules that define how traffic is routed and handled.",
+        "Properties": {
+            "action": {
+                "Description": "Required. A detailed rule defining how to route traffic.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "destinations": {
+                        "Description": "The destination to which traffic should be forwarded.",
+                        "Optional": true,
+                        "Properties": {
+                            "service_name": {
+                                "Description": "The URL of a BackendService to route traffic to.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "weight": {
+                                "Description": "Specifies the proportion of requests forwarded to the backend referenced by the serviceName field.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "fault_injection_policy": {
+                        "Description": "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "abort": {
+                                "Description": "Specification of how client requests are aborted as part of fault injection before being sent to a destination.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "http_status": {
+                                        "Description": "The HTTP status code used to abort the request.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "percentage": {
+                                        "Description": "The percentage of traffic which will be aborted.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "delay": {
+                                "Description": "Specification of how client requests are delayed as part of fault injection before being sent to a destination.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "fixed_delay": {
+                                        "Description": "Specify a fixed delay before forwarding the request.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "percentage": {
+                                        "Description": "The percentage of traffic on which delay will be injected.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "retry_policy": {
+                        "Description": "Specifies the retry policy associated with this route.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "num_retries": {
+                                "Description": "Specifies the allowed number of retries.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "retry_conditions": {
+                                "Description": "Specifies one or more conditions when this retry policy applies. Possible values: [\"connect-failure\", \"refused-stream\", \"cancelled\", \"deadline-exceeded\", \"resource-exhausted\", \"unavailable\"]",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "timeout": {
+                        "Description": "Specifies the timeout for selected route.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "matches": {
+                "Description": "Matches define conditions used for matching the rule against incoming gRPC requests.",
+                "Optional": true,
+                "Properties": {
+                    "headers": {
+                        "Description": "Specifies a list of HTTP request headers to match against.",
+                        "Optional": true,
+                        "Properties": {
+                            "key": {
+                                "Description": "Required. The key of the header.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "type": {
+                                "Description": "The type of match. Default value: \"EXACT\" Possible values: [\"TYPE_UNSPECIFIED\", \"EXACT\", \"REGULAR_EXPRESSION\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "value": {
+                                "Description": "Required. The value of the header.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "method": {
+                        "Description": "A gRPC method to match against. If this field is empty or omitted, will match all methods.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "case_sensitive": {
+                                "Description": "Specifies that matches are case sensitive. The default value is true.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "grpc_method": {
+                                "Description": "Required. Name of the method to match against.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "grpc_service": {
+                                "Description": "Required. Name of the service to match against.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the GrpcRoute was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

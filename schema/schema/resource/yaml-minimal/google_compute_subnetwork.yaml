@@ -1,0 +1,30 @@
+allow_subnet_cidr_routes_overlap: TypeBool
+creation_timestamp: TypeString
+description: TypeString
+external_ipv6_prefix: TypeString
+fingerprint: TypeString
+gateway_address: TypeString
+internal_ipv6_prefix: TypeString
+ip_cidr_range: TypeString
+ipv6_access_type: TypeString
+ipv6_cidr_range: TypeString
+log_config:
+    aggregation_interval: TypeString
+    filter_expr: TypeString
+    flow_sampling: TypeFloat
+    metadata: TypeString
+    metadata_fields: TypeSet(TypeString)
+name: TypeString
+network: TypeString
+private_ip_google_access: TypeBool
+private_ipv6_google_access: TypeString
+project: TypeString
+purpose: TypeString
+region: TypeString
+role: TypeString
+secondary_ip_range:
+    ip_cidr_range: TypeString
+    range_name: TypeString
+self_link: TypeString
+stack_type: TypeString
+

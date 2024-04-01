@@ -1,0 +1,6 @@
+dataset_id: TypeString
+etag: TypeString
+policy_data: TypeString
+project: TypeString
+table_id: TypeString
+

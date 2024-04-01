@@ -1,0 +1,116 @@
+create_time:
+    Type: TypeString
+    Description: The time when the Membership was created.
+    Computed: "true"
+group:
+    Type: TypeString
+    Description: The name of the Group to create this membership in.
+    Required: "true"
+member_key:
+    Type: TypeList
+    Description: EntityKey of the member.
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: member_key, preferred_member_key
+    MaxItems: "1"
+    Properties:
+        id:
+            Type: TypeString
+            Description: |-
+                The ID of the entity.
+
+                For Google-managed entities, the id must be the email address of an existing
+                group or user.
+
+                For external-identity-mapped entities, the id must be a string conforming
+                to the Identity Source's requirements.
+
+                Must be unique within a namespace.
+            Required: "true"
+        namespace:
+            Type: TypeString
+            Description: |-
+                The namespace in which the entity exists.
+
+                If not specified, the EntityKey represents a Google-managed entity
+                such as a Google user or a Google Group.
+
+                If specified, the EntityKey represents an external-identity-mapped group.
+                The namespace must correspond to an identity source created in Admin Console
+                and must be in the form of 'identitysources/{identity_source_id}'.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the Membership, of the form groups/{group_id}/memberships/{membership_id}.
+    Computed: "true"
+preferred_member_key:
+    Type: TypeList
+    Description: EntityKey of the member.
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: member_key, preferred_member_key
+    MaxItems: "1"
+    Properties:
+        id:
+            Type: TypeString
+            Description: |-
+                The ID of the entity.
+
+                For Google-managed entities, the id must be the email address of an existing
+                group or user.
+
+                For external-identity-mapped entities, the id must be a string conforming
+                to the Identity Source's requirements.
+
+                Must be unique within a namespace.
+            Required: "true"
+        namespace:
+            Type: TypeString
+            Description: |-
+                The namespace in which the entity exists.
+
+                If not specified, the EntityKey represents a Google-managed entity
+                such as a Google user or a Google Group.
+
+                If specified, the EntityKey represents an external-identity-mapped group.
+                The namespace must correspond to an identity source created in Admin Console
+                and must be in the form of 'identitysources/{identity_source_id}'.
+            Optional: "true"
+roles:
+    Type: TypeSet
+    Description: |-
+        The MembershipRoles that apply to the Membership.
+        Must not contain duplicate MembershipRoles with the same name.
+    Required: "true"
+    Properties:
+        expiry_detail:
+            Type: TypeList
+            Description: |-
+                The MembershipRole expiry details, only supported for MEMBER role.
+                Other roles cannot be accompanied with MEMBER role having expiry.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                expire_time:
+                    Type: TypeString
+                    Description: |-
+                        The time at which the MembershipRole will expire.
+
+                        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond
+                        resolution and up to nine fractional digits.
+
+                        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+                    Required: "true"
+        name:
+            Type: TypeString
+            Description: 'The name of the MembershipRole. Must be one of OWNER, MANAGER, MEMBER. Possible values: ["OWNER", "MANAGER", "MEMBER"]'
+            Required: "true"
+type:
+    Type: TypeString
+    Description: The type of the membership.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time when the Membership was last updated.
+    Computed: "true"
+

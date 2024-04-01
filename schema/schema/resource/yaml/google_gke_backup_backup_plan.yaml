@@ -1,0 +1,203 @@
+backup_config:
+    Type: TypeList
+    Description: Defines the configuration of Backups created via this BackupPlan.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        all_namespaces:
+            Type: TypeBool
+            Description: If True, include all namespaced resources.
+            Optional: "true"
+            ExactlyOneOf: backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications
+        encryption_key:
+            Type: TypeList
+            Description: |-
+                This defines a customer managed encryption key that will be used to encrypt the "config"
+                portion (the Kubernetes resources) of Backups created via this plan.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                gcp_kms_encryption_key:
+                    Type: TypeString
+                    Description: 'Google Cloud KMS encryption key. Format: projects/*/locations/*/keyRings/*/cryptoKeys/*'
+                    Required: "true"
+        include_secrets:
+            Type: TypeBool
+            Description: |-
+                This flag specifies whether Kubernetes Secret resources should be included
+                when they fall into the scope of Backups.
+            Computed: "true"
+            Optional: "true"
+        include_volume_data:
+            Type: TypeBool
+            Description: |-
+                This flag specifies whether volume data should be backed up when PVCs are
+                included in the scope of a Backup.
+            Computed: "true"
+            Optional: "true"
+        selected_applications:
+            Type: TypeList
+            Description: A list of namespaced Kubernetes Resources.
+            Optional: "true"
+            ExactlyOneOf: backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications
+            MaxItems: "1"
+            Properties:
+                namespaced_names:
+                    Type: TypeList
+                    Description: A list of namespaced Kubernetes resources.
+                    Required: "true"
+                    Properties:
+                        name:
+                            Type: TypeString
+                            Description: The name of a Kubernetes Resource.
+                            Required: "true"
+                        namespace:
+                            Type: TypeString
+                            Description: The namespace of a Kubernetes Resource.
+                            Required: "true"
+        selected_namespaces:
+            Type: TypeList
+            Description: If set, include just the resources in the listed namespaces.
+            Optional: "true"
+            ExactlyOneOf: backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications
+            MaxItems: "1"
+            Properties:
+                namespaces:
+                    Type: TypeList
+                    Description: A list of Kubernetes Namespaces.
+                    Required: "true"
+backup_schedule:
+    Type: TypeList
+    Description: Defines a schedule for automatic Backup creation via this BackupPlan.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cron_schedule:
+            Type: TypeString
+            Description: |-
+                A standard cron string that defines a repeating schedule for
+                creating Backups via this BackupPlan.
+                If this is defined, then backupRetainDays must also be defined.
+            Optional: "true"
+        paused:
+            Type: TypeBool
+            Description: This flag denotes whether automatic Backup creation is paused for this BackupPlan.
+            Computed: "true"
+            Optional: "true"
+cluster:
+    Type: TypeString
+    Description: The source cluster from which Backups will be created via this BackupPlan.
+    Required: "true"
+deactivated:
+    Type: TypeBool
+    Description: |-
+        This flag indicates whether this BackupPlan has been deactivated.
+        Setting this field to True locks the BackupPlan such that no further updates will be allowed
+        (except deletes), including the deactivated field itself. It also prevents any new Backups
+        from being created via this BackupPlan (including scheduled Backups).
+    Computed: "true"
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: User specified descriptive string for this BackupPlan.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        etag is used for optimistic concurrency control as a way to help prevent simultaneous
+        updates of a backup plan from overwriting each other. It is strongly suggested that
+        systems make use of the 'etag' in the read-modify-write cycle to perform BackupPlan updates
+        in order to avoid race conditions: An etag is returned in the response to backupPlans.get,
+        and systems are expected to put that etag in the request to backupPlans.patch or
+        backupPlans.delete to ensure that their change will be applied to the same version of the resource.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Description: A set of custom labels supplied by the user.
+        A list of key->value pairs.
+        Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The region of the Backup Plan.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The full name of the BackupPlan Resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+protected_pod_count:
+    Type: TypeInt
+    Description: The number of Kubernetes Pods backed up in the last successful Backup created via this BackupPlan.
+    Computed: "true"
+retention_policy:
+    Type: TypeList
+    Description: RetentionPolicy governs lifecycle of Backups created under this plan.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        backup_delete_lock_days:
+            Type: TypeInt
+            Description: |-
+                Minimum age for a Backup created via this BackupPlan (in days).
+                Must be an integer value between 0-90 (inclusive).
+                A Backup created under this BackupPlan will not be deletable
+                until it reaches Backup's (create time + backup_delete_lock_days).
+                Updating this field of a BackupPlan does not affect existing Backups.
+                Backups created after a successful update will inherit this new value.
+            Computed: "true"
+            Optional: "true"
+        backup_retain_days:
+            Type: TypeInt
+            Description: |-
+                The default maximum age of a Backup created via this BackupPlan.
+                This field MUST be an integer value >= 0 and <= 365. If specified,
+                a Backup created under this BackupPlan will be automatically deleted
+                after its age reaches (createTime + backupRetainDays).
+                If not specified, Backups created under this BackupPlan will NOT be
+                subject to automatic deletion. Updating this field does NOT affect
+                existing Backups under it. Backups created AFTER a successful update
+                will automatically pick up the new value.
+                NOTE: backupRetainDays must be >= backupDeleteLockDays.
+                If cronSchedule is defined, then this must be <= 360 * the creation interval.]
+            Computed: "true"
+            Optional: "true"
+        locked:
+            Type: TypeBool
+            Description: |-
+                This flag denotes whether the retention policy of this BackupPlan is locked.
+                If set to True, no further update is allowed on this policy, including
+                the locked field itself.
+            Computed: "true"
+            Optional: "true"
+state:
+    Type: TypeString
+    Description: The State of the BackupPlan.
+    Computed: "true"
+state_reason:
+    Type: TypeString
+    Description: Detailed description of why BackupPlan is in its current state.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Server generated, unique identifier of UUID format.
+    Computed: "true"
+

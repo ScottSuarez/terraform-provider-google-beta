@@ -1,0 +1,35 @@
+bucket:
+    Type: TypeString
+    Description: The bucket of the resource
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. The creation timestamp of the view.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Describes this view.
+    Optional: "true"
+filter:
+    Type: TypeString
+    Description: 'Filter that restricts which log entries in a bucket are visible in this view. Filters are restricted to be a logical AND of ==/!= of any of the following: - originating project/folder/organization/billing account. - resource type - log id For example: SOURCE("projects/myproject") AND resource.type = "gce_instance" AND LOG_ID("stdout")'
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: 'The location of the resource. The supported locations are: global, us-central1, us-east1, us-west1, asia-east1, europe-west1.'
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: 'The resource name of the view. For example: \''projects/my-project/locations/global/buckets/my-bucket/views/my-view\'''
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: The parent of the resource.
+    Computed: "true"
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The last update timestamp of the view.
+    Computed: "true"
+

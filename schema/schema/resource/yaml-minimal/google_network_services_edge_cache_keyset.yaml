@@ -1,0 +1,13 @@
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+public_key:
+    id: TypeString
+    managed: TypeBool
+    value: TypeString
+terraform_labels: TypeMap(TypeString)
+validation_shared_keys:
+    secret_version: TypeString
+

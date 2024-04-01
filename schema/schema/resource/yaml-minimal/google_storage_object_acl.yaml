@@ -1,0 +1,5 @@
+bucket: TypeString
+object: TypeString
+predefined_acl: TypeString
+role_entity: TypeSet(TypeString)
+

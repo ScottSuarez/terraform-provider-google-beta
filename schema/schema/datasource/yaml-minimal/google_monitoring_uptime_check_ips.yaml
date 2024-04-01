@@ -1,0 +1,5 @@
+uptime_check_ips:
+    ip_address: TypeString
+    location: TypeString
+    region: TypeString
+

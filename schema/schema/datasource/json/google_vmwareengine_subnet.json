@@ -1,0 +1,79 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "dhcp_address_ranges": {
+        "Computed": true,
+        "Description": "DHCP address ranges.",
+        "Properties": {
+            "first_address": {
+                "Computed": true,
+                "Description": "The first IP address of the range.",
+                "Type": "TypeString"
+            },
+            "last_address": {
+                "Computed": true,
+                "Description": "The last IP address of the range.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "gateway_id": {
+        "Computed": true,
+        "Description": "The canonical identifier of the logical router that this subnet is attached to.",
+        "Type": "TypeString"
+    },
+    "gateway_ip": {
+        "Computed": true,
+        "Description": "The IP address of the gateway of this subnet. Must fall within the IP prefix defined above.",
+        "Type": "TypeString"
+    },
+    "ip_cidr_range": {
+        "Computed": true,
+        "Description": "The IP address range of the subnet in CIDR format.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the subnet. For userDefined subnets, this name should be in the format of \"service-n\",\nwhere n ranges from 1 to 5.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The resource name of the private cloud to create a new subnet in.\nResource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.\nFor example: projects/my-project/locations/us-west1-a/privateClouds/my-cloud",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "standard_config": {
+        "Computed": true,
+        "Description": "Whether the NSX-T configuration in the backend follows the standard configuration supported by Google Cloud.\nIf false, the subnet cannot be modified through Google Cloud, only through NSX-T directly.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the subnet.",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "The type of the subnet.",
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last updated time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "vlan_id": {
+        "Computed": true,
+        "Description": "VLAN ID of the VLAN on which the subnet is configured.",
+        "Type": "TypeInt"
+    }
+}

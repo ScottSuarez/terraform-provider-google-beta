@@ -1,0 +1,37 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The creation time of the catalog. A timestamp in RFC3339 UTC\n\"Zulu\" format, with nanosecond resolution and up to nine fractional\ndigits.",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "Output only. The deletion time of the catalog. Only set after the catalog\nis deleted. A timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Output only. The time when this catalog is considered expired. Only set\nafter the catalog is deleted. Only set after the catalog is deleted.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The geographic location where the Catalog should reside.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the Catalog. Format:\nprojects/{project_id_or_number}/locations/{locationId}/catalogs/{catalogId}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The last modification time of the catalog. A timestamp in\nRFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits.",
+        "Type": "TypeString"
+    }
+}

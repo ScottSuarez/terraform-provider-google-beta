@@ -1,0 +1,29 @@
+custom_support_level:
+    Type: TypeString
+    Optional: "true"
+full_resource_name:
+    Type: TypeString
+    Required: "true"
+permissions:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        api_disabled:
+            Type: TypeBool
+            Computed: "true"
+        custom_support_level:
+            Type: TypeString
+            Computed: "true"
+        name:
+            Type: TypeString
+            Computed: "true"
+        stage:
+            Type: TypeString
+            Computed: "true"
+        title:
+            Type: TypeString
+            Computed: "true"
+stages:
+    Type: TypeList
+    Optional: "true"
+

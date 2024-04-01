@@ -1,0 +1,32 @@
+{
+    "asset": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "dataplex_zone": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "lake": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

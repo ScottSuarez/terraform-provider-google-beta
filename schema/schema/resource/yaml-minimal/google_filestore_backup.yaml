@@ -1,0 +1,17 @@
+capacity_gb: TypeString
+create_time: TypeString
+description: TypeString
+download_bytes: TypeString
+effective_labels: TypeMap(TypeString)
+kms_key_name: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+source_file_share: TypeString
+source_instance: TypeString
+source_instance_tier: TypeString
+state: TypeString
+storage_bytes: TypeString
+terraform_labels: TypeMap(TypeString)
+

@@ -1,0 +1,260 @@
+{
+    "async_primary_disk": {
+        "Computed": true,
+        "Description": "A nested object resource",
+        "Properties": {
+            "disk": {
+                "Computed": true,
+                "Description": "Primary disk for asynchronous disk replication.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "An optional description of this resource. Provide this property when\nyou create the resource.",
+        "Type": "TypeString"
+    },
+    "disk_encryption_key": {
+        "Computed": true,
+        "Description": "Encrypts the disk using a customer-supplied encryption key.\n\nAfter you encrypt a disk with a customer-supplied key, you must\nprovide the same key if you use the disk later (e.g. to create a disk\nsnapshot or an image, or to attach the disk to a virtual machine).\n\nCustomer-supplied encryption keys do not protect access to metadata of\nthe disk.\n\nIf you do not provide an encryption key when creating the disk, then\nthe disk will be encrypted using an automatically generated key and\nyou do not need to provide a key to use the disk later.",
+        "Properties": {
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The self link of the encryption key used to encrypt the disk. Also called KmsKeyName\nin the cloud console. Your project's Compute Engine System service account\n('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have\n'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.\nSee https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys",
+                "Type": "TypeString"
+            },
+            "kms_key_service_account": {
+                "Computed": true,
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Computed": true,
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Type": "TypeString"
+            },
+            "rsa_encrypted_key": {
+                "Computed": true,
+                "Description": "Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit\ncustomer-supplied encryption key to either encrypt or decrypt\nthis resource. You can provide either the rawKey or the rsaEncryptedKey.",
+                "Type": "TypeString"
+            },
+            "sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied\nencryption key that protects this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "disk_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource. This identifier is defined by the server.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_confidential_compute": {
+        "Computed": true,
+        "Description": "Whether this disk is using confidential compute mode.\nNote: Only supported on hyperdisk skus, disk_encryption_key is required when setting to true",
+        "Type": "TypeBool"
+    },
+    "guest_os_features": {
+        "Computed": true,
+        "Description": "A list of features to enable on the guest operating system.\nApplicable only for bootable disks.",
+        "Properties": {
+            "type": {
+                "Computed": true,
+                "Description": "The type of supported feature. Read [Enabling guest operating system features](https://cloud.google.com/compute/docs/images/create-delete-deprecate-private-images#guest-os-features) to see a list of available options. Possible values: [\"MULTI_IP_SUBNET\", \"SECURE_BOOT\", \"SEV_CAPABLE\", \"UEFI_COMPATIBLE\", \"VIRTIO_SCSI_MULTIQUEUE\", \"WINDOWS\", \"GVNIC\", \"SEV_LIVE_MIGRATABLE\", \"SEV_SNP_CAPABLE\", \"SUSPEND_RESUME_COMPATIBLE\", \"TDX_CAPABLE\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "image": {
+        "Computed": true,
+        "Description": "The image from which to initialize this disk. This can be\none of: the image's 'self_link', 'projects/{project}/global/images/{image}',\n'projects/{project}/global/images/family/{family}', 'global/images/{image}',\n'global/images/family/{family}', 'family/{family}', '{project}/{family}',\n'{project}/{image}', '{family}', or '{image}'. If referred by family, the\nimages names must include the family name. If they don't, use the\n[google_compute_image data source](/docs/providers/google/d/compute_image.html).\nFor instance, the image 'centos-6-v20180104' includes its family name 'centos-6'.\nThese images can be referred by family name here.",
+        "Type": "TypeString"
+    },
+    "interface": {
+        "Computed": true,
+        "Description": "Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.",
+        "Type": "TypeString"
+    },
+    "label_fingerprint": {
+        "Computed": true,
+        "Description": "The fingerprint used for optimistic locking of this resource.  Used\ninternally during updates.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Labels to apply to this disk.  A list of key-\u003evalue pairs.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "last_attach_timestamp": {
+        "Computed": true,
+        "Description": "Last attach timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "last_detach_timestamp": {
+        "Computed": true,
+        "Description": "Last detach timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "licenses": {
+        "Computed": true,
+        "Description": "Any applicable license URI.",
+        "Type": "TypeList"
+    },
+    "multi_writer": {
+        "Computed": true,
+        "Description": "Indicates whether or not the disk can be read/write attached to more than one instance.",
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "physical_block_size_bytes": {
+        "Computed": true,
+        "Description": "Physical block size of the persistent disk, in bytes. If not present\nin a request, a default value is used. Currently supported sizes\nare 4096 and 16384, other sizes may be added in the future.\nIf an unsupported value is requested, the error message will list\nthe supported values for the caller's project.",
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "provisioned_iops": {
+        "Computed": true,
+        "Description": "Indicates how many IOPS must be provisioned for the disk.\nNote: Updating currently is only supported by hyperdisk skus without the need to delete and recreate the disk, hyperdisk\nallows for an update of IOPS every 4 hours. To update your hyperdisk more frequently, you'll need to manually delete and recreate it",
+        "Type": "TypeInt"
+    },
+    "provisioned_throughput": {
+        "Computed": true,
+        "Description": "Indicates how much Throughput must be provisioned for the disk.\nNote: Updating currently is only supported by hyperdisk skus without the need to delete and recreate the disk, hyperdisk\nallows for an update of Throughput every 4 hours. To update your hyperdisk more frequently, you'll need to manually delete and recreate it",
+        "Type": "TypeInt"
+    },
+    "resource_policies": {
+        "Computed": true,
+        "Description": "Resource policies applied to this disk for automatic snapshot creations.\n\n~\u003e**NOTE** This value does not support updating the\nresource policy, as resource policies can not be updated more than\none at a time. Use\n['google_compute_disk_resource_policy_attachment'](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_disk_resource_policy_attachment)\nto allow for updating the resource policy attached to the disk.",
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "size": {
+        "Computed": true,
+        "Description": "Size of the persistent disk, specified in GB. You can specify this\nfield when creating a persistent disk using the 'image' or\n'snapshot' parameter, or specify it alone to create an empty\npersistent disk.\n\nIf you specify this field along with 'image' or 'snapshot',\nthe value must not be less than the size of the image\nor the size of the snapshot.\n\n~\u003e**NOTE** If you change the size, Terraform updates the disk size\nif upsizing is detected but recreates the disk if downsizing is requested.\nYou can add 'lifecycle.prevent_destroy' in the config to prevent destroying\nand recreating.",
+        "Type": "TypeInt"
+    },
+    "snapshot": {
+        "Computed": true,
+        "Description": "The source snapshot used to create this disk. You can provide this as\na partial or full URL to the resource. If the snapshot is in another\nproject than this disk, you must supply a full URL. For example, the\nfollowing are valid values:\n\n* 'https://www.googleapis.com/compute/v1/projects/project/global/snapshots/snapshot'\n* 'projects/project/global/snapshots/snapshot'\n* 'global/snapshots/snapshot'\n* 'snapshot'",
+        "Type": "TypeString"
+    },
+    "source_disk": {
+        "Computed": true,
+        "Description": "The source disk used to create this disk. You can provide this as a partial or full URL to the resource.\nFor example, the following are valid values:\n\n* https://www.googleapis.com/compute/v1/projects/{project}/zones/{zone}/disks/{disk}\n* https://www.googleapis.com/compute/v1/projects/{project}/regions/{region}/disks/{disk}\n* projects/{project}/zones/{zone}/disks/{disk}\n* projects/{project}/regions/{region}/disks/{disk}\n* zones/{zone}/disks/{disk}\n* regions/{region}/disks/{disk}",
+        "Type": "TypeString"
+    },
+    "source_disk_id": {
+        "Computed": true,
+        "Description": "The ID value of the disk used to create this image. This value may\nbe used to determine whether the image was taken from the current\nor a previous instance of a given disk name.",
+        "Type": "TypeString"
+    },
+    "source_image_encryption_key": {
+        "Computed": true,
+        "Description": "The customer-supplied encryption key of the source image. Required if\nthe source image is protected by a customer-supplied encryption key.",
+        "Properties": {
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The self link of the encryption key used to encrypt the disk. Also called KmsKeyName\nin the cloud console. Your project's Compute Engine System service account\n('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have\n'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.\nSee https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys",
+                "Type": "TypeString"
+            },
+            "kms_key_service_account": {
+                "Computed": true,
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Computed": true,
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Type": "TypeString"
+            },
+            "sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied\nencryption key that protects this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "source_image_id": {
+        "Computed": true,
+        "Description": "The ID value of the image used to create this disk. This value\nidentifies the exact image that was used to create this persistent\ndisk. For example, if you created the persistent disk from an image\nthat was later deleted and recreated under the same name, the source\nimage ID would identify the exact version of the image that was used.",
+        "Type": "TypeString"
+    },
+    "source_snapshot_encryption_key": {
+        "Computed": true,
+        "Description": "The customer-supplied encryption key of the source snapshot. Required\nif the source snapshot is protected by a customer-supplied encryption\nkey.",
+        "Properties": {
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The self link of the encryption key used to encrypt the disk. Also called KmsKeyName\nin the cloud console. Your project's Compute Engine System service account\n('service-{{PROJECT_NUMBER}}@compute-system.iam.gserviceaccount.com') must have\n'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this feature.\nSee https://cloud.google.com/compute/docs/disks/customer-managed-encryption#encrypt_a_new_persistent_disk_with_your_own_keys",
+                "Type": "TypeString"
+            },
+            "kms_key_service_account": {
+                "Computed": true,
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Computed": true,
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Type": "TypeString"
+            },
+            "sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied\nencryption key that protects this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "source_snapshot_id": {
+        "Computed": true,
+        "Description": "The unique ID of the snapshot used to create this disk. This value\nidentifies the exact snapshot that was used to create this persistent\ndisk. For example, if you created the persistent disk from a snapshot\nthat was later deleted and recreated under the same name, the source\nsnapshot ID would identify the exact version of the snapshot that was\nused.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "URL of the disk type resource describing which disk type to use to\ncreate the disk. Provide this when creating the disk.",
+        "Type": "TypeString"
+    },
+    "users": {
+        "Computed": true,
+        "Description": "Links to the users of the disk (attached instances) in form:\nproject/zones/zone/instances/instance",
+        "Type": "TypeList"
+    },
+    "zone": {
+        "Description": "A reference to the zone where the disk resides.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

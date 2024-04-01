@@ -1,0 +1,77 @@
+connected_projects:
+    Type: TypeList
+    Description: List of projects using the connector.
+    Computed: "true"
+ip_cidr_range:
+    Type: TypeString
+    Description: 'The range of internal addresses that follows RFC 4632 notation. Example: ''10.132.0.0/28''.'
+    Optional: "true"
+    RequiredWith: network
+machine_type:
+    Type: TypeString
+    Description: Machine type of VM Instance underlying connector. Default is e2-micro
+    Optional: "true"
+max_instances:
+    Type: TypeInt
+    Description: Maximum value of instances in autoscaling group underlying the connector.
+    Computed: "true"
+    Optional: "true"
+max_throughput:
+    Type: TypeInt
+    Description: Maximum throughput of the connector in Mbps, must be greater than 'min_throughput'. Default is 300.
+    Optional: "true"
+min_instances:
+    Type: TypeInt
+    Description: Minimum value of instances in autoscaling group underlying the connector.
+    Computed: "true"
+    Optional: "true"
+min_throughput:
+    Type: TypeInt
+    Description: Minimum throughput of the connector in Mbps. Default and min is 200.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the resource (Max 25 characters).
+    Required: "true"
+network:
+    Type: TypeString
+    Description: Name or self_link of the VPC network. Required if 'ip_cidr_range' is set.
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: network, subnet.0.name
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: Region where the VPC Access connector resides. If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: The fully qualified name of this VPC connector
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: State of the VPC access connector.
+    Computed: "true"
+subnet:
+    Type: TypeList
+    Description: The subnet in which to house the connector
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        name:
+            Type: TypeString
+            Description: |-
+                Subnet name (relative, not fully qualified). E.g. if the full subnet selfLink is
+                https://compute.googleapis.com/compute/v1/projects/{project}/regions/{region}/subnetworks/{subnetName} the correct input for this field would be {subnetName}"
+            Optional: "true"
+            ExactlyOneOf: network, subnet.0.name
+        project_id:
+            Type: TypeString
+            Description: Project in which the subnet exists. If not set, this project is assumed to be the project for which the connector create request was issued.
+            Computed: "true"
+            Optional: "true"
+

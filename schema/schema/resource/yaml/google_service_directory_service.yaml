@@ -1,0 +1,25 @@
+metadata:
+    Type: TypeMap
+    Description: |-
+        Metadata for the service. This data can be consumed
+        by service clients. The entire metadata dictionary may contain
+        up to 2000 characters, spread across all key-value pairs.
+        Metadata that goes beyond any these limits will be rejected.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name for the service in the
+        format 'projects/*/locations/*/namespaces/*/services/*'.
+    Computed: "true"
+namespace:
+    Type: TypeString
+    Description: The resource name of the namespace this service will belong to.
+    Required: "true"
+service_id:
+    Type: TypeString
+    Description: |-
+        The Resource ID must be 1-63 characters long, including digits,
+        lowercase letters or the hyphen character.
+    Required: "true"
+

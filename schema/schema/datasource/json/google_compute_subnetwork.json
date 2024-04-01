@@ -1,0 +1,59 @@
+{
+    "description": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "gateway_address": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "internal_ipv6_prefix": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "ip_cidr_range": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "private_ip_google_access": {
+        "Computed": true,
+        "Type": "TypeBool"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "secondary_ip_range": {
+        "Computed": true,
+        "Properties": {
+            "ip_cidr_range": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "range_name": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

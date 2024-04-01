@@ -1,0 +1,46 @@
+description:
+    Type: TypeString
+    Description: User-provided description for this VMware Engine network.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location where the VMwareEngineNetwork should reside.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The ID of the VMwareEngineNetwork.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: State of the VMware Engine network.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'VMware Engine network type. Possible values: ["LEGACY", "STANDARD"]'
+    Required: "true"
+uid:
+    Type: TypeString
+    Description: System-generated unique identifier for the resource.
+    Computed: "true"
+vpc_networks:
+    Type: TypeList
+    Description: |-
+        VMware Engine service VPC networks that provide connectivity from a private cloud to customer projects,
+        the internet, and other Google Cloud services.
+    Computed: "true"
+    Properties:
+        network:
+            Type: TypeString
+            Description: |-
+                The relative resource name of the service VPC network this VMware Engine network is attached to.
+                For example: projects/123123/global/networks/my-network
+            Computed: "true"
+        type:
+            Type: TypeString
+            Description: Type of VPC network (INTRANET, INTERNET, or GOOGLE_CLOUD)
+            Computed: "true"
+

@@ -1,0 +1,96 @@
+display_name:
+    Type: TypeString
+    Description: The display name for this template.
+    Optional: "true"
+fields:
+    Type: TypeSet
+    Description: Set of tag template field IDs and the settings for the field. This set is an exhaustive list of the allowed fields. This set must contain at least one field and at most 500 fields. The change of field_id will be resulting in re-creating of field. The change of primitive_type will be resulting in re-creating of field, however if the field is a required, you cannot update it.
+    Required: "true"
+    Properties:
+        description:
+            Type: TypeString
+            Description: A description for this field.
+            Computed: "true"
+            Optional: "true"
+        display_name:
+            Type: TypeString
+            Description: The display name for this field.
+            Computed: "true"
+            Optional: "true"
+        field_id:
+            Type: TypeString
+            Required: "true"
+        is_required:
+            Type: TypeBool
+            Description: Whether this is a required field. Defaults to false.
+            Computed: "true"
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: 'The resource name of the tag template field in URL format. Example: projects/{project_id}/locations/{location}/tagTemplates/{tagTemplateId}/fields/{field}'
+            Computed: "true"
+        order:
+            Type: TypeInt
+            Description: |-
+                The order of this field with respect to other fields in this tag template.
+                A higher value indicates a more important field. The value can be negative.
+                Multiple fields can have the same order, and field orders within a tag do not have to be sequential.
+            Computed: "true"
+            Optional: "true"
+        type:
+            Type: TypeList
+            Description: The type of value this tag field can contain.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                enum_type:
+                    Type: TypeList
+                    Description: |-
+                        Represents an enum type.
+                         Exactly one of 'primitive_type' or 'enum_type' must be set
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        allowed_values:
+                            Type: TypeSet
+                            Description: |-
+                                The set of allowed values for this enum. The display names of the
+                                values must be case-insensitively unique within this set. Currently,
+                                enum values can only be added to the list of allowed values. Deletion
+                                and renaming of enum values are not supported.
+                                Can have up to 500 allowed values.
+                            Required: "true"
+                            Properties:
+                                display_name:
+                                    Type: TypeString
+                                    Description: The display name of the enum value.
+                                    Required: "true"
+                primitive_type:
+                    Type: TypeString
+                    Description: |-
+                        Represents primitive types - string, bool etc.
+                         Exactly one of 'primitive_type' or 'enum_type' must be set Possible values: ["DOUBLE", "STRING", "BOOL", "TIMESTAMP"]
+                    Computed: "true"
+                    Optional: "true"
+force_delete:
+    Type: TypeBool
+    Description: This confirms the deletion of any possible tags using this template. Must be set to true in order to delete the tag template.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: 'The resource name of the tag template in URL format. Example: projects/{project_id}/locations/{location}/tagTemplates/{tagTemplateId}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: Template location region.
+    Computed: "true"
+    Optional: "true"
+tag_template_id:
+    Type: TypeString
+    Description: The id of the tag template to create.
+    Required: "true"
+

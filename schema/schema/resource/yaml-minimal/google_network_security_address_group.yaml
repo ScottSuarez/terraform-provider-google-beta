@@ -1,0 +1,13 @@
+capacity: TypeInt
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+items: TypeList(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+parent: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+update_time: TypeString
+

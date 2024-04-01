@@ -1,0 +1,71 @@
+container_image:
+    Type: TypeList
+    Description: Use a container image to start the notebook instance.
+    Optional: "true"
+    ExactlyOneOf: vm_image, container_image
+    MaxItems: "1"
+    Properties:
+        repository:
+            Type: TypeString
+            Description: |-
+                The path to the container image repository.
+                For example: gcr.io/{project_id}/{imageName}
+            Required: "true"
+        tag:
+            Type: TypeString
+            Description: The tag of the container image. If not specified, this defaults to the latest tag.
+            Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Instance creation time
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A brief description of this environment.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Display name of this environment for the UI.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: A reference to the zone where the machine resides.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name specified for the Environment instance.
+        Format: projects/{project_id}/locations/{location}/environments/{environmentId}
+    Required: "true"
+post_startup_script:
+    Type: TypeString
+    Description: |-
+        Path to a Bash script that automatically runs after a notebook instance fully boots up.
+        The path must be a URL or Cloud Storage path. Example: "gs://path-to-file/file-name"
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+vm_image:
+    Type: TypeList
+    Description: Use a Compute Engine VM image to start the notebook instance.
+    Optional: "true"
+    ExactlyOneOf: vm_image, container_image
+    MaxItems: "1"
+    Properties:
+        image_family:
+            Type: TypeString
+            Description: Use this VM image family to find the image; the newest image in this family will be used.
+            Optional: "true"
+        image_name:
+            Type: TypeString
+            Description: Use VM image name to find the image.
+            Optional: "true"
+        project:
+            Type: TypeString
+            Description: |-
+                The name of the Google Cloud project that this VM image belongs to.
+                Format: projects/{project_id}
+            Required: "true"
+

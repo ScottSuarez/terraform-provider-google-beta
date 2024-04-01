@@ -1,0 +1,37 @@
+description:
+    Type: TypeString
+    Description: The description of the response policy, such as 'My new response policy'.
+    Optional: "true"
+gke_clusters:
+    Type: TypeList
+    Description: The list of Google Kubernetes Engine clusters that can see this zone.
+    Optional: "true"
+    Properties:
+        gke_cluster_name:
+            Type: TypeString
+            Description: |-
+                The resource name of the cluster to bind this ManagedZone to.
+                This should be specified in the format like
+                'projects/*/locations/*/clusters/*'
+            Required: "true"
+networks:
+    Type: TypeList
+    Description: The list of network names specifying networks to which this policy is applied.
+    Optional: "true"
+    Properties:
+        network_url:
+            Type: TypeString
+            Description: |-
+                The fully qualified URL of the VPC network to bind to.
+                This should be formatted like
+                'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+response_policy_name:
+    Type: TypeString
+    Description: The user assigned name for this Response Policy, such as 'myresponsepolicy'.
+    Required: "true"
+

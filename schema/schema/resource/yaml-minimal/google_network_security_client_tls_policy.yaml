@@ -1,0 +1,21 @@
+client_certificate:
+    certificate_provider_instance:
+        plugin_instance: TypeString
+    grpc_endpoint:
+        target_uri: TypeString
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+server_validation_ca:
+    certificate_provider_instance:
+        plugin_instance: TypeString
+    grpc_endpoint:
+        target_uri: TypeString
+sni: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

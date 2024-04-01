@@ -1,0 +1,181 @@
+advanced_settings:
+    dtmf_settings:
+        enabled: TypeBool
+        finish_digit: TypeString
+        max_digits: TypeInt
+display_name: TypeString
+entry_fulfillment:
+    conditional_cases:
+        cases: TypeString
+    messages:
+        channel: TypeString
+        conversation_success:
+            metadata: TypeString
+        live_agent_handoff:
+            metadata: TypeString
+        output_audio_text:
+            allow_playback_interruption: TypeBool
+            ssml: TypeString
+            text: TypeString
+        payload: TypeString
+        play_audio:
+            allow_playback_interruption: TypeBool
+            audio_uri: TypeString
+        telephony_transfer_call:
+            phone_number: TypeString
+        text:
+            allow_playback_interruption: TypeBool
+            text: TypeList(TypeString)
+    return_partial_responses: TypeBool
+    set_parameter_actions:
+        parameter: TypeString
+        value: TypeString
+    tag: TypeString
+    webhook: TypeString
+event_handlers:
+    event: TypeString
+    name: TypeString
+    target_flow: TypeString
+    target_page: TypeString
+    trigger_fulfillment:
+        conditional_cases:
+            cases: TypeString
+        messages:
+            channel: TypeString
+            conversation_success:
+                metadata: TypeString
+            live_agent_handoff:
+                metadata: TypeString
+            output_audio_text:
+                allow_playback_interruption: TypeBool
+                ssml: TypeString
+                text: TypeString
+            payload: TypeString
+            play_audio:
+                allow_playback_interruption: TypeBool
+                audio_uri: TypeString
+            telephony_transfer_call:
+                phone_number: TypeString
+            text:
+                allow_playback_interruption: TypeBool
+                text: TypeList(TypeString)
+        return_partial_responses: TypeBool
+        set_parameter_actions:
+            parameter: TypeString
+            value: TypeString
+        tag: TypeString
+        webhook: TypeString
+form:
+    parameters:
+        advanced_settings:
+            dtmf_settings:
+                enabled: TypeBool
+                finish_digit: TypeString
+                max_digits: TypeInt
+        default_value: TypeString
+        display_name: TypeString
+        entity_type: TypeString
+        fill_behavior:
+            initial_prompt_fulfillment:
+                conditional_cases:
+                    cases: TypeString
+                messages:
+                    channel: TypeString
+                    conversation_success:
+                        metadata: TypeString
+                    live_agent_handoff:
+                        metadata: TypeString
+                    output_audio_text:
+                        allow_playback_interruption: TypeBool
+                        ssml: TypeString
+                        text: TypeString
+                    payload: TypeString
+                    play_audio:
+                        allow_playback_interruption: TypeBool
+                        audio_uri: TypeString
+                    telephony_transfer_call:
+                        phone_number: TypeString
+                    text:
+                        allow_playback_interruption: TypeBool
+                        text: TypeList(TypeString)
+                return_partial_responses: TypeBool
+                set_parameter_actions:
+                    parameter: TypeString
+                    value: TypeString
+                tag: TypeString
+                webhook: TypeString
+            reprompt_event_handlers:
+                event: TypeString
+                name: TypeString
+                target_flow: TypeString
+                target_page: TypeString
+                trigger_fulfillment:
+                    conditional_cases:
+                        cases: TypeString
+                    messages:
+                        channel: TypeString
+                        conversation_success:
+                            metadata: TypeString
+                        live_agent_handoff:
+                            metadata: TypeString
+                        output_audio_text:
+                            allow_playback_interruption: TypeBool
+                            ssml: TypeString
+                            text: TypeString
+                        payload: TypeString
+                        play_audio:
+                            allow_playback_interruption: TypeBool
+                            audio_uri: TypeString
+                        telephony_transfer_call:
+                            phone_number: TypeString
+                        text:
+                            allow_playback_interruption: TypeBool
+                            text: TypeList(TypeString)
+                    return_partial_responses: TypeBool
+                    set_parameter_actions:
+                        parameter: TypeString
+                        value: TypeString
+                    tag: TypeString
+                    webhook: TypeString
+        is_list: TypeBool
+        redact: TypeBool
+        required: TypeBool
+language_code: TypeString
+name: TypeString
+parent: TypeString
+transition_route_groups: TypeList(TypeString)
+transition_routes:
+    condition: TypeString
+    intent: TypeString
+    name: TypeString
+    target_flow: TypeString
+    target_page: TypeString
+    trigger_fulfillment:
+        conditional_cases:
+            cases: TypeString
+        messages:
+            channel: TypeString
+            conversation_success:
+                metadata: TypeString
+            live_agent_handoff:
+                metadata: TypeString
+            output_audio_text:
+                allow_playback_interruption: TypeBool
+                ssml: TypeString
+                text: TypeString
+            payload: TypeString
+            play_audio:
+                allow_playback_interruption: TypeBool
+                audio_uri: TypeString
+            telephony_transfer_call:
+                phone_number: TypeString
+            text:
+                allow_playback_interruption: TypeBool
+                text: TypeList(TypeString)
+        return_partial_responses: TypeBool
+        set_parameter_actions:
+            parameter: TypeString
+            value: TypeString
+        tag: TypeString
+        webhook: TypeString
+

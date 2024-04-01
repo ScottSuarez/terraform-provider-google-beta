@@ -1,0 +1,27 @@
+admin_enabled: TypeBool
+bandwidth: TypeString
+candidate_subnets: TypeList(TypeString)
+cloud_router_ip_address: TypeString
+creation_timestamp: TypeString
+customer_router_ip_address: TypeString
+description: TypeString
+edge_availability_domain: TypeString
+encryption: TypeString
+google_reference_id: TypeString
+interconnect: TypeString
+ipsec_internal_addresses: TypeList(TypeString)
+mtu: TypeString
+name: TypeString
+pairing_key: TypeString
+partner_asn: TypeString
+private_interconnect_info:
+    tag8021q: TypeInt
+project: TypeString
+region: TypeString
+router: TypeString
+self_link: TypeString
+stack_type: TypeString
+state: TypeString
+type: TypeString
+vlan_tag8021q: TypeInt
+

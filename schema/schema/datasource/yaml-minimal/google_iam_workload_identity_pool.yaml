@@ -1,0 +1,8 @@
+description: TypeString
+disabled: TypeBool
+display_name: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+workload_identity_pool_id: TypeString
+

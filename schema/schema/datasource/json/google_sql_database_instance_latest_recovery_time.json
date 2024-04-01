@@ -1,0 +1,16 @@
+{
+    "instance": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "latest_recovery_time": {
+        "Computed": true,
+        "Description": "Timestamp, identifies the latest recovery time of the source instance.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

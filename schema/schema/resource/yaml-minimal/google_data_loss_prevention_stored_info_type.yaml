@@ -1,0 +1,26 @@
+description: TypeString
+dictionary:
+    cloud_storage_path:
+        path: TypeString
+    word_list:
+        words: TypeList(TypeString)
+display_name: TypeString
+large_custom_dictionary:
+    big_query_field:
+        field:
+            name: TypeString
+        table:
+            dataset_id: TypeString
+            project_id: TypeString
+            table_id: TypeString
+    cloud_storage_file_set:
+        url: TypeString
+    output_path:
+        path: TypeString
+name: TypeString
+parent: TypeString
+regex:
+    group_indexes: TypeList(TypeInt)
+    pattern: TypeString
+stored_info_type_id: TypeString
+

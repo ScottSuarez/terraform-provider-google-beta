@@ -1,0 +1,551 @@
+database_version:
+    Type: TypeString
+    Description: To filter out the database instances which are of the specified database version.
+    Optional: "true"
+instances:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        available_maintenance_versions:
+            Type: TypeList
+            Description: Available Maintenance versions.
+            Computed: "true"
+        clone:
+            Type: TypeList
+            Description: Configuration for creating a new instance as a clone of another instance.
+            Computed: "true"
+            Properties:
+                allocated_ip_range:
+                    Type: TypeString
+                    Description: 'The name of the allocated ip range for the private ip CloudSQL instance. For example: "google-managed-services-default". If set, the cloned instance ip will be created in the allocated range. The range name must comply with [RFC 1035](https://tools.ietf.org/html/rfc1035). Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?.'
+                    Computed: "true"
+                database_names:
+                    Type: TypeList
+                    Description: (SQL Server only, use with point_in_time) clone only the specified databases from the source instance. Clone all databases if empty.
+                    Computed: "true"
+                point_in_time:
+                    Type: TypeString
+                    Description: The timestamp of the point in time that should be restored.
+                    Computed: "true"
+                preferred_zone:
+                    Type: TypeString
+                    Description: (Point-in-time recovery for PostgreSQL only) Clone to an instance in the specified zone. If no zone is specified, clone to the same zone as the source instance.
+                    Computed: "true"
+                source_instance_name:
+                    Type: TypeString
+                    Description: The name of the instance from which the point in time should be restored.
+                    Computed: "true"
+        connection_name:
+            Type: TypeString
+            Description: The connection name of the instance to be used in connection strings. For example, when connecting with Cloud SQL Proxy.
+            Computed: "true"
+        database_version:
+            Type: TypeString
+            Description: The MySQL, PostgreSQL or SQL Server (beta) version to use. Supported values include MYSQL_5_6, MYSQL_5_7, MYSQL_8_0, POSTGRES_9_6, POSTGRES_10, POSTGRES_11, POSTGRES_12, POSTGRES_13, POSTGRES_14, POSTGRES_15, SQLSERVER_2017_STANDARD, SQLSERVER_2017_ENTERPRISE, SQLSERVER_2017_EXPRESS, SQLSERVER_2017_WEB. Database Version Policies includes an up-to-date reference of supported versions.
+            Computed: "true"
+        deletion_protection:
+            Type: TypeBool
+            Description: Used to block Terraform from deleting a SQL Instance. Defaults to true.
+            Computed: "true"
+        dns_name:
+            Type: TypeString
+            Description: The dns name of the instance.
+            Computed: "true"
+        encryption_key_name:
+            Type: TypeString
+            Computed: "true"
+        first_ip_address:
+            Type: TypeString
+            Description: The first IPv4 address of any type assigned. This is to support accessing the first address in the list in a terraform output when the resource is configured with a count.
+            Computed: "true"
+        instance_type:
+            Type: TypeString
+            Description: The type of the instance. The valid values are:- 'SQL_INSTANCE_TYPE_UNSPECIFIED', 'CLOUD_SQL_INSTANCE', 'ON_PREMISES_INSTANCE' and 'READ_REPLICA_INSTANCE'.
+            Computed: "true"
+        ip_address:
+            Type: TypeList
+            Computed: "true"
+            Properties:
+                ip_address:
+                    Type: TypeString
+                    Computed: "true"
+                time_to_retire:
+                    Type: TypeString
+                    Computed: "true"
+                type:
+                    Type: TypeString
+                    Computed: "true"
+        maintenance_version:
+            Type: TypeString
+            Description: Maintenance version.
+            Computed: "true"
+        master_instance_name:
+            Type: TypeString
+            Description: The name of the instance that will act as the master in the replication setup. Note, this requires the master to have binary_log_enabled set, as well as existing backups.
+            Computed: "true"
+        name:
+            Type: TypeString
+            Description: The name of the instance. If the name is left blank, Terraform will randomly generate one when the instance is first created. This is done because after a name is used, it cannot be reused for up to one week.
+            Computed: "true"
+        private_ip_address:
+            Type: TypeString
+            Description: IPv4 address assigned. This is a workaround for an issue fixed in Terraform 0.12 but also provides a convenient way to access an IP of a specific type without performing filtering in a Terraform config.
+            Computed: "true"
+        project:
+            Type: TypeString
+            Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+            Computed: "true"
+        psc_service_attachment_link:
+            Type: TypeString
+            Description: The link to service attachment of PSC instance.
+            Computed: "true"
+        public_ip_address:
+            Type: TypeString
+            Description: IPv4 address assigned. This is a workaround for an issue fixed in Terraform 0.12 but also provides a convenient way to access an IP of a specific type without performing filtering in a Terraform config.
+            Computed: "true"
+        region:
+            Type: TypeString
+            Description: The region the instance will sit in. Note, Cloud SQL is not available in all regions. A valid region must be provided to use this resource. If a region is not provided in the resource definition, the provider region will be used instead, but this will be an apply-time error for instances if the provider region is not supported with Cloud SQL. If you choose not to provide the region argument for this resource, make sure you understand this.
+            Computed: "true"
+        replica_configuration:
+            Type: TypeList
+            Description: The configuration for replication.
+            Computed: "true"
+            Properties:
+                ca_certificate:
+                    Type: TypeString
+                    Description: PEM representation of the trusted CA's x509 certificate.
+                    Computed: "true"
+                client_certificate:
+                    Type: TypeString
+                    Description: PEM representation of the replica's x509 certificate.
+                    Computed: "true"
+                client_key:
+                    Type: TypeString
+                    Description: PEM representation of the replica's private key. The corresponding public key in encoded in the client_certificate.
+                    Computed: "true"
+                connect_retry_interval:
+                    Type: TypeInt
+                    Description: The number of seconds between connect retries. MySQL's default is 60 seconds.
+                    Computed: "true"
+                dump_file_path:
+                    Type: TypeString
+                    Description: Path to a SQL file in Google Cloud Storage from which replica instances are created. Format is gs://bucket/filename.
+                    Computed: "true"
+                failover_target:
+                    Type: TypeBool
+                    Description: Specifies if the replica is the failover target. If the field is set to true the replica will be designated as a failover replica. If the master instance fails, the replica instance will be promoted as the new master instance. Not supported for Postgres
+                    Computed: "true"
+                master_heartbeat_period:
+                    Type: TypeInt
+                    Description: Time in ms between replication heartbeats.
+                    Computed: "true"
+                password:
+                    Type: TypeString
+                    Description: Password for the replication connection.
+                    Computed: "true"
+                ssl_cipher:
+                    Type: TypeString
+                    Description: Permissible ciphers for use in SSL encryption.
+                    Computed: "true"
+                username:
+                    Type: TypeString
+                    Description: Username for replication connection.
+                    Computed: "true"
+                verify_server_certificate:
+                    Type: TypeBool
+                    Description: True if the master's common name value is checked during the SSL handshake.
+                    Computed: "true"
+        restore_backup_context:
+            Type: TypeList
+            Computed: "true"
+            Properties:
+                backup_run_id:
+                    Type: TypeInt
+                    Description: The ID of the backup run to restore from.
+                    Computed: "true"
+                instance_id:
+                    Type: TypeString
+                    Description: The ID of the instance that the backup was taken from.
+                    Computed: "true"
+                project:
+                    Type: TypeString
+                    Description: The full project ID of the source instance.
+                    Computed: "true"
+        root_password:
+            Type: TypeString
+            Description: Initial root password. Required for MS SQL Server.
+            Computed: "true"
+        self_link:
+            Type: TypeString
+            Description: The URI of the created resource.
+            Computed: "true"
+        server_ca_cert:
+            Type: TypeList
+            Computed: "true"
+            Properties:
+                cert:
+                    Type: TypeString
+                    Description: The CA Certificate used to connect to the SQL Instance via SSL.
+                    Computed: "true"
+                common_name:
+                    Type: TypeString
+                    Description: The CN valid for the CA Cert.
+                    Computed: "true"
+                create_time:
+                    Type: TypeString
+                    Description: Creation time of the CA Cert.
+                    Computed: "true"
+                expiration_time:
+                    Type: TypeString
+                    Description: Expiration time of the CA Cert.
+                    Computed: "true"
+                sha1_fingerprint:
+                    Type: TypeString
+                    Description: SHA Fingerprint of the CA Cert.
+                    Computed: "true"
+        service_account_email_address:
+            Type: TypeString
+            Description: The service account email address assigned to the instance.
+            Computed: "true"
+        settings:
+            Type: TypeList
+            Description: The settings to use for the database. The configuration is detailed below.
+            Computed: "true"
+            Properties:
+                activation_policy:
+                    Type: TypeString
+                    Description: This specifies when the instance should be active. Can be either ALWAYS, NEVER or ON_DEMAND.
+                    Computed: "true"
+                active_directory_config:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        domain:
+                            Type: TypeString
+                            Description: Domain name of the Active Directory for SQL Server (e.g., mydomain.com).
+                            Computed: "true"
+                advanced_machine_features:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        threads_per_core:
+                            Type: TypeInt
+                            Description: The number of threads per physical core. Can be 1 or 2.
+                            Computed: "true"
+                availability_type:
+                    Type: TypeString
+                    Description: |-
+                        The availability type of the Cloud SQL instance, high availability
+                        (REGIONAL) or single zone (ZONAL). For all instances, ensure that
+                        settings.backup_configuration.enabled is set to true.
+                        For MySQL instances, ensure that settings.backup_configuration.binary_log_enabled is set to true.
+                        For Postgres instances, ensure that settings.backup_configuration.point_in_time_recovery_enabled
+                        is set to true. Defaults to ZONAL.
+                    Computed: "true"
+                backup_configuration:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        backup_retention_settings:
+                            Type: TypeList
+                            Computed: "true"
+                            Properties:
+                                retained_backups:
+                                    Type: TypeInt
+                                    Description: Number of backups to retain.
+                                    Computed: "true"
+                                retention_unit:
+                                    Type: TypeString
+                                    Description: The unit that 'retainedBackups' represents. Defaults to COUNT
+                                    Computed: "true"
+                        binary_log_enabled:
+                            Type: TypeBool
+                            Description: True if binary logging is enabled. If settings.backup_configuration.enabled is false, this must be as well. Can only be used with MySQL.
+                            Computed: "true"
+                        enabled:
+                            Type: TypeBool
+                            Description: True if backup configuration is enabled.
+                            Computed: "true"
+                        location:
+                            Type: TypeString
+                            Description: Location of the backup configuration.
+                            Computed: "true"
+                        point_in_time_recovery_enabled:
+                            Type: TypeBool
+                            Description: True if Point-in-time recovery is enabled.
+                            Computed: "true"
+                        start_time:
+                            Type: TypeString
+                            Description: HH:MM format time indicating when backup configuration starts.
+                            Computed: "true"
+                        transaction_log_retention_days:
+                            Type: TypeInt
+                            Description: The number of days of transaction logs we retain for point in time restore, from 1-7. (For PostgreSQL Enterprise Plus instances, from 1 to 35.)
+                            Computed: "true"
+                collation:
+                    Type: TypeString
+                    Description: The name of server instance collation.
+                    Computed: "true"
+                connector_enforcement:
+                    Type: TypeString
+                    Description: Specifies if connections must use Cloud SQL connectors.
+                    Computed: "true"
+                data_cache_config:
+                    Type: TypeList
+                    Description: Data cache configurations.
+                    Computed: "true"
+                    Properties:
+                        data_cache_enabled:
+                            Type: TypeBool
+                            Description: Whether data cache is enabled for the instance.
+                            Computed: "true"
+                database_flags:
+                    Type: TypeSet
+                    Computed: "true"
+                    Properties:
+                        name:
+                            Type: TypeString
+                            Description: Name of the flag.
+                            Computed: "true"
+                        value:
+                            Type: TypeString
+                            Description: Value of the flag.
+                            Computed: "true"
+                deletion_protection_enabled:
+                    Type: TypeBool
+                    Description: Configuration to protect against accidental instance deletion.
+                    Computed: "true"
+                deny_maintenance_period:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        end_date:
+                            Type: TypeString
+                            Description: End date before which maintenance will not take place. The date is in format yyyy-mm-dd i.e., 2020-11-01, or mm-dd, i.e., 11-01
+                            Computed: "true"
+                        start_date:
+                            Type: TypeString
+                            Description: Start date after which maintenance will not take place. The date is in format yyyy-mm-dd i.e., 2020-11-01, or mm-dd, i.e., 11-01
+                            Computed: "true"
+                        time:
+                            Type: TypeString
+                            Description: 'Time in UTC when the "deny maintenance period" starts on start_date and ends on end_date. The time is in format: HH:mm:SS, i.e., 00:00:00'
+                            Computed: "true"
+                disk_autoresize:
+                    Type: TypeBool
+                    Description: Enables auto-resizing of the storage size. Defaults to true.
+                    Computed: "true"
+                disk_autoresize_limit:
+                    Type: TypeInt
+                    Description: The maximum size, in GB, to which storage capacity can be automatically increased. The default value is 0, which specifies that there is no limit.
+                    Computed: "true"
+                disk_size:
+                    Type: TypeInt
+                    Description: The size of data disk, in GB. Size of a running instance cannot be reduced but can be increased. The minimum value is 10GB.
+                    Computed: "true"
+                disk_type:
+                    Type: TypeString
+                    Description: 'The type of data disk: PD_SSD or PD_HDD. Defaults to PD_SSD.'
+                    Computed: "true"
+                edition:
+                    Type: TypeString
+                    Description: The edition of the instance, can be ENTERPRISE or ENTERPRISE_PLUS.
+                    Computed: "true"
+                insights_config:
+                    Type: TypeList
+                    Description: Configuration of Query Insights.
+                    Computed: "true"
+                    Properties:
+                        query_insights_enabled:
+                            Type: TypeBool
+                            Description: True if Query Insights feature is enabled.
+                            Computed: "true"
+                        query_plans_per_minute:
+                            Type: TypeInt
+                            Description: Number of query execution plans captured by Insights per minute for all queries combined. Between 0 and 20. Default to 5.
+                            Computed: "true"
+                        query_string_length:
+                            Type: TypeInt
+                            Description: Maximum query length stored in bytes. Between 256 and 4500. Default to 1024.
+                            Computed: "true"
+                        record_application_tags:
+                            Type: TypeBool
+                            Description: True if Query Insights will record application tags from query when enabled.
+                            Computed: "true"
+                        record_client_address:
+                            Type: TypeBool
+                            Description: True if Query Insights will record client address when enabled.
+                            Computed: "true"
+                ip_configuration:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        allocated_ip_range:
+                            Type: TypeString
+                            Description: 'The name of the allocated ip range for the private ip CloudSQL instance. For example: "google-managed-services-default". If set, the instance ip will be created in the allocated range. The range name must comply with RFC 1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?.'
+                            Computed: "true"
+                        authorized_networks:
+                            Type: TypeSet
+                            Computed: "true"
+                            Properties:
+                                expiration_time:
+                                    Type: TypeString
+                                    Computed: "true"
+                                name:
+                                    Type: TypeString
+                                    Computed: "true"
+                                value:
+                                    Type: TypeString
+                                    Computed: "true"
+                        enable_private_path_for_google_cloud_services:
+                            Type: TypeBool
+                            Description: Whether Google Cloud services such as BigQuery are allowed to access data in this Cloud SQL instance over a private IP connection. SQLSERVER database type is not supported.
+                            Computed: "true"
+                        ipv4_enabled:
+                            Type: TypeBool
+                            Description: Whether this Cloud SQL instance should be assigned a public IPV4 address. At least ipv4_enabled must be enabled or a private_network must be configured.
+                            Computed: "true"
+                        private_network:
+                            Type: TypeString
+                            Description: The VPC network from which the Cloud SQL instance is accessible for private IP. For example, projects/myProject/global/networks/default. Specifying a network enables private IP. At least ipv4_enabled must be enabled or a private_network must be configured. This setting can be updated, but it cannot be removed after it is set.
+                            Computed: "true"
+                        psc_config:
+                            Type: TypeSet
+                            Description: PSC settings for a Cloud SQL instance.
+                            Computed: "true"
+                            Properties:
+                                allowed_consumer_projects:
+                                    Type: TypeSet
+                                    Description: List of consumer projects that are allow-listed for PSC connections to this instance. This instance can be connected to with PSC from any network in these projects. Each consumer project in this list may be represented by a project number (numeric) or by a project id (alphanumeric).
+                                    Computed: "true"
+                                psc_enabled:
+                                    Type: TypeBool
+                                    Description: Whether PSC connectivity is enabled for this instance.
+                                    Computed: "true"
+                        require_ssl:
+                            Type: TypeBool
+                            Description: Whether SSL connections over IP are enforced or not. To change this field, also set the corresponding value in ssl_mode if it has been set too.
+                            Computed: "true"
+                        ssl_mode:
+                            Type: TypeString
+                            Description: Specify how SSL connection should be enforced in DB connections. This field provides more SSL enforcment options compared to require_ssl. To change this field, also set the correspoding value in require_ssl.
+                            Computed: "true"
+                location_preference:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        follow_gae_application:
+                            Type: TypeString
+                            Description: A Google App Engine application whose zone to remain in. Must be in the same region as this instance.
+                            Computed: "true"
+                        secondary_zone:
+                            Type: TypeString
+                            Description: The preferred Compute Engine zone for the secondary/failover
+                            Computed: "true"
+                        zone:
+                            Type: TypeString
+                            Description: The preferred compute engine zone.
+                            Computed: "true"
+                maintenance_window:
+                    Type: TypeList
+                    Description: Declares a one-hour maintenance window when an Instance can automatically restart to apply updates. The maintenance window is specified in UTC time.
+                    Computed: "true"
+                    Properties:
+                        day:
+                            Type: TypeInt
+                            Description: Day of week (1-7), starting on Monday
+                            Computed: "true"
+                        hour:
+                            Type: TypeInt
+                            Description: Hour of day (0-23), ignored if day not set
+                            Computed: "true"
+                        update_track:
+                            Type: TypeString
+                            Description: Receive updates earlier (canary) or later (stable)
+                            Computed: "true"
+                password_validation_policy:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        complexity:
+                            Type: TypeString
+                            Description: Password complexity.
+                            Computed: "true"
+                        disallow_username_substring:
+                            Type: TypeBool
+                            Description: Disallow username as a part of the password.
+                            Computed: "true"
+                        enable_password_policy:
+                            Type: TypeBool
+                            Description: Whether the password policy is enabled or not.
+                            Computed: "true"
+                        min_length:
+                            Type: TypeInt
+                            Description: Minimum number of characters allowed.
+                            Computed: "true"
+                        password_change_interval:
+                            Type: TypeString
+                            Description: Minimum interval after which the password can be changed. This flag is only supported for PostgresSQL.
+                            Computed: "true"
+                        reuse_interval:
+                            Type: TypeInt
+                            Description: Number of previous passwords that cannot be reused.
+                            Computed: "true"
+                pricing_plan:
+                    Type: TypeString
+                    Description: Pricing plan for this instance, can only be PER_USE.
+                    Computed: "true"
+                sql_server_audit_config:
+                    Type: TypeList
+                    Computed: "true"
+                    Properties:
+                        bucket:
+                            Type: TypeString
+                            Description: The name of the destination bucket (e.g., gs://mybucket).
+                            Computed: "true"
+                        retention_interval:
+                            Type: TypeString
+                            Description: 'How long to keep generated audit files. A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s"..'
+                            Computed: "true"
+                        upload_interval:
+                            Type: TypeString
+                            Description: 'How often to upload generated audit files. A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s".'
+                            Computed: "true"
+                tier:
+                    Type: TypeString
+                    Description: The machine type to use. See tiers for more details and supported versions. Postgres supports only shared-core machine types, and custom machine types such as db-custom-2-13312. See the Custom Machine Type Documentation to learn about specifying custom machine types.
+                    Computed: "true"
+                time_zone:
+                    Type: TypeString
+                    Description: The time_zone to be used by the database engine (supported only for SQL Server), in SQL Server timezone format.
+                    Computed: "true"
+                user_labels:
+                    Type: TypeMap
+                    Description: A set of key/value user label pairs to assign to the instance.
+                    Computed: "true"
+                version:
+                    Type: TypeInt
+                    Description: Used to make sure changes to the settings block are atomic.
+                    Computed: "true"
+project:
+    Type: TypeString
+    Description: Project ID of the project that contains the instances.
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: To filter out the database instances which are located in this specified region.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: 'To filter out the database instances based on the current state of the database instance, valid values include : "SQL_INSTANCE_STATE_UNSPECIFIED", "RUNNABLE", "SUSPENDED", "PENDING_DELETE", "PENDING_CREATE", "MAINTENANCE" and "FAILED".'
+    Optional: "true"
+tier:
+    Type: TypeString
+    Description: To filter out the database instances based on the machine type.
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: To filter out the database instances which are located in this specified zone.
+    Optional: "true"
+

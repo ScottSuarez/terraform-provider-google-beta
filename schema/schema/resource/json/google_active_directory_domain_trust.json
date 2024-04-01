@@ -1,0 +1,42 @@
+{
+    "domain": {
+        "Description": "The fully qualified domain name. e.g. mydomain.myorganization.com, with the restrictions,\nhttps://cloud.google.com/managed-microsoft-ad/reference/rest/v1/projects.locations.global.domains.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "selective_authentication": {
+        "Description": "Whether the trusted side has forest/domain wide access or selective access to an approved set of resources.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "target_dns_ip_addresses": {
+        "Description": "The target DNS server IP addresses which can resolve the remote domain involved in the trust.",
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "target_domain_name": {
+        "Description": "The fully qualified target domain name which will be in trust with the current domain.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "trust_direction": {
+        "Description": "The trust direction, which decides if the current domain is trusted, trusting, or both. Possible values: [\"INBOUND\", \"OUTBOUND\", \"BIDIRECTIONAL\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "trust_handshake_secret": {
+        "Description": "The trust secret used for the handshake with the target domain. This will not be stored.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "trust_type": {
+        "Description": "The type of trust represented by the trust resource. Possible values: [\"FOREST\", \"EXTERNAL\"]",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

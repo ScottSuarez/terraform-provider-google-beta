@@ -1,0 +1,22 @@
+{
+    "attachment_id": {
+        "Description": "The resource that the security policy is attached to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "The display name of the security policy of the association.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name for an association.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_id": {
+        "Description": "The security policy ID of the association.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

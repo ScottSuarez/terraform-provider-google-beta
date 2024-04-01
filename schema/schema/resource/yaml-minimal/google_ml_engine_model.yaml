@@ -1,0 +1,12 @@
+default_version:
+    name: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+online_prediction_console_logging: TypeBool
+online_prediction_logging: TypeBool
+project: TypeString
+regions: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+

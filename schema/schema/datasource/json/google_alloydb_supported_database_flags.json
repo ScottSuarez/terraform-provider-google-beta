@@ -1,0 +1,90 @@
+{
+    "location": {
+        "Description": "The canonical id for the location. For example: \"us-east1\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Description": "Project ID of the project.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "supported_database_flags": {
+        "Computed": true,
+        "Properties": {
+            "accepts_multiple_values": {
+                "Computed": true,
+                "Description": "Whether the database flag accepts multiple values. If true, a comma-separated list of stringified values may be specified.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "flag_name": {
+                "Computed": true,
+                "Description": "The name of the database flag, e.g. \"max_allowed_packets\". The is a possibly key for the Instance.database_flags map field.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "integer_restrictions": {
+                "Computed": true,
+                "Description": "Restriction on INTEGER type value.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "max_value": {
+                        "Computed": true,
+                        "Description": "The maximum value that can be specified, if applicable.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "min_value": {
+                        "Computed": true,
+                        "Description": "The minimum value that can be specified, if applicable.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The name of the flag resource, following Google Cloud conventions, e.g.: * projects/{project}/locations/{location}/flags/{flag} This field currently has no semantic meaning.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "requires_db_restart": {
+                "Computed": true,
+                "Description": "Whether setting or updating this flag on an Instance requires a database restart. If a flag that requires database restart is set, the backend will automatically restart the database (making sure to satisfy any availability SLO's).",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "string_restrictions": {
+                "Computed": true,
+                "Description": "Restriction on STRING type value.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "allowed_values": {
+                        "Computed": true,
+                        "Description": "The list of allowed values, if bounded. This field will be empty if there is a unbounded number of allowed values.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "supported_db_versions": {
+                "Computed": true,
+                "Description": "Major database engine versions for which this flag is supported. Supported values are:- 'DATABASE_VERSION_UNSPECIFIED', and 'POSTGRES_14'.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "value_type": {
+                "Computed": true,
+                "Description": "ValueType describes the semantic type of the value that the flag accepts. The supported values are:- 'VALUE_TYPE_UNSPECIFIED', 'STRING', 'INTEGER', 'FLOAT', 'NONE'.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

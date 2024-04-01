@@ -1,0 +1,61 @@
+cert:
+    state: TypeString
+    type: TypeString
+    verification:
+        dns:
+            check_time: TypeString
+            desired:
+                domain_name: TypeString
+                records:
+                    domain_name: TypeString
+                    rdata: TypeString
+                    required_action: TypeString
+                    type: TypeString
+            discovered:
+                domain_name: TypeString
+                records:
+                    domain_name: TypeString
+                    rdata: TypeString
+                    required_action: TypeString
+                    type: TypeString
+        http:
+            desired: TypeString
+            discovered: TypeString
+            last_check_time: TypeString
+            path: TypeString
+cert_preference: TypeString
+create_time: TypeString
+custom_domain: TypeString
+delete_time: TypeString
+etag: TypeString
+expire_time: TypeString
+host_state: TypeString
+issues:
+    code: TypeInt
+    details: TypeString
+    message: TypeString
+name: TypeString
+ownership_state: TypeString
+project: TypeString
+reconciling: TypeBool
+redirect_target: TypeString
+required_dns_updates:
+    check_time: TypeString
+    desired:
+        domain_name: TypeString
+        records:
+            domain_name: TypeString
+            rdata: TypeString
+            required_action: TypeString
+            type: TypeString
+    discovered:
+        domain_name: TypeString
+        records:
+            domain_name: TypeString
+            rdata: TypeString
+            required_action: TypeString
+            type: TypeString
+site_id: TypeString
+update_time: TypeString
+wait_dns_verification: TypeBool
+

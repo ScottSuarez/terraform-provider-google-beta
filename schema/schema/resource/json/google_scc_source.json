@@ -1,0 +1,22 @@
+{
+    "description": {
+        "Description": "The description of the source (max of 1024 characters).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The source’s display name. A source’s display name must be unique\namongst its siblings, for example, two sources with the same parent\ncan't share the same display name. The display name must start and end\nwith a letter or digit, may contain letters, digits, spaces, hyphens,\nand underscores, and can be no longer than 32 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of this source, in the format\n'organizations/{{organization}}/sources/{{source}}'.",
+        "Type": "TypeString"
+    },
+    "organization": {
+        "Description": "The organization whose Cloud Security Command Center the Source\nlives in.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

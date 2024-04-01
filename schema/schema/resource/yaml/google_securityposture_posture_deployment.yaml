@@ -1,0 +1,83 @@
+create_time:
+    Type: TypeString
+    Description: Time the posture deployment was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Description of the posture deployment.
+    Optional: "true"
+desired_posture_id:
+    Type: TypeString
+    Description: |-
+        This is an output only optional field which will be filled in case when
+        PostureDeployment state is UPDATE_FAILED or CREATE_FAILED or DELETE_FAILED.
+        It denotes the desired posture to be deployed.
+    Computed: "true"
+desired_posture_revision_id:
+    Type: TypeString
+    Description: |-
+        This is an output only optional field which will be filled in case when
+        PostureDeployment state is UPDATE_FAILED or CREATE_FAILED or DELETE_FAILED.
+        It denotes the desired posture revision_id to be deployed.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: For Resource freshness validation (https://google.aip.dev/154)
+    Computed: "true"
+failure_message:
+    Type: TypeString
+    Description: |-
+        This is a output only optional field which will be filled in case where
+        PostureDeployment enters a failure state like UPDATE_FAILED or
+        CREATE_FAILED or DELETE_FAILED. It will have the failure message for posture deployment's
+        CREATE/UPDATE/DELETE methods.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource, eg. global'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Name of the posture deployment instance.
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: The parent of the resource, an organization. Format should be 'organizations/{organization_id}'.
+    Required: "true"
+posture_deployment_id:
+    Type: TypeString
+    Description: ID of the posture deployment.
+    Required: "true"
+posture_id:
+    Type: TypeString
+    Description: |-
+        Relative name of the posture which needs to be deployed. It should be in the format:
+          organizations/{organization_id}/locations/{location}/postures/{posture_id}
+    Required: "true"
+posture_revision_id:
+    Type: TypeString
+    Description: Revision_id the posture which needs to be deployed.
+    Required: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the posture deployment.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: |-
+        State of the posture deployment. A posture deployment can be in the following terminal states:
+        ACTIVE, CREATE_FAILED, UPDATE_FAILED, DELETE_FAILED.
+    Computed: "true"
+target_resource:
+    Type: TypeString
+    Description: |-
+        The resource on which the posture should be deployed. This can be in one of the following formats:
+        projects/{project_number},
+        folders/{folder_number},
+        organizations/{organization_id}
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Time the posture deployment was updated in UTC.
+    Computed: "true"
+

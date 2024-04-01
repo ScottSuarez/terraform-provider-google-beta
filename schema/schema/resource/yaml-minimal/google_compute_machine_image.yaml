@@ -1,0 +1,13 @@
+description: TypeString
+guest_flush: TypeBool
+machine_image_encryption_key:
+    kms_key_name: TypeString
+    kms_key_service_account: TypeString
+    raw_key: TypeString
+    sha256: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+source_instance: TypeString
+storage_locations: TypeList(TypeString)
+

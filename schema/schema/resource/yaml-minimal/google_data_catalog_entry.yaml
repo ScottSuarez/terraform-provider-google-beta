@@ -1,0 +1,27 @@
+bigquery_date_sharded_spec:
+    dataset: TypeString
+    shard_count: TypeInt
+    table_prefix: TypeString
+bigquery_table_spec:
+    table_source_type: TypeString
+    table_spec:
+        grouped_entry: TypeString
+    view_spec:
+        view_query: TypeString
+description: TypeString
+display_name: TypeString
+entry_group: TypeString
+entry_id: TypeString
+gcs_fileset_spec:
+    file_patterns: TypeList(TypeString)
+    sample_gcs_file_specs:
+        file_path: TypeString
+        size_bytes: TypeInt
+integrated_system: TypeString
+linked_resource: TypeString
+name: TypeString
+schema: TypeString
+type: TypeString
+user_specified_system: TypeString
+user_specified_type: TypeString
+

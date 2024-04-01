@@ -1,0 +1,24 @@
+fqdn:
+    Type: TypeString
+    Description: |-
+        Fully qualified domain name of network endpoint.
+        This can only be specified when network_endpoint_type of the NEG is INTERNET_FQDN_PORT.
+    Optional: "true"
+    AtLeastOneOf: fqdn, ip_address
+global_network_endpoint_group:
+    Type: TypeString
+    Description: The global network endpoint group this endpoint is part of.
+    Required: "true"
+ip_address:
+    Type: TypeString
+    Description: IPv4 address external endpoint.
+    Optional: "true"
+port:
+    Type: TypeInt
+    Description: Port number of the external endpoint.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

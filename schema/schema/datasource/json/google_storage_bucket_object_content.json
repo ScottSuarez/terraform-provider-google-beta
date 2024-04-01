@@ -1,0 +1,135 @@
+{
+    "bucket": {
+        "Description": "The name of the containing bucket.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "cache_control": {
+        "Computed": true,
+        "Description": "Cache-Control directive to specify caching behavior of object data. If omitted and object is accessible to all anonymous users, the default will be public, max-age=3600",
+        "Type": "TypeString"
+    },
+    "content": {
+        "Description": "Data as string to be uploaded. Must be defined if source is not. Note: The content field is marked as sensitive. To view the raw contents of the object, please define an output.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "content_disposition": {
+        "Computed": true,
+        "Description": "Content-Disposition of the object data.",
+        "Type": "TypeString"
+    },
+    "content_encoding": {
+        "Computed": true,
+        "Description": "Content-Encoding of the object data.",
+        "Type": "TypeString"
+    },
+    "content_language": {
+        "Computed": true,
+        "Description": "Content-Language of the object data.",
+        "Type": "TypeString"
+    },
+    "content_type": {
+        "Computed": true,
+        "Description": "Content-Type of the object data. Defaults to \"application/octet-stream\" or \"text/plain; charset=utf-8\".",
+        "Type": "TypeString"
+    },
+    "crc32c": {
+        "Computed": true,
+        "Description": "Base 64 CRC32 hash of the uploaded data.",
+        "Type": "TypeString"
+    },
+    "customer_encryption": {
+        "Computed": true,
+        "Description": "Encryption key; encoded using base64.",
+        "Properties": {
+            "encryption_algorithm": {
+                "Computed": true,
+                "Description": "The encryption algorithm. Default: AES256",
+                "Type": "TypeString"
+            },
+            "encryption_key": {
+                "Computed": true,
+                "Description": "Base64 encoded customer supplied encryption key.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "detect_md5hash": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "event_based_hold": {
+        "Computed": true,
+        "Description": "Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any).",
+        "Type": "TypeBool"
+    },
+    "kms_key_name": {
+        "Computed": true,
+        "Description": "Resource name of the Cloud KMS key that will be used to encrypt the object. Overrides the object metadata's kmsKeyName value, if any.",
+        "Type": "TypeString"
+    },
+    "md5hash": {
+        "Computed": true,
+        "Description": "Base 64 MD5 hash of the uploaded data.",
+        "Type": "TypeString"
+    },
+    "media_link": {
+        "Computed": true,
+        "Description": "A url reference to download this object.",
+        "Type": "TypeString"
+    },
+    "metadata": {
+        "Computed": true,
+        "Description": "User-provided metadata, in key/value pairs.",
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The name of the object. If you're interpolating the name of this object, see output_name instead.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "output_name": {
+        "Computed": true,
+        "Description": "The name of the object. Use this field in interpolations with google_storage_object_acl to recreate google_storage_object_acl resources when your google_storage_bucket_object is recreated.",
+        "Type": "TypeString"
+    },
+    "retention": {
+        "Computed": true,
+        "Description": "Object level retention configuration.",
+        "Properties": {
+            "mode": {
+                "Computed": true,
+                "Description": "The object retention mode. Supported values include: \"Unlocked\", \"Locked\".",
+                "Type": "TypeString"
+            },
+            "retain_until_time": {
+                "Computed": true,
+                "Description": "Time in RFC 3339 (e.g. 2030-01-01T02:03:04Z) until which object retention protects this object.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "A url reference to this object.",
+        "Type": "TypeString"
+    },
+    "source": {
+        "Computed": true,
+        "Description": "A path to the data you want to upload. Must be defined if content is not.",
+        "Type": "TypeString"
+    },
+    "storage_class": {
+        "Computed": true,
+        "Description": "The StorageClass of the new bucket object. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE. If not provided, this defaults to the bucket's default storage class or to a standard class.",
+        "Type": "TypeString"
+    },
+    "temporary_hold": {
+        "Computed": true,
+        "Description": "Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.",
+        "Type": "TypeBool"
+    }
+}

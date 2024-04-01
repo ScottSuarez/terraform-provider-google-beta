@@ -1,0 +1,53 @@
+api_config:
+    Type: TypeString
+    Description: |-
+        Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}.
+        When changing api configs please ensure the new config is a new resource and the
+        [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) rule 'create_before_destroy' is set.
+    Required: "true"
+default_hostname:
+    Type: TypeString
+    Description: The default API Gateway host name of the form {gatewayId}-{hash}.{region_code}.gateway.dev.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: A user-visible name for the API.
+    Computed: "true"
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gateway_id:
+    Type: TypeString
+    Description: Identifier to assign to the Gateway. Must be unique within scope of the parent resource(project).
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user-provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: 'Resource name of the Gateway. Format: projects/{project}/locations/{region}/gateways/{gateway}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the gateway for the API.
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

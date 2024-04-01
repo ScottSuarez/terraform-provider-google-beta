@@ -1,0 +1,31 @@
+ancestor:
+    Type: TypeString
+    Description: 'Policy for including ancestors in the index. Default value: "NONE" Possible values: ["NONE", "ALL_ANCESTORS"]'
+    Optional: "true"
+index_id:
+    Type: TypeString
+    Description: The index id.
+    Computed: "true"
+kind:
+    Type: TypeString
+    Description: The entity kind which the index applies to.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+properties:
+    Type: TypeList
+    Description: An ordered list of properties to index on.
+    Optional: "true"
+    MinItems: "1"
+    Properties:
+        direction:
+            Type: TypeString
+            Description: 'The direction the index should optimize for sorting. Possible values: ["ASCENDING", "DESCENDING"]'
+            Required: "true"
+        name:
+            Type: TypeString
+            Description: The property name to index.
+            Required: "true"
+

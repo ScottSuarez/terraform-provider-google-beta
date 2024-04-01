@@ -1,0 +1,8 @@
+delivery_config:
+    delivery_requirement: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+topic: TypeString
+zone: TypeString
+

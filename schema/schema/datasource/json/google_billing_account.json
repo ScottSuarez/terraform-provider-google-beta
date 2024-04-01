@@ -1,0 +1,30 @@
+{
+    "billing_account": {
+        "ConflictsWith": "display_name",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "ConflictsWith": "billing_account",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "lookup_projects": {
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "open": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "project_ids": {
+        "Computed": true,
+        "Type": "TypeSet"
+    }
+}

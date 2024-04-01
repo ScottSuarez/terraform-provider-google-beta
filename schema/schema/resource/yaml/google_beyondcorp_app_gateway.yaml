@@ -1,0 +1,65 @@
+allocated_connections:
+    Type: TypeList
+    Description: A list of connections allocated for the Gateway.
+    Computed: "true"
+    Properties:
+        ingress_port:
+            Type: TypeInt
+            Description: The ingress port of an allocated connection.
+            Optional: "true"
+        psc_uri:
+            Type: TypeString
+            Description: The PSC uri of an allocated connection.
+            Optional: "true"
+display_name:
+    Type: TypeString
+    Description: An arbitrary user-provided name for the AppGateway.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+host_type:
+    Type: TypeString
+    Description: 'The type of hosting used by the AppGateway. Default value: "HOST_TYPE_UNSPECIFIED" Possible values: ["HOST_TYPE_UNSPECIFIED", "GCP_REGIONAL_MIG"]'
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: ID of the AppGateway.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the AppGateway.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: Represents the different states of a AppGateway.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'The type of network connectivity used by the AppGateway. Default value: "TYPE_UNSPECIFIED" Possible values: ["TYPE_UNSPECIFIED", "TCP_PROXY"]'
+    Optional: "true"
+uri:
+    Type: TypeString
+    Description: Server-defined URI for this resource.
+    Computed: "true"
+

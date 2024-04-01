@@ -1,0 +1,26 @@
+bigtable:
+    auto_scaling:
+        cpu_utilization_target: TypeInt
+        max_node_count: TypeInt
+        min_node_count: TypeInt
+create_time: TypeString
+dedicated_serving_endpoint:
+    private_service_connect_config:
+        enable_private_service_connect: TypeBool
+        project_allowlist: TypeList(TypeString)
+    public_endpoint_domain_name: TypeString
+    service_attachment: TypeString
+effective_labels: TypeMap(TypeString)
+embedding_management:
+    enabled: TypeBool
+etag: TypeString
+force_destroy: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+optimized: {}
+project: TypeString
+region: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

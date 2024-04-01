@@ -1,0 +1,47 @@
+{
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "http_keep_alive_timeout_sec": {
+        "Description": "Specifies how long to keep a connection open, after completing a response,\nwhile there is no matching traffic (in seconds). If an HTTP keepalive is\nnot specified, a default value (610 seconds) will be used. For Global\nexternal HTTP(S) load balancer, the minimum allowed value is 5 seconds and\nthe maximum allowed value is 1200 seconds. For Global external HTTP(S)\nload balancer (classic), this option is not available publicly.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "proxy_bind": {
+        "Computed": true,
+        "Description": "This field only applies when the forwarding rule that references\nthis target proxy has a loadBalancingScheme set to INTERNAL_SELF_MANAGED.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "proxy_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource.",
+        "Type": "TypeInt"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "url_map": {
+        "Description": "A reference to the UrlMap resource that defines the mapping from URL\nto the BackendService.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

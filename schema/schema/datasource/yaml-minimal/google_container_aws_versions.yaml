@@ -1,0 +1,5 @@
+location: TypeString
+project: TypeString
+supported_regions: TypeList(TypeString)
+valid_versions: TypeList(TypeString)
+

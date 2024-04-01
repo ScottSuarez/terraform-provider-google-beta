@@ -1,0 +1,12 @@
+auto_create_network: TypeBool
+billing_account: TypeString
+effective_labels: TypeMap(TypeString)
+folder_id: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+number: TypeString
+org_id: TypeString
+project_id: TypeString
+skip_delete: TypeBool
+terraform_labels: TypeMap(TypeString)
+

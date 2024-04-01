@@ -1,0 +1,32 @@
+annotations: TypeMap(TypeString)
+anthos_cluster:
+    membership: TypeString
+create_time: TypeString
+deploy_parameters: TypeMap(TypeString)
+description: TypeString
+effective_annotations: unknown
+effective_labels: unknown
+etag: TypeString
+execution_configs:
+    artifact_storage: TypeString
+    execution_timeout: TypeString
+    service_account: TypeString
+    usages: TypeList(TypeString)
+    worker_pool: TypeString
+gke:
+    cluster: TypeString
+    internal_ip: TypeBool
+labels: TypeMap(TypeString)
+location: TypeString
+multi_target:
+    target_ids: TypeList(TypeString)
+name: TypeString
+project: TypeString
+require_approval: TypeBool
+run:
+    location: TypeString
+target_id: TypeString
+terraform_labels: unknown
+uid: TypeString
+update_time: TypeString
+

@@ -1,0 +1,17 @@
+database:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+instance:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

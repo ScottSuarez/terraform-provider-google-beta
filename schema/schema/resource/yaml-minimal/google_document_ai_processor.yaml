@@ -1,0 +1,7 @@
+display_name: TypeString
+kms_key_name: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+type: TypeString
+

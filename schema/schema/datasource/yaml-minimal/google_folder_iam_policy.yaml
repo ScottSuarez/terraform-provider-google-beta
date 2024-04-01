@@ -1,0 +1,4 @@
+etag: TypeString
+folder: TypeString
+policy_data: TypeString
+

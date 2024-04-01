@@ -1,0 +1,141 @@
+{
+    "commitment": {
+        "Computed": true,
+        "Description": "Full or partial URL to a parent commitment. This field displays for\nreservations that are tied to a commitment.",
+        "Type": "TypeString"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "An optional description of this resource.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "share_settings": {
+        "Computed": true,
+        "Description": "The share setting for reservations.",
+        "Properties": {
+            "project_map": {
+                "Computed": true,
+                "Description": "A map of project number and project config. This is only valid when shareType's value is SPECIFIC_PROJECTS.",
+                "Properties": {
+                    "id": {
+                        "Computed": true,
+                        "Type": "TypeString"
+                    },
+                    "project_id": {
+                        "Computed": true,
+                        "Description": "The project id/number, should be same as the key of this project config in the project map.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "share_type": {
+                "Computed": true,
+                "Description": "Type of sharing for this shared-reservation Possible values: [\"LOCAL\", \"SPECIFIC_PROJECTS\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "specific_reservation": {
+        "Computed": true,
+        "Description": "Reservation for instances with specific machine shapes.",
+        "Properties": {
+            "count": {
+                "Computed": true,
+                "Description": "The number of resources that are allocated.",
+                "Type": "TypeInt"
+            },
+            "in_use_count": {
+                "Computed": true,
+                "Description": "How many instances are in use.",
+                "Type": "TypeInt"
+            },
+            "instance_properties": {
+                "Computed": true,
+                "Description": "The instance properties for the reservation.",
+                "Properties": {
+                    "guest_accelerators": {
+                        "Computed": true,
+                        "Description": "Guest accelerator type and count.",
+                        "Properties": {
+                            "accelerator_count": {
+                                "Computed": true,
+                                "Description": "The number of the guest accelerator cards exposed to\nthis instance.",
+                                "Type": "TypeInt"
+                            },
+                            "accelerator_type": {
+                                "Computed": true,
+                                "Description": "The full or partial URL of the accelerator type to\nattach to this instance. For example:\n'projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100'\n\nIf you are creating an instance template, specify only the accelerator name.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "local_ssds": {
+                        "Computed": true,
+                        "Description": "The amount of local ssd to reserve with each instance. This\nreserves disks of type 'local-ssd'.",
+                        "Properties": {
+                            "disk_size_gb": {
+                                "Computed": true,
+                                "Description": "The size of the disk in base-2 GB.",
+                                "Type": "TypeInt"
+                            },
+                            "interface": {
+                                "Computed": true,
+                                "Description": "The disk interface to use for attaching this disk. Default value: \"SCSI\" Possible values: [\"SCSI\", \"NVME\"]",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "machine_type": {
+                        "Computed": true,
+                        "Description": "The name of the machine type to reserve.",
+                        "Type": "TypeString"
+                    },
+                    "min_cpu_platform": {
+                        "Computed": true,
+                        "Description": "The minimum CPU platform for the reservation. For example,\n'\"Intel Skylake\"'. See\nthe CPU platform availability reference](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones)\nfor information on available CPU platforms.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "specific_reservation_required": {
+        "Computed": true,
+        "Description": "When set to true, only VMs that target this reservation by name can\nconsume this reservation. Otherwise, it can be consumed by VMs with\naffinity for any reservation. Defaults to false.",
+        "Type": "TypeBool"
+    },
+    "status": {
+        "Computed": true,
+        "Description": "The status of the reservation.",
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Description": "The zone where the reservation is made.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

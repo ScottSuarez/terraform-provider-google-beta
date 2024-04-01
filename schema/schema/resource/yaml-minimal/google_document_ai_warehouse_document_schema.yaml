@@ -1,0 +1,49 @@
+display_name: TypeString
+document_is_folder: TypeBool
+location: TypeString
+name: TypeString
+project_number: TypeString
+property_definitions:
+    date_time_type_options: {}
+    display_name: TypeString
+    enum_type_options:
+        possible_values: TypeList(TypeString)
+        validation_check_disabled: TypeBool
+    float_type_options: {}
+    integer_type_options: {}
+    is_filterable: TypeBool
+    is_metadata: TypeBool
+    is_repeatable: TypeBool
+    is_required: TypeBool
+    is_searchable: TypeBool
+    map_type_options: {}
+    name: TypeString
+    property_type_options:
+        property_definitions:
+            date_time_type_options: {}
+            display_name: TypeString
+            enum_type_options:
+                possible_values: TypeList(TypeString)
+                validation_check_disabled: TypeBool
+            float_type_options: {}
+            integer_type_options: {}
+            is_filterable: TypeBool
+            is_metadata: TypeBool
+            is_repeatable: TypeBool
+            is_required: TypeBool
+            is_searchable: TypeBool
+            map_type_options: {}
+            name: TypeString
+            retrieval_importance: TypeString
+            schema_sources:
+                name: TypeString
+                processor_type: TypeString
+            text_type_options: {}
+            timestamp_type_options: {}
+    retrieval_importance: TypeString
+    schema_sources:
+        name: TypeString
+        processor_type: TypeString
+    text_type_options: {}
+    timestamp_type_options: {}
+

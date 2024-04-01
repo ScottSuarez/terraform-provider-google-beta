@@ -1,0 +1,11 @@
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+name: TypeString
+nlu_settings:
+    classification_threshold: TypeFloat
+    model_training_mode: TypeString
+    model_type: TypeString
+parent: TypeString
+state: TypeString
+

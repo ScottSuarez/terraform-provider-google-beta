@@ -1,0 +1,11 @@
+crypto_key_name: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+instructions: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+service_account: TypeString
+terraform_labels: TypeMap(TypeString)
+

@@ -1,0 +1,48 @@
+checker_type: TypeString
+content_matchers:
+    content: TypeString
+    json_path_matcher:
+        json_matcher: TypeString
+        json_path: TypeString
+    matcher: TypeString
+display_name: TypeString
+http_check:
+    accepted_response_status_codes:
+        status_class: TypeString
+        status_value: TypeInt
+    auth_info:
+        password: TypeString
+        username: TypeString
+    body: TypeString
+    content_type: TypeString
+    custom_content_type: TypeString
+    headers: TypeMap(TypeString)
+    mask_headers: TypeBool
+    path: TypeString
+    ping_config:
+        pings_count: TypeInt
+    port: TypeInt
+    request_method: TypeString
+    use_ssl: TypeBool
+    validate_ssl: TypeBool
+monitored_resource:
+    labels: TypeMap(TypeString)
+    type: TypeString
+name: TypeString
+period: TypeString
+project: TypeString
+resource_group:
+    group_id: TypeString
+    resource_type: TypeString
+selected_regions: TypeList(TypeString)
+synthetic_monitor:
+    cloud_function_v2:
+        name: TypeString
+tcp_check:
+    ping_config:
+        pings_count: TypeInt
+    port: TypeInt
+timeout: TypeString
+uptime_check_id: TypeString
+user_labels: TypeMap(TypeString)
+

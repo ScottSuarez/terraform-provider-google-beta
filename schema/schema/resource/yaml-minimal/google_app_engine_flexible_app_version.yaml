@@ -1,0 +1,120 @@
+api_config:
+    auth_fail_action: TypeString
+    login: TypeString
+    script: TypeString
+    security_level: TypeString
+    url: TypeString
+automatic_scaling:
+    cool_down_period: TypeString
+    cpu_utilization:
+        aggregation_window_length: TypeString
+        target_utilization: TypeFloat
+    disk_utilization:
+        target_read_bytes_per_second: TypeInt
+        target_read_ops_per_second: TypeInt
+        target_write_bytes_per_second: TypeInt
+        target_write_ops_per_second: TypeInt
+    max_concurrent_requests: TypeInt
+    max_idle_instances: TypeInt
+    max_pending_latency: TypeString
+    max_total_instances: TypeInt
+    min_idle_instances: TypeInt
+    min_pending_latency: TypeString
+    min_total_instances: TypeInt
+    network_utilization:
+        target_received_bytes_per_second: TypeInt
+        target_received_packets_per_second: TypeInt
+        target_sent_bytes_per_second: TypeInt
+        target_sent_packets_per_second: TypeInt
+    request_utilization:
+        target_concurrent_requests: TypeFloat
+        target_request_count_per_second: TypeString
+beta_settings: TypeMap(TypeString)
+default_expiration: TypeString
+delete_service_on_destroy: TypeBool
+deployment:
+    cloud_build_options:
+        app_yaml_path: TypeString
+        cloud_build_timeout: TypeString
+    container:
+        image: TypeString
+    files:
+        name: TypeString
+        sha1_sum: TypeString
+        source_url: TypeString
+    zip:
+        files_count: TypeInt
+        source_url: TypeString
+endpoints_api_service:
+    config_id: TypeString
+    disable_trace_sampling: TypeBool
+    name: TypeString
+    rollout_strategy: TypeString
+entrypoint:
+    shell: TypeString
+env_variables: TypeMap(TypeString)
+handlers:
+    auth_fail_action: TypeString
+    login: TypeString
+    redirect_http_response_code: TypeString
+    script:
+        script_path: TypeString
+    security_level: TypeString
+    static_files:
+        application_readable: TypeBool
+        expiration: TypeString
+        http_headers: TypeMap(TypeString)
+        mime_type: TypeString
+        path: TypeString
+        require_matching_file: TypeBool
+        upload_path_regex: TypeString
+    url_regex: TypeString
+inbound_services: TypeSet(TypeString)
+instance_class: TypeString
+liveness_check:
+    check_interval: TypeString
+    failure_threshold: TypeFloat
+    host: TypeString
+    initial_delay: TypeString
+    path: TypeString
+    success_threshold: TypeFloat
+    timeout: TypeString
+manual_scaling:
+    instances: TypeInt
+name: TypeString
+network:
+    forwarded_ports: TypeList(TypeString)
+    instance_tag: TypeString
+    name: TypeString
+    session_affinity: TypeBool
+    subnetwork: TypeString
+nobuild_files_regex: TypeString
+noop_on_destroy: TypeBool
+project: TypeString
+readiness_check:
+    app_start_timeout: TypeString
+    check_interval: TypeString
+    failure_threshold: TypeFloat
+    host: TypeString
+    path: TypeString
+    success_threshold: TypeFloat
+    timeout: TypeString
+resources:
+    cpu: TypeInt
+    disk_gb: TypeInt
+    memory_gb: TypeFloat
+    volumes:
+        name: TypeString
+        size_gb: TypeInt
+        volume_type: TypeString
+runtime: TypeString
+runtime_api_version: TypeString
+runtime_channel: TypeString
+runtime_main_executable_path: TypeString
+service: TypeString
+service_account: TypeString
+serving_status: TypeString
+version_id: TypeString
+vpc_access_connector:
+    name: TypeString
+

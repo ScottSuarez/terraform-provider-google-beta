@@ -1,0 +1,64 @@
+column_family:
+    Type: TypeString
+    Description: The name of the column family.
+    Required: "true"
+deletion_policy:
+    Type: TypeString
+    Description: |-
+        The deletion policy for the GC policy. Setting ABANDON allows the resource
+        				to be abandoned rather than deleted. This is useful for GC policy as it cannot be deleted
+        				in a replicated instance. Possible values are: "ABANDON".
+    Optional: "true"
+gc_rules:
+    Type: TypeString
+    Description: Serialized JSON string for garbage collection policy. Conflicts with "mode", "max_age" and "max_version".
+    Optional: "true"
+    ConflictsWith: mode, max_age, max_version
+instance_name:
+    Type: TypeString
+    Description: The name of the Bigtable instance.
+    Required: "true"
+max_age:
+    Type: TypeList
+    Description: 'NOTE: ''gc_rules'' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all cells older than the given age.'
+    Optional: "true"
+    ConflictsWith: gc_rules
+    MaxItems: "1"
+    Properties:
+        days:
+            Type: TypeInt
+            Description: Number of days before applying GC policy.
+            Computed: "true"
+            Optional: "true"
+            ExactlyOneOf: max_age.0.days, max_age.0.duration
+        duration:
+            Type: TypeString
+            Description: Duration before applying GC policy
+            Computed: "true"
+            Optional: "true"
+            ExactlyOneOf: max_age.0.days, max_age.0.duration
+max_version:
+    Type: TypeList
+    Description: 'NOTE: ''gc_rules'' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all versions of a cell except for the most recent.'
+    Optional: "true"
+    ConflictsWith: gc_rules
+    Properties:
+        number:
+            Type: TypeInt
+            Description: Number of version before applying the GC policy.
+            Required: "true"
+mode:
+    Type: TypeString
+    Description: 'NOTE: ''gc_rules'' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. If multiple policies are set, you should choose between UNION OR INTERSECTION.'
+    Optional: "true"
+    ConflictsWith: gc_rules
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+table:
+    Type: TypeString
+    Description: The name of the table.
+    Required: "true"
+

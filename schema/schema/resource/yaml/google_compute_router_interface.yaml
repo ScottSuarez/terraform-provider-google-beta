@@ -1,0 +1,52 @@
+interconnect_attachment:
+    Type: TypeString
+    Description: The name or resource link to the VLAN interconnect for this interface. Changing this forces a new interface to be created. Only one of interconnect_attachment, subnetwork or vpn_tunnel can be specified.
+    Optional: "true"
+    AtLeastOneOf: ip_range, interconnect_attachment, subnetwork, vpn_tunnel
+    ConflictsWith: subnetwork, vpn_tunnel
+ip_range:
+    Type: TypeString
+    Description: The IP address and range of the interface. The IP range must be in the RFC3927 link-local IP space. Changing this forces a new interface to be created.
+    Computed: "true"
+    Optional: "true"
+    AtLeastOneOf: ip_range, interconnect_attachment, subnetwork, vpn_tunnel
+name:
+    Type: TypeString
+    Description: A unique name for the interface, required by GCE. Changing this forces a new interface to be created.
+    Required: "true"
+private_ip_address:
+    Type: TypeString
+    Description: The regional private internal IP address that is used to establish BGP sessions to a VM instance acting as a third-party Router Appliance. Changing this forces a new interface to be created.
+    Optional: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which this interface's router belongs. If it is not provided, the provider project is used. Changing this forces a new interface to be created.
+    Computed: "true"
+    Optional: "true"
+redundant_interface:
+    Type: TypeString
+    Description: The name of the interface that is redundant to this interface. Changing this forces a new interface to be created.
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region this interface's router sits in. If not specified, the project region will be used. Changing this forces a new interface to be created.
+    Computed: "true"
+    Optional: "true"
+router:
+    Type: TypeString
+    Description: The name of the router this interface will be attached to. Changing this forces a new interface to be created.
+    Required: "true"
+subnetwork:
+    Type: TypeString
+    Description: The URI of the subnetwork resource that this interface belongs to, which must be in the same region as the Cloud Router. Changing this forces a new interface to be created. Only one of subnetwork, interconnect_attachment or vpn_tunnel can be specified.
+    Optional: "true"
+    AtLeastOneOf: ip_range, interconnect_attachment, subnetwork, vpn_tunnel
+    ConflictsWith: interconnect_attachment, vpn_tunnel
+vpn_tunnel:
+    Type: TypeString
+    Description: The name or resource link to the VPN tunnel this interface will be linked to. Changing this forces a new interface to be created. Only one of vpn_tunnel, interconnect_attachment or subnetwork can be specified.
+    Optional: "true"
+    AtLeastOneOf: ip_range, interconnect_attachment, subnetwork, vpn_tunnel
+    ConflictsWith: interconnect_attachment, subnetwork
+

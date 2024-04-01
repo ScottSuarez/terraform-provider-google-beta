@@ -1,0 +1,15 @@
+assigned_volume_count: TypeInt
+create_time: TypeString
+daily_backup_limit: TypeInt
+description: TypeString
+effective_labels: TypeMap(TypeString)
+enabled: TypeBool
+labels: TypeMap(TypeString)
+location: TypeString
+monthly_backup_limit: TypeInt
+name: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+weekly_backup_limit: TypeInt
+

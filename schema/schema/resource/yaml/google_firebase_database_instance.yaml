@@ -1,0 +1,47 @@
+database_url:
+    Type: TypeString
+    Description: |-
+        The database URL in the form of https://{instance-id}.firebaseio.com for us-central1 instances
+        or https://{instance-id}.{region}.firebasedatabase.app in other regions.
+    Computed: "true"
+desired_state:
+    Type: TypeString
+    Description: The intended database state.
+    Optional: "true"
+instance_id:
+    Type: TypeString
+    Description: |-
+        The globally unique identifier of the Firebase Realtime Database instance.
+        Instance IDs cannot be reused after deletion.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The fully-qualified resource name of the Firebase Realtime Database, in the
+        format: projects/PROJECT_NUMBER/locations/REGION_IDENTIFIER/instances/INSTANCE_ID
+        PROJECT_NUMBER: The Firebase project's ['ProjectNumber'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number)
+        Learn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510).
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: |-
+        A reference to the region where the Firebase Realtime database resides.
+        Check all [available regions](https://firebase.google.com/docs/projects/locations#rtdb-locations)
+    Required: "true"
+state:
+    Type: TypeString
+    Description: The current database state. Set desired_state to :DISABLED to disable the database and :ACTIVE to reenable the database
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: |-
+        The database type.
+        Each project can create one default Firebase Realtime Database, which cannot be deleted once created.
+        Creating user Databases is only available for projects on the Blaze plan.
+        Projects can be upgraded using the Cloud Billing API https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo. Default value: "USER_DATABASE" Possible values: ["DEFAULT_DATABASE", "USER_DATABASE"]
+    Optional: "true"
+

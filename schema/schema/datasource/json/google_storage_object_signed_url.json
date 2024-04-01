@@ -1,0 +1,38 @@
+{
+    "bucket": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "content_md5": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "content_type": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "credentials": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "duration": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "extension_headers": {
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "http_method": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "path": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "signed_url": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

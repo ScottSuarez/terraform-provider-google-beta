@@ -1,0 +1,510 @@
+access_urls:
+    Type: TypeList
+    Description: URLs for accessing content published by this CA, such as the CA certificate and CRLs.
+    Computed: "true"
+    Properties:
+        ca_certificate_access_url:
+            Type: TypeString
+            Description: |-
+                The URL where this CertificateAuthority's CA certificate is published. This will only be
+                set for CAs that have been activated.
+            Computed: "true"
+        crl_access_urls:
+            Type: TypeList
+            Description: |-
+                The URL where this CertificateAuthority's CRLs are published. This will only be set for
+                CAs that have been activated.
+            Computed: "true"
+certificate_authority_id:
+    Type: TypeString
+    Description: The user provided Resource ID for this Certificate Authority.
+    Required: "true"
+config:
+    Type: TypeList
+    Description: The config used to create a self-signed X.509 certificate or CSR.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        subject_config:
+            Type: TypeList
+            Description: Specifies some of the values in a certificate that are related to the subject.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                subject:
+                    Type: TypeList
+                    Description: Contains distinguished name fields such as the location and organization.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        common_name:
+                            Type: TypeString
+                            Description: The common name of the distinguished name.
+                            Required: "true"
+                        country_code:
+                            Type: TypeString
+                            Description: The country code of the subject.
+                            Optional: "true"
+                        locality:
+                            Type: TypeString
+                            Description: The locality or city of the subject.
+                            Optional: "true"
+                        organization:
+                            Type: TypeString
+                            Description: The organization of the subject.
+                            Required: "true"
+                        organizational_unit:
+                            Type: TypeString
+                            Description: The organizational unit of the subject.
+                            Optional: "true"
+                        postal_code:
+                            Type: TypeString
+                            Description: The postal code of the subject.
+                            Optional: "true"
+                        province:
+                            Type: TypeString
+                            Description: The province, territory, or regional state of the subject.
+                            Optional: "true"
+                        street_address:
+                            Type: TypeString
+                            Description: The street address of the subject.
+                            Optional: "true"
+                subject_alt_name:
+                    Type: TypeList
+                    Description: The subject alternative name fields.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        dns_names:
+                            Type: TypeList
+                            Description: Contains only valid, fully-qualified host names.
+                            Optional: "true"
+                            AtLeastOneOf: config.0.subject_config.0.subject_alt_name.0.dns_names, config.0.subject_config.0.subject_alt_name.0.uris, config.0.subject_config.0.subject_alt_name.0.email_addresses, config.0.subject_config.0.subject_alt_name.0.ip_addresses
+                        email_addresses:
+                            Type: TypeList
+                            Description: Contains only valid RFC 2822 E-mail addresses.
+                            Optional: "true"
+                            AtLeastOneOf: config.0.subject_config.0.subject_alt_name.0.dns_names, config.0.subject_config.0.subject_alt_name.0.uris, config.0.subject_config.0.subject_alt_name.0.email_addresses, config.0.subject_config.0.subject_alt_name.0.ip_addresses
+                        ip_addresses:
+                            Type: TypeList
+                            Description: Contains only valid 32-bit IPv4 addresses or RFC 4291 IPv6 addresses.
+                            Optional: "true"
+                            AtLeastOneOf: config.0.subject_config.0.subject_alt_name.0.dns_names, config.0.subject_config.0.subject_alt_name.0.uris, config.0.subject_config.0.subject_alt_name.0.email_addresses, config.0.subject_config.0.subject_alt_name.0.ip_addresses
+                        uris:
+                            Type: TypeList
+                            Description: Contains only valid RFC 3986 URIs.
+                            Optional: "true"
+                            AtLeastOneOf: config.0.subject_config.0.subject_alt_name.0.dns_names, config.0.subject_config.0.subject_alt_name.0.uris, config.0.subject_config.0.subject_alt_name.0.email_addresses, config.0.subject_config.0.subject_alt_name.0.ip_addresses
+        x509_config:
+            Type: TypeList
+            Description: Describes how some of the technical X.509 fields in a certificate should be populated.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                additional_extensions:
+                    Type: TypeList
+                    Description: Specifies an X.509 extension, which may be used in different parts of X.509 objects like certificates, CSRs, and CRLs.
+                    Optional: "true"
+                    Properties:
+                        critical:
+                            Type: TypeBool
+                            Description: |-
+                                Indicates whether or not this extension is critical (i.e., if the client does not know how to
+                                handle this extension, the client should consider this to be an error).
+                            Required: "true"
+                        object_id:
+                            Type: TypeList
+                            Description: Describes values that are relevant in a CA certificate.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                object_id_path:
+                                    Type: TypeList
+                                    Description: An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+                                    Required: "true"
+                        value:
+                            Type: TypeString
+                            Description: The value of this X.509 extension. A base64-encoded string.
+                            Required: "true"
+                aia_ocsp_servers:
+                    Type: TypeList
+                    Description: |-
+                        Describes Online Certificate Status Protocol (OCSP) endpoint addresses that appear in the
+                        "Authority Information Access" extension in the certificate.
+                    Optional: "true"
+                ca_options:
+                    Type: TypeList
+                    Description: Describes values that are relevant in a CA certificate.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        is_ca:
+                            Type: TypeBool
+                            Description: When true, the "CA" in Basic Constraints extension will be set to true.
+                            Required: "true"
+                        max_issuer_path_length:
+                            Type: TypeInt
+                            Description: |-
+                                Refers to the "path length constraint" in Basic Constraints extension. For a CA certificate, this value describes the depth of
+                                subordinate CA certificates that are allowed. If this value is less than 0, the request will fail. Setting the value to 0
+                                requires setting 'zero_max_issuer_path_length = true'.
+                            Optional: "true"
+                        non_ca:
+                            Type: TypeBool
+                            Description: |-
+                                When true, the "CA" in Basic Constraints extension will be set to false.
+                                If both 'is_ca' and 'non_ca' are unset, the extension will be omitted from the CA certificate.
+                            Optional: "true"
+                        zero_max_issuer_path_length:
+                            Type: TypeBool
+                            Description: |-
+                                When true, the "path length constraint" in Basic Constraints extension will be set to 0.
+                                If both 'max_issuer_path_length' and 'zero_max_issuer_path_length' are unset,
+                                the max path length will be omitted from the CA certificate.
+                            Optional: "true"
+                key_usage:
+                    Type: TypeList
+                    Description: Indicates the intended use for keys that correspond to a certificate.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        base_key_usage:
+                            Type: TypeList
+                            Description: Describes high-level ways in which a key may be used.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                cert_sign:
+                                    Type: TypeBool
+                                    Description: The key may be used to sign certificates.
+                                    Optional: "true"
+                                content_commitment:
+                                    Type: TypeBool
+                                    Description: The key may be used for cryptographic commitments. Note that this may also be referred to as "non-repudiation".
+                                    Optional: "true"
+                                crl_sign:
+                                    Type: TypeBool
+                                    Description: The key may be used sign certificate revocation lists.
+                                    Optional: "true"
+                                data_encipherment:
+                                    Type: TypeBool
+                                    Description: The key may be used to encipher data.
+                                    Optional: "true"
+                                decipher_only:
+                                    Type: TypeBool
+                                    Description: The key may be used to decipher only.
+                                    Optional: "true"
+                                digital_signature:
+                                    Type: TypeBool
+                                    Description: The key may be used for digital signatures.
+                                    Optional: "true"
+                                encipher_only:
+                                    Type: TypeBool
+                                    Description: The key may be used to encipher only.
+                                    Optional: "true"
+                                key_agreement:
+                                    Type: TypeBool
+                                    Description: The key may be used in a key agreement protocol.
+                                    Optional: "true"
+                                key_encipherment:
+                                    Type: TypeBool
+                                    Description: The key may be used to encipher other keys.
+                                    Optional: "true"
+                        extended_key_usage:
+                            Type: TypeList
+                            Description: Describes high-level ways in which a key may be used.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                client_auth:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.2. Officially described as "TLS WWW client authentication", though regularly used for non-WWW TLS.
+                                    Optional: "true"
+                                code_signing:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.3. Officially described as "Signing of downloadable executable code client authentication".
+                                    Optional: "true"
+                                email_protection:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.4. Officially described as "Email protection".
+                                    Optional: "true"
+                                ocsp_signing:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.9. Officially described as "Signing OCSP responses".
+                                    Optional: "true"
+                                server_auth:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.1. Officially described as "TLS WWW server authentication", though regularly used for non-WWW TLS.
+                                    Optional: "true"
+                                time_stamping:
+                                    Type: TypeBool
+                                    Description: Corresponds to OID 1.3.6.1.5.5.7.3.8. Officially described as "Binding the hash of an object to a time".
+                                    Optional: "true"
+                        unknown_extended_key_usages:
+                            Type: TypeList
+                            Description: An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+                            Optional: "true"
+                            Properties:
+                                object_id_path:
+                                    Type: TypeList
+                                    Description: An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+                                    Required: "true"
+                name_constraints:
+                    Type: TypeList
+                    Description: Describes the X.509 name constraints extension.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        critical:
+                            Type: TypeBool
+                            Description: Indicates whether or not the name constraints are marked critical.
+                            Required: "true"
+                        excluded_dns_names:
+                            Type: TypeList
+                            Description: |-
+                                Contains excluded DNS names. Any DNS name that can be
+                                constructed by simply adding zero or more labels to
+                                the left-hand side of the name satisfies the name constraint.
+                                For example, 'example.com', 'www.example.com', 'www.sub.example.com'
+                                would satisfy 'example.com' while 'example1.com' does not.
+                            Optional: "true"
+                        excluded_email_addresses:
+                            Type: TypeList
+                            Description: |-
+                                Contains the excluded email addresses. The value can be a particular
+                                email address, a hostname to indicate all email addresses on that host or
+                                a domain with a leading period (e.g. '.example.com') to indicate
+                                all email addresses in that domain.
+                            Optional: "true"
+                        excluded_ip_ranges:
+                            Type: TypeList
+                            Description: |-
+                                Contains the excluded IP ranges. For IPv4 addresses, the ranges
+                                are expressed using CIDR notation as specified in RFC 4632.
+                                For IPv6 addresses, the ranges are expressed in similar encoding as IPv4
+                                addresses.
+                            Optional: "true"
+                        excluded_uris:
+                            Type: TypeList
+                            Description: |-
+                                Contains the excluded URIs that apply to the host part of the name.
+                                The value can be a hostname or a domain with a
+                                leading period (like '.example.com')
+                            Optional: "true"
+                        permitted_dns_names:
+                            Type: TypeList
+                            Description: |-
+                                Contains permitted DNS names. Any DNS name that can be
+                                constructed by simply adding zero or more labels to
+                                the left-hand side of the name satisfies the name constraint.
+                                For example, 'example.com', 'www.example.com', 'www.sub.example.com'
+                                would satisfy 'example.com' while 'example1.com' does not.
+                            Optional: "true"
+                        permitted_email_addresses:
+                            Type: TypeList
+                            Description: |-
+                                Contains the permitted email addresses. The value can be a particular
+                                email address, a hostname to indicate all email addresses on that host or
+                                a domain with a leading period (e.g. '.example.com') to indicate
+                                all email addresses in that domain.
+                            Optional: "true"
+                        permitted_ip_ranges:
+                            Type: TypeList
+                            Description: |-
+                                Contains the permitted IP ranges. For IPv4 addresses, the ranges
+                                are expressed using CIDR notation as specified in RFC 4632.
+                                For IPv6 addresses, the ranges are expressed in similar encoding as IPv4
+                                addresses.
+                            Optional: "true"
+                        permitted_uris:
+                            Type: TypeList
+                            Description: |-
+                                Contains the permitted URIs that apply to the host part of the name.
+                                The value can be a hostname or a domain with a
+                                leading period (like '.example.com')
+                            Optional: "true"
+                policy_ids:
+                    Type: TypeList
+                    Description: Describes the X.509 certificate policy object identifiers, per https://tools.ietf.org/html/rfc5280#section-4.2.1.4.
+                    Optional: "true"
+                    Properties:
+                        object_id_path:
+                            Type: TypeList
+                            Description: An ObjectId specifies an object identifier (OID). These provide context and describe types in ASN.1 messages.
+                            Required: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        The time at which this CertificateAuthority was created.
+
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+deletion_protection:
+    Type: TypeBool
+    Description: |-
+        Whether or not to allow Terraform to destroy the CertificateAuthority. Unless this field is set to false
+        in Terraform state, a 'terraform destroy' or 'terraform apply' that would delete the instance will fail.
+    Optional: "true"
+desired_state:
+    Type: TypeString
+    Description: Desired state of the CertificateAuthority. Set this field to 'STAGED' to create a 'STAGED' root CA.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gcs_bucket:
+    Type: TypeString
+    Description: |-
+        The name of a Cloud Storage bucket where this CertificateAuthority will publish content,
+        such as the CA certificate and CRLs. This must be a bucket name, without any prefixes
+        (such as 'gs://') or suffixes (such as '.googleapis.com'). For example, to use a bucket named
+        my-bucket, you would simply specify 'my-bucket'. If not specified, a managed bucket will be
+        created.
+    Optional: "true"
+ignore_active_certificates_on_deletion:
+    Type: TypeBool
+    Description: |-
+        This field allows the CA to be deleted even if the CA has active certs. Active certs include both unrevoked and unexpired certs.
+        Use with care. Defaults to 'false'.
+    Optional: "true"
+key_spec:
+    Type: TypeList
+    Description: |-
+        Used when issuing certificates for this CertificateAuthority. If this CertificateAuthority
+        is a self-signed CertificateAuthority, this key is also used to sign the self-signed CA
+        certificate. Otherwise, it is used to sign a CSR.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        algorithm:
+            Type: TypeString
+            Description: |-
+                The algorithm to use for creating a managed Cloud KMS key for a for a simplified
+                experience. All managed keys will be have their ProtectionLevel as HSM. Possible values: ["SIGN_HASH_ALGORITHM_UNSPECIFIED", "RSA_PSS_2048_SHA256", "RSA_PSS_3072_SHA256", "RSA_PSS_4096_SHA256", "RSA_PKCS1_2048_SHA256", "RSA_PKCS1_3072_SHA256", "RSA_PKCS1_4096_SHA256", "EC_P256_SHA256", "EC_P384_SHA384"]
+            Optional: "true"
+            ExactlyOneOf: key_spec.0.cloud_kms_key_version, key_spec.0.algorithm
+        cloud_kms_key_version:
+            Type: TypeString
+            Description: |-
+                The resource name for an existing Cloud KMS CryptoKeyVersion in the format
+                'projects/*/locations/*/keyRings/*/cryptoKeys/*/cryptoKeyVersions/*'.
+            Optional: "true"
+            ExactlyOneOf: key_spec.0.cloud_kms_key_version, key_spec.0.algorithm
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels with user-defined metadata.
+
+        An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass":
+        "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+lifetime:
+    Type: TypeString
+    Description: |-
+        The desired lifetime of the CA certificate. Used to create the "notBeforeTime" and
+        "notAfterTime" fields inside an X.509 certificate. A duration in seconds with up to nine
+        fractional digits, terminated by 's'. Example: "3.5s".
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        Location of the CertificateAuthority. A full list of valid locations can be found by
+        running 'gcloud privateca locations list'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name for this CertificateAuthority in the format
+        projects/*/locations/*/certificateAuthorities/*.
+    Computed: "true"
+pem_ca_certificate:
+    Type: TypeString
+    Description: The signed CA certificate issued from the subordinated CA's CSR. This is needed when activating the subordiante CA with a third party issuer.
+    Optional: "true"
+pem_ca_certificates:
+    Type: TypeList
+    Description: |-
+        This CertificateAuthority's certificate chain, including the current
+        CertificateAuthority's certificate. Ordered such that the root issuer is the final
+        element (consistent with RFC 5246). For a self-signed CA, this will only list the current
+        CertificateAuthority's certificate.
+    Computed: "true"
+pool:
+    Type: TypeString
+    Description: The name of the CaPool this Certificate Authority belongs to.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+skip_grace_period:
+    Type: TypeBool
+    Description: |-
+        If this flag is set, the Certificate Authority will be deleted as soon as
+        possible without a 30-day grace period where undeletion would have been
+        allowed. If you proceed, there will be no way to recover this CA.
+        Use with care. Defaults to 'false'.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The State for this CertificateAuthority.
+    Computed: "true"
+subordinate_config:
+    Type: TypeList
+    Description: |-
+        If this is a subordinate CertificateAuthority, this field will be set
+        with the subordinate configuration, which describes its issuers.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        certificate_authority:
+            Type: TypeString
+            Description: |-
+                This can refer to a CertificateAuthority that was used to create a
+                subordinate CertificateAuthority. This field is used for information
+                and usability purposes only. The resource name is in the format
+                'projects/*/locations/*/caPools/*/certificateAuthorities/*'.
+            Optional: "true"
+            ExactlyOneOf: subordinate_config.0.certificate_authority, subordinate_config.0.pem_issuer_chain
+        pem_issuer_chain:
+            Type: TypeList
+            Description: |-
+                Contains the PEM certificate chain for the issuers of this CertificateAuthority,
+                but not pem certificate for this CA itself.
+            Optional: "true"
+            ExactlyOneOf: subordinate_config.0.certificate_authority, subordinate_config.0.pem_issuer_chain
+            MaxItems: "1"
+            Properties:
+                pem_certificates:
+                    Type: TypeList
+                    Description: Expected to be in leaf-to-root order according to RFC 5246.
+                    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: |-
+        The Type of this CertificateAuthority.
+
+        ~> **Note:** For 'SUBORDINATE' Certificate Authorities, they need to
+        be activated before they can issue certificates. Default value: "SELF_SIGNED" Possible values: ["SELF_SIGNED", "SUBORDINATE"]
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time at which this CertificateAuthority was updated.
+
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

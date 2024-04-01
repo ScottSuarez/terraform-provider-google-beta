@@ -1,0 +1,15 @@
+blob_storage_path_prefix: TypeString
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_spec:
+    kms_key_name: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+run_count: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

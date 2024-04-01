@@ -1,0 +1,11 @@
+bigquery_dataset:
+    dataset_id: TypeString
+bucket: TypeString
+create_time: TypeString
+description: TypeString
+lifecycle_state: TypeString
+link_id: TypeString
+location: TypeString
+name: TypeString
+parent: TypeString
+

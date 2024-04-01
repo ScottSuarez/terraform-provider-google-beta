@@ -1,0 +1,157 @@
+create_time:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A description of the instance.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        Server-specified ETag for the instance resource to prevent
+        simultaneous updates from overwriting each other.
+    Computed: "true"
+file_shares:
+    Type: TypeList
+    Description: |-
+        File system shares on the instance. For this version, only a
+        single file share is supported.
+    Computed: "true"
+    Properties:
+        capacity_gb:
+            Type: TypeInt
+            Description: |-
+                File share capacity in GiB. This must be at least 1024 GiB
+                for the standard tier, or 2560 GiB for the premium tier.
+            Computed: "true"
+        name:
+            Type: TypeString
+            Description: The name of the fileshare (16 characters or less)
+            Computed: "true"
+        nfs_export_options:
+            Type: TypeList
+            Description: Nfs Export Options. There is a limit of 10 export options per file share.
+            Computed: "true"
+            Properties:
+                access_mode:
+                    Type: TypeString
+                    Description: |-
+                        Either READ_ONLY, for allowing only read requests on the exported directory,
+                        or READ_WRITE, for allowing both read and write requests. The default is READ_WRITE. Default value: "READ_WRITE" Possible values: ["READ_ONLY", "READ_WRITE"]
+                    Computed: "true"
+                anon_gid:
+                    Type: TypeInt
+                    Description: |-
+                        An integer representing the anonymous group id with a default value of 65534.
+                        Anon_gid may only be set with squashMode of ROOT_SQUASH. An error will be returned
+                        if this field is specified for other squashMode settings.
+                    Computed: "true"
+                anon_uid:
+                    Type: TypeInt
+                    Description: |-
+                        An integer representing the anonymous user id with a default value of 65534.
+                        Anon_uid may only be set with squashMode of ROOT_SQUASH. An error will be returned
+                        if this field is specified for other squashMode settings.
+                    Computed: "true"
+                ip_ranges:
+                    Type: TypeList
+                    Description: |-
+                        List of either IPv4 addresses, or ranges in CIDR notation which may mount the file share.
+                        Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned.
+                        The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
+                    Computed: "true"
+                squash_mode:
+                    Type: TypeString
+                    Description: |-
+                        Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH,
+                        for not allowing root access. The default is NO_ROOT_SQUASH. Default value: "NO_ROOT_SQUASH" Possible values: ["NO_ROOT_SQUASH", "ROOT_SQUASH"]
+                    Computed: "true"
+        source_backup:
+            Type: TypeString
+            Description: |-
+                The resource name of the backup, in the format
+                projects/{projectId}/locations/{locationId}/backups/{backupId},
+                that this file share has been restored from.
+            Computed: "true"
+kms_key_name:
+    Type: TypeString
+    Description: KMS key name used for data encryption.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user-provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The name of the location of the instance. This can be a region for ENTERPRISE tier instances.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the instance.
+    Required: "true"
+networks:
+    Type: TypeList
+    Description: |-
+        VPC networks to which the instance is connected. For this version,
+        only a single network is supported.
+    Computed: "true"
+    Properties:
+        connect_mode:
+            Type: TypeString
+            Description: |-
+                The network connect mode of the Filestore instance.
+                If not provided, the connect mode defaults to
+                DIRECT_PEERING. Default value: "DIRECT_PEERING" Possible values: ["DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS"]
+            Computed: "true"
+        ip_addresses:
+            Type: TypeList
+            Description: A list of IPv4 or IPv6 addresses.
+            Computed: "true"
+        modes:
+            Type: TypeList
+            Description: |-
+                IP versions for which the instance has
+                IP addresses assigned. Possible values: ["ADDRESS_MODE_UNSPECIFIED", "MODE_IPV4", "MODE_IPV6"]
+            Computed: "true"
+        network:
+            Type: TypeString
+            Description: |-
+                The name of the GCE VPC network to which the
+                instance is connected.
+            Computed: "true"
+        reserved_ip_range:
+            Type: TypeString
+            Description: |-
+                A /29 CIDR block that identifies the range of IP
+                addresses reserved for this instance.
+            Computed: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+tier:
+    Type: TypeString
+    Description: |-
+        The service tier of the instance.
+        Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD, ZONAL, REGIONAL and ENTERPRISE
+    Computed: "true"
+zone:
+    Type: TypeString
+    Description: The name of the Filestore zone of the instance.
+    Computed: "true"
+

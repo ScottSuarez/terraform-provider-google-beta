@@ -1,0 +1,36 @@
+channel: TypeString
+conditions: TypeMap(TypeString)
+create_time: TypeString
+destination:
+    cloud_function: TypeString
+    cloud_run_service:
+        path: TypeString
+        region: TypeString
+        service: TypeString
+    gke:
+        cluster: TypeString
+        location: TypeString
+        namespace: TypeString
+        path: TypeString
+        service: TypeString
+    workflow: TypeString
+effective_labels: unknown
+etag: TypeString
+event_data_content_type: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+matching_criteria:
+    attribute: TypeString
+    operator: TypeString
+    value: TypeString
+name: TypeString
+project: TypeString
+service_account: TypeString
+terraform_labels: unknown
+transport:
+    pubsub:
+        subscription: TypeString
+        topic: TypeString
+uid: TypeString
+update_time: TypeString
+

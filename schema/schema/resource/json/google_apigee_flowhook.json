@@ -1,0 +1,32 @@
+{
+    "continue_on_error": {
+        "Description": "Flag that specifies whether execution should continue if the flow hook throws an exception. Set to true to continue execution. Set to false to stop execution if the flow hook throws an exception. Defaults to true.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "Description of the flow hook.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "environment": {
+        "Description": "The resource ID of the environment.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "flow_hook_point": {
+        "Description": "Where in the API call flow the flow hook is invoked. Must be one of PreProxyFlowHook, PostProxyFlowHook, PreTargetFlowHook, or PostTargetFlowHook.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The Apigee Organization associated with the environment",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "sharedflow": {
+        "Description": "Id of the Sharedflow attaching to a flowhook point.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

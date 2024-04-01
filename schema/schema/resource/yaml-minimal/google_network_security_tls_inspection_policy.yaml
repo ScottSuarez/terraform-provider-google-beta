@@ -1,0 +1,9 @@
+ca_pool: TypeString
+create_time: TypeString
+description: TypeString
+exclude_public_ca_set: TypeBool
+location: TypeString
+name: TypeString
+project: TypeString
+update_time: TypeString
+

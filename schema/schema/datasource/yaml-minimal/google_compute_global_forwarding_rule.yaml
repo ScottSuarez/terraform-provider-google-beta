@@ -1,0 +1,31 @@
+allow_psc_global_access: TypeBool
+base_forwarding_rule: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+ip_address: TypeString
+ip_protocol: TypeString
+ip_version: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+load_balancing_scheme: TypeString
+metadata_filters:
+    filter_labels:
+        name: TypeString
+        value: TypeString
+    filter_match_criteria: TypeString
+name: TypeString
+network: TypeString
+no_automate_dns_zone: TypeBool
+port_range: TypeString
+project: TypeString
+psc_connection_id: TypeString
+psc_connection_status: TypeString
+self_link: TypeString
+service_directory_registrations:
+    namespace: TypeString
+    service_directory_region: TypeString
+source_ip_ranges: TypeList(TypeString)
+subnetwork: TypeString
+target: TypeString
+terraform_labels: TypeMap(TypeString)
+

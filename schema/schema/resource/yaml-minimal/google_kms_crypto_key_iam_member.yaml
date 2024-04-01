@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+crypto_key_id: TypeString
+etag: TypeString
+member: TypeString
+role: TypeString
+

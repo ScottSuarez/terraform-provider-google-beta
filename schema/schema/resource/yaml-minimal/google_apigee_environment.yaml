@@ -1,0 +1,12 @@
+api_proxy_type: TypeString
+deployment_type: TypeString
+description: TypeString
+display_name: TypeString
+name: TypeString
+node_config:
+    current_aggregate_node_count: TypeString
+    max_node_count: TypeString
+    min_node_count: TypeString
+org_id: TypeString
+type: TypeString
+

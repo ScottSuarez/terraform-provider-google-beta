@@ -1,0 +1,286 @@
+all_instances_config:
+    Type: TypeList
+    Description: Specifies configuration that overrides the instance template configuration for the group.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        labels:
+            Type: TypeMap
+            Description: The label key-value pairs that you want to patch onto the instance,
+            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: The metadata key-value pairs that you want to patch onto the instance. For more information, see Project and instance metadata,
+            Optional: "true"
+auto_healing_policies:
+    Type: TypeList
+    Description: The autohealing policies for this managed instance group. You can specify only one value.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        health_check:
+            Type: TypeString
+            Description: The health check resource that signals autohealing.
+            Required: "true"
+        initial_delay_sec:
+            Type: TypeInt
+            Description: The number of seconds that the managed instance group waits before it applies autohealing policies to new instances or recently recreated instances. Between 0 and 3600.
+            Required: "true"
+base_instance_name:
+    Type: TypeString
+    Description: The base instance name to use for instances in this group. The value must be a valid RFC1035 name. Supported characters are lowercase letters, numbers, and hyphens (-). Instances are named by appending a hyphen and a random four-character string to the base instance name.
+    Required: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional textual description of the instance group manager.
+    Optional: "true"
+distribution_policy_target_shape:
+    Type: TypeString
+    Description: The shape to which the group converges either proactively or on resize events (depending on the value set in updatePolicy.instanceRedistributionType).
+    Computed: "true"
+    Optional: "true"
+distribution_policy_zones:
+    Type: TypeSet
+    Description: The distribution policy for this managed instance group. You can specify one or more values.
+    Computed: "true"
+    Optional: "true"
+fingerprint:
+    Type: TypeString
+    Description: The fingerprint of the instance group manager.
+    Computed: "true"
+instance_group:
+    Type: TypeString
+    Description: The full URL of the instance group created by the manager.
+    Computed: "true"
+instance_lifecycle_policy:
+    Type: TypeList
+    Description: The instance lifecycle policy for this managed instance group.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        force_update_on_repair:
+            Type: TypeString
+            Description: 'Specifies whether to apply the group''s latest configuration when repairing a VM. Valid options are: YES, NO. If YES and you updated the group''s instance template or per-instance configurations after the VM was created, then these changes are applied when VM is repaired. If NO (default), then updates are applied in accordance with the group''s update policy type.'
+            Optional: "true"
+list_managed_instances_results:
+    Type: TypeString
+    Description: 'Pagination behavior of the listManagedInstances API method for this managed instance group. Valid values are: "PAGELESS", "PAGINATED". If PAGELESS (default), Pagination is disabled for the group''s listManagedInstances API method. maxResults and pageToken query parameters are ignored and all instances are returned in a single response. If PAGINATED, pagination is enabled, maxResults and pageToken query parameters are respected.'
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the instance group manager. Must be 1-63 characters long and comply with RFC1035. Supported characters include lowercase letters, numbers, and hyphens.
+    Required: "true"
+named_port:
+    Type: TypeSet
+    Description: The named port configuration.
+    Optional: "true"
+    Properties:
+        name:
+            Type: TypeString
+            Description: The name of the port.
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: The port number.
+            Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region where the managed instance group resides.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: The URL of the created resource.
+    Computed: "true"
+stateful_disk:
+    Type: TypeSet
+    Description: Disks created on the instances that will be preserved on instance delete, update, etc. Structure is documented below. For more information see the official documentation. Proactive cross zone instance redistribution must be disabled before you can update stateful disks on existing instance group managers. This can be controlled via the update_policy.
+    Optional: "true"
+    Properties:
+        delete_rule:
+            Type: TypeString
+            Description: A value that prescribes what should happen to the stateful disk when the VM instance is deleted. The available options are NEVER and ON_PERMANENT_INSTANCE_DELETION. NEVER - detach the disk when the VM is deleted, but do not delete the disk. ON_PERMANENT_INSTANCE_DELETION will delete the stateful disk when the VM is permanently deleted from the instance group. The default is NEVER.
+            Optional: "true"
+        device_name:
+            Type: TypeString
+            Description: The device name of the disk to be attached.
+            Required: "true"
+stateful_external_ip:
+    Type: TypeList
+    Description: 'External IPs considered stateful by the instance group. '
+    Optional: "true"
+    Properties:
+        delete_rule:
+            Type: TypeString
+            Description: A value that prescribes what should happen to an associated static Address resource when a VM instance is permanently deleted. The available options are NEVER and ON_PERMANENT_INSTANCE_DELETION. NEVER - detach the IP when the VM is deleted, but do not delete the address resource. ON_PERMANENT_INSTANCE_DELETION will delete the stateful address when the VM is permanently deleted from the instance group. The default is NEVER.
+            Optional: "true"
+        interface_name:
+            Type: TypeString
+            Description: The network interface name
+            Optional: "true"
+stateful_internal_ip:
+    Type: TypeList
+    Description: 'External IPs considered stateful by the instance group. '
+    Optional: "true"
+    Properties:
+        delete_rule:
+            Type: TypeString
+            Description: A value that prescribes what should happen to an associated static Address resource when a VM instance is permanently deleted. The available options are NEVER and ON_PERMANENT_INSTANCE_DELETION. NEVER - detach the IP when the VM is deleted, but do not delete the address resource. ON_PERMANENT_INSTANCE_DELETION will delete the stateful address when the VM is permanently deleted from the instance group. The default is NEVER.
+            Optional: "true"
+        interface_name:
+            Type: TypeString
+            Description: The network interface name
+            Optional: "true"
+status:
+    Type: TypeList
+    Description: The status of this managed instance group.
+    Computed: "true"
+    Properties:
+        all_instances_config:
+            Type: TypeList
+            Description: Status of all-instances configuration on the group.
+            Computed: "true"
+            Properties:
+                effective:
+                    Type: TypeBool
+                    Description: A bit indicating whether this configuration has been applied to all managed instances in the group.
+                    Computed: "true"
+        is_stable:
+            Type: TypeBool
+            Description: 'A bit indicating whether the managed instance group is in a stable state. A stable state means that: none of the instances in the managed instance group is currently undergoing any type of change (for example, creation, restart, or deletion); no future changes are scheduled for instances in the managed instance group; and the managed instance group itself is not being modified.'
+            Computed: "true"
+        stateful:
+            Type: TypeList
+            Description: Stateful status of the given Instance Group Manager.
+            Computed: "true"
+            Properties:
+                has_stateful_config:
+                    Type: TypeBool
+                    Description: A bit indicating whether the managed instance group has stateful configuration, that is, if you have configured any items in a stateful policy or in per-instance configs. The group might report that it has no stateful config even when there is still some preserved state on a managed instance, for example, if you have deleted all PICs but not yet applied those deletions.
+                    Computed: "true"
+                per_instance_configs:
+                    Type: TypeList
+                    Description: Status of per-instance configs on the instance.
+                    Computed: "true"
+                    Properties:
+                        all_effective:
+                            Type: TypeBool
+                            Description: A bit indicating if all of the group's per-instance configs (listed in the output of a listPerInstanceConfigs API call) have status EFFECTIVE or there are no per-instance-configs.
+                            Computed: "true"
+        version_target:
+            Type: TypeList
+            Description: A status of consistency of Instances' versions with their target version specified by version field on Instance Group Manager.
+            Computed: "true"
+            Properties:
+                is_reached:
+                    Type: TypeBool
+                    Description: A bit indicating whether version target has been reached in this managed instance group, i.e. all instances are in their target version. Instances' target version are specified by version field on Instance Group Manager.
+                    Computed: "true"
+target_pools:
+    Type: TypeSet
+    Description: The full URL of all target pools to which new instances in the group are added. Updating the target pools attribute does not affect existing instances.
+    Optional: "true"
+target_size:
+    Type: TypeInt
+    Description: The target number of running instances for this managed instance group. This value should always be explicitly set unless this resource is attached to an autoscaler, in which case it should never be set. Defaults to 0.
+    Computed: "true"
+    Optional: "true"
+update_policy:
+    Type: TypeList
+    Description: The update policy for this managed instance group.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        instance_redistribution_type:
+            Type: TypeString
+            Description: 'The instance redistribution policy for regional managed instance groups. Valid values are: "PROACTIVE", "NONE". If PROACTIVE (default), the group attempts to maintain an even distribution of VM instances across zones in the region. If NONE, proactive redistribution is disabled.'
+            Optional: "true"
+        max_surge_fixed:
+            Type: TypeInt
+            Description: The maximum number of instances that can be created above the specified targetSize during the update process. Conflicts with max_surge_percent. It has to be either 0 or at least equal to the number of zones. If fixed values are used, at least one of max_unavailable_fixed or max_surge_fixed must be greater than 0.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: update_policy.0.max_surge_percent
+        max_surge_percent:
+            Type: TypeInt
+            Description: The maximum number of instances(calculated as percentage) that can be created above the specified targetSize during the update process. Conflicts with max_surge_fixed. Percent value is only allowed for regional managed instance groups with size at least 10.
+            Optional: "true"
+            ConflictsWith: update_policy.0.max_surge_fixed
+        max_unavailable_fixed:
+            Type: TypeInt
+            Description: The maximum number of instances that can be unavailable during the update process. Conflicts with max_unavailable_percent. It has to be either 0 or at least equal to the number of zones. If fixed values are used, at least one of max_unavailable_fixed or max_surge_fixed must be greater than 0.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: update_policy.0.max_unavailable_percent
+        max_unavailable_percent:
+            Type: TypeInt
+            Description: The maximum number of instances(calculated as percentage) that can be unavailable during the update process. Conflicts with max_unavailable_fixed. Percent value is only allowed for regional managed instance groups with size at least 10.
+            Optional: "true"
+            ConflictsWith: update_policy.0.max_unavailable_fixed
+        min_ready_sec:
+            Type: TypeInt
+            Description: Minimum number of seconds to wait for after a newly created instance becomes available. This value must be from range [0, 3600].
+            Optional: "true"
+        minimal_action:
+            Type: TypeString
+            Description: Minimal action to be taken on an instance. You can specify either REFRESH to update without stopping instances, RESTART to restart existing instances or REPLACE to delete and create new instances from the target template. If you specify a REFRESH, the Updater will attempt to perform that action only. However, if the Updater determines that the minimal action you specify is not enough to perform the update, it might perform a more disruptive action.
+            Required: "true"
+        most_disruptive_allowed_action:
+            Type: TypeString
+            Description: Most disruptive action that is allowed to be taken on an instance. You can specify either NONE to forbid any actions, REFRESH to allow actions that do not need instance restart, RESTART to allow actions that can be applied without instance replacing or REPLACE to allow all possible actions. If the Updater determines that the minimal update action needed is more disruptive than most disruptive allowed action you specify it will not perform the update at all.
+            Optional: "true"
+        replacement_method:
+            Type: TypeString
+            Description: 'The instance replacement method for regional managed instance groups. Valid values are: "RECREATE", "SUBSTITUTE". If SUBSTITUTE (default), the group replaces VM instances with new instances that have randomly generated names. If RECREATE, instance names are preserved.  You must also set max_unavailable_fixed or max_unavailable_percent to be greater than 0.'
+            Optional: "true"
+        type:
+            Type: TypeString
+            Description: The type of update process. You can specify either PROACTIVE so that the instance group manager proactively executes actions in order to bring instances to their target versions or OPPORTUNISTIC so that no action is proactively executed but the update will be performed as part of other actions (for example, resizes or recreateInstances calls).
+            Required: "true"
+version:
+    Type: TypeList
+    Description: Application versions managed by this instance group. Each version deals with a specific instance template, allowing canary release scenarios.
+    Required: "true"
+    Properties:
+        instance_template:
+            Type: TypeString
+            Description: The full URL to an instance template from which all new instances of this version will be created.
+            Required: "true"
+        name:
+            Type: TypeString
+            Description: Version name.
+            Optional: "true"
+        target_size:
+            Type: TypeList
+            Description: The number of instances calculated as a fixed number or a percentage depending on the settings.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                fixed:
+                    Type: TypeInt
+                    Description: The number of instances which are managed for this version. Conflicts with percent.
+                    Optional: "true"
+                percent:
+                    Type: TypeInt
+                    Description: The number of instances (calculated as percentage) which are managed for this version. Conflicts with fixed. Note that when using percent, rounding will be in favor of explicitly set target_size values; a managed instance group with 2 instances and 2 versions, one of which has a target_size.percent of 60 will create 2 instances of that version.
+                    Optional: "true"
+wait_for_instances:
+    Type: TypeBool
+    Description: Whether to wait for all instances to be created/updated before returning. Note that if this is set to true and the operation does not succeed, Terraform will continue trying until it times out.
+    Optional: "true"
+wait_for_instances_status:
+    Type: TypeString
+    Description: When used with wait_for_instances specifies the status to wait for. When STABLE is specified this resource will wait until the instances are stable before returning. When UPDATED is set, it will wait for the version target to be reached and any per instance configs to be effective and all instances configs to be effective as well as all instances to be stable before returning.
+    Optional: "true"
+

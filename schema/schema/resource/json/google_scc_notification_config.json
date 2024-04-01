@@ -1,0 +1,45 @@
+{
+    "config_id": {
+        "Description": "This must be unique within the organization.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "The description of the notification config (max of 1024 characters).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of this notification config, in the format\n'organizations/{{organization}}/notificationConfigs/{{config_id}}'.",
+        "Type": "TypeString"
+    },
+    "organization": {
+        "Description": "The organization whose Cloud Security Command Center the Notification\nConfig lives in.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "pubsub_topic": {
+        "Description": "The Pub/Sub topic to send notifications to. Its format is\n\"projects/[project_id]/topics/[topic]\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The service account that needs \"pubsub.topics.publish\" permission to\npublish to the Pub/Sub topic.",
+        "Type": "TypeString"
+    },
+    "streaming_config": {
+        "Description": "The config for triggering streaming-based notifications.",
+        "MaxItems": 1,
+        "Properties": {
+            "filter": {
+                "Description": "Expression that defines the filter to apply across create/update\nevents of assets or findings as specified by the event type. The\nexpression is a list of zero or more restrictions combined via\nlogical operators AND and OR. Parentheses are supported, and OR\nhas higher precedence than AND.\n\nRestrictions have the form \u003cfield\u003e \u003coperator\u003e \u003cvalue\u003e and may have\na - character in front of them to indicate negation. The fields\nmap to those defined in the corresponding resource.\n\nThe supported operators are:\n\n* = for all value types.\n* \u003e, \u003c, \u003e=, \u003c= for integer values.\n* :, meaning substring matching, for strings.\n\nThe supported value types are:\n\n* string literals in quotes.\n* integer literals without quotes.\n* boolean literals true and false without quotes.\n\nSee\n[Filtering notifications](https://cloud.google.com/security-command-center/docs/how-to-api-filter-notifications)\nfor information on how to write a filter.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

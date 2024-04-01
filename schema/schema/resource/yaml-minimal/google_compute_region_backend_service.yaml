@@ -1,0 +1,103 @@
+affinity_cookie_ttl_sec: TypeInt
+backend:
+    balancing_mode: TypeString
+    capacity_scaler: TypeFloat
+    description: TypeString
+    failover: TypeBool
+    group: TypeString
+    max_connections: TypeInt
+    max_connections_per_endpoint: TypeInt
+    max_connections_per_instance: TypeInt
+    max_rate: TypeInt
+    max_rate_per_endpoint: TypeFloat
+    max_rate_per_instance: TypeFloat
+    max_utilization: TypeFloat
+cdn_policy:
+    cache_key_policy:
+        include_host: TypeBool
+        include_named_cookies: TypeList(TypeString)
+        include_protocol: TypeBool
+        include_query_string: TypeBool
+        query_string_blacklist: TypeSet(TypeString)
+        query_string_whitelist: TypeSet(TypeString)
+    cache_mode: TypeString
+    client_ttl: TypeInt
+    default_ttl: TypeInt
+    max_ttl: TypeInt
+    negative_caching: TypeBool
+    negative_caching_policy:
+        code: TypeInt
+        ttl: TypeInt
+    serve_while_stale: TypeInt
+    signed_url_cache_max_age_sec: TypeInt
+circuit_breakers:
+    connect_timeout:
+        nanos: TypeInt
+        seconds: TypeInt
+    max_connections: TypeInt
+    max_pending_requests: TypeInt
+    max_requests: TypeInt
+    max_requests_per_connection: TypeInt
+    max_retries: TypeInt
+connection_draining_timeout_sec: TypeInt
+connection_tracking_policy:
+    connection_persistence_on_unhealthy_backends: TypeString
+    enable_strong_affinity: TypeBool
+    idle_timeout_sec: TypeInt
+    tracking_mode: TypeString
+consistent_hash:
+    http_cookie:
+        name: TypeString
+        path: TypeString
+        ttl:
+            nanos: TypeInt
+            seconds: TypeInt
+    http_header_name: TypeString
+    minimum_ring_size: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+enable_cdn: TypeBool
+failover_policy:
+    disable_connection_drain_on_failover: TypeBool
+    drop_traffic_if_unhealthy: TypeBool
+    failover_ratio: TypeFloat
+fingerprint: TypeString
+health_checks: TypeSet(TypeString)
+iap:
+    oauth2_client_id: TypeString
+    oauth2_client_secret: TypeString
+    oauth2_client_secret_sha256: TypeString
+load_balancing_scheme: TypeString
+locality_lb_policy: TypeString
+log_config:
+    enable: TypeBool
+    sample_rate: TypeFloat
+name: TypeString
+network: TypeString
+outlier_detection:
+    base_ejection_time:
+        nanos: TypeInt
+        seconds: TypeInt
+    consecutive_errors: TypeInt
+    consecutive_gateway_failure: TypeInt
+    enforcing_consecutive_errors: TypeInt
+    enforcing_consecutive_gateway_failure: TypeInt
+    enforcing_success_rate: TypeInt
+    interval:
+        nanos: TypeInt
+        seconds: TypeInt
+    max_ejection_percent: TypeInt
+    success_rate_minimum_hosts: TypeInt
+    success_rate_request_volume: TypeInt
+    success_rate_stdev_factor: TypeInt
+port_name: TypeString
+project: TypeString
+protocol: TypeString
+region: TypeString
+security_policy: TypeString
+self_link: TypeString
+session_affinity: TypeString
+subsetting:
+    policy: TypeString
+timeout_sec: TypeInt
+

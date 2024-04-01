@@ -1,0 +1,18 @@
+{
+    "key": {
+        "Description": "The metadata key to set.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "value": {
+        "Description": "The value to set for the given metadata key.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

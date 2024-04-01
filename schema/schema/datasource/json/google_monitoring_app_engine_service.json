@@ -1,0 +1,43 @@
+{
+    "display_name": {
+        "Computed": true,
+        "Description": "Name used for UI elements listing this Service.",
+        "Type": "TypeString"
+    },
+    "module_id": {
+        "Description": "The ID of the App Engine module underlying this service. \nCorresponds to the 'moduleId' resource label for a 'gae_app'\nmonitored resource(see https://cloud.google.com/monitoring/api/resources#tag_gae_app)",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The full resource name for this service. The syntax is:\nprojects/[PROJECT_ID]/services/[SERVICE_ID].",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_id": {
+        "Computed": true,
+        "Description": "An optional service ID to use. If not given, the server will generate a\nservice ID.",
+        "Type": "TypeString"
+    },
+    "telemetry": {
+        "Computed": true,
+        "Description": "Configuration for how to query telemetry on a Service.",
+        "Properties": {
+            "resource_name": {
+                "Computed": true,
+                "Description": "The full name of the resource that defines this service.\nFormatted as described in\nhttps://cloud.google.com/apis/design/resource_names.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "user_labels": {
+        "Computed": true,
+        "Description": "Labels which have been used to annotate the service. Label keys must start\nwith a letter. Label keys and values may contain lowercase letters,\nnumbers, underscores, and dashes. Label keys and values have a maximum\nlength of 63 characters, and must be less than 128 bytes in size. Up to 64\nlabel entries may be stored. For labels which do not have a semantic value,\nthe empty string may be supplied for the label value.",
+        "Type": "TypeMap"
+    }
+}

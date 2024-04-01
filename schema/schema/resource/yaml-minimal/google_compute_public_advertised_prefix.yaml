@@ -1,0 +1,7 @@
+description: TypeString
+dns_verification_ip: TypeString
+ip_cidr_range: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+

@@ -1,0 +1,22 @@
+filter: TypeString
+machine_types:
+    accelerators:
+        guest_accelerator_count: TypeInt
+        guest_accelerator_type: TypeString
+    bundled_local_ssds:
+        default_interface: TypeString
+        partition_count: TypeInt
+    deprecated:
+        replacement: TypeString
+        state: TypeString
+    description: TypeString
+    guest_cpus: TypeInt
+    is_shared_cpus: TypeBool
+    maximum_persistent_disks: TypeInt
+    maximum_persistent_disks_size_gb: TypeInt
+    memory_mb: TypeInt
+    name: TypeString
+    self_link: TypeString
+project: TypeString
+zone: TypeString
+

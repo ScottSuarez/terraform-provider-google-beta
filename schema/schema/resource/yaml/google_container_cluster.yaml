@@ -1,0 +1,2177 @@
+addons_config:
+    Type: TypeList
+    Description: The configuration for addons supported by GKE.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cloudrun_config:
+            Type: TypeList
+            Description: The status of the CloudRun addon. It is disabled by default. Set disabled = false to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+                load_balancer_type:
+                    Type: TypeString
+                    Optional: "true"
+        config_connector_config:
+            Type: TypeList
+            Description: The of the Config Connector addon.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        dns_cache_config:
+            Type: TypeList
+            Description: The status of the NodeLocal DNSCache addon. It is disabled by default. Set enabled = true to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            ConflictsWith: enable_autopilot
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        gce_persistent_disk_csi_driver_config:
+            Type: TypeList
+            Description: 'Whether this cluster should enable the Google Compute Engine Persistent Disk Container Storage Interface (CSI) Driver. Set enabled = true to enable. The Compute Engine persistent disk CSI Driver is enabled by default on newly created clusters for the following versions: Linux clusters: GKE version 1.18.10-gke.2100 or later, or 1.19.3-gke.2100 or later.'
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        gcp_filestore_csi_driver_config:
+            Type: TypeList
+            Description: The status of the Filestore CSI driver addon, which allows the usage of filestore instance as volumes. Defaults to disabled; set enabled = true to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            ConflictsWith: enable_autopilot
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        gcs_fuse_csi_driver_config:
+            Type: TypeList
+            Description: The status of the GCS Fuse CSI driver addon, which allows the usage of gcs bucket as volumes. Defaults to disabled; set enabled = true to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        gke_backup_agent_config:
+            Type: TypeList
+            Description: The status of the Backup for GKE Agent addon. It is disabled by default. Set enabled = true to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        horizontal_pod_autoscaling:
+            Type: TypeList
+            Description: The status of the Horizontal Pod Autoscaling addon, which increases or decreases the number of replica pods a replication controller has based on the resource usage of the existing pods. It ensures that a Heapster pod is running in the cluster, which is also used by the Cloud Monitoring service. It is enabled by default; set disabled = true to disable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+        http_load_balancing:
+            Type: TypeList
+            Description: The status of the HTTP (L7) load balancing controller addon, which makes it easy to set up HTTP load balancers for services in a cluster. It is enabled by default; set disabled = true to disable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+        istio_config:
+            Type: TypeList
+            Description: The status of the Istio addon.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                auth:
+                    Type: TypeString
+                    Description: The authentication type between services in Istio. Available options include AUTH_MUTUAL_TLS.
+                    Optional: "true"
+                disabled:
+                    Type: TypeBool
+                    Description: The status of the Istio addon, which makes it easy to set up Istio for services in a cluster. It is disabled by default. Set disabled = false to enable.
+                    Required: "true"
+        kalm_config:
+            Type: TypeList
+            Description: Configuration for the KALM addon, which manages the lifecycle of k8s. It is disabled by default; Set enabled = true to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Required: "true"
+        network_policy_config:
+            Type: TypeList
+            Description: Whether we should enable the network policy addon for the master. This must be enabled in order to enable network policy for the nodes. To enable this, you must also define a network_policy block, otherwise nothing will happen. It can only be disabled if the nodes already do not have network policies enabled. Defaults to disabled; set disabled = false to enable.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: addons_config.0.http_load_balancing, addons_config.0.horizontal_pod_autoscaling, addons_config.0.network_policy_config, addons_config.0.cloudrun_config, addons_config.0.gcp_filestore_csi_driver_config, addons_config.0.dns_cache_config, addons_config.0.gce_persistent_disk_csi_driver_config, addons_config.0.gke_backup_agent_config, addons_config.0.config_connector_config, addons_config.0.gcs_fuse_csi_driver_config, addons_config.0.istio_config, addons_config.0.kalm_config
+            ConflictsWith: enable_autopilot
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+allow_net_admin:
+    Type: TypeBool
+    Description: Enable NET_ADMIN for this cluster.
+    Optional: "true"
+authenticator_groups_config:
+    Type: TypeList
+    Description: Configuration for the Google Groups for GKE feature.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        security_group:
+            Type: TypeString
+            Description: The name of the RBAC security group for use with Google security groups in Kubernetes RBAC. Group name must be in format gke-security-groups@yourdomain.com.
+            Required: "true"
+binary_authorization:
+    Type: TypeList
+    Description: Configuration options for the Binary Authorization feature.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Enable Binary Authorization for this cluster.
+            Optional: "true"
+            ConflictsWith: enable_autopilot, binary_authorization.0.evaluation_mode
+        evaluation_mode:
+            Type: TypeString
+            Description: Mode of operation for Binary Authorization policy evaluation.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: binary_authorization.0.enabled
+cluster_autoscaling:
+    Type: TypeList
+    Description: Per-cluster configuration of Node Auto-Provisioning with Cluster Autoscaler to automatically adjust the size of the cluster and create/delete node pools based on the current needs of the cluster's workload. See the guide to using Node Auto-Provisioning for more details.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        auto_provisioning_defaults:
+            Type: TypeList
+            Description: Contains defaults for a node pool created by NAP.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                boot_disk_kms_key:
+                    Type: TypeString
+                    Description: The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.
+                    Optional: "true"
+                disk_size:
+                    Type: TypeInt
+                    Description: Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+                    Optional: "true"
+                disk_type:
+                    Type: TypeString
+                    Description: Type of the disk attached to each node.
+                    Optional: "true"
+                image_type:
+                    Type: TypeString
+                    Description: The default image type used by NAP once a new node pool is being created.
+                    Optional: "true"
+                management:
+                    Type: TypeList
+                    Description: NodeManagement configuration for this NodePool.
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        auto_repair:
+                            Type: TypeBool
+                            Description: Specifies whether the node auto-repair is enabled for the node pool. If enabled, the nodes in this node pool will be monitored and, if they fail health checks too many times, an automatic repair action will be triggered.
+                            Computed: "true"
+                            Optional: "true"
+                        auto_upgrade:
+                            Type: TypeBool
+                            Description: Specifies whether node auto-upgrade is enabled for the node pool. If enabled, node auto-upgrade helps keep the nodes in your node pool up to date with the latest release version of Kubernetes.
+                            Computed: "true"
+                            Optional: "true"
+                        upgrade_options:
+                            Type: TypeList
+                            Description: Specifies the Auto Upgrade knobs for the node pool.
+                            Computed: "true"
+                            Properties:
+                                auto_upgrade_start_time:
+                                    Type: TypeString
+                                    Description: This field is set when upgrades are about to commence with the approximate start time for the upgrades, in RFC3339 text format.
+                                    Computed: "true"
+                                description:
+                                    Type: TypeString
+                                    Description: This field is set when upgrades are about to commence with the description of the upgrade.
+                                    Computed: "true"
+                min_cpu_platform:
+                    Type: TypeString
+                    Description: Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell.
+                    Optional: "true"
+                oauth_scopes:
+                    Type: TypeList
+                    Description: Scopes that are used by NAP when creating node pools.
+                    Computed: "true"
+                    Optional: "true"
+                service_account:
+                    Type: TypeString
+                    Description: The Google Cloud Platform Service Account to be used by the node VMs.
+                    Optional: "true"
+                shielded_instance_config:
+                    Type: TypeList
+                    Description: Shielded Instance options.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enable_integrity_monitoring:
+                            Type: TypeBool
+                            Description: Defines whether the instance has integrity monitoring enabled.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_autoscaling.0.auto_provisioning_defaults.0.shielded_instance_config.0.enable_secure_boot, cluster_autoscaling.0.auto_provisioning_defaults.0.shielded_instance_config.0.enable_integrity_monitoring
+                        enable_secure_boot:
+                            Type: TypeBool
+                            Description: Defines whether the instance has Secure Boot enabled.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_autoscaling.0.auto_provisioning_defaults.0.shielded_instance_config.0.enable_secure_boot, cluster_autoscaling.0.auto_provisioning_defaults.0.shielded_instance_config.0.enable_integrity_monitoring
+                upgrade_settings:
+                    Type: TypeList
+                    Description: Specifies the upgrade settings for NAP created node pools
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        blue_green_settings:
+                            Type: TypeList
+                            Description: Settings for blue-green upgrade strategy.
+                            Computed: "true"
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                node_pool_soak_duration:
+                                    Type: TypeString
+                                    Description: |-
+                                        Time needed after draining entire blue pool. After this period, blue pool will be cleaned up.
+
+                                        																A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".
+                                    Computed: "true"
+                                    Optional: "true"
+                                standard_rollout_policy:
+                                    Type: TypeList
+                                    Description: Standard policy for the blue-green upgrade.
+                                    Computed: "true"
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        batch_node_count:
+                                            Type: TypeInt
+                                            Description: Number of blue nodes to drain in a batch.
+                                            Computed: "true"
+                                            Optional: "true"
+                                            ExactlyOneOf: cluster_autoscaling.0.auto_provisioning_defaults.0.upgrade_settings.0.blue_green_settings.0.standard_rollout_policy.0.batch_percentage, cluster_autoscaling.0.auto_provisioning_defaults.0.upgrade_settings.0.blue_green_settings.0.standard_rollout_policy.0.batch_node_count
+                                        batch_percentage:
+                                            Type: TypeFloat
+                                            Description: Percentage of the bool pool nodes to drain in a batch. The range of this field should be (0.0, 1.0].
+                                            Computed: "true"
+                                            Optional: "true"
+                                            ExactlyOneOf: cluster_autoscaling.0.auto_provisioning_defaults.0.upgrade_settings.0.blue_green_settings.0.standard_rollout_policy.0.batch_percentage, cluster_autoscaling.0.auto_provisioning_defaults.0.upgrade_settings.0.blue_green_settings.0.standard_rollout_policy.0.batch_node_count
+                                        batch_soak_duration:
+                                            Type: TypeString
+                                            Description: |-
+                                                Soak time after each batch gets drained.
+
+                                                																			A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".
+                                            Optional: "true"
+                        max_surge:
+                            Type: TypeInt
+                            Description: The maximum number of nodes that can be created beyond the current size of the node pool during the upgrade process.
+                            Optional: "true"
+                        max_unavailable:
+                            Type: TypeInt
+                            Description: The maximum number of nodes that can be simultaneously unavailable during the upgrade process.
+                            Optional: "true"
+                        strategy:
+                            Type: TypeString
+                            Description: Update strategy of the node pool.
+                            Computed: "true"
+                            Optional: "true"
+        autoscaling_profile:
+            Type: TypeString
+            Description: Configuration options for the Autoscaling profile feature, which lets you choose whether the cluster autoscaler should optimize for resource utilization or resource availability when deciding to remove nodes from a cluster. Can be BALANCED or OPTIMIZE_UTILIZATION. Defaults to BALANCED.
+            Optional: "true"
+        enabled:
+            Type: TypeBool
+            Description: Whether node auto-provisioning is enabled. Resource limits for cpu and memory must be defined to enable node auto-provisioning.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: enable_autopilot
+        resource_limits:
+            Type: TypeList
+            Description: Global constraints for machine resources in the cluster. Configuring the cpu and memory types is required if node auto-provisioning is enabled. These limits will apply to node pool autoscaling in addition to node auto-provisioning.
+            Optional: "true"
+            ConflictsWith: enable_autopilot
+            Properties:
+                maximum:
+                    Type: TypeInt
+                    Description: Maximum amount of the resource in the cluster.
+                    Optional: "true"
+                minimum:
+                    Type: TypeInt
+                    Description: Minimum amount of the resource in the cluster.
+                    Optional: "true"
+                resource_type:
+                    Type: TypeString
+                    Description: The type of the resource. For example, cpu and memory. See the guide to using Node Auto-Provisioning for a list of types.
+                    Required: "true"
+cluster_ipv4_cidr:
+    Type: TypeString
+    Description: The IP address range of the Kubernetes pods in this cluster in CIDR notation (e.g. 10.96.0.0/14). Leave blank to have one automatically chosen or specify a /14 block in 10.0.0.0/8. This field will only work for routes-based clusters, where ip_allocation_policy is not defined.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: ip_allocation_policy
+cluster_telemetry:
+    Type: TypeList
+    Description: Telemetry integration for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        type:
+            Type: TypeString
+            Description: Type of the integration.
+            Required: "true"
+confidential_nodes:
+    Type: TypeList
+    Description: 'Configuration for the confidential nodes feature, which makes nodes run on confidential VMs. Warning: This configuration can''t be changed (or added/removed) after cluster creation without deleting and recreating the entire cluster.'
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether Confidential Nodes feature is enabled for all nodes in this cluster.
+            Required: "true"
+cost_management_config:
+    Type: TypeList
+    Description: Cost management configuration for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether to enable GKE cost allocation. When you enable GKE cost allocation, the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery. Defaults to false.
+            Required: "true"
+database_encryption:
+    Type: TypeList
+    Description: 'Application-layer Secrets Encryption settings. The object format is {state = string, key_name = string}. Valid values of state are: "ENCRYPTED"; "DECRYPTED". key_name is the name of a CloudKMS key.'
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        key_name:
+            Type: TypeString
+            Description: The key to use to encrypt/decrypt secrets.
+            Optional: "true"
+        state:
+            Type: TypeString
+            Description: ENCRYPTED or DECRYPTED.
+            Required: "true"
+datapath_provider:
+    Type: TypeString
+    Description: The desired datapath provider for this cluster. By default, uses the IPTables-based kube-proxy implementation.
+    Computed: "true"
+    Optional: "true"
+default_max_pods_per_node:
+    Type: TypeInt
+    Description: The default maximum number of pods per node in this cluster. This doesn't work on "routes-based" clusters, clusters that don't have IP Aliasing enabled.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+default_snat_status:
+    Type: TypeList
+    Description: Whether the cluster disables default in-node sNAT rules. In-node sNAT rules will be disabled when defaultSnatStatus is disabled.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        disabled:
+            Type: TypeBool
+            Description: When disabled is set to false, default IP masquerade rules will be applied to the nodes to prevent sNAT on cluster internal traffic.
+            Required: "true"
+deletion_protection:
+    Type: TypeBool
+    Description: Whether or not to allow Terraform to destroy the instance. Defaults to true. Unless this field is set to false in Terraform state, a terraform destroy or terraform apply that would delete the cluster will fail.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: ' Description of the cluster.'
+    Optional: "true"
+dns_config:
+    Type: TypeList
+    Description: Configuration for Cloud DNS for Kubernetes Engine.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cluster_dns:
+            Type: TypeString
+            Description: Which in-cluster DNS provider should be used.
+            Optional: "true"
+        cluster_dns_domain:
+            Type: TypeString
+            Description: The suffix used for all cluster service records.
+            Optional: "true"
+        cluster_dns_scope:
+            Type: TypeString
+            Description: The scope of access to cluster DNS records.
+            Optional: "true"
+enable_autopilot:
+    Type: TypeBool
+    Description: Enable Autopilot for this cluster.
+    Optional: "true"
+enable_fqdn_network_policy:
+    Type: TypeBool
+    Description: Whether FQDN Network Policy is enabled on this cluster.
+    Optional: "true"
+enable_intranode_visibility:
+    Type: TypeBool
+    Description: Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+enable_k8s_beta_apis:
+    Type: TypeList
+    Description: Configuration for Kubernetes Beta APIs.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled_apis:
+            Type: TypeSet
+            Description: Enabled Kubernetes Beta APIs.
+            Required: "true"
+enable_kubernetes_alpha:
+    Type: TypeBool
+    Description: Whether to enable Kubernetes Alpha features for this cluster. Note that when this option is enabled, the cluster cannot be upgraded and will be automatically deleted after 30 days.
+    Optional: "true"
+enable_l4_ilb_subsetting:
+    Type: TypeBool
+    Description: Whether L4ILB Subsetting is enabled for this cluster.
+    Optional: "true"
+enable_legacy_abac:
+    Type: TypeBool
+    Description: Whether the ABAC authorizer is enabled for this cluster. When enabled, identities in the system, including service accounts, nodes, and controllers, will have statically granted permissions beyond those provided by the RBAC configuration or IAM. Defaults to false.
+    Optional: "true"
+enable_multi_networking:
+    Type: TypeBool
+    Description: Whether multi-networking is enabled for this cluster.
+    Optional: "true"
+enable_shielded_nodes:
+    Type: TypeBool
+    Description: Enable Shielded Nodes features on all nodes in this cluster. Defaults to true.
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+enable_tpu:
+    Type: TypeBool
+    Description: Whether to enable Cloud TPU resources in this cluster.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: tpu_config
+endpoint:
+    Type: TypeString
+    Description: The IP address of this cluster's Kubernetes master.
+    Computed: "true"
+fleet:
+    Type: TypeList
+    Description: Fleet configuration of the cluster.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        membership:
+            Type: TypeString
+            Description: Full resource name of the registered fleet membership of the cluster.
+            Computed: "true"
+        pre_registered:
+            Type: TypeBool
+            Description: Whether the cluster has been registered via the fleet API.
+            Computed: "true"
+        project:
+            Type: TypeString
+            Description: The Fleet host project of the cluster.
+            Optional: "true"
+gateway_api_config:
+    Type: TypeList
+    Description: Configuration for GKE Gateway API controller.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        channel:
+            Type: TypeString
+            Description: The Gateway API release channel to use for Gateway API.
+            Required: "true"
+identity_service_config:
+    Type: TypeList
+    Description: Configuration for Identity Service which allows customers to use external identity providers with the K8S API.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether to enable the Identity Service component.
+            Optional: "true"
+initial_node_count:
+    Type: TypeInt
+    Description: The number of nodes to create in this cluster's default node pool. In regional or multi-zonal clusters, this is the number of nodes per zone. Must be set if node_pool is not set. If you're using google_container_node_pool objects with no default node pool, you'll need to set this to a value of at least 1, alongside setting remove_default_node_pool to true.
+    Optional: "true"
+ip_allocation_policy:
+    Type: TypeList
+    Description: Configuration of cluster IP allocation for VPC-native clusters. Adding this block enables IP aliasing, making the cluster VPC-native instead of routes-based.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: cluster_ipv4_cidr
+    MaxItems: "1"
+    Properties:
+        additional_pod_ranges_config:
+            Type: TypeList
+            Description: AdditionalPodRangesConfig is the configuration for additional pod secondary ranges supporting the ClusterUpdate message.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                pod_range_names:
+                    Type: TypeSet
+                    Description: Name for pod secondary ipv4 range which has the actual range defined ahead.
+                    Required: "true"
+                    MinItems: "1"
+        cluster_ipv4_cidr_block:
+            Type: TypeString
+            Description: The IP address range for the cluster pod IPs. Set to blank to have a range chosen with the default size. Set to /netmask (e.g. /14) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: ip_allocation_policy.0.cluster_secondary_range_name, ip_allocation_policy.0.services_secondary_range_name
+        cluster_secondary_range_name:
+            Type: TypeString
+            Description: The name of the existing secondary range in the cluster's subnetwork to use for pod IP addresses. Alternatively, cluster_ipv4_cidr_block can be used to automatically create a GKE-managed one.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: ip_allocation_policy.0.cluster_ipv4_cidr_block, ip_allocation_policy.0.services_ipv4_cidr_block
+        pod_cidr_overprovision_config:
+            Type: TypeList
+            Description: Configuration for cluster level pod cidr overprovision. Default is disabled=false.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+        services_ipv4_cidr_block:
+            Type: TypeString
+            Description: The IP address range of the services IPs in this cluster. Set to blank to have a range chosen with the default size. Set to /netmask (e.g. /14) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: ip_allocation_policy.0.cluster_secondary_range_name, ip_allocation_policy.0.services_secondary_range_name
+        services_secondary_range_name:
+            Type: TypeString
+            Description: The name of the existing secondary range in the cluster's subnetwork to use for service ClusterIPs. Alternatively, services_ipv4_cidr_block can be used to automatically create a GKE-managed one.
+            Computed: "true"
+            Optional: "true"
+            ConflictsWith: ip_allocation_policy.0.cluster_ipv4_cidr_block, ip_allocation_policy.0.services_ipv4_cidr_block
+        stack_type:
+            Type: TypeString
+            Description: The IP Stack type of the cluster. Choose between IPV4 and IPV4_IPV6. Default type is IPV4 Only if not set
+            Optional: "true"
+label_fingerprint:
+    Type: TypeString
+    Description: The fingerprint of the set of labels for this cluster.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location (region or zone) in which the cluster master will be created, as well as the default node location. If you specify a zone (such as us-central1-a), the cluster will be a zonal cluster with a single cluster master. If you specify a region (such as us-west1), the cluster will be a regional cluster with multiple masters spread across zones in the region, and with default node locations in those zones as well.
+    Computed: "true"
+    Optional: "true"
+logging_config:
+    Type: TypeList
+    Description: Logging configuration for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enable_components:
+            Type: TypeList
+            Description: GKE components exposing logs. Valid values include SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER, SCHEDULER, and WORKLOADS.
+            Required: "true"
+logging_service:
+    Type: TypeString
+    Description: The logging service that the cluster should write logs to. Available options include logging.googleapis.com(Legacy Stackdriver), logging.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Logging), and none. Defaults to logging.googleapis.com/kubernetes.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: cluster_telemetry
+maintenance_policy:
+    Type: TypeList
+    Description: The maintenance policy to use for the cluster.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        daily_maintenance_window:
+            Type: TypeList
+            Description: 'Time window specified for daily maintenance operations. Specify start_time in RFC3339 format "HH:MM”, where HH : [00-23] and MM : [00-59] GMT.'
+            Optional: "true"
+            ExactlyOneOf: maintenance_policy.0.daily_maintenance_window, maintenance_policy.0.recurring_window
+            MaxItems: "1"
+            Properties:
+                duration:
+                    Type: TypeString
+                    Computed: "true"
+                start_time:
+                    Type: TypeString
+                    Required: "true"
+        maintenance_exclusion:
+            Type: TypeSet
+            Description: Exceptions to maintenance window. Non-emergency maintenance should not occur in these windows.
+            Optional: "true"
+            MaxItems: "20"
+            Properties:
+                end_time:
+                    Type: TypeString
+                    Required: "true"
+                exclusion_name:
+                    Type: TypeString
+                    Required: "true"
+                exclusion_options:
+                    Type: TypeList
+                    Description: Maintenance exclusion related options.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        scope:
+                            Type: TypeString
+                            Description: The scope of automatic upgrades to restrict in the exclusion window.
+                            Required: "true"
+                start_time:
+                    Type: TypeString
+                    Required: "true"
+        recurring_window:
+            Type: TypeList
+            Description: Time window for recurring maintenance operations.
+            Optional: "true"
+            ExactlyOneOf: maintenance_policy.0.daily_maintenance_window, maintenance_policy.0.recurring_window
+            MaxItems: "1"
+            Properties:
+                end_time:
+                    Type: TypeString
+                    Required: "true"
+                recurrence:
+                    Type: TypeString
+                    Required: "true"
+                start_time:
+                    Type: TypeString
+                    Required: "true"
+master_auth:
+    Type: TypeList
+    Description: The authentication information for accessing the Kubernetes master. Some values in this block are only returned by the API if your service account has permission to get credentials for your GKE cluster. If you see an unexpected diff unsetting your client cert, ensure you have the container.clusters.getCredentials permission.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        client_certificate:
+            Type: TypeString
+            Description: Base64 encoded public certificate used by clients to authenticate to the cluster endpoint.
+            Computed: "true"
+        client_certificate_config:
+            Type: TypeList
+            Description: Whether client certificate authorization is enabled for this cluster.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                issue_client_certificate:
+                    Type: TypeBool
+                    Description: Whether client certificate authorization is enabled for this cluster.
+                    Required: "true"
+        client_key:
+            Type: TypeString
+            Description: Base64 encoded private key used by clients to authenticate to the cluster endpoint.
+            Computed: "true"
+        cluster_ca_certificate:
+            Type: TypeString
+            Description: Base64 encoded public certificate that is the root of trust for the cluster.
+            Computed: "true"
+master_authorized_networks_config:
+    Type: TypeList
+    Description: The desired configuration options for master authorized networks. Omit the nested cidr_blocks attribute to disallow external access (except the cluster node IPs, which GKE automatically whitelists).
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cidr_blocks:
+            Type: TypeSet
+            Description: External networks that can access the Kubernetes cluster master through HTTPS.
+            Optional: "true"
+            Properties:
+                cidr_block:
+                    Type: TypeString
+                    Description: External network that can access Kubernetes master through HTTPS. Must be specified in CIDR notation.
+                    Required: "true"
+                display_name:
+                    Type: TypeString
+                    Description: Field for users to identify CIDR blocks.
+                    Optional: "true"
+        gcp_public_cidrs_access_enabled:
+            Type: TypeBool
+            Description: Whether master is accessbile via Google Compute Engine Public IP addresses.
+            Computed: "true"
+            Optional: "true"
+master_version:
+    Type: TypeString
+    Description: The current version of the master in the cluster. This may be different than the min_master_version set in the config if the master has been updated by GKE.
+    Computed: "true"
+mesh_certificates:
+    Type: TypeList
+    Description: If set, and enable_certificates=true, the GKE Workload Identity Certificates controller and node agent will be deployed in the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enable_certificates:
+            Type: TypeBool
+            Description: When enabled the GKE Workload Identity Certificates controller and node agent will be deployed in the cluster.
+            Required: "true"
+min_master_version:
+    Type: TypeString
+    Description: The minimum version of the master. GKE will auto-update the master to new versions, so this does not guarantee the current master version--use the read-only master_version field to obtain that. If unset, the cluster's version will be set by GKE to the version of the most recent official release (which is not necessarily the latest version).
+    Optional: "true"
+monitoring_config:
+    Type: TypeList
+    Description: Monitoring configuration for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        advanced_datapath_observability_config:
+            Type: TypeList
+            Description: Configuration of Advanced Datapath Observability features.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "2"
+            Properties:
+                enable_metrics:
+                    Type: TypeBool
+                    Description: Whether or not the advanced datapath metrics are enabled.
+                    Required: "true"
+                relay_mode:
+                    Type: TypeString
+                    Description: Mode used to make Relay available.
+                    Computed: "true"
+                    Optional: "true"
+        enable_components:
+            Type: TypeList
+            Description: GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET and WORKLOADS.
+            Computed: "true"
+            Optional: "true"
+        managed_prometheus:
+            Type: TypeList
+            Description: Configuration for Google Cloud Managed Services for Prometheus.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not the managed collection is enabled.
+                    Required: "true"
+monitoring_service:
+    Type: TypeString
+    Description: The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com(Legacy Stackdriver), monitoring.googleapis.com/kubernetes(Stackdriver Kubernetes Engine Monitoring), and none. Defaults to monitoring.googleapis.com/kubernetes.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: cluster_telemetry
+name:
+    Type: TypeString
+    Description: The name of the cluster, unique within the project and location.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: The name or self_link of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network.
+    Optional: "true"
+network_policy:
+    Type: TypeList
+    Description: Configuration options for the NetworkPolicy feature.
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether network policy is enabled on the cluster.
+            Required: "true"
+        provider:
+            Type: TypeString
+            Description: The selected network policy provider.
+            Optional: "true"
+networking_mode:
+    Type: TypeString
+    Description: Determines whether alias IPs or routes will be used for pod IPs in the cluster. Defaults to VPC_NATIVE for new clusters.
+    Computed: "true"
+    Optional: "true"
+node_config:
+    Type: TypeList
+    Description: The configuration of the nodepool
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        advanced_machine_features:
+            Type: TypeList
+            Description: Specifies options for controlling advanced machine features.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                threads_per_core:
+                    Type: TypeInt
+                    Description: The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
+                    Required: "true"
+        boot_disk_kms_key:
+            Type: TypeString
+            Description: The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.
+            Optional: "true"
+        confidential_nodes:
+            Type: TypeList
+            Description: 'Configuration for the confidential nodes feature, which makes nodes run on confidential VMs. Warning: This configuration can''t be changed (or added/removed) after pool creation without deleting and recreating the entire pool.'
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether Confidential Nodes feature is enabled for all nodes in this pool.
+                    Required: "true"
+        disk_size_gb:
+            Type: TypeInt
+            Description: Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+            Computed: "true"
+            Optional: "true"
+        disk_type:
+            Type: TypeString
+            Description: Type of the disk attached to each node. Such as pd-standard, pd-balanced or pd-ssd
+            Computed: "true"
+            Optional: "true"
+        effective_taints:
+            Type: TypeList
+            Description: List of kubernetes taints applied to each node.
+            Computed: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: Effect for taint.
+                    Computed: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for taint.
+                    Computed: "true"
+                value:
+                    Type: TypeString
+                    Description: Value for taint.
+                    Computed: "true"
+        enable_confidential_storage:
+            Type: TypeBool
+            Description: If enabled boot disks are configured with confidential mode.
+            Optional: "true"
+        ephemeral_storage_config:
+            Type: TypeList
+            Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                    Required: "true"
+        ephemeral_storage_local_ssd_config:
+            Type: TypeList
+            Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                    Required: "true"
+        fast_socket:
+            Type: TypeList
+            Description: Enable or disable NCCL Fast Socket in the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not NCCL Fast Socket is enabled
+                    Required: "true"
+        gcfs_config:
+            Type: TypeList
+            Description: GCFS configuration for this node.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not GCFS is enabled
+                    Required: "true"
+        guest_accelerator:
+            Type: TypeList
+            Description: List of the type and count of accelerator cards attached to the instance.
+            Computed: "true"
+            Optional: "true"
+            Properties:
+                count:
+                    Type: TypeInt
+                    Description: The number of the accelerator cards exposed to an instance.
+                    Required: "true"
+                gpu_driver_installation_config:
+                    Type: TypeList
+                    Description: Configuration for auto installation of GPU driver.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gpu_driver_version:
+                            Type: TypeString
+                            Description: Mode for how the GPU driver is installed.
+                            Required: "true"
+                gpu_partition_size:
+                    Type: TypeString
+                    Description: Size of partitions to create on the GPU. Valid values are described in the NVIDIA mig user guide (https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#partitioning)
+                    Optional: "true"
+                gpu_sharing_config:
+                    Type: TypeList
+                    Description: Configuration for GPU sharing.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gpu_sharing_strategy:
+                            Type: TypeString
+                            Description: The type of GPU sharing strategy to enable on the GPU node. Possible values are described in the API package (https://pkg.go.dev/google.golang.org/api/container/v1#GPUSharingConfig)
+                            Required: "true"
+                        max_shared_clients_per_gpu:
+                            Type: TypeInt
+                            Description: The maximum number of containers that can share a GPU.
+                            Required: "true"
+                type:
+                    Type: TypeString
+                    Description: The accelerator type resource name.
+                    Required: "true"
+        gvnic:
+            Type: TypeList
+            Description: Enable or disable gvnic in the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not gvnic is enabled
+                    Required: "true"
+        host_maintenance_policy:
+            Type: TypeList
+            Description: The maintenance policy for the hosts on which the GKE VMs run on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                maintenance_interval:
+                    Type: TypeString
+                    Description: .
+                    Required: "true"
+        image_type:
+            Type: TypeString
+            Description: The image type to use for this node. Note that for a given image type, the latest version of it will be used.
+            Computed: "true"
+            Optional: "true"
+        kubelet_config:
+            Type: TypeList
+            Description: Node kubelet configs.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cpu_cfs_quota:
+                    Type: TypeBool
+                    Description: Enable CPU CFS quota enforcement for containers that specify CPU limits.
+                    Optional: "true"
+                cpu_cfs_quota_period:
+                    Type: TypeString
+                    Description: Set the CPU CFS quota period value 'cpu.cfs_period_us'.
+                    Optional: "true"
+                cpu_manager_policy:
+                    Type: TypeString
+                    Description: Control the CPU management policy on the node.
+                    Required: "true"
+                pod_pids_limit:
+                    Type: TypeInt
+                    Description: Controls the maximum number of processes allowed to run in a pod.
+                    Optional: "true"
+        labels:
+            Type: TypeMap
+            Description: The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node.
+            Computed: "true"
+            Optional: "true"
+        linux_node_config:
+            Type: TypeList
+            Description: Parameters that can be configured on Linux nodes.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cgroup_mode:
+                    Type: TypeString
+                    Description: cgroupMode specifies the cgroup mode to be used on the node.
+                    Computed: "true"
+                    Optional: "true"
+                sysctls:
+                    Type: TypeMap
+                    Description: The Linux kernel parameters to be applied to the nodes and all pods running on the nodes.
+                    Optional: "true"
+        local_nvme_ssd_block_config:
+            Type: TypeList
+            Description: Parameters for raw-block local NVMe SSDs.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of raw-block local NVMe SSD disks to be attached to the node. Each local SSD is 375 GB in size.
+                    Required: "true"
+        local_ssd_count:
+            Type: TypeInt
+            Description: The number of local SSD disks to be attached to the node.
+            Computed: "true"
+            Optional: "true"
+        logging_variant:
+            Type: TypeString
+            Description: Type of logging agent that is used as the default value for node pools in the cluster. Valid values include DEFAULT and MAX_THROUGHPUT.
+            Computed: "true"
+            Optional: "true"
+        machine_type:
+            Type: TypeString
+            Description: The name of a Google Compute Engine machine type.
+            Computed: "true"
+            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: The metadata key/value pairs assigned to instances in the cluster.
+            Computed: "true"
+            Optional: "true"
+        min_cpu_platform:
+            Type: TypeString
+            Description: Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform.
+            Computed: "true"
+            Optional: "true"
+        node_group:
+            Type: TypeString
+            Description: Setting this field will assign instances of this pool to run on the specified node group. This is useful for running workloads on sole tenant nodes.
+            Optional: "true"
+        oauth_scopes:
+            Type: TypeSet
+            Description: The set of Google API scopes to be made available on all of the node VMs.
+            Computed: "true"
+            Optional: "true"
+        preemptible:
+            Type: TypeBool
+            Description: Whether the nodes are created as preemptible VM instances.
+            Optional: "true"
+        reservation_affinity:
+            Type: TypeList
+            Description: The reservation affinity configuration for the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                consume_reservation_type:
+                    Type: TypeString
+                    Description: Corresponds to the type of reservation consumption.
+                    Required: "true"
+                key:
+                    Type: TypeString
+                    Description: The label key of a reservation resource.
+                    Optional: "true"
+                values:
+                    Type: TypeSet
+                    Description: The label values of the reservation resource.
+                    Optional: "true"
+        resource_labels:
+            Type: TypeMap
+            Description: The GCE resource labels (a map of key/value pairs) to be applied to the node pool.
+            Optional: "true"
+        sandbox_config:
+            Type: TypeList
+            Description: Sandbox configuration for this node.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                sandbox_type:
+                    Type: TypeString
+                    Description: Type of the sandbox to use for the node (e.g. 'gvisor')
+                    Required: "true"
+        service_account:
+            Type: TypeString
+            Description: The Google Cloud Platform Service Account to be used by the node VMs.
+            Computed: "true"
+            Optional: "true"
+        shielded_instance_config:
+            Type: TypeList
+            Description: Shielded Instance options.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enable_integrity_monitoring:
+                    Type: TypeBool
+                    Description: Defines whether the instance has integrity monitoring enabled.
+                    Optional: "true"
+                enable_secure_boot:
+                    Type: TypeBool
+                    Description: Defines whether the instance has Secure Boot enabled.
+                    Optional: "true"
+        sole_tenant_config:
+            Type: TypeList
+            Description: Node affinity options for sole tenant node pools.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                node_affinity:
+                    Type: TypeSet
+                    Description: .
+                    Required: "true"
+                    Properties:
+                        key:
+                            Type: TypeString
+                            Description: .
+                            Required: "true"
+                        operator:
+                            Type: TypeString
+                            Description: .
+                            Required: "true"
+                        values:
+                            Type: TypeList
+                            Description: .
+                            Required: "true"
+        spot:
+            Type: TypeBool
+            Description: Whether the nodes are created as spot VM instances.
+            Optional: "true"
+        tags:
+            Type: TypeList
+            Description: The list of instance tags applied to all nodes.
+            Optional: "true"
+        taint:
+            Type: TypeList
+            Description: List of Kubernetes taints to be applied to each node.
+            Optional: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: Effect for taint.
+                    Required: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for taint.
+                    Required: "true"
+                value:
+                    Type: TypeString
+                    Description: Value for taint.
+                    Required: "true"
+        workload_metadata_config:
+            Type: TypeList
+            Description: The workload metadata configuration for this node.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                mode:
+                    Type: TypeString
+                    Description: Mode is the configuration for how to expose metadata to workloads running on the node.
+                    Required: "true"
+node_locations:
+    Type: TypeSet
+    Description: The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If this is specified for a zonal cluster, omit the cluster's zone.
+    Computed: "true"
+    Optional: "true"
+node_pool:
+    Type: TypeList
+    Description: 'List of node pools associated with this cluster. See google_container_node_pool for schema. Warning: node pools defined inside a cluster can''t be changed (or added/removed) after cluster creation without deleting and recreating the entire cluster. Unless you absolutely need the ability to say "these are the only node pools associated with this cluster", use the google_container_node_pool resource instead of this property.'
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+    Properties:
+        autoscaling:
+            Type: TypeList
+            Description: Configuration required by cluster autoscaler to adjust the size of the node pool to the current cluster usage.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                location_policy:
+                    Type: TypeString
+                    Description: Location policy specifies the algorithm used when scaling-up the node pool. "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduces preemption risk for Spot VMs.
+                    Computed: "true"
+                    Optional: "true"
+                max_node_count:
+                    Type: TypeInt
+                    Description: Maximum number of nodes per zone in the node pool. Must be >= min_node_count. Cannot be used with total limits.
+                    Optional: "true"
+                min_node_count:
+                    Type: TypeInt
+                    Description: Minimum number of nodes per zone in the node pool. Must be >=0 and <= max_node_count. Cannot be used with total limits.
+                    Optional: "true"
+                total_max_node_count:
+                    Type: TypeInt
+                    Description: Maximum number of all nodes in the node pool. Must be >= total_min_node_count. Cannot be used with per zone limits.
+                    Optional: "true"
+                total_min_node_count:
+                    Type: TypeInt
+                    Description: Minimum number of all nodes in the node pool. Must be >=0 and <= total_max_node_count. Cannot be used with per zone limits.
+                    Optional: "true"
+        initial_node_count:
+            Type: TypeInt
+            Description: The initial number of nodes for the pool. In regional or multi-zonal clusters, this is the number of nodes per zone. Changing this will force recreation of the resource.
+            Computed: "true"
+            Optional: "true"
+        instance_group_urls:
+            Type: TypeList
+            Description: The resource URLs of the managed instance groups associated with this node pool.
+            Computed: "true"
+        managed_instance_group_urls:
+            Type: TypeList
+            Description: List of instance group URLs which have been assigned to this node pool.
+            Computed: "true"
+        management:
+            Type: TypeList
+            Description: Node management configuration, wherein auto-repair and auto-upgrade is configured.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                auto_repair:
+                    Type: TypeBool
+                    Description: Whether the nodes will be automatically repaired. Enabled by default.
+                    Optional: "true"
+                auto_upgrade:
+                    Type: TypeBool
+                    Description: Whether the nodes will be automatically upgraded. Enabled by default.
+                    Optional: "true"
+        max_pods_per_node:
+            Type: TypeInt
+            Description: The maximum number of pods per node in this node pool. Note that this does not work on node pools which are "route-based" - that is, node pools belonging to clusters that do not have IP Aliasing enabled.
+            Computed: "true"
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: The name of the node pool. If left blank, Terraform will auto-generate a unique name.
+            Computed: "true"
+            Optional: "true"
+        name_prefix:
+            Type: TypeString
+            Description: Creates a unique name for the node pool beginning with the specified prefix. Conflicts with name.
+            Computed: "true"
+            Optional: "true"
+        network_config:
+            Type: TypeList
+            Description: Networking configuration for this NodePool. If specified, it overrides the cluster-level defaults.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                additional_node_network_configs:
+                    Type: TypeList
+                    Description: We specify the additional node networks for this node pool using this list. Each node network corresponds to an additional interface
+                    Optional: "true"
+                    Properties:
+                        network:
+                            Type: TypeString
+                            Description: Name of the VPC where the additional interface belongs.
+                            Optional: "true"
+                        subnetwork:
+                            Type: TypeString
+                            Description: Name of the subnetwork where the additional interface belongs.
+                            Optional: "true"
+                additional_pod_network_configs:
+                    Type: TypeList
+                    Description: We specify the additional pod networks for this node pool using this list. Each pod network corresponds to an additional alias IP range for the node
+                    Optional: "true"
+                    Properties:
+                        max_pods_per_node:
+                            Type: TypeInt
+                            Description: The maximum number of pods per node which use this pod network.
+                            Computed: "true"
+                            Optional: "true"
+                        secondary_pod_range:
+                            Type: TypeString
+                            Description: The name of the secondary range on the subnet which provides IP address for this pod range.
+                            Optional: "true"
+                        subnetwork:
+                            Type: TypeString
+                            Description: Name of the subnetwork where the additional pod network belongs.
+                            Optional: "true"
+                create_pod_range:
+                    Type: TypeBool
+                    Description: Whether to create a new range for pod IPs in this node pool. Defaults are provided for pod_range and pod_ipv4_cidr_block if they are not specified.
+                    Optional: "true"
+                enable_private_nodes:
+                    Type: TypeBool
+                    Description: Whether nodes have internal IP addresses only.
+                    Computed: "true"
+                    Optional: "true"
+                network_performance_config:
+                    Type: TypeList
+                    Description: Network bandwidth tier configuration.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        total_egress_bandwidth_tier:
+                            Type: TypeString
+                            Description: Specifies the total network bandwidth tier for the NodePool.
+                            Required: "true"
+                pod_cidr_overprovision_config:
+                    Type: TypeList
+                    Description: Configuration for node-pool level pod cidr overprovision. If not set, the cluster level setting will be inherited
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        disabled:
+                            Type: TypeBool
+                            Required: "true"
+                pod_ipv4_cidr_block:
+                    Type: TypeString
+                    Description: The IP address range for pod IPs in this node pool. Only applicable if create_pod_range is true. Set to blank to have a range chosen with the default size. Set to /netmask (e.g. /14) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) to pick a specific range to use.
+                    Computed: "true"
+                    Optional: "true"
+                pod_range:
+                    Type: TypeString
+                    Description: The ID of the secondary range for pod IPs. If create_pod_range is true, this ID is used for the new range. If create_pod_range is false, uses an existing secondary range with this ID.
+                    Computed: "true"
+                    Optional: "true"
+        node_config:
+            Type: TypeList
+            Description: The configuration of the nodepool
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                advanced_machine_features:
+                    Type: TypeList
+                    Description: Specifies options for controlling advanced machine features.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        threads_per_core:
+                            Type: TypeInt
+                            Description: The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
+                            Required: "true"
+                boot_disk_kms_key:
+                    Type: TypeString
+                    Description: The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.
+                    Optional: "true"
+                confidential_nodes:
+                    Type: TypeList
+                    Description: 'Configuration for the confidential nodes feature, which makes nodes run on confidential VMs. Warning: This configuration can''t be changed (or added/removed) after pool creation without deleting and recreating the entire pool.'
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enabled:
+                            Type: TypeBool
+                            Description: Whether Confidential Nodes feature is enabled for all nodes in this pool.
+                            Required: "true"
+                disk_size_gb:
+                    Type: TypeInt
+                    Description: Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+                    Computed: "true"
+                    Optional: "true"
+                disk_type:
+                    Type: TypeString
+                    Description: Type of the disk attached to each node. Such as pd-standard, pd-balanced or pd-ssd
+                    Computed: "true"
+                    Optional: "true"
+                effective_taints:
+                    Type: TypeList
+                    Description: List of kubernetes taints applied to each node.
+                    Computed: "true"
+                    Properties:
+                        effect:
+                            Type: TypeString
+                            Description: Effect for taint.
+                            Computed: "true"
+                        key:
+                            Type: TypeString
+                            Description: Key for taint.
+                            Computed: "true"
+                        value:
+                            Type: TypeString
+                            Description: Value for taint.
+                            Computed: "true"
+                enable_confidential_storage:
+                    Type: TypeBool
+                    Description: If enabled boot disks are configured with confidential mode.
+                    Optional: "true"
+                ephemeral_storage_config:
+                    Type: TypeList
+                    Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        local_ssd_count:
+                            Type: TypeInt
+                            Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                            Required: "true"
+                ephemeral_storage_local_ssd_config:
+                    Type: TypeList
+                    Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        local_ssd_count:
+                            Type: TypeInt
+                            Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                            Required: "true"
+                fast_socket:
+                    Type: TypeList
+                    Description: Enable or disable NCCL Fast Socket in the node pool.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enabled:
+                            Type: TypeBool
+                            Description: Whether or not NCCL Fast Socket is enabled
+                            Required: "true"
+                gcfs_config:
+                    Type: TypeList
+                    Description: GCFS configuration for this node.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enabled:
+                            Type: TypeBool
+                            Description: Whether or not GCFS is enabled
+                            Required: "true"
+                guest_accelerator:
+                    Type: TypeList
+                    Description: List of the type and count of accelerator cards attached to the instance.
+                    Computed: "true"
+                    Optional: "true"
+                    Properties:
+                        count:
+                            Type: TypeInt
+                            Description: The number of the accelerator cards exposed to an instance.
+                            Required: "true"
+                        gpu_driver_installation_config:
+                            Type: TypeList
+                            Description: Configuration for auto installation of GPU driver.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                gpu_driver_version:
+                                    Type: TypeString
+                                    Description: Mode for how the GPU driver is installed.
+                                    Required: "true"
+                        gpu_partition_size:
+                            Type: TypeString
+                            Description: Size of partitions to create on the GPU. Valid values are described in the NVIDIA mig user guide (https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#partitioning)
+                            Optional: "true"
+                        gpu_sharing_config:
+                            Type: TypeList
+                            Description: Configuration for GPU sharing.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                gpu_sharing_strategy:
+                                    Type: TypeString
+                                    Description: The type of GPU sharing strategy to enable on the GPU node. Possible values are described in the API package (https://pkg.go.dev/google.golang.org/api/container/v1#GPUSharingConfig)
+                                    Required: "true"
+                                max_shared_clients_per_gpu:
+                                    Type: TypeInt
+                                    Description: The maximum number of containers that can share a GPU.
+                                    Required: "true"
+                        type:
+                            Type: TypeString
+                            Description: The accelerator type resource name.
+                            Required: "true"
+                gvnic:
+                    Type: TypeList
+                    Description: Enable or disable gvnic in the node pool.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enabled:
+                            Type: TypeBool
+                            Description: Whether or not gvnic is enabled
+                            Required: "true"
+                host_maintenance_policy:
+                    Type: TypeList
+                    Description: The maintenance policy for the hosts on which the GKE VMs run on.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        maintenance_interval:
+                            Type: TypeString
+                            Description: .
+                            Required: "true"
+                image_type:
+                    Type: TypeString
+                    Description: The image type to use for this node. Note that for a given image type, the latest version of it will be used.
+                    Computed: "true"
+                    Optional: "true"
+                kubelet_config:
+                    Type: TypeList
+                    Description: Node kubelet configs.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        cpu_cfs_quota:
+                            Type: TypeBool
+                            Description: Enable CPU CFS quota enforcement for containers that specify CPU limits.
+                            Optional: "true"
+                        cpu_cfs_quota_period:
+                            Type: TypeString
+                            Description: Set the CPU CFS quota period value 'cpu.cfs_period_us'.
+                            Optional: "true"
+                        cpu_manager_policy:
+                            Type: TypeString
+                            Description: Control the CPU management policy on the node.
+                            Required: "true"
+                        pod_pids_limit:
+                            Type: TypeInt
+                            Description: Controls the maximum number of processes allowed to run in a pod.
+                            Optional: "true"
+                labels:
+                    Type: TypeMap
+                    Description: The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node.
+                    Computed: "true"
+                    Optional: "true"
+                linux_node_config:
+                    Type: TypeList
+                    Description: Parameters that can be configured on Linux nodes.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        cgroup_mode:
+                            Type: TypeString
+                            Description: cgroupMode specifies the cgroup mode to be used on the node.
+                            Computed: "true"
+                            Optional: "true"
+                        sysctls:
+                            Type: TypeMap
+                            Description: The Linux kernel parameters to be applied to the nodes and all pods running on the nodes.
+                            Optional: "true"
+                local_nvme_ssd_block_config:
+                    Type: TypeList
+                    Description: Parameters for raw-block local NVMe SSDs.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        local_ssd_count:
+                            Type: TypeInt
+                            Description: Number of raw-block local NVMe SSD disks to be attached to the node. Each local SSD is 375 GB in size.
+                            Required: "true"
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: The number of local SSD disks to be attached to the node.
+                    Computed: "true"
+                    Optional: "true"
+                logging_variant:
+                    Type: TypeString
+                    Description: Type of logging agent that is used as the default value for node pools in the cluster. Valid values include DEFAULT and MAX_THROUGHPUT.
+                    Computed: "true"
+                    Optional: "true"
+                machine_type:
+                    Type: TypeString
+                    Description: The name of a Google Compute Engine machine type.
+                    Computed: "true"
+                    Optional: "true"
+                metadata:
+                    Type: TypeMap
+                    Description: The metadata key/value pairs assigned to instances in the cluster.
+                    Computed: "true"
+                    Optional: "true"
+                min_cpu_platform:
+                    Type: TypeString
+                    Description: Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform.
+                    Computed: "true"
+                    Optional: "true"
+                node_group:
+                    Type: TypeString
+                    Description: Setting this field will assign instances of this pool to run on the specified node group. This is useful for running workloads on sole tenant nodes.
+                    Optional: "true"
+                oauth_scopes:
+                    Type: TypeSet
+                    Description: The set of Google API scopes to be made available on all of the node VMs.
+                    Computed: "true"
+                    Optional: "true"
+                preemptible:
+                    Type: TypeBool
+                    Description: Whether the nodes are created as preemptible VM instances.
+                    Optional: "true"
+                reservation_affinity:
+                    Type: TypeList
+                    Description: The reservation affinity configuration for the node pool.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        consume_reservation_type:
+                            Type: TypeString
+                            Description: Corresponds to the type of reservation consumption.
+                            Required: "true"
+                        key:
+                            Type: TypeString
+                            Description: The label key of a reservation resource.
+                            Optional: "true"
+                        values:
+                            Type: TypeSet
+                            Description: The label values of the reservation resource.
+                            Optional: "true"
+                resource_labels:
+                    Type: TypeMap
+                    Description: The GCE resource labels (a map of key/value pairs) to be applied to the node pool.
+                    Optional: "true"
+                sandbox_config:
+                    Type: TypeList
+                    Description: Sandbox configuration for this node.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        sandbox_type:
+                            Type: TypeString
+                            Description: Type of the sandbox to use for the node (e.g. 'gvisor')
+                            Required: "true"
+                service_account:
+                    Type: TypeString
+                    Description: The Google Cloud Platform Service Account to be used by the node VMs.
+                    Computed: "true"
+                    Optional: "true"
+                shielded_instance_config:
+                    Type: TypeList
+                    Description: Shielded Instance options.
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enable_integrity_monitoring:
+                            Type: TypeBool
+                            Description: Defines whether the instance has integrity monitoring enabled.
+                            Optional: "true"
+                        enable_secure_boot:
+                            Type: TypeBool
+                            Description: Defines whether the instance has Secure Boot enabled.
+                            Optional: "true"
+                sole_tenant_config:
+                    Type: TypeList
+                    Description: Node affinity options for sole tenant node pools.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        node_affinity:
+                            Type: TypeSet
+                            Description: .
+                            Required: "true"
+                            Properties:
+                                key:
+                                    Type: TypeString
+                                    Description: .
+                                    Required: "true"
+                                operator:
+                                    Type: TypeString
+                                    Description: .
+                                    Required: "true"
+                                values:
+                                    Type: TypeList
+                                    Description: .
+                                    Required: "true"
+                spot:
+                    Type: TypeBool
+                    Description: Whether the nodes are created as spot VM instances.
+                    Optional: "true"
+                tags:
+                    Type: TypeList
+                    Description: The list of instance tags applied to all nodes.
+                    Optional: "true"
+                taint:
+                    Type: TypeList
+                    Description: List of Kubernetes taints to be applied to each node.
+                    Optional: "true"
+                    Properties:
+                        effect:
+                            Type: TypeString
+                            Description: Effect for taint.
+                            Required: "true"
+                        key:
+                            Type: TypeString
+                            Description: Key for taint.
+                            Required: "true"
+                        value:
+                            Type: TypeString
+                            Description: Value for taint.
+                            Required: "true"
+                workload_metadata_config:
+                    Type: TypeList
+                    Description: The workload metadata configuration for this node.
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        mode:
+                            Type: TypeString
+                            Description: Mode is the configuration for how to expose metadata to workloads running on the node.
+                            Required: "true"
+        node_count:
+            Type: TypeInt
+            Description: The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling.
+            Computed: "true"
+            Optional: "true"
+        node_locations:
+            Type: TypeSet
+            Description: The list of zones in which the node pool's nodes should be located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If unspecified, the cluster-level node_locations will be used.
+            Computed: "true"
+            Optional: "true"
+        placement_policy:
+            Type: TypeList
+            Description: Specifies the node placement policy
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                policy_name:
+                    Type: TypeString
+                    Description: If set, refers to the name of a custom resource policy supplied by the user. The resource policy must be in the same project and region as the node pool. If not found, InvalidArgument error is returned.
+                    Optional: "true"
+                tpu_topology:
+                    Type: TypeString
+                    Description: TPU placement topology for pod slice node pool. https://cloud.google.com/tpu/docs/types-topologies#tpu_topologies
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: Type defines the type of placement policy
+                    Required: "true"
+        queued_provisioning:
+            Type: TypeList
+            Description: Specifies the configuration of queued provisioning
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether nodes in this node pool are obtainable solely through the ProvisioningRequest API
+                    Required: "true"
+        upgrade_settings:
+            Type: TypeList
+            Description: Specify node upgrade settings to change how many nodes GKE attempts to upgrade at once. The number of nodes upgraded simultaneously is the sum of max_surge and max_unavailable. The maximum number of nodes upgraded simultaneously is limited to 20.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                blue_green_settings:
+                    Type: TypeList
+                    Description: Settings for BlueGreen node pool upgrade.
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        node_pool_soak_duration:
+                            Type: TypeString
+                            Description: Time needed after draining entire blue pool. After this period, blue pool will be cleaned up.
+                            Computed: "true"
+                            Optional: "true"
+                        standard_rollout_policy:
+                            Type: TypeList
+                            Description: Standard rollout policy is the default policy for blue-green.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                batch_node_count:
+                                    Type: TypeInt
+                                    Description: Number of blue nodes to drain in a batch.
+                                    Computed: "true"
+                                    Optional: "true"
+                                batch_percentage:
+                                    Type: TypeFloat
+                                    Description: Percentage of the blue pool nodes to drain in a batch.
+                                    Computed: "true"
+                                    Optional: "true"
+                                batch_soak_duration:
+                                    Type: TypeString
+                                    Description: Soak time after each batch gets drained.
+                                    Computed: "true"
+                                    Optional: "true"
+                max_surge:
+                    Type: TypeInt
+                    Description: The number of additional nodes that can be added to the node pool during an upgrade. Increasing max_surge raises the number of nodes that can be upgraded simultaneously. Can be set to 0 or greater.
+                    Computed: "true"
+                    Optional: "true"
+                max_unavailable:
+                    Type: TypeInt
+                    Description: The number of nodes that can be simultaneously unavailable during an upgrade. Increasing max_unavailable raises the number of nodes that can be upgraded in parallel. Can be set to 0 or greater.
+                    Computed: "true"
+                    Optional: "true"
+                strategy:
+                    Type: TypeString
+                    Description: Update strategy for the given nodepool.
+                    Optional: "true"
+        version:
+            Type: TypeString
+            Description: The Kubernetes version for the nodes in this pool. Note that if this field and auto_upgrade are both specified, they will fight each other for what the node version should be, so setting both is highly discouraged. While a fuzzy version can be specified, it's recommended that you specify explicit versions as Terraform will see spurious diffs when fuzzy versions are used. See the google_container_engine_versions data source's version_prefix field to approximate fuzzy versions in a Terraform-compatible way.
+            Computed: "true"
+            Optional: "true"
+node_pool_auto_config:
+    Type: TypeList
+    Description: Node pool configs that apply to all auto-provisioned node pools in autopilot clusters and node auto-provisioning enabled clusters.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        network_tags:
+            Type: TypeList
+            Description: Collection of Compute Engine network tags that can be applied to a node's underlying VM instance.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                tags:
+                    Type: TypeList
+                    Description: List of network tags applied to auto-provisioned node pools.
+                    Optional: "true"
+node_pool_defaults:
+    Type: TypeList
+    Description: The default nodel pool settings for the entire cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        node_config_defaults:
+            Type: TypeList
+            Description: Subset of NodeConfig message that has defaults.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                gcfs_config:
+                    Type: TypeList
+                    Description: GCFS configuration for this node.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        enabled:
+                            Type: TypeBool
+                            Description: Whether or not GCFS is enabled
+                            Required: "true"
+                logging_variant:
+                    Type: TypeString
+                    Description: Type of logging agent that is used as the default value for node pools in the cluster. Valid values include DEFAULT and MAX_THROUGHPUT.
+                    Computed: "true"
+                    Optional: "true"
+node_version:
+    Type: TypeString
+    Description: The Kubernetes version on the nodes. Must either be unset or set to the same value as min_master_version on create. Defaults to the default version set by GKE which is not necessarily the latest version. This only affects nodes in the default node pool. While a fuzzy version can be specified, it's recommended that you specify explicit versions as Terraform will see spurious diffs when fuzzy versions are used. See the google_container_engine_versions data source's version_prefix field to approximate fuzzy versions in a Terraform-compatible way. To update nodes in other node pools, use the version attribute on the node pool.
+    Computed: "true"
+    Optional: "true"
+notification_config:
+    Type: TypeList
+    Description: The notification config for sending cluster upgrade notifications
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        pubsub:
+            Type: TypeList
+            Description: Notification config for Cloud Pub/Sub
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not the notification config is enabled
+                    Required: "true"
+                filter:
+                    Type: TypeList
+                    Description: Allows filtering to one or more specific event types. If event types are present, those and only those event types will be transmitted to the cluster. Other types will be skipped. If no filter is specified, or no event types are present, all event types will be sent
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        event_type:
+                            Type: TypeList
+                            Description: Can be used to filter what notifications are sent. Valid values include include UPGRADE_AVAILABLE_EVENT, UPGRADE_EVENT and SECURITY_BULLETIN_EVENT
+                            Required: "true"
+                topic:
+                    Type: TypeString
+                    Description: 'The pubsub topic to push upgrade notifications to. Must be in the same project as the cluster. Must be in the format: projects/{project}/topics/{topic}.'
+                    Optional: "true"
+operation:
+    Type: TypeString
+    Computed: "true"
+pod_security_policy_config:
+    Type: TypeList
+    Description: Configuration for the PodSecurityPolicy feature.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Enable the PodSecurityPolicy controller for this cluster. If enabled, pods must be valid under a PodSecurityPolicy to be created.
+            Required: "true"
+private_cluster_config:
+    Type: TypeList
+    Description: Configuration for private clusters, clusters with private nodes.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enable_private_endpoint:
+            Type: TypeBool
+            Description: When true, the cluster's private endpoint is used as the cluster endpoint and access through the public endpoint is disabled. When false, either endpoint can be used.
+            Optional: "true"
+            AtLeastOneOf: private_cluster_config.0.enable_private_endpoint, private_cluster_config.0.enable_private_nodes, private_cluster_config.0.master_ipv4_cidr_block, private_cluster_config.0.private_endpoint_subnetwork, private_cluster_config.0.master_global_access_config
+        enable_private_nodes:
+            Type: TypeBool
+            Description: Enables the private cluster feature, creating a private endpoint on the cluster. In a private cluster, nodes only have RFC 1918 private addresses and communicate with the master's private endpoint via private networking.
+            Optional: "true"
+            AtLeastOneOf: private_cluster_config.0.enable_private_endpoint, private_cluster_config.0.enable_private_nodes, private_cluster_config.0.master_ipv4_cidr_block, private_cluster_config.0.private_endpoint_subnetwork, private_cluster_config.0.master_global_access_config
+        master_global_access_config:
+            Type: TypeList
+            Description: Controls cluster master global access settings.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: private_cluster_config.0.enable_private_endpoint, private_cluster_config.0.enable_private_nodes, private_cluster_config.0.master_ipv4_cidr_block, private_cluster_config.0.private_endpoint_subnetwork, private_cluster_config.0.master_global_access_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether the cluster master is accessible globally or not.
+                    Required: "true"
+        master_ipv4_cidr_block:
+            Type: TypeString
+            Description: The IP range in CIDR notation to use for the hosted master network. This range will be used for assigning private IP addresses to the cluster master(s) and the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network, and it must be a /28 subnet. See Private Cluster Limitations for more details. This field only applies to private clusters, when enable_private_nodes is true.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: private_cluster_config.0.enable_private_endpoint, private_cluster_config.0.enable_private_nodes, private_cluster_config.0.master_ipv4_cidr_block, private_cluster_config.0.private_endpoint_subnetwork, private_cluster_config.0.master_global_access_config
+        peering_name:
+            Type: TypeString
+            Description: The name of the peering between this cluster and the Google owned VPC.
+            Computed: "true"
+        private_endpoint:
+            Type: TypeString
+            Description: The internal IP address of this cluster's master endpoint.
+            Computed: "true"
+        private_endpoint_subnetwork:
+            Type: TypeString
+            Description: Subnetwork in cluster's network where master's endpoint will be provisioned.
+            Optional: "true"
+            AtLeastOneOf: private_cluster_config.0.enable_private_endpoint, private_cluster_config.0.enable_private_nodes, private_cluster_config.0.master_ipv4_cidr_block, private_cluster_config.0.private_endpoint_subnetwork, private_cluster_config.0.master_global_access_config
+        public_endpoint:
+            Type: TypeString
+            Description: The external IP address of this cluster's master endpoint.
+            Computed: "true"
+private_ipv6_google_access:
+    Type: TypeString
+    Description: The desired state of IPv6 connectivity to Google Services. By default, no private IPv6 access to or from Google Services (all access will be via IPv4).
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+protect_config:
+    Type: TypeList
+    Description: Enable/Disable Protect API features for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        workload_config:
+            Type: TypeList
+            Description: WorkloadConfig defines which actions are enabled for a cluster's workload configurations.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: protect_config.0.workload_config, protect_config.0.workload_vulnerability_mode
+            MaxItems: "1"
+            Properties:
+                audit_mode:
+                    Type: TypeString
+                    Description: Sets which mode of auditing should be used for the cluster's workloads. Accepted values are DISABLED, BASIC.
+                    Required: "true"
+        workload_vulnerability_mode:
+            Type: TypeString
+            Description: Sets which mode to use for Protect workload vulnerability scanning feature. Accepted values are DISABLED, BASIC.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: protect_config.0.workload_config, protect_config.0.workload_vulnerability_mode
+release_channel:
+    Type: TypeList
+    Description: Configuration options for the Release channel feature, which provide more control over automatic upgrades of your GKE clusters. Note that removing this field from your config will not unenroll it. Instead, use the "UNSPECIFIED" channel.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        channel:
+            Type: TypeString
+            Description: |-
+                The selected release channel. Accepted values are:
+                * UNSPECIFIED: Not set.
+                * RAPID: Weekly upgrade cadence; Early testers and developers who requires new features.
+                * REGULAR: Multiple per month upgrade cadence; Production users who need features not yet offered in the Stable channel.
+                * STABLE: Every few months upgrade cadence; Production users who need stability above all else, and for whom frequent upgrades are too risky.
+            Required: "true"
+remove_default_node_pool:
+    Type: TypeBool
+    Description: If true, deletes the default node pool upon cluster creation. If you're using google_container_node_pool resources with no default node pool, this should be set to true, alongside setting initial_node_count to at least 1.
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+resource_labels:
+    Type: TypeMap
+    Description: The GCE resource labels (a map of key/value pairs) to be applied to the cluster.
+    Optional: "true"
+resource_usage_export_config:
+    Type: TypeList
+    Description: Configuration for the ResourceUsageExportConfig feature.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        bigquery_destination:
+            Type: TypeList
+            Description: Parameters for using BigQuery as the destination of resource usage export.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                dataset_id:
+                    Type: TypeString
+                    Description: The ID of a BigQuery Dataset.
+                    Required: "true"
+        enable_network_egress_metering:
+            Type: TypeBool
+            Description: Whether to enable network egress metering for this cluster. If enabled, a daemonset will be created in the cluster to meter network egress traffic.
+            Optional: "true"
+        enable_resource_consumption_metering:
+            Type: TypeBool
+            Description: Whether to enable resource consumption metering on this cluster. When enabled, a table will be created in the resource export BigQuery dataset to store resource consumption data. The resulting table can be joined with the resource usage table or with BigQuery billing export. Defaults to true.
+            Optional: "true"
+security_posture_config:
+    Type: TypeList
+    Description: Defines the config needed to enable/disable features for the Security Posture API
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        mode:
+            Type: TypeString
+            Description: Sets the mode of the Kubernetes security posture API's off-cluster features. Available options include DISABLED and BASIC.
+            Computed: "true"
+            Optional: "true"
+        vulnerability_mode:
+            Type: TypeString
+            Description: Sets the mode of the Kubernetes security posture API's workload vulnerability scanning. Available options include VULNERABILITY_DISABLED, VULNERABILITY_BASIC and VULNERABILITY_ENTERPRISE.
+            Computed: "true"
+            Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL for the resource.
+    Computed: "true"
+service_external_ips_config:
+    Type: TypeList
+    Description: If set, and enabled=true, services with external ips field will not be blocked
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: When enabled, services with exterenal ips specified will be allowed.
+            Required: "true"
+services_ipv4_cidr:
+    Type: TypeString
+    Description: The IP address range of the Kubernetes services in this cluster, in CIDR notation (e.g. 1.2.3.4/29). Service addresses are typically put in the last /16 from the container CIDR.
+    Computed: "true"
+subnetwork:
+    Type: TypeString
+    Description: The name or self_link of the Google Compute Engine subnetwork in which the cluster's instances are launched.
+    Computed: "true"
+    Optional: "true"
+tpu_config:
+    Type: TypeList
+    Description: TPU configuration for the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether Cloud TPU integration is enabled or not
+            Required: "true"
+        ipv4_cidr_block:
+            Type: TypeString
+            Description: IPv4 CIDR block reserved for Cloud TPU in the VPC.
+            Computed: "true"
+        use_service_networking:
+            Type: TypeBool
+            Description: Whether to use service networking for Cloud TPU or not
+            Optional: "true"
+tpu_ipv4_cidr_block:
+    Type: TypeString
+    Description: The IP address range of the Cloud TPUs in this cluster, in CIDR notation (e.g. 1.2.3.4/29).
+    Computed: "true"
+vertical_pod_autoscaling:
+    Type: TypeList
+    Description: Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Enables vertical pod autoscaling.
+            Required: "true"
+workload_alts_config:
+    Type: TypeList
+    Description: Configuration for direct-path (via ALTS) with workload identity.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enable_alts:
+            Type: TypeBool
+            Description: Whether the alts handshaker should be enabled or not for direct-path. Requires Workload Identity (workloadPool must be non-empty).
+            Required: "true"
+workload_identity_config:
+    Type: TypeList
+    Description: Configuration for the use of Kubernetes Service Accounts in GCP IAM policies.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: enable_autopilot
+    MaxItems: "1"
+    Properties:
+        workload_pool:
+            Type: TypeString
+            Description: The workload pool to attach all Kubernetes service accounts to.
+            Optional: "true"
+

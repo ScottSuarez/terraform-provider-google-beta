@@ -1,0 +1,97 @@
+cluster:
+    Type: TypeString
+    Description: The name of the target Distributed Cloud Edge Cluster.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: The time when the node pool was created.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels associated with this resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+local_disk_encryption:
+    Type: TypeList
+    Description: Local disk encryption options. This field is only used when enabling CMEK support.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key:
+            Type: TypeString
+            Description: |-
+                The Cloud KMS CryptoKey e.g. projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{cryptoKey} to use for protecting node local disks.
+                If not specified, a Google-managed key will be used instead.
+            Optional: "true"
+        kms_key_active_version:
+            Type: TypeString
+            Description: The Cloud KMS CryptoKeyVersion currently in use for protecting node local disks. Only applicable if kmsKey is set.
+            Computed: "true"
+        kms_key_state:
+            Type: TypeString
+            Description: |-
+                Availability of the Cloud KMS CryptoKey. If not KEY_AVAILABLE, then nodes may go offline as they cannot access their local data.
+                This can be caused by a lack of permissions to use the key, or if the key is disabled or deleted.
+            Computed: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource.
+    Required: "true"
+machine_filter:
+    Type: TypeString
+    Description: |-
+        Only machines matching this filter will be allowed to join the node pool.
+        The filtering language accepts strings like "name=<name>", and is
+        documented in more detail in [AIP-160](https://google.aip.dev/160).
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the node pool.
+    Required: "true"
+node_config:
+    Type: TypeList
+    Description: Configuration for each node in the NodePool
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        labels:
+            Type: TypeMap
+            Description: '"The Kubernetes node labels"'
+            Computed: "true"
+            Optional: "true"
+node_count:
+    Type: TypeInt
+    Description: The number of nodes in the pool.
+    Required: "true"
+node_location:
+    Type: TypeString
+    Description: 'Name of the Google Distributed Cloud Edge zone where this node pool will be created. For example: ''us-central1-edge-customer-a''.'
+    Required: "true"
+node_version:
+    Type: TypeString
+    Description: The lowest release version among all worker nodes.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time when the node pool was last updated.
+    Computed: "true"
+

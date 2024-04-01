@@ -1,0 +1,18 @@
+etag:
+    Type: TypeString
+    Computed: "true"
+lake:
+    Type: TypeString
+    Required: "true"
+location:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

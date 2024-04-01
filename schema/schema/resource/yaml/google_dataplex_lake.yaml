@@ -1,0 +1,106 @@
+asset_status:
+    Type: TypeList
+    Description: Output only. Aggregated status of the underlying assets of the lake.
+    Computed: "true"
+    Properties:
+        active_assets:
+            Type: TypeInt
+            Description: Number of active assets.
+            Computed: "true"
+        security_policy_applying_assets:
+            Type: TypeInt
+            Description: Number of assets that are in process of updating the security policy on attached resources.
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the status.
+            Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. The time when the lake was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Optional. Description of the lake.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Optional. User friendly display name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. User-defined labels for the lake.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+metastore:
+    Type: TypeList
+    Description: Optional. Settings to manage lake and Dataproc Metastore service instance association.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        service:
+            Type: TypeString
+            Description: 'Optional. A relative reference to the Dataproc Metastore (https://cloud.google.com/dataproc-metastore/docs) service associated with the lake: `projects/{project_id}/locations/{location_id}/services/{service_id}`'
+            Optional: "true"
+metastore_status:
+    Type: TypeList
+    Description: Output only. Metastore status of the lake.
+    Computed: "true"
+    Properties:
+        endpoint:
+            Type: TypeString
+            Description: The URI of the endpoint used to access the Metastore service.
+            Computed: "true"
+        message:
+            Type: TypeString
+            Description: Additional information about the current status.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: 'Current state of association. Possible values: STATE_UNSPECIFIED, NONE, READY, UPDATING, ERROR'
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the metastore status of the lake.
+            Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the lake.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+service_account:
+    Type: TypeString
+    Description: Output only. Service account associated with this lake. This service account must be authorized to access or operate on resources managed by the lake.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. Current state of the lake. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Output only. System generated globally unique ID for the lake. This ID will be different if the lake is deleted and re-created with the same name.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The time when the lake was last updated.
+    Computed: "true"
+

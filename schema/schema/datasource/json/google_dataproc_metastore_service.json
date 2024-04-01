@@ -1,0 +1,264 @@
+{
+    "artifact_gcs_uri": {
+        "Computed": true,
+        "Description": "A Cloud Storage URI (starting with gs://) that specifies where artifacts related to the metastore service are stored.",
+        "Type": "TypeString"
+    },
+    "database_type": {
+        "Computed": true,
+        "Description": "The database type that the Metastore service stores its data. Default value: \"MYSQL\" Possible values: [\"MYSQL\", \"SPANNER\"]",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "encryption_config": {
+        "Computed": true,
+        "Description": "Information used to configure the Dataproc Metastore service to encrypt\ncustomer data at rest.",
+        "Properties": {
+            "kms_key": {
+                "Computed": true,
+                "Description": "The fully qualified customer provided Cloud KMS key name to use for customer data encryption.\nUse the following format: 'projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/cryptoKeys/([^/]+)'",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "endpoint_uri": {
+        "Computed": true,
+        "Description": "The URI of the endpoint used to access the metastore service.",
+        "Type": "TypeString"
+    },
+    "hive_metastore_config": {
+        "Computed": true,
+        "Description": "Configuration information specific to running Hive metastore software as the metastore service.",
+        "Properties": {
+            "auxiliary_versions": {
+                "Computed": true,
+                "Description": "A mapping of Hive metastore version to the auxiliary version configuration.\nWhen specified, a secondary Hive metastore service is created along with the primary service.\nAll auxiliary versions must be less than the service's primary version.\nThe key is the auxiliary service name and it must match the regular expression a-z?.\nThis means that the first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.",
+                "Properties": {
+                    "config_overrides": {
+                        "Computed": true,
+                        "Description": "A mapping of Hive metastore configuration key-value pairs to apply to the auxiliary Hive metastore (configured in hive-site.xml) in addition to the primary version's overrides.\nIf keys are present in both the auxiliary version's overrides and the primary version's overrides, the value from the auxiliary version's overrides takes precedence.",
+                        "Type": "TypeMap"
+                    },
+                    "key": {
+                        "Computed": true,
+                        "Type": "TypeString"
+                    },
+                    "version": {
+                        "Computed": true,
+                        "Description": "The Hive metastore version of the auxiliary service. It must be less than the primary Hive metastore service's version.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "config_overrides": {
+                "Computed": true,
+                "Description": "A mapping of Hive metastore configuration key-value pairs to apply to the Hive metastore (configured in hive-site.xml).\nThe mappings override system defaults (some keys cannot be overridden)",
+                "Type": "TypeMap"
+            },
+            "endpoint_protocol": {
+                "Computed": true,
+                "Description": "The protocol to use for the metastore service endpoint. If unspecified, defaults to 'THRIFT'. Default value: \"THRIFT\" Possible values: [\"THRIFT\", \"GRPC\"]",
+                "Type": "TypeString"
+            },
+            "kerberos_config": {
+                "Computed": true,
+                "Description": "Information used to configure the Hive metastore service as a service principal in a Kerberos realm.",
+                "Properties": {
+                    "keytab": {
+                        "Computed": true,
+                        "Description": "A Kerberos keytab file that can be used to authenticate a service principal with a Kerberos Key Distribution Center (KDC).",
+                        "Properties": {
+                            "cloud_secret": {
+                                "Computed": true,
+                                "Description": "The relative resource name of a Secret Manager secret version, in the following form:\n\n\"projects/{projectNumber}/secrets/{secret_id}/versions/{version_id}\".",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "krb5_config_gcs_uri": {
+                        "Computed": true,
+                        "Description": "A Cloud Storage URI that specifies the path to a krb5.conf file. It is of the form gs://{bucket_name}/path/to/krb5.conf, although the file does not need to be named krb5.conf explicitly.",
+                        "Type": "TypeString"
+                    },
+                    "principal": {
+                        "Computed": true,
+                        "Description": "A Kerberos principal that exists in the both the keytab the KDC to authenticate as. A typical principal is of the form \"primary/instance@REALM\", but there is no exact format.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "version": {
+                "Computed": true,
+                "Description": "The Hive metastore schema version.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "User-defined labels for the metastore service.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location where the metastore service should reside.\nThe default value is 'global'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "maintenance_window": {
+        "Computed": true,
+        "Description": "The one hour maintenance window of the metastore service.\nThis specifies when the service can be restarted for maintenance purposes in UTC time.\nMaintenance window is not needed for services with the 'SPANNER' database type.",
+        "Properties": {
+            "day_of_week": {
+                "Computed": true,
+                "Description": "The day of week, when the window starts. Possible values: [\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                "Type": "TypeString"
+            },
+            "hour_of_day": {
+                "Computed": true,
+                "Description": "The hour of day (0-23) when the window starts.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "metadata_integration": {
+        "Computed": true,
+        "Description": "The setting that defines how metastore metadata should be integrated with external services and systems.",
+        "Properties": {
+            "data_catalog_config": {
+                "Computed": true,
+                "Description": "The integration config for the Data Catalog service.",
+                "Properties": {
+                    "enabled": {
+                        "Computed": true,
+                        "Description": "Defines whether the metastore metadata should be synced to Data Catalog. The default value is to disable syncing metastore metadata to Data Catalog.",
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The relative resource name of the metastore service.",
+        "Type": "TypeString"
+    },
+    "network": {
+        "Computed": true,
+        "Description": "The relative resource name of the VPC network on which the instance can be accessed. It is specified in the following form:\n\n\"projects/{projectNumber}/global/networks/{network_id}\".",
+        "Type": "TypeString"
+    },
+    "network_config": {
+        "Computed": true,
+        "Description": "The configuration specifying the network settings for the Dataproc Metastore service.",
+        "Properties": {
+            "consumers": {
+                "Computed": true,
+                "Description": "The consumer-side network configuration for the Dataproc Metastore instance.",
+                "Properties": {
+                    "endpoint_uri": {
+                        "Computed": true,
+                        "Description": "The URI of the endpoint used to access the metastore service.",
+                        "Type": "TypeString"
+                    },
+                    "subnetwork": {
+                        "Computed": true,
+                        "Description": "The subnetwork of the customer project from which an IP address is reserved and used as the Dataproc Metastore service's endpoint.\nIt is accessible to hosts in the subnet and to all hosts in a subnet in the same region and same network.\nThere must be at least one IP address available in the subnet's primary range. The subnet is specified in the following form:\n'projects/{projectNumber}/regions/{region_id}/subnetworks/{subnetwork_id}",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "custom_routes_enabled": {
+                "Computed": true,
+                "Description": "Enables custom routes to be imported and exported for the Dataproc Metastore service's peered VPC network.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "port": {
+        "Computed": true,
+        "Description": "The TCP port at which the metastore service is reached. Default: 9083.",
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "release_channel": {
+        "Computed": true,
+        "Description": "The release channel of the service. If unspecified, defaults to 'STABLE'. Default value: \"STABLE\" Possible values: [\"CANARY\", \"STABLE\"]",
+        "Type": "TypeString"
+    },
+    "scaling_config": {
+        "Computed": true,
+        "Description": "Represents the scaling configuration of a metastore service.",
+        "Properties": {
+            "instance_size": {
+                "Computed": true,
+                "Description": "Metastore instance sizes. Possible values: [\"EXTRA_SMALL\", \"SMALL\", \"MEDIUM\", \"LARGE\", \"EXTRA_LARGE\"]",
+                "Type": "TypeString"
+            },
+            "scaling_factor": {
+                "Computed": true,
+                "Description": "Scaling factor, in increments of 0.1 for values less than 1.0, and increments of 1.0 for values greater than 1.0.",
+                "Type": "TypeFloat"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "service_id": {
+        "Description": "The ID of the metastore service. The id must contain only letters (a-z, A-Z), numbers (0-9), underscores (_),\nand hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of between\n3 and 63 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the metastore service.",
+        "Type": "TypeString"
+    },
+    "state_message": {
+        "Computed": true,
+        "Description": "Additional information about the current state of the metastore service, if available.",
+        "Type": "TypeString"
+    },
+    "telemetry_config": {
+        "Computed": true,
+        "Description": "The configuration specifying telemetry settings for the Dataproc Metastore service. If unspecified defaults to JSON.",
+        "Properties": {
+            "log_format": {
+                "Computed": true,
+                "Description": "The output format of the Dataproc Metastore service's logs. Default value: \"JSON\" Possible values: [\"LEGACY\", \"JSON\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "tier": {
+        "Computed": true,
+        "Description": "The tier of the service. Possible values: [\"DEVELOPER\", \"ENTERPRISE\"]",
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "The globally unique resource identifier of the metastore service.",
+        "Type": "TypeString"
+    }
+}

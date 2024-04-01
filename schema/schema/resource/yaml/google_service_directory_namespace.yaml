@@ -1,0 +1,45 @@
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels associated with this Namespace. No more than 64 user
+        labels can be associated with a given resource. Label keys and values can
+        be no longer than 63 characters.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The location for the Namespace.
+        A full list of valid locations can be found by running
+        'gcloud beta service-directory locations list'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name for the namespace
+        in the format 'projects/*/locations/*/namespaces/*'.
+    Computed: "true"
+namespace_id:
+    Type: TypeString
+    Description: |-
+        The Resource ID must be 1-63 characters long, including digits,
+        lowercase letters or the hyphen character.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

@@ -1,0 +1,42 @@
+cert:
+    Type: TypeString
+    Description: The actual certificate data for this client certificate.
+    Computed: "true"
+cert_serial_number:
+    Type: TypeString
+    Description: The serial number extracted from the certificate data.
+    Computed: "true"
+common_name:
+    Type: TypeString
+    Description: The common name to be used in the certificate to identify the client. Constrained to [a-zA-Z.-_ ]+. Changing this forces a new resource to be created.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: The time when the certificate was created in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.
+    Computed: "true"
+expiration_time:
+    Type: TypeString
+    Description: The time when the certificate expires in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.
+    Computed: "true"
+instance:
+    Type: TypeString
+    Description: The name of the Cloud SQL instance. Changing this forces a new resource to be created.
+    Required: "true"
+private_key:
+    Type: TypeString
+    Description: The private key associated with the client certificate.
+    Computed: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+server_ca_cert:
+    Type: TypeString
+    Description: The CA cert of the server this client cert was generated from.
+    Computed: "true"
+sha1_fingerprint:
+    Type: TypeString
+    Description: The SHA1 Fingerprint of the certificate.
+    Computed: "true"
+

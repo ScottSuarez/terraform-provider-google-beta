@@ -1,0 +1,27 @@
+bucket: TypeString
+cache_control: TypeString
+content: TypeString
+content_disposition: TypeString
+content_encoding: TypeString
+content_language: TypeString
+content_type: TypeString
+crc32c: TypeString
+customer_encryption:
+    encryption_algorithm: TypeString
+    encryption_key: TypeString
+detect_md5hash: TypeString
+event_based_hold: TypeBool
+kms_key_name: TypeString
+md5hash: TypeString
+media_link: TypeString
+metadata: TypeMap(TypeString)
+name: TypeString
+output_name: TypeString
+retention:
+    mode: TypeString
+    retain_until_time: TypeString
+self_link: TypeString
+source: TypeString
+storage_class: TypeString
+temporary_hold: TypeBool
+

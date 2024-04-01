@@ -1,0 +1,90 @@
+filter:
+    Type: TypeString
+    Optional: "true"
+machine_types:
+    Type: TypeList
+    Description: The list of machine types
+    Computed: "true"
+    Properties:
+        accelerators:
+            Type: TypeList
+            Description: A list of accelerator configurations assigned to this machine type.
+            Computed: "true"
+            Properties:
+                guest_accelerator_count:
+                    Type: TypeInt
+                    Description: Number of accelerator cards exposed to the guest.
+                    Computed: "true"
+                guest_accelerator_type:
+                    Type: TypeString
+                    Description: The accelerator type resource name, not a full URL, e.g. nvidia-tesla-t4.
+                    Computed: "true"
+        bundled_local_ssds:
+            Type: TypeSet
+            Description: The configuration of bundled local SSD for the machine type.
+            Computed: "true"
+            Properties:
+                default_interface:
+                    Type: TypeString
+                    Description: The default disk interface if the interface is not specified.
+                    Computed: "true"
+                partition_count:
+                    Type: TypeInt
+                    Description: The number of partitions.
+                    Computed: "true"
+        deprecated:
+            Type: TypeSet
+            Description: The deprecation status associated with this machine type. Only applicable if the machine type is unavailable.
+            Computed: "true"
+            Properties:
+                replacement:
+                    Type: TypeString
+                    Description: The URL of the suggested replacement for a deprecated machine type.
+                    Computed: "true"
+                state:
+                    Type: TypeString
+                    Description: The deprecation state of this resource. This can be ACTIVE, DEPRECATED, OBSOLETE, or DELETED.
+                    Computed: "true"
+        description:
+            Type: TypeString
+            Description: A textual description of the machine type.
+            Computed: "true"
+        guest_cpus:
+            Type: TypeInt
+            Description: The number of virtual CPUs that are available to the instance.
+            Computed: "true"
+        is_shared_cpus:
+            Type: TypeBool
+            Description: Whether this machine type has a shared CPU.
+            Computed: "true"
+        maximum_persistent_disks:
+            Type: TypeInt
+            Description: The maximum persistent disks allowed.
+            Computed: "true"
+        maximum_persistent_disks_size_gb:
+            Type: TypeInt
+            Description: The maximum total persistent disks size (GB) allowed.
+            Computed: "true"
+        memory_mb:
+            Type: TypeInt
+            Description: The amount of physical memory available to the instance, defined in MB.
+            Computed: "true"
+        name:
+            Type: TypeString
+            Description: The name of the machine type.
+            Computed: "true"
+        self_link:
+            Type: TypeString
+            Description: The server-defined URL for the machine type.
+            Computed: "true"
+project:
+    Type: TypeString
+    Description: Project ID for this request.
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: The name of the zone for this request.
+    Computed: "true"
+    Optional: "true"
+

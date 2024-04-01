@@ -1,0 +1,14 @@
+description: TypeString
+gateway_address: TypeString
+internal_ipv6_prefix: TypeString
+ip_cidr_range: TypeString
+name: TypeString
+network: TypeString
+private_ip_google_access: TypeBool
+project: TypeString
+region: TypeString
+secondary_ip_range:
+    ip_cidr_range: TypeString
+    range_name: TypeString
+self_link: TypeString
+

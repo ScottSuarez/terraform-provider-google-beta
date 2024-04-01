@@ -1,0 +1,116 @@
+{
+    "action": {
+        "Description": "The action to take when a rule match is found. Possible values are \"ALLOW\" or \"DENY\". Possible values: [\"ALLOW\", \"DENY\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the AuthorizationPolicy was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the AuthorizationPolicy resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of the authorization policy.\nThe default value is 'global'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the AuthorizationPolicy resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Description": "List of rules to match. Note that at least one of the rules must match in order for the action specified in the 'action' field to be taken.\nA rule is a match if there is a matching source and destination. If left blank, the action specified in the action field will be applied on every request.",
+        "Optional": true,
+        "Properties": {
+            "destinations": {
+                "Description": "List of attributes for the traffic destination. All of the destinations must match. A destination is a match if a request matches all the specified hosts, ports, methods and headers.\nIf not set, the action specified in the 'action' field will be applied without any rule checks for the destination.",
+                "Optional": true,
+                "Properties": {
+                    "hosts": {
+                        "Description": "List of host names to match. Matched against the \":authority\" header in http requests. At least one host should match. Each host can be an exact match, or a prefix match (example \"mydomain.*\") or a suffix match (example \"*.myorg.com\") or a presence (any) match \"*\".",
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "http_header_match": {
+                        "Description": "Match against key:value pair in http header. Provides a flexible match based on HTTP headers, for potentially advanced use cases. At least one header should match.\nAvoid using header matches to make authorization decisions unless there is a strong guarantee that requests arrive through a trusted client or proxy.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "header_name": {
+                                "Description": "The name of the HTTP header to match. For matching against the HTTP request's authority, use a headerMatch with the header name \":authority\". For matching a request's method, use the headerName \":method\".",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "regex_match": {
+                                "Description": "The value of the header must match the regular expression specified in regexMatch. For regular expression grammar, please see: en.cppreference.com/w/cpp/regex/ecmascript For matching against a port specified in the HTTP request, use a headerMatch with headerName set to Host and a regular expression that satisfies the RFC2616 Host header's port specifier.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "methods": {
+                        "Description": "A list of HTTP methods to match. At least one method should match. Should not be set for gRPC services.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "ports": {
+                        "Description": "List of destination ports to match. At least one port should match.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "sources": {
+                "Description": "List of attributes for the traffic source. All of the sources must match. A source is a match if both principals and ipBlocks match.\nIf not set, the action specified in the 'action' field will be applied without any rule checks for the source.",
+                "Optional": true,
+                "Properties": {
+                    "ip_blocks": {
+                        "Description": "List of CIDR ranges to match based on source IP address. At least one IP block should match. Single IP (e.g., \"1.2.3.4\") and CIDR (e.g., \"1.2.3.0/24\") are supported. Authorization based on source IP alone should be avoided.\nThe IP addresses of any load balancers or proxies should be considered untrusted.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "principals": {
+                        "Description": "List of peer identities to match for authorization. At least one principal should match. Each peer can be an exact match, or a prefix match (example, \"namespace/*\") or a suffix match (example, \"*/service-account\") or a presence match \"*\".\nAuthorization based on the principal name without certificate validation (configured by ServerTlsPolicy resource) is considered insecure.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the AuthorizationPolicy was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

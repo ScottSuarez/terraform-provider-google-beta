@@ -1,0 +1,236 @@
+checker_type:
+    Type: TypeString
+    Description: 'The checker type to use for the check. If the monitored resource type is ''servicedirectory_service'', ''checker_type'' must be set to ''VPC_CHECKERS''. Possible values: ["STATIC_IP_CHECKERS", "VPC_CHECKERS"]'
+    Computed: "true"
+    Optional: "true"
+content_matchers:
+    Type: TypeList
+    Description: The expected content on the page the check is run against. Currently, only the first entry in the list is supported, and other entries will be ignored. The server will look for an exact match of the string in the page response's content. This field is optional and should only be specified if a content match is required.
+    Optional: "true"
+    Properties:
+        content:
+            Type: TypeString
+            Description: String or regex content to match (max 1024 bytes)
+            Required: "true"
+        json_path_matcher:
+            Type: TypeList
+            Description: Information needed to perform a JSONPath content match. Used for 'ContentMatcherOption::MATCHES_JSON_PATH' and 'ContentMatcherOption::NOT_MATCHES_JSON_PATH'.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                json_matcher:
+                    Type: TypeString
+                    Description: 'Options to perform JSONPath content matching. Default value: "EXACT_MATCH" Possible values: ["EXACT_MATCH", "REGEX_MATCH"]'
+                    Optional: "true"
+                json_path:
+                    Type: TypeString
+                    Description: JSONPath within the response output pointing to the expected 'ContentMatcher::content' to match against.
+                    Required: "true"
+        matcher:
+            Type: TypeString
+            Description: 'The type of content matcher that will be applied to the server output, compared to the content string when the check is run. Default value: "CONTAINS_STRING" Possible values: ["CONTAINS_STRING", "NOT_CONTAINS_STRING", "MATCHES_REGEX", "NOT_MATCHES_REGEX", "MATCHES_JSON_PATH", "NOT_MATCHES_JSON_PATH"]'
+            Optional: "true"
+display_name:
+    Type: TypeString
+    Description: A human-friendly name for the uptime check configuration. The display name should be unique within a Stackdriver Workspace in order to make it easier to identify; however, uniqueness is not enforced.
+    Required: "true"
+http_check:
+    Type: TypeList
+    Description: Contains information needed to make an HTTP or HTTPS check.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        accepted_response_status_codes:
+            Type: TypeList
+            Description: If present, the check will only pass if the HTTP response status code is in this set of status codes. If empty, the HTTP status code will only pass if the HTTP status code is 200-299.
+            Optional: "true"
+            Properties:
+                status_class:
+                    Type: TypeString
+                    Description: 'A class of status codes to accept. Possible values: ["STATUS_CLASS_1XX", "STATUS_CLASS_2XX", "STATUS_CLASS_3XX", "STATUS_CLASS_4XX", "STATUS_CLASS_5XX", "STATUS_CLASS_ANY"]'
+                    Optional: "true"
+                status_value:
+                    Type: TypeInt
+                    Description: A status code to accept.
+                    Optional: "true"
+        auth_info:
+            Type: TypeList
+            Description: The authentication information. Optional when creating an HTTP check; defaults to empty.
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+            MaxItems: "1"
+            Properties:
+                password:
+                    Type: TypeString
+                    Description: The password to authenticate.
+                    Required: "true"
+                username:
+                    Type: TypeString
+                    Description: The username to authenticate.
+                    Required: "true"
+        body:
+            Type: TypeString
+            Description: The request body associated with the HTTP POST request. If 'content_type' is 'URL_ENCODED', the body passed in must be URL-encoded. Users can provide a 'Content-Length' header via the 'headers' field or the API will do so. If the 'request_method' is 'GET' and 'body' is not empty, the API will return an error. The maximum byte size is 1 megabyte. Note - As with all bytes fields JSON representations are base64 encoded. e.g. 'foo=bar' in URL-encoded form is 'foo%3Dbar' and in base64 encoding is 'Zm9vJTI1M0RiYXI='.
+            Optional: "true"
+        content_type:
+            Type: TypeString
+            Description: 'The content type to use for the check. Possible values: ["TYPE_UNSPECIFIED", "URL_ENCODED", "USER_PROVIDED"]'
+            Optional: "true"
+        custom_content_type:
+            Type: TypeString
+            Description: A user provided content type header to use for the check. The invalid configurations outlined in the 'content_type' field apply to custom_content_type', as well as the following 1. 'content_type' is 'URL_ENCODED' and 'custom_content_type' is set. 2. 'content_type' is 'USER_PROVIDED' and 'custom_content_type' is not set.
+            Optional: "true"
+        headers:
+            Type: TypeMap
+            Description: The list of headers to send as part of the uptime check request. If two headers have the same key and different values, they should be entered as a single header, with the value being a comma-separated list of all the desired values as described in [RFC 2616 (page 31)](https://www.w3.org/Protocols/rfc2616/rfc2616.txt). Entering two separate headers with the same key in a Create call will cause the first to be overwritten by the second. The maximum number of headers allowed is 100.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+        mask_headers:
+            Type: TypeBool
+            Description: Boolean specifying whether to encrypt the header information. Encryption should be specified for any headers related to authentication that you do not wish to be seen when retrieving the configuration. The server will be responsible for encrypting the headers. On Get/List calls, if 'mask_headers' is set to 'true' then the headers will be obscured with '******'.
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+        path:
+            Type: TypeString
+            Description: The path to the page to run the check against. Will be combined with the host (specified within the MonitoredResource) and port to construct the full URL. If the provided path does not begin with '/', a '/' will be prepended automatically. Optional (defaults to '/').
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+        ping_config:
+            Type: TypeList
+            Description: Contains information needed to add pings to an HTTP check.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                pings_count:
+                    Type: TypeInt
+                    Description: Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.
+                    Required: "true"
+        port:
+            Type: TypeInt
+            Description: The port to the page to run the check against. Will be combined with 'host' (specified within the ['monitored_resource'](#nested_monitored_resource)) and path to construct the full URL. Optional (defaults to 80 without SSL, or 443 with SSL).
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+        request_method:
+            Type: TypeString
+            Description: 'The HTTP request method to use for the check. If set to ''METHOD_UNSPECIFIED'' then ''request_method'' defaults to ''GET''. Default value: "GET" Possible values: ["METHOD_UNSPECIFIED", "GET", "POST"]'
+            Optional: "true"
+        use_ssl:
+            Type: TypeBool
+            Description: If true, use HTTPS instead of HTTP to run the check.
+            Optional: "true"
+            AtLeastOneOf: http_check.0.auth_info, http_check.0.port, http_check.0.headers, http_check.0.path, http_check.0.use_ssl, http_check.0.mask_headers
+        validate_ssl:
+            Type: TypeBool
+            Description: Boolean specifying whether to include SSL certificate validation as a part of the Uptime check. Only applies to checks where 'monitored_resource' is set to 'uptime_url'. If 'use_ssl' is 'false', setting 'validate_ssl' to 'true' has no effect.
+            Optional: "true"
+monitored_resource:
+    Type: TypeList
+    Description: |-
+        The [monitored resource]
+        (https://cloud.google.com/monitoring/api/resources) associated with the
+        configuration. The following monitored resource types are supported for
+        uptime checks:
+        * 'aws_ec2_instance'
+        * 'aws_elb_load_balancer'
+        * 'gae_app
+        * 'gce_instance'
+        * 'k8s_service'
+        * 'servicedirectory_service'
+        * 'uptime_url'
+    Optional: "true"
+    ExactlyOneOf: monitored_resource, resource_group, synthetic_monitor
+    MaxItems: "1"
+    Properties:
+        labels:
+            Type: TypeMap
+            Description: Values for all of the labels listed in the associated monitored resource descriptor. For example, Compute Engine VM instances use the labels 'project_id', 'instance_id', and 'zone'.
+            Required: "true"
+        type:
+            Type: TypeString
+            Description: The monitored resource type. This field must match the type field of a ['MonitoredResourceDescriptor'](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.monitoredResourceDescriptors#MonitoredResourceDescriptor) object. For example, the type of a Compute Engine VM instance is 'gce_instance'. For a list of types, see [Monitoring resource types](https://cloud.google.com/monitoring/api/resources) and [Logging resource types](https://cloud.google.com/logging/docs/api/v2/resource-list).
+            Required: "true"
+name:
+    Type: TypeString
+    Description: A unique resource name for this UptimeCheckConfig. The format is 'projects/[PROJECT_ID]/uptimeCheckConfigs/[UPTIME_CHECK_ID]'.
+    Computed: "true"
+period:
+    Type: TypeString
+    Description: How often, in seconds, the uptime check is performed. Currently, the only supported values are 60s (1 minute), 300s (5 minutes), 600s (10 minutes), and 900s (15 minutes). Optional, defaults to 300s.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+resource_group:
+    Type: TypeList
+    Description: The group resource associated with the configuration.
+    Optional: "true"
+    ExactlyOneOf: monitored_resource, resource_group, synthetic_monitor
+    MaxItems: "1"
+    Properties:
+        group_id:
+            Type: TypeString
+            Description: The group of resources being monitored. Should be the 'name' of a group
+            Optional: "true"
+            AtLeastOneOf: resource_group.0.resource_type, resource_group.0.group_id
+        resource_type:
+            Type: TypeString
+            Description: 'The resource type of the group members. Possible values: ["RESOURCE_TYPE_UNSPECIFIED", "INSTANCE", "AWS_ELB_LOAD_BALANCER"]'
+            Optional: "true"
+            AtLeastOneOf: resource_group.0.resource_type, resource_group.0.group_id
+selected_regions:
+    Type: TypeList
+    Description: The list of regions from which the check will be run. Some regions contain one location, and others contain more than one. If this field is specified, enough regions to include a minimum of 3 locations must be provided, or an error message is returned. Not specifying this field will result in uptime checks running from all regions.
+    Optional: "true"
+synthetic_monitor:
+    Type: TypeList
+    Description: A Synthetic Monitor deployed to a Cloud Functions V2 instance.
+    Optional: "true"
+    ExactlyOneOf: monitored_resource, resource_group, synthetic_monitor
+    MaxItems: "1"
+    Properties:
+        cloud_function_v2:
+            Type: TypeList
+            Description: Target a Synthetic Monitor GCFv2 Instance
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: The fully qualified name of the cloud function resource.
+                    Required: "true"
+tcp_check:
+    Type: TypeList
+    Description: Contains information needed to make a TCP check.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        ping_config:
+            Type: TypeList
+            Description: Contains information needed to add pings to a TCP check.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                pings_count:
+                    Type: TypeInt
+                    Description: Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.
+                    Required: "true"
+        port:
+            Type: TypeInt
+            Description: The port to the page to run the check against. Will be combined with host (specified within the 'monitored_resource') to construct the full URL.
+            Required: "true"
+timeout:
+    Type: TypeString
+    Description: The maximum amount of time to wait for the request to complete (must be between 1 and 60 seconds). [See the accepted formats]( https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration)
+    Required: "true"
+uptime_check_id:
+    Type: TypeString
+    Description: The id of the uptime check
+    Computed: "true"
+user_labels:
+    Type: TypeMap
+    Description: User-supplied key/value data to be used for organizing and identifying the 'UptimeCheckConfig' objects. The field can contain up to 64 entries. Each key and value is limited to 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values can contain only lowercase letters, numerals, underscores, and dashes. Keys must begin with a letter.
+    Optional: "true"
+

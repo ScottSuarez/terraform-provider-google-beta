@@ -1,0 +1,21 @@
+data_refresh_window_days: TypeInt
+data_source_id: TypeString
+destination_dataset_id: TypeString
+disabled: TypeBool
+display_name: TypeString
+email_preferences:
+    enable_failure_email: TypeBool
+location: TypeString
+name: TypeString
+notification_pubsub_topic: TypeString
+params: TypeMap(TypeString)
+project: TypeString
+schedule: TypeString
+schedule_options:
+    disable_auto_scheduling: TypeBool
+    end_time: TypeString
+    start_time: TypeString
+sensitive_params:
+    secret_access_key: TypeString
+service_account_name: TypeString
+

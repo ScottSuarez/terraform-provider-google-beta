@@ -1,0 +1,57 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "endpoint_ip": {
+        "Computed": true,
+        "Description": "The Private Service Connect connection endpoint ip.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Location in which Endpoint Attachment needs to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of Endpoint Attachment needs to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_attachment": {
+        "Description": "The path of the service attachment.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

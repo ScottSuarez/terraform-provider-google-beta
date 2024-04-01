@@ -1,0 +1,16 @@
+certificate_manager_certificates: TypeList(TypeString)
+certificate_map: TypeString
+creation_timestamp: TypeString
+description: TypeString
+http_keep_alive_timeout_sec: TypeInt
+name: TypeString
+project: TypeString
+proxy_bind: TypeBool
+proxy_id: TypeInt
+quic_override: TypeString
+self_link: TypeString
+server_tls_policy: TypeString
+ssl_certificates: TypeList(TypeString)
+ssl_policy: TypeString
+url_map: TypeString
+

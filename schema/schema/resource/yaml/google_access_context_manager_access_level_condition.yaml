@@ -1,0 +1,126 @@
+access_level:
+    Type: TypeString
+    Description: The name of the Access Level to add this condition to.
+    Required: "true"
+device_policy:
+    Type: TypeList
+    Description: |-
+        Device specific restrictions, all restrictions must hold for
+        the Condition to be true. If not specified, all devices are
+        allowed.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        allowed_device_management_levels:
+            Type: TypeList
+            Description: |-
+                A list of allowed device management levels.
+                An empty list allows all management levels. Possible values: ["MANAGEMENT_UNSPECIFIED", "NONE", "BASIC", "COMPLETE"]
+            Optional: "true"
+        allowed_encryption_statuses:
+            Type: TypeList
+            Description: |-
+                A list of allowed encryptions statuses.
+                An empty list allows all statuses. Possible values: ["ENCRYPTION_UNSPECIFIED", "ENCRYPTION_UNSUPPORTED", "UNENCRYPTED", "ENCRYPTED"]
+            Optional: "true"
+        os_constraints:
+            Type: TypeList
+            Description: |-
+                A list of allowed OS versions.
+                An empty list allows all types and all versions.
+            Optional: "true"
+            Properties:
+                minimum_version:
+                    Type: TypeString
+                    Description: |-
+                        The minimum allowed OS version. If not set, any version
+                        of this OS satisfies the constraint.
+                        Format: "major.minor.patch" such as "10.5.301", "9.2.1".
+                    Optional: "true"
+                os_type:
+                    Type: TypeString
+                    Description: 'The operating system type of the device. Possible values: ["OS_UNSPECIFIED", "DESKTOP_MAC", "DESKTOP_WINDOWS", "DESKTOP_LINUX", "DESKTOP_CHROME_OS", "ANDROID", "IOS"]'
+                    Required: "true"
+        require_admin_approval:
+            Type: TypeBool
+            Description: Whether the device needs to be approved by the customer admin.
+            Optional: "true"
+        require_corp_owned:
+            Type: TypeBool
+            Description: Whether the device needs to be corp owned.
+            Optional: "true"
+        require_screen_lock:
+            Type: TypeBool
+            Description: |-
+                Whether or not screenlock is required for the DevicePolicy
+                to be true. Defaults to false.
+            Optional: "true"
+ip_subnetworks:
+    Type: TypeList
+    Description: |-
+        A list of CIDR block IP subnetwork specification. May be IPv4
+        or IPv6.
+        Note that for a CIDR IP address block, the specified IP address
+        portion must be properly truncated (i.e. all the host bits must
+        be zero) or the input is considered malformed. For example,
+        "192.0.2.0/24" is accepted but "192.0.2.1/24" is not. Similarly,
+        for IPv6, "2001:db8::/32" is accepted whereas "2001:db8::1/32"
+        is not. The originating IP of a request must be in one of the
+        listed subnets in order for this Condition to be true.
+        If empty, all IP addresses are allowed.
+    Optional: "true"
+members:
+    Type: TypeList
+    Description: |-
+        An allowed list of members (users, service accounts).
+        Using groups is not supported yet.
+
+        The signed-in user originating the request must be a part of one
+        of the provided members. If not specified, a request may come
+        from any user (logged in/not logged in, not present in any
+        groups, etc.).
+        Formats: 'user:{emailid}', 'serviceAccount:{emailid}'
+    Optional: "true"
+negate:
+    Type: TypeBool
+    Description: |-
+        Whether to negate the Condition. If true, the Condition becomes
+        a NAND over its non-empty fields, each field must be false for
+        the Condition overall to be satisfied. Defaults to false.
+    Optional: "true"
+regions:
+    Type: TypeList
+    Description: |-
+        The request must originate from one of the provided
+        countries/regions.
+        Format: A valid ISO 3166-1 alpha-2 code.
+    Optional: "true"
+required_access_levels:
+    Type: TypeList
+    Description: |-
+        A list of other access levels defined in the same Policy,
+        referenced by resource name. Referencing an AccessLevel which
+        does not exist is an error. All access levels listed must be
+        granted for the Condition to be true.
+        Format: accessPolicies/{policy_id}/accessLevels/{short_name}
+    Optional: "true"
+vpc_network_sources:
+    Type: TypeList
+    Description: The request must originate from one of the provided VPC networks in Google Cloud. Cannot specify this field together with 'ip_subnetworks'.
+    Optional: "true"
+    Properties:
+        vpc_subnetwork:
+            Type: TypeList
+            Description: Sub networks within a VPC network.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                network:
+                    Type: TypeString
+                    Description: Required. Network name to be allowed by this Access Level. Networks of foreign organizations requires 'compute.network.get' permission to be granted to caller.
+                    Required: "true"
+                vpc_ip_subnetworks:
+                    Type: TypeList
+                    Description: CIDR block IP subnetwork specification. Must be IPv4.
+                    Optional: "true"
+

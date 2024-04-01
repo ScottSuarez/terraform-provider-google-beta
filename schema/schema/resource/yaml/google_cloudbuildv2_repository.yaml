@@ -1,0 +1,46 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Allows clients to store small amounts of arbitrary data.
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. Server assigned timestamp for when the connection was created.
+    Computed: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the repository.
+    Required: "true"
+parent_connection:
+    Type: TypeString
+    Description: The connection for the resource
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+remote_uri:
+    Type: TypeString
+    Description: Required. Git Clone HTTPS URI.
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. Server assigned timestamp for when the connection was updated.
+    Computed: "true"
+

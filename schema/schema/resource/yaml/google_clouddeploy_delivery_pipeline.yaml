@@ -1,0 +1,331 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field `effective_annotations` for all of the annotations present on the resource.
+    Optional: "true"
+condition:
+    Type: TypeList
+    Description: Output only. Information around the state of the Delivery Pipeline.
+    Computed: "true"
+    Properties:
+        pipeline_ready_condition:
+            Type: TypeList
+            Description: Details around the Pipeline's overall status.
+            Computed: "true"
+            Properties:
+                status:
+                    Type: TypeBool
+                    Description: True if the Pipeline is in a valid state. Otherwise at least one condition in `PipelineCondition` is in an invalid state. Iterate over those conditions and see which condition(s) has status = false to find out what is wrong with the Pipeline.
+                    Computed: "true"
+                update_time:
+                    Type: TypeString
+                    Description: Last time the condition was updated.
+                    Computed: "true"
+        targets_present_condition:
+            Type: TypeList
+            Description: Details around targets enumerated in the pipeline.
+            Computed: "true"
+            Properties:
+                missing_targets:
+                    Type: TypeList
+                    Description: The list of Target names that are missing. For example, projects/{project_id}/locations/{location_name}/targets/{target_name}.
+                    Computed: "true"
+                status:
+                    Type: TypeBool
+                    Description: True if there aren't any missing Targets.
+                    Computed: "true"
+                update_time:
+                    Type: TypeString
+                    Description: Last time the condition was updated.
+                    Computed: "true"
+        targets_type_condition:
+            Type: TypeList
+            Description: Details on the whether the targets enumerated in the pipeline are of the same type.
+            Computed: "true"
+            Properties:
+                error_details:
+                    Type: TypeString
+                    Description: Human readable error message.
+                    Computed: "true"
+                status:
+                    Type: TypeBool
+                    Description: True if the targets are all a comparable type. For example this is true if all targets are GKE clusters. This is false if some targets are Cloud Run targets and others are GKE clusters.
+                    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. Time at which the pipeline was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Description of the `DeliveryPipeline`. Max length is 255 characters.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels are attributes that can be set and used by both the user and by Google Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be <= 128 bytes.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Name of the `DeliveryPipeline`. Format is [a-z][a-z0-9\-]{0,62}.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+serial_pipeline:
+    Type: TypeList
+    Description: SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        stages:
+            Type: TypeList
+            Description: Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+            Optional: "true"
+            Properties:
+                deploy_parameters:
+                    Type: TypeList
+                    Description: Optional. The deploy parameters to use for the target in this stage.
+                    Optional: "true"
+                    Properties:
+                        match_target_labels:
+                            Type: TypeMap
+                            Description: Optional. Deploy parameters are applied to targets with match labels. If unspecified, deploy parameters are applied to all targets (including child targets of a multi-target).
+                            Optional: "true"
+                        values:
+                            Type: TypeMap
+                            Description: Required. Values are deploy parameters in key-value pairs.
+                            Required: "true"
+                profiles:
+                    Type: TypeList
+                    Description: Skaffold profiles to use when rendering the manifest for this stage's `Target`.
+                    Optional: "true"
+                strategy:
+                    Type: TypeList
+                    Description: Optional. The strategy to use for a `Rollout` to this stage.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        canary:
+                            Type: TypeList
+                            Description: Canary deployment strategy provides progressive percentage based deployments to a Target.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                canary_deployment:
+                                    Type: TypeList
+                                    Description: Configures the progressive based deployment for a Target.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        percentages:
+                                            Type: TypeList
+                                            Description: Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 <= n < 100.
+                                            Required: "true"
+                                        postdeploy:
+                                            Type: TypeList
+                                            Description: Optional. Configuration for the postdeploy job of the last phase. If this is not configured, postdeploy job will not be present.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                actions:
+                                                    Type: TypeList
+                                                    Description: Optional. A sequence of skaffold custom actions to invoke during execution of the postdeploy job.
+                                                    Optional: "true"
+                                        predeploy:
+                                            Type: TypeList
+                                            Description: Optional. Configuration for the predeploy job of the first phase. If this is not configured, predeploy job will not be present.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                actions:
+                                                    Type: TypeList
+                                                    Description: Optional. A sequence of skaffold custom actions to invoke during execution of the predeploy job.
+                                                    Optional: "true"
+                                        verify:
+                                            Type: TypeBool
+                                            Description: Whether to run verify tests after each percentage deployment.
+                                            Optional: "true"
+                                custom_canary_deployment:
+                                    Type: TypeList
+                                    Description: Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        phase_configs:
+                                            Type: TypeList
+                                            Description: Required. Configuration for each phase in the canary deployment in the order executed.
+                                            Required: "true"
+                                            Properties:
+                                                percentage:
+                                                    Type: TypeInt
+                                                    Description: Required. Percentage deployment for the phase.
+                                                    Required: "true"
+                                                phase_id:
+                                                    Type: TypeString
+                                                    Description: 'Required. The ID to assign to the `Rollout` phase. This value must consist of lower-case letters, numbers, and hyphens, start with a letter and end with a letter or a number, and have a max length of 63 characters. In other words, it must match the following regex: `^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$`.'
+                                                    Required: "true"
+                                                postdeploy:
+                                                    Type: TypeList
+                                                    Description: Optional. Configuration for the postdeploy job of this phase. If this is not configured, postdeploy job will not be present for this phase.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        actions:
+                                                            Type: TypeList
+                                                            Description: Optional. A sequence of skaffold custom actions to invoke during execution of the postdeploy job.
+                                                            Optional: "true"
+                                                predeploy:
+                                                    Type: TypeList
+                                                    Description: Optional. Configuration for the predeploy job of this phase. If this is not configured, predeploy job will not be present for this phase.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        actions:
+                                                            Type: TypeList
+                                                            Description: Optional. A sequence of skaffold custom actions to invoke during execution of the predeploy job.
+                                                            Optional: "true"
+                                                profiles:
+                                                    Type: TypeList
+                                                    Description: Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
+                                                    Optional: "true"
+                                                verify:
+                                                    Type: TypeBool
+                                                    Description: Whether to run verify tests after the deployment.
+                                                    Optional: "true"
+                                runtime_config:
+                                    Type: TypeList
+                                    Description: Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        cloud_run:
+                                            Type: TypeList
+                                            Description: Cloud Run runtime configuration.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                automatic_traffic_control:
+                                                    Type: TypeBool
+                                                    Description: Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user's behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
+                                                    Optional: "true"
+                                        kubernetes:
+                                            Type: TypeList
+                                            Description: Kubernetes runtime configuration.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                gateway_service_mesh:
+                                                    Type: TypeList
+                                                    Description: Kubernetes Gateway API service mesh configuration.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        deployment:
+                                                            Type: TypeString
+                                                            Description: Required. Name of the Kubernetes Deployment whose traffic is managed by the specified HTTPRoute and Service.
+                                                            Required: "true"
+                                                        http_route:
+                                                            Type: TypeString
+                                                            Description: Required. Name of the Gateway API HTTPRoute.
+                                                            Required: "true"
+                                                        route_update_wait_time:
+                                                            Type: TypeString
+                                                            Description: Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.
+                                                            Optional: "true"
+                                                        service:
+                                                            Type: TypeString
+                                                            Description: Required. Name of the Kubernetes Service.
+                                                            Required: "true"
+                                                service_networking:
+                                                    Type: TypeList
+                                                    Description: Kubernetes Service networking configuration.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        deployment:
+                                                            Type: TypeString
+                                                            Description: Required. Name of the Kubernetes Deployment whose traffic is managed by the specified Service.
+                                                            Required: "true"
+                                                        disable_pod_overprovisioning:
+                                                            Type: TypeBool
+                                                            Description: Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.
+                                                            Optional: "true"
+                                                        service:
+                                                            Type: TypeString
+                                                            Description: Required. Name of the Kubernetes Service.
+                                                            Required: "true"
+                        standard:
+                            Type: TypeList
+                            Description: Standard deployment strategy executes a single deploy and allows verifying the deployment.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                postdeploy:
+                                    Type: TypeList
+                                    Description: Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        actions:
+                                            Type: TypeList
+                                            Description: Optional. A sequence of skaffold custom actions to invoke during execution of the postdeploy job.
+                                            Optional: "true"
+                                predeploy:
+                                    Type: TypeList
+                                    Description: Optional. Configuration for the predeploy job. If this is not configured, predeploy job will not be present.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        actions:
+                                            Type: TypeList
+                                            Description: Optional. A sequence of skaffold custom actions to invoke during execution of the predeploy job.
+                                            Optional: "true"
+                                verify:
+                                    Type: TypeBool
+                                    Description: Whether to verify a deployment.
+                                    Optional: "true"
+                target_id:
+                    Type: TypeString
+                    Description: The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
+                    Optional: "true"
+suspended:
+    Type: TypeBool
+    Description: When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Output only. Unique identifier of the `DeliveryPipeline`.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. Most recent time at which the pipeline was updated.
+    Computed: "true"
+

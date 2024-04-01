@@ -1,0 +1,84 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        User specified annotations. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field `effective_annotations` for all of the annotations present on the resource.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. Time at which the request to create the `WorkerPool` was received.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: Output only. Time at which the request to delete the `WorkerPool` was received.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: A user-specified, human-readable name for the `WorkerPool`. If provided, this value must be 1-63 characters.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: User-defined name of the `WorkerPool`.
+    Required: "true"
+network_config:
+    Type: TypeList
+    Description: Network configuration for the `WorkerPool`.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        peered_network:
+            Type: TypeString
+            Description: Required. Immutable. The network definition that the workers are peered to. If this section is left empty, the workers will be peered to `WorkerPool.project_id` on the service producer network. Must be in the format `projects/{project}/global/networks/{network}`, where `{project}` is a project number, such as `12345`, and `{network}` is the name of a VPC network in the project. See [Understanding network configuration options](https://cloud.google.com/cloud-build/docs/custom-workers/set-up-custom-worker-pool-environment#understanding_the_network_configuration_options)
+            Required: "true"
+        peered_network_ip_range:
+            Type: TypeString
+            Description: Optional. Immutable. Subnet IP range within the peered network. This is specified in CIDR notation with a slash and the subnet prefix size. You can optionally specify an IP address before the subnet prefix value. e.g. `192.168.0.0/29` would specify an IP range starting at 192.168.0.0 with a prefix size of 29 bits. `/16` would specify a prefix size of 16 bits, with an automatically determined IP within the peered VPC. If unspecified, a value of `/24` will be used.
+            Optional: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. `WorkerPool` state. Possible values: STATE_UNSPECIFIED, PENDING, APPROVED, REJECTED, CANCELLED'
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Output only. A unique identifier for the `WorkerPool`.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. Time at which the request to update the `WorkerPool` was received.
+    Computed: "true"
+worker_config:
+    Type: TypeList
+    Description: Configuration to be used for a creating workers in the `WorkerPool`.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        disk_size_gb:
+            Type: TypeInt
+            Description: Size of the disk attached to the worker, in GB. See [Worker pool config file](https://cloud.google.com/cloud-build/docs/custom-workers/worker-pool-config-file). Specify a value of up to 1000. If `0` is specified, Cloud Build will use a standard disk size.
+            Optional: "true"
+        machine_type:
+            Type: TypeString
+            Description: Machine type of a worker, such as `n1-standard-1`. See [Worker pool config file](https://cloud.google.com/cloud-build/docs/custom-workers/worker-pool-config-file). If left blank, Cloud Build will use `n1-standard-1`.
+            Optional: "true"
+        no_external_ip:
+            Type: TypeBool
+            Description: If true, workers are created without any public address, which prevents network egress to public IPs.
+            Computed: "true"
+            Optional: "true"
+

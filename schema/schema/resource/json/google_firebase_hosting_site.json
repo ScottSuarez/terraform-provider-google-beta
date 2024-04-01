@@ -1,0 +1,27 @@
+{
+    "app_id": {
+        "Description": "Optional. The [ID of a Web App](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects.webApps#WebApp.FIELDS.app_id)\nassociated with the Hosting site.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "default_url": {
+        "Computed": true,
+        "Description": "The default URL for the site in the form of https://{name}.web.app",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. The fully-qualified resource name of the Hosting site, in the\nformat: projects/PROJECT_IDENTIFIER/sites/SITE_ID PROJECT_IDENTIFIER: the\nFirebase project's\n['ProjectNumber'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its\n['ProjectId'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_id).\nLearn more about using project identifiers in Google's\n[AIP 2510 standard](https://google.aip.dev/cloud/2510).",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "site_id": {
+        "Description": "Required. Immutable. A globally unique identifier for the Hosting site. This identifier is\nused to construct the Firebase-provisioned subdomains for the site, so it must also be a valid\ndomain name label.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

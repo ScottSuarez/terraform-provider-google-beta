@@ -1,0 +1,1 @@
+["accelerator_type","cidr_block","description","effective_labels","labels","name","network","network_endpoints","network_endpoints.ip_address","network_endpoints.port","project","scheduling_config","scheduling_config.preemptible","service_account","tensorflow_version","terraform_labels","use_service_networking","zone"]

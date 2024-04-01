@@ -1,0 +1,550 @@
+create_time: TypeString
+deidentify_config:
+    image_transformations:
+        transforms:
+            all_info_types: {}
+            all_text: {}
+            redaction_color:
+                blue: TypeFloat
+                green: TypeFloat
+                red: TypeFloat
+            selected_info_types:
+                info_types:
+                    name: TypeString
+                    sensitivity_score:
+                        score: TypeString
+                    version: TypeString
+    info_type_transformations:
+        transformations:
+            info_types:
+                name: TypeString
+                sensitivity_score:
+                    score: TypeString
+                version: TypeString
+            primitive_transformation:
+                bucketing_config:
+                    buckets:
+                        max:
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                        min:
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                        replacement_value:
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                character_mask_config:
+                    characters_to_ignore:
+                        characters_to_skip: TypeString
+                        common_characters_to_ignore: TypeString
+                    masking_character: TypeString
+                    number_to_mask: TypeInt
+                    reverse_order: TypeBool
+                crypto_deterministic_config:
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    surrogate_info_type:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                crypto_hash_config:
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                crypto_replace_ffx_fpe_config:
+                    common_alphabet: TypeString
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    custom_alphabet: TypeString
+                    radix: TypeInt
+                    surrogate_info_type:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                date_shift_config:
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    lower_bound_days: TypeInt
+                    upper_bound_days: TypeInt
+                fixed_size_bucketing_config:
+                    bucket_size: TypeFloat
+                    lower_bound:
+                        float_value: TypeFloat
+                        integer_value: TypeString
+                    upper_bound:
+                        float_value: TypeFloat
+                        integer_value: TypeString
+                redact_config: {}
+                replace_config:
+                    new_value:
+                        boolean_value: TypeBool
+                        date_value:
+                            day: TypeInt
+                            month: TypeInt
+                            year: TypeInt
+                        day_of_week_value: TypeString
+                        float_value: TypeFloat
+                        integer_value: TypeInt
+                        string_value: TypeString
+                        time_value:
+                            hours: TypeInt
+                            minutes: TypeInt
+                            nanos: TypeInt
+                            seconds: TypeInt
+                        timestamp_value: TypeString
+                replace_dictionary_config:
+                    word_list:
+                        words: TypeList(TypeString)
+                replace_with_info_type_config: TypeBool
+                time_part_config:
+                    part_to_extract: TypeString
+    record_transformations:
+        field_transformations:
+            condition:
+                expressions:
+                    conditions:
+                        conditions:
+                            field:
+                                name: TypeString
+                            operator: TypeString
+                            value:
+                                boolean_value: TypeBool
+                                date_value:
+                                    day: TypeInt
+                                    month: TypeInt
+                                    year: TypeInt
+                                day_of_week_value: TypeString
+                                float_value: TypeFloat
+                                integer_value: TypeString
+                                string_value: TypeString
+                                time_value:
+                                    hours: TypeInt
+                                    minutes: TypeInt
+                                    nanos: TypeInt
+                                    seconds: TypeInt
+                                timestamp_value: TypeString
+                    logical_operator: TypeString
+            fields:
+                name: TypeString
+            info_type_transformations:
+                transformations:
+                    info_types:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                    primitive_transformation:
+                        bucketing_config:
+                            buckets:
+                                max:
+                                    date_value:
+                                        day: TypeInt
+                                        month: TypeInt
+                                        year: TypeInt
+                                    day_of_week_value: TypeString
+                                    float_value: TypeFloat
+                                    integer_value: TypeString
+                                    string_value: TypeString
+                                    time_value:
+                                        hours: TypeInt
+                                        minutes: TypeInt
+                                        nanos: TypeInt
+                                        seconds: TypeInt
+                                    timestamp_value: TypeString
+                                min:
+                                    date_value:
+                                        day: TypeInt
+                                        month: TypeInt
+                                        year: TypeInt
+                                    day_of_week_value: TypeString
+                                    float_value: TypeFloat
+                                    integer_value: TypeString
+                                    string_value: TypeString
+                                    time_value:
+                                        hours: TypeInt
+                                        minutes: TypeInt
+                                        nanos: TypeInt
+                                        seconds: TypeInt
+                                    timestamp_value: TypeString
+                                replacement_value:
+                                    date_value:
+                                        day: TypeInt
+                                        month: TypeInt
+                                        year: TypeInt
+                                    day_of_week_value: TypeString
+                                    float_value: TypeFloat
+                                    integer_value: TypeString
+                                    string_value: TypeString
+                                    time_value:
+                                        hours: TypeInt
+                                        minutes: TypeInt
+                                        nanos: TypeInt
+                                        seconds: TypeInt
+                                    timestamp_value: TypeString
+                        character_mask_config:
+                            characters_to_ignore:
+                                characters_to_skip: TypeString
+                                common_characters_to_ignore: TypeString
+                            masking_character: TypeString
+                            number_to_mask: TypeInt
+                            reverse_order: TypeBool
+                        crypto_deterministic_config:
+                            context:
+                                name: TypeString
+                            crypto_key:
+                                kms_wrapped:
+                                    crypto_key_name: TypeString
+                                    wrapped_key: TypeString
+                                transient:
+                                    name: TypeString
+                                unwrapped:
+                                    key: TypeString
+                            surrogate_info_type:
+                                name: TypeString
+                                sensitivity_score:
+                                    score: TypeString
+                                version: TypeString
+                        crypto_hash_config:
+                            crypto_key:
+                                kms_wrapped:
+                                    crypto_key_name: TypeString
+                                    wrapped_key: TypeString
+                                transient:
+                                    name: TypeString
+                                unwrapped:
+                                    key: TypeString
+                        crypto_replace_ffx_fpe_config:
+                            common_alphabet: TypeString
+                            context:
+                                name: TypeString
+                            crypto_key:
+                                kms_wrapped:
+                                    crypto_key_name: TypeString
+                                    wrapped_key: TypeString
+                                transient:
+                                    name: TypeString
+                                unwrapped:
+                                    key: TypeString
+                            custom_alphabet: TypeString
+                            radix: TypeInt
+                            surrogate_info_type:
+                                name: TypeString
+                                sensitivity_score:
+                                    score: TypeString
+                                version: TypeString
+                        date_shift_config:
+                            context:
+                                name: TypeString
+                            crypto_key:
+                                kms_wrapped:
+                                    crypto_key_name: TypeString
+                                    wrapped_key: TypeString
+                                transient:
+                                    name: TypeString
+                                unwrapped:
+                                    key: TypeString
+                            lower_bound_days: TypeInt
+                            upper_bound_days: TypeInt
+                        fixed_size_bucketing_config:
+                            bucket_size: TypeFloat
+                            lower_bound:
+                                float_value: TypeFloat
+                                integer_value: TypeString
+                            upper_bound:
+                                float_value: TypeFloat
+                                integer_value: TypeString
+                        redact_config: {}
+                        replace_config:
+                            new_value:
+                                boolean_value: TypeBool
+                                date_value:
+                                    day: TypeInt
+                                    month: TypeInt
+                                    year: TypeInt
+                                day_of_week_value: TypeString
+                                float_value: TypeFloat
+                                integer_value: TypeString
+                                string_value: TypeString
+                                time_value:
+                                    hours: TypeInt
+                                    minutes: TypeInt
+                                    nanos: TypeInt
+                                    seconds: TypeInt
+                                timestamp_value: TypeString
+                        replace_dictionary_config:
+                            word_list:
+                                words: TypeList(TypeString)
+                        replace_with_info_type_config: {}
+                        time_part_config:
+                            part_to_extract: TypeString
+            primitive_transformation:
+                bucketing_config:
+                    buckets:
+                        max:
+                            boolean_value: TypeBool
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                        min:
+                            boolean_value: TypeBool
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                        replacement_value:
+                            boolean_value: TypeBool
+                            date_value:
+                                day: TypeInt
+                                month: TypeInt
+                                year: TypeInt
+                            day_of_week_value: TypeString
+                            float_value: TypeFloat
+                            integer_value: TypeString
+                            string_value: TypeString
+                            time_value:
+                                hours: TypeInt
+                                minutes: TypeInt
+                                nanos: TypeInt
+                                seconds: TypeInt
+                            timestamp_value: TypeString
+                character_mask_config:
+                    characters_to_ignore:
+                        characters_to_skip: TypeString
+                        common_characters_to_ignore: TypeString
+                    masking_character: TypeString
+                    number_to_mask: TypeInt
+                    reverse_order: TypeBool
+                crypto_deterministic_config:
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    surrogate_info_type:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                crypto_hash_config:
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                crypto_replace_ffx_fpe_config:
+                    common_alphabet: TypeString
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    custom_alphabet: TypeString
+                    radix: TypeInt
+                    surrogate_info_type:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                date_shift_config:
+                    context:
+                        name: TypeString
+                    crypto_key:
+                        kms_wrapped:
+                            crypto_key_name: TypeString
+                            wrapped_key: TypeString
+                        transient:
+                            name: TypeString
+                        unwrapped:
+                            key: TypeString
+                    lower_bound_days: TypeInt
+                    upper_bound_days: TypeInt
+                fixed_size_bucketing_config:
+                    bucket_size: TypeFloat
+                    lower_bound:
+                        boolean_value: TypeBool
+                        date_value:
+                            day: TypeInt
+                            month: TypeInt
+                            year: TypeInt
+                        day_of_week_value: TypeString
+                        float_value: TypeFloat
+                        integer_value: TypeString
+                        string_value: TypeString
+                        time_value:
+                            hours: TypeInt
+                            minutes: TypeInt
+                            nanos: TypeInt
+                            seconds: TypeInt
+                        timestamp_value: TypeString
+                    upper_bound:
+                        boolean_value: TypeBool
+                        date_value:
+                            day: TypeInt
+                            month: TypeInt
+                            year: TypeInt
+                        day_of_week_value: TypeString
+                        float_value: TypeFloat
+                        integer_value: TypeString
+                        string_value: TypeString
+                        time_value:
+                            hours: TypeInt
+                            minutes: TypeInt
+                            nanos: TypeInt
+                            seconds: TypeInt
+                        timestamp_value: TypeString
+                redact_config: {}
+                replace_config:
+                    new_value:
+                        boolean_value: TypeBool
+                        date_value:
+                            day: TypeInt
+                            month: TypeInt
+                            year: TypeInt
+                        day_of_week_value: TypeString
+                        float_value: TypeFloat
+                        integer_value: TypeString
+                        string_value: TypeString
+                        time_value:
+                            hours: TypeInt
+                            minutes: TypeInt
+                            nanos: TypeInt
+                            seconds: TypeInt
+                        timestamp_value: TypeString
+                replace_dictionary_config:
+                    word_list:
+                        words: TypeList(TypeString)
+                time_part_config:
+                    part_to_extract: TypeString
+        record_suppressions:
+            condition:
+                expressions:
+                    conditions:
+                        conditions:
+                            field:
+                                name: TypeString
+                            operator: TypeString
+                            value:
+                                boolean_value: TypeBool
+                                date_value:
+                                    day: TypeInt
+                                    month: TypeInt
+                                    year: TypeInt
+                                day_of_week_value: TypeString
+                                float_value: TypeFloat
+                                integer_value: TypeString
+                                string_value: TypeString
+                                time_value:
+                                    hours: TypeInt
+                                    minutes: TypeInt
+                                    nanos: TypeInt
+                                    seconds: TypeInt
+                                timestamp_value: TypeString
+                    logical_operator: TypeString
+description: TypeString
+display_name: TypeString
+name: TypeString
+parent: TypeString
+template_id: TypeString
+update_time: TypeString
+

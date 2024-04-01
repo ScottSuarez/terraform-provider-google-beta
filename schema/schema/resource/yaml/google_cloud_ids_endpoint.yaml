@@ -1,0 +1,45 @@
+create_time:
+    Type: TypeString
+    Description: Creation timestamp in RFC 3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of the endpoint.
+    Optional: "true"
+endpoint_forwarding_rule:
+    Type: TypeString
+    Description: URL of the endpoint's network address to which traffic is to be sent by Packet Mirroring.
+    Computed: "true"
+endpoint_ip:
+    Type: TypeString
+    Description: Internal IP address of the endpoint's network entry point.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location for the endpoint.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Name of the endpoint in the format projects/{project_id}/locations/{locationId}/endpoints/{endpointId}.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: Name of the VPC network that is connected to the IDS endpoint. This can either contain the VPC network name itself (like "src-net") or the full URL to the network (like "projects/{project_id}/global/networks/src-net").
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+severity:
+    Type: TypeString
+    Description: 'The minimum alert severity level that is reported by the endpoint. Possible values: ["INFORMATIONAL", "LOW", "MEDIUM", "HIGH", "CRITICAL"]'
+    Required: "true"
+threat_exceptions:
+    Type: TypeList
+    Description: 'Configuration for threat IDs excluded from generating alerts. Limit: 99 IDs.'
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: Last update timestamp in RFC 3339 text format.
+    Computed: "true"
+

@@ -1,0 +1,23 @@
+cluster: TypeString
+create_time: TypeString
+details:
+    cloud_router:
+        name: TypeString
+    cloud_vpns:
+        gateway: TypeString
+    error: TypeString
+    state: TypeString
+effective_labels: TypeMap(TypeString)
+enable_high_availability: TypeBool
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+nat_gateway_ip: TypeString
+project: TypeString
+router: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+vpc: TypeString
+vpc_project:
+    project_id: TypeString
+

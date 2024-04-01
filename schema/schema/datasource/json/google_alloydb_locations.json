@@ -1,0 +1,43 @@
+{
+    "locations": {
+        "Computed": true,
+        "Properties": {
+            "display_name": {
+                "Computed": true,
+                "Description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "location_id": {
+                "Computed": true,
+                "Description": "The canonical id for this location. For example: \"us-east1\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "metadata": {
+                "Computed": true,
+                "Description": "Service-specific metadata. For example the available capacity at the given location.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "Resource name for the location, which may vary between implementations. For example: \"projects/example-project/locations/us-east1",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Description": "Project ID of the project.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

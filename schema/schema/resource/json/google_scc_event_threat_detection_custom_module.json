@@ -1,0 +1,42 @@
+{
+    "config": {
+        "Description": "Config for the module. For the resident module, its config value is defined at this level.\nFor the inherited module, its config value is inherited from the ancestor module.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The human readable name to be displayed for the module.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enablement_state": {
+        "Description": "The state of enablement for the module at the given level of the hierarchy. Possible values: [\"ENABLED\", \"DISABLED\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "last_editor": {
+        "Computed": true,
+        "Description": "The editor that last updated the custom module",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the Event Threat Detection custom module.\nIts format is \"organizations/{organization}/eventThreatDetectionSettings/customModules/{module}\".",
+        "Type": "TypeString"
+    },
+    "organization": {
+        "Description": "Numerical ID of the parent organization.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "Immutable. Type for the module. e.g. CONFIGURABLE_BAD_IP.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time at which the custom module was last updated.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

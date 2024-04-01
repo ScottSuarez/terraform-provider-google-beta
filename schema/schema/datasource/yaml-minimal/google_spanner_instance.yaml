@@ -1,0 +1,21 @@
+autoscaling_config:
+    autoscaling_limits:
+        max_nodes: TypeInt
+        max_processing_units: TypeInt
+        min_nodes: TypeInt
+        min_processing_units: TypeInt
+    autoscaling_targets:
+        high_priority_cpu_utilization_percent: TypeInt
+        storage_utilization_percent: TypeInt
+config: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+force_destroy: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+num_nodes: TypeInt
+processing_units: TypeInt
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+

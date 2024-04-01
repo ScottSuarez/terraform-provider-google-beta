@@ -1,0 +1,49 @@
+backup_pool:
+    Type: TypeString
+    Description: URL to the backup target pool. Must also set failover_ratio.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: Textual description field.
+    Optional: "true"
+failover_ratio:
+    Type: TypeFloat
+    Description: Ratio (0 to 1) of failed nodes before using the backup pool (which must also be set).
+    Optional: "true"
+health_checks:
+    Type: TypeList
+    Description: List of zero or one health check name or self_link. Only legacy google_compute_http_health_check is supported.
+    Optional: "true"
+    MaxItems: "1"
+instances:
+    Type: TypeSet
+    Description: List of instances in the pool. They can be given as URLs, or in the form of "zone/name". Note that the instances need not exist at the time of target pool creation, so there is no need to use the Terraform interpolators to create a dependency on the instances from the target pool.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: A unique name for the resource, required by GCE. Changing this forces a new resource to be created.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: Where the target pool resides. Defaults to project region.
+    Computed: "true"
+    Optional: "true"
+security_policy:
+    Type: TypeString
+    Description: The resource URL for the security policy associated with this target pool.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: The URI of the created resource.
+    Computed: "true"
+session_affinity:
+    Type: TypeString
+    Description: How to distribute load. Options are "NONE" (no affinity). "CLIENT_IP" (hash of the source/dest addresses / ports), and "CLIENT_IP_PROTO" also includes the protocol (default "NONE").
+    Optional: "true"
+

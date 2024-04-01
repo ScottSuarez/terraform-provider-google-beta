@@ -1,0 +1,110 @@
+assignment:
+    group_labels:
+        labels: TypeMap(TypeString)
+    instance_name_prefixes: TypeList(TypeString)
+    instances: TypeList(TypeString)
+    os_types:
+        os_architecture: TypeString
+        os_short_name: TypeString
+        os_version: TypeString
+    zones: TypeList(TypeString)
+create_time: TypeString
+description: TypeString
+etag: TypeString
+guest_policy_id: TypeString
+name: TypeString
+package_repositories:
+    apt:
+        archive_type: TypeString
+        components: TypeList(TypeString)
+        distribution: TypeString
+        gpg_key: TypeString
+        uri: TypeString
+    goo:
+        name: TypeString
+        url: TypeString
+    yum:
+        base_url: TypeString
+        display_name: TypeString
+        gpg_keys: TypeList(TypeString)
+        id: TypeString
+    zypper:
+        base_url: TypeString
+        display_name: TypeString
+        gpg_keys: TypeList(TypeString)
+        id: TypeString
+packages:
+    desired_state: TypeString
+    manager: TypeString
+    name: TypeString
+project: TypeString
+recipes:
+    artifacts:
+        allow_insecure: TypeBool
+        gcs:
+            bucket: TypeString
+            generation: TypeInt
+            object: TypeString
+        id: TypeString
+        remote:
+            check_sum: TypeString
+            uri: TypeString
+    desired_state: TypeString
+    install_steps:
+        archive_extraction:
+            artifact_id: TypeString
+            destination: TypeString
+            type: TypeString
+        dpkg_installation:
+            artifact_id: TypeString
+        file_copy:
+            artifact_id: TypeString
+            destination: TypeString
+            overwrite: TypeBool
+            permissions: TypeString
+        file_exec:
+            allowed_exit_codes: TypeString
+            args: TypeList(TypeString)
+            artifact_id: TypeString
+            local_path: TypeString
+        msi_installation:
+            allowed_exit_codes: TypeList(TypeInt)
+            artifact_id: TypeString
+            flags: TypeList(TypeString)
+        rpm_installation:
+            artifact_id: TypeString
+        script_run:
+            allowed_exit_codes: TypeList(TypeInt)
+            interpreter: TypeString
+            script: TypeString
+    name: TypeString
+    update_steps:
+        archive_extraction:
+            artifact_id: TypeString
+            destination: TypeString
+            type: TypeString
+        dpkg_installation:
+            artifact_id: TypeString
+        file_copy:
+            artifact_id: TypeString
+            destination: TypeString
+            overwrite: TypeBool
+            permissions: TypeString
+        file_exec:
+            allowed_exit_codes: TypeList(TypeInt)
+            args: TypeList(TypeString)
+            artifact_id: TypeString
+            local_path: TypeString
+        msi_installation:
+            allowed_exit_codes: TypeList(TypeInt)
+            artifact_id: TypeString
+            flags: TypeList(TypeString)
+        rpm_installation:
+            artifact_id: TypeString
+        script_run:
+            allowed_exit_codes: TypeList(TypeInt)
+            interpreter: TypeString
+            script: TypeString
+    version: TypeString
+update_time: TypeString
+

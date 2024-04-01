@@ -1,0 +1,67 @@
+application_matcher:
+    Type: TypeString
+    Description: CEL expression for matching on L7/application level criteria.
+    Optional: "true"
+basic_profile:
+    Type: TypeString
+    Description: 'Profile which tells what the primitive action should be. Possible values are: * ALLOW * DENY. Possible values: ["BASIC_PROFILE_UNSPECIFIED", "ALLOW", "DENY"]'
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        The timestamp when the resource was created.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z"
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Free-text description of the resource.
+    Optional: "true"
+enabled:
+    Type: TypeBool
+    Description: Whether the rule is enforced.
+    Required: "true"
+gateway_security_policy:
+    Type: TypeString
+    Description: The name of the gatewat security policy this rule belongs to.
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location of the gateway security policy.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. ame is the full resource name so projects/{project}/locations/{location}/gatewaySecurityPolicies/{gateway_security_policy}/rules/{rule}
+        rule should match the pattern: (^a-z?$).
+    Required: "true"
+priority:
+    Type: TypeInt
+    Description: Priority of the rule. Lower number corresponds to higher precedence.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+session_matcher:
+    Type: TypeString
+    Description: CEL expression for matching on session criteria.
+    Required: "true"
+tls_inspection_enabled:
+    Type: TypeBool
+    Description: |-
+        Flag to enable TLS inspection of traffic matching on. Can only be true if the
+        parent GatewaySecurityPolicy references a TLSInspectionConfig.
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The timestamp when the resource was updated.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

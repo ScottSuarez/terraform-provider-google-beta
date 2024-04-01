@@ -1,0 +1,22 @@
+description: TypeString
+destination:
+    instance: TypeString
+    ip_address: TypeString
+    network: TypeString
+    port: TypeInt
+    project_id: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+protocol: TypeString
+related_projects: TypeList(TypeString)
+source:
+    instance: TypeString
+    ip_address: TypeString
+    network: TypeString
+    network_type: TypeString
+    port: TypeInt
+    project_id: TypeString
+terraform_labels: TypeMap(TypeString)
+

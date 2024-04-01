@@ -1,0 +1,7 @@
+client_id: TypeString
+client_secret: TypeString
+enabled: TypeBool
+idp_id: TypeString
+name: TypeString
+project: TypeString
+

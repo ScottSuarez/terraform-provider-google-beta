@@ -1,0 +1,14 @@
+audit_config:
+    audit_log_configs:
+        exempted_members: TypeSet(TypeString)
+        log_type: TypeString
+    service: TypeString
+binding:
+    condition:
+        description: TypeString
+        expression: TypeString
+        title: TypeString
+    members: TypeSet(TypeString)
+    role: TypeString
+policy_data: TypeString
+

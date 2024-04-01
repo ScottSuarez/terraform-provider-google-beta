@@ -1,0 +1,19 @@
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_spec:
+    kms_key_name: TypeString
+etag: TypeString
+force_destroy: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+online_serving_config:
+    fixed_node_count: TypeInt
+    scaling:
+        max_node_count: TypeInt
+        min_node_count: TypeInt
+online_storage_ttl_days: TypeInt
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

@@ -1,0 +1,15 @@
+envgroup_id:
+    Type: TypeString
+    Description: |-
+        The Apigee environment group associated with the Apigee environment,
+        in the format 'organizations/{{org_name}}/envgroups/{{envgroup_name}}'.
+    Required: "true"
+environment:
+    Type: TypeString
+    Description: The resource ID of the environment.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the newly created  attachment (output parameter).
+    Computed: "true"
+

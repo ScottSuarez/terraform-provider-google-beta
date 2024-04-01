@@ -1,0 +1,7 @@
+device_name: TypeString
+disk: TypeString
+instance: TypeString
+mode: TypeString
+project: TypeString
+zone: TypeString
+

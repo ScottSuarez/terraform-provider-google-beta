@@ -1,0 +1,49 @@
+artifact_gcs_uri: TypeString
+database_type: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_config:
+    kms_key: TypeString
+endpoint_uri: TypeString
+hive_metastore_config:
+    auxiliary_versions:
+        config_overrides: TypeMap(TypeString)
+        key: TypeString
+        version: TypeString
+    config_overrides: TypeMap(TypeString)
+    endpoint_protocol: TypeString
+    kerberos_config:
+        keytab:
+            cloud_secret: TypeString
+        krb5_config_gcs_uri: TypeString
+        principal: TypeString
+    version: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+maintenance_window:
+    day_of_week: TypeString
+    hour_of_day: TypeInt
+metadata_integration:
+    data_catalog_config:
+        enabled: TypeBool
+name: TypeString
+network: TypeString
+network_config:
+    consumers:
+        endpoint_uri: TypeString
+        subnetwork: TypeString
+    custom_routes_enabled: TypeBool
+port: TypeInt
+project: TypeString
+release_channel: TypeString
+scaling_config:
+    instance_size: TypeString
+    scaling_factor: TypeFloat
+service_id: TypeString
+state: TypeString
+state_message: TypeString
+telemetry_config:
+    log_format: TypeString
+terraform_labels: TypeMap(TypeString)
+tier: TypeString
+uid: TypeString
+

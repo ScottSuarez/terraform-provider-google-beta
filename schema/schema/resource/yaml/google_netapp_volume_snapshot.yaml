@@ -1,0 +1,44 @@
+description:
+    Type: TypeString
+    Description: Description for the snapshot.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels as key value pairs. Example: '{ "owner": "Bob", "department": "finance", "purpose": "testing" }'.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Name of the snapshot location. Snapshots are child resources of volumes and live in the same location.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the snapshot.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+used_bytes:
+    Type: TypeInt
+    Description: Storage used to store blocks unique to this snapshot.
+    Computed: "true"
+volume_name:
+    Type: TypeString
+    Description: The name of the volume to create the snapshot in.
+    Required: "true"
+

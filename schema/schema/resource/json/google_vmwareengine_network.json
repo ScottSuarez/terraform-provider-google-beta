@@ -1,0 +1,54 @@
+{
+    "description": {
+        "Description": "User-provided description for this VMware Engine network.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location where the VMwareEngineNetwork should reside.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the VMwareEngineNetwork.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the VMware Engine network.",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "VMware Engine network type. Possible values: [\"LEGACY\", \"STANDARD\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "vpc_networks": {
+        "Computed": true,
+        "Description": "VMware Engine service VPC networks that provide connectivity from a private cloud to customer projects,\nthe internet, and other Google Cloud services.",
+        "Properties": {
+            "network": {
+                "Computed": true,
+                "Description": "The relative resource name of the service VPC network this VMware Engine network is attached to.\nFor example: projects/123123/global/networks/my-network",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "Type of VPC network (INTRANET, INTERNET, or GOOGLE_CLOUD)",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

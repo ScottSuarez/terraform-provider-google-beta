@@ -1,0 +1,18 @@
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+private_service_connect_config:
+    enable_private_service_connect: TypeBool
+    project_allowlist: TypeList(TypeString)
+project: TypeString
+public_endpoint_domain_name: TypeString
+public_endpoint_enabled: TypeBool
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

@@ -1,0 +1,516 @@
+alloydb:
+    Type: TypeList
+    Description: Specifies required connection parameters, and the parameters required to create an AlloyDB destination cluster.
+    Optional: "true"
+    ExactlyOneOf: mysql, postgresql, oracle, cloudsql, alloydb
+    MaxItems: "1"
+    Properties:
+        cluster_id:
+            Type: TypeString
+            Description: Required. The AlloyDB cluster ID that this connection profile is associated with.
+            Required: "true"
+        settings:
+            Type: TypeList
+            Description: Immutable. Metadata used to create the destination AlloyDB cluster.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                initial_user:
+                    Type: TypeList
+                    Description: Required. Input only. Initial user to setup during cluster creation.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        password:
+                            Type: TypeString
+                            Description: The initial password for the user.
+                            Required: "true"
+                        password_set:
+                            Type: TypeBool
+                            Description: Output only. Indicates if the initialUser.password field has been set.
+                            Computed: "true"
+                        user:
+                            Type: TypeString
+                            Description: The database username.
+                            Required: "true"
+                labels:
+                    Type: TypeMap
+                    Description: Labels for the AlloyDB cluster created by DMS.
+                    Optional: "true"
+                primary_instance_settings:
+                    Type: TypeList
+                    Description: Settings for the cluster's primary instance
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        database_flags:
+                            Type: TypeMap
+                            Description: Database flags to pass to AlloyDB when DMS is creating the AlloyDB cluster and instances. See the AlloyDB documentation for how these can be used.
+                            Optional: "true"
+                        id:
+                            Type: TypeString
+                            Description: The database username.
+                            Required: "true"
+                        labels:
+                            Type: TypeMap
+                            Description: Labels for the AlloyDB primary instance created by DMS.
+                            Optional: "true"
+                        machine_config:
+                            Type: TypeList
+                            Description: Configuration for the machines that host the underlying database engine.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                cpu_count:
+                                    Type: TypeInt
+                                    Description: The number of CPU's in the VM instance.
+                                    Required: "true"
+                        private_ip:
+                            Type: TypeString
+                            Description: Output only. The private IP address for the Instance. This is the connection endpoint for an end-user application.
+                            Computed: "true"
+                vpc_network:
+                    Type: TypeString
+                    Description: |-
+                        Required. The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster.
+                        It is specified in the form: 'projects/{project_number}/global/networks/{network_id}'. This is required to create a cluster.
+                    Required: "true"
+cloudsql:
+    Type: TypeList
+    Description: Specifies required connection parameters, and, optionally, the parameters required to create a Cloud SQL destination database instance.
+    Optional: "true"
+    ExactlyOneOf: mysql, postgresql, oracle, cloudsql, alloydb
+    MaxItems: "1"
+    Properties:
+        cloud_sql_id:
+            Type: TypeString
+            Description: Output only. The Cloud SQL instance ID that this connection profile is associated with.
+            Computed: "true"
+        private_ip:
+            Type: TypeString
+            Description: Output only. The Cloud SQL database instance's private IP.
+            Computed: "true"
+        public_ip:
+            Type: TypeString
+            Description: Output only. The Cloud SQL database instance's public IP.
+            Computed: "true"
+        settings:
+            Type: TypeList
+            Description: Immutable. Metadata used to create the destination Cloud SQL database.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                activation_policy:
+                    Type: TypeString
+                    Description: 'The activation policy specifies when the instance is activated; it is applicable only when the instance state is ''RUNNABLE''. Possible values: ["ALWAYS", "NEVER"]'
+                    Optional: "true"
+                auto_storage_increase:
+                    Type: TypeBool
+                    Description: |-
+                        If you enable this setting, Cloud SQL checks your available storage every 30 seconds. If the available storage falls below a threshold size, Cloud SQL automatically adds additional storage capacity.
+                        If the available storage repeatedly falls below the threshold size, Cloud SQL continues to add storage until it reaches the maximum of 30 TB.
+                    Optional: "true"
+                cmek_key_name:
+                    Type: TypeString
+                    Description: The KMS key name used for the csql instance.
+                    Optional: "true"
+                collation:
+                    Type: TypeString
+                    Description: The Cloud SQL default instance level collation.
+                    Optional: "true"
+                data_disk_size_gb:
+                    Type: TypeString
+                    Description: The storage capacity available to the database, in GB. The minimum (and default) size is 10GB.
+                    Optional: "true"
+                data_disk_type:
+                    Type: TypeString
+                    Description: 'The type of storage. Possible values: ["PD_SSD", "PD_HDD"]'
+                    Optional: "true"
+                database_flags:
+                    Type: TypeMap
+                    Description: The database flags passed to the Cloud SQL instance at startup.
+                    Optional: "true"
+                database_version:
+                    Type: TypeString
+                    Description: |-
+                        The database engine type and version.
+                        Currently supported values located at https://cloud.google.com/database-migration/docs/reference/rest/v1/projects.locations.connectionProfiles#sqldatabaseversion
+                    Optional: "true"
+                edition:
+                    Type: TypeString
+                    Description: 'The edition of the given Cloud SQL instance. Possible values: ["ENTERPRISE", "ENTERPRISE_PLUS"]'
+                    Optional: "true"
+                ip_config:
+                    Type: TypeList
+                    Description: The settings for IP Management. This allows to enable or disable the instance IP and manage which external networks can connect to the instance. The IPv4 address cannot be disabled.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        authorized_networks:
+                            Type: TypeList
+                            Description: The list of external networks that are allowed to connect to the instance using the IP.
+                            Optional: "true"
+                            Properties:
+                                expire_time:
+                                    Type: TypeString
+                                    Description: The time when this access control entry expires in RFC 3339 format.
+                                    Optional: "true"
+                                label:
+                                    Type: TypeString
+                                    Description: A label to identify this entry.
+                                    Optional: "true"
+                                ttl:
+                                    Type: TypeString
+                                    Description: Input only. The time-to-leave of this access control entry.
+                                    Optional: "true"
+                                value:
+                                    Type: TypeString
+                                    Description: The allowlisted value for the access control list.
+                                    Required: "true"
+                        enable_ipv4:
+                            Type: TypeBool
+                            Description: Whether the instance should be assigned an IPv4 address or not.
+                            Optional: "true"
+                        private_network:
+                            Type: TypeString
+                            Description: |-
+                                The resource link for the VPC network from which the Cloud SQL instance is accessible for private IP. For example, projects/myProject/global/networks/default.
+                                This setting can be updated, but it cannot be removed after it is set.
+                            Optional: "true"
+                        require_ssl:
+                            Type: TypeBool
+                            Description: Whether SSL connections over IP should be enforced or not.
+                            Optional: "true"
+                root_password:
+                    Type: TypeString
+                    Description: Input only. Initial root password.
+                    Optional: "true"
+                root_password_set:
+                    Type: TypeBool
+                    Description: Output only. Indicates If this connection profile root password is stored.
+                    Computed: "true"
+                source_id:
+                    Type: TypeString
+                    Description: 'The Database Migration Service source connection profile ID, in the format: projects/my_project_name/locations/us-central1/connectionProfiles/connection_profile_ID'
+                    Required: "true"
+                storage_auto_resize_limit:
+                    Type: TypeString
+                    Description: The maximum size to which storage capacity can be automatically increased. The default value is 0, which specifies that there is no limit.
+                    Optional: "true"
+                tier:
+                    Type: TypeString
+                    Description: |-
+                        The tier (or machine type) for this instance, for example: db-n1-standard-1 (MySQL instances) or db-custom-1-3840 (PostgreSQL instances).
+                        For more information, see https://cloud.google.com/sql/docs/mysql/instance-settings
+                    Optional: "true"
+                user_labels:
+                    Type: TypeMap
+                    Description: The resource labels for a Cloud SQL instance to use to annotate any related underlying resources such as Compute Engine VMs.
+                    Optional: "true"
+                zone:
+                    Type: TypeString
+                    Description: The Google Cloud Platform zone where your Cloud SQL datdabse instance is located.
+                    Optional: "true"
+connection_profile_id:
+    Type: TypeString
+    Description: The ID of the connection profile.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: 'Output only. The timestamp when the resource was created. A timestamp in RFC3339 UTC ''Zulu'' format, accurate to nanoseconds. Example: ''2014-10-02T15:01:23.045123456Z''.'
+    Computed: "true"
+dbprovider:
+    Type: TypeString
+    Description: The database provider.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: The connection profile display name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+error:
+    Type: TypeList
+    Description: Output only. The error details in case of state FAILED.
+    Computed: "true"
+    Properties:
+        code:
+            Type: TypeInt
+            Description: The status code, which should be an enum value of google.rpc.Code.
+            Computed: "true"
+        details:
+            Type: TypeList
+            Description: A list of messages that carry the error details.
+            Computed: "true"
+        message:
+            Type: TypeString
+            Description: Human readable message indicating details about the current status.
+            Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        The resource labels for connection profile to use to annotate any related underlying resources such as Compute Engine VMs.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location where the connection profile should reside.
+    Optional: "true"
+mysql:
+    Type: TypeList
+    Description: Specifies connection parameters required specifically for MySQL databases.
+    Optional: "true"
+    ExactlyOneOf: mysql, postgresql, oracle, cloudsql, alloydb
+    MaxItems: "1"
+    Properties:
+        cloud_sql_id:
+            Type: TypeString
+            Description: If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+            Optional: "true"
+        host:
+            Type: TypeString
+            Description: Required. The IP or hostname of the source MySQL database.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: |-
+                Required. Input only. The password for the user that Database Migration Service will be using to connect to the database.
+                This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
+            Required: "true"
+        password_set:
+            Type: TypeBool
+            Description: Output only. Indicates If this connection profile password is stored.
+            Computed: "true"
+        port:
+            Type: TypeInt
+            Description: Required. The network port of the source MySQL database.
+            Required: "true"
+        ssl:
+            Type: TypeList
+            Description: SSL configuration for the destination to connect to the source database.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ca_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server's certificate.
+                        The replica will use this certificate to verify it's connecting to the right host.
+                    Required: "true"
+                client_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.
+                        If this field is used then the 'clientKey' field is mandatory
+                    Optional: "true"
+                client_key:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate.
+                        If this field is used then the 'clientCertificate' field is mandatory.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: The current connection profile state.
+                    Computed: "true"
+        username:
+            Type: TypeString
+            Description: Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
+            Required: "true"
+name:
+    Type: TypeString
+    Description: The name of this connection profile resource in the form of projects/{project}/locations/{location}/connectionProfiles/{connectionProfile}.
+    Computed: "true"
+oracle:
+    Type: TypeList
+    Description: Specifies connection parameters required specifically for Oracle databases.
+    Optional: "true"
+    ExactlyOneOf: mysql, postgresql, oracle, cloudsql, alloydb
+    MaxItems: "1"
+    Properties:
+        database_service:
+            Type: TypeString
+            Description: Required. Database service for the Oracle connection.
+            Required: "true"
+        forward_ssh_connectivity:
+            Type: TypeList
+            Description: SSL configuration for the destination to connect to the source database.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                hostname:
+                    Type: TypeString
+                    Description: Required. Hostname for the SSH tunnel.
+                    Required: "true"
+                password:
+                    Type: TypeString
+                    Description: Input only. SSH password. Only one of 'password' and 'private_key' can be configured.
+                    Optional: "true"
+                port:
+                    Type: TypeInt
+                    Description: Port for the SSH tunnel, default value is 22.
+                    Required: "true"
+                private_key:
+                    Type: TypeString
+                    Description: Input only. SSH private key. Only one of 'password' and 'private_key' can be configured.
+                    Optional: "true"
+                    ExactlyOneOf: oracle.0.forward_ssh_connectivity.0.password, oracle.0.forward_ssh_connectivity.0.private_key
+                username:
+                    Type: TypeString
+                    Description: Required. Username for the SSH tunnel.
+                    Required: "true"
+        host:
+            Type: TypeString
+            Description: Required. The IP or hostname of the source Oracle database.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: |-
+                Required. Input only. The password for the user that Database Migration Service will be using to connect to the database.
+                This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
+            Required: "true"
+        password_set:
+            Type: TypeBool
+            Description: Output only. Indicates If this connection profile password is stored.
+            Computed: "true"
+        port:
+            Type: TypeInt
+            Description: Required. The network port of the source Oracle database.
+            Required: "true"
+        private_connectivity:
+            Type: TypeList
+            Description: Configuration for using a private network to communicate with the source database
+            Optional: "true"
+            ExactlyOneOf: oracle.0.static_service_ip_connectivity, oracle.0.forward_ssh_connectivity, oracle.0.private_connectivity
+            MaxItems: "1"
+            Properties:
+                private_connection:
+                    Type: TypeString
+                    Description: Required. The resource name (URI) of the private connection.
+                    Required: "true"
+        ssl:
+            Type: TypeList
+            Description: SSL configuration for the destination to connect to the source database.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ca_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server's certificate.
+                        The replica will use this certificate to verify it's connecting to the right host.
+                    Required: "true"
+                client_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.
+                        If this field is used then the 'clientKey' field is mandatory
+                    Optional: "true"
+                client_key:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate.
+                        If this field is used then the 'clientCertificate' field is mandatory.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: The current connection profile state.
+                    Computed: "true"
+        static_service_ip_connectivity:
+            Type: TypeList
+            Description: |-
+                This object has no nested fields.
+
+                Static IP address connectivity configured on service project.
+            Optional: "true"
+            MaxItems: "1"
+            Properties: {}
+        username:
+            Type: TypeString
+            Description: Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
+            Required: "true"
+postgresql:
+    Type: TypeList
+    Description: Specifies connection parameters required specifically for PostgreSQL databases.
+    Optional: "true"
+    ExactlyOneOf: mysql, postgresql, oracle, cloudsql, alloydb
+    MaxItems: "1"
+    Properties:
+        cloud_sql_id:
+            Type: TypeString
+            Description: If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+            Optional: "true"
+        host:
+            Type: TypeString
+            Description: Required. The IP or hostname of the source MySQL database.
+            Required: "true"
+        network_architecture:
+            Type: TypeString
+            Description: Output only. If the source is a Cloud SQL database, this field indicates the network architecture it's associated with.
+            Computed: "true"
+        password:
+            Type: TypeString
+            Description: |-
+                Required. Input only. The password for the user that Database Migration Service will be using to connect to the database.
+                This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
+            Required: "true"
+        password_set:
+            Type: TypeBool
+            Description: Output only. Indicates If this connection profile password is stored.
+            Computed: "true"
+        port:
+            Type: TypeInt
+            Description: Required. The network port of the source MySQL database.
+            Required: "true"
+        ssl:
+            Type: TypeList
+            Description: SSL configuration for the destination to connect to the source database.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ca_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server's certificate.
+                        The replica will use this certificate to verify it's connecting to the right host.
+                    Required: "true"
+                client_certificate:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.
+                        If this field is used then the 'clientKey' field is mandatory
+                    Optional: "true"
+                client_key:
+                    Type: TypeString
+                    Description: |-
+                        Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate.
+                        If this field is used then the 'clientCertificate' field is mandatory.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: The current connection profile state.
+                    Computed: "true"
+        username:
+            Type: TypeString
+            Description: Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The current connection profile state.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

@@ -1,0 +1,72 @@
+{
+    "access_restrictions": {
+        "Description": "Configure access restrictions on the workforce pool users. This is an optional field. If specified web\nsign-in can be restricted to given set of services or programmatic sign-in can be disabled for pool users.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allowed_services": {
+                "Description": "Services allowed for web sign-in with the workforce pool.\nIf not set by default there are no restrictions.",
+                "Optional": true,
+                "Properties": {
+                    "domain": {
+                        "Description": "Domain name of the service.\nExample: console.cloud.google",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "disable_programmatic_signin": {
+                "Description": "Disable programmatic sign-in by disabling token issue via the Security Token API endpoint.\nSee [Security Token Service API](https://cloud.google.com/iam/docs/reference/sts/rest).",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "A user-specified description of the pool. Cannot exceed 256 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "disabled": {
+        "Description": "Whether the pool is disabled. You cannot use a disabled pool to exchange tokens,\nor use existing tokens to access resources. If the pool is re-enabled, existing tokens grant access again.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "display_name": {
+        "Description": "A user-specified display name of the pool in Google Cloud Console. Cannot exceed 32 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. The resource name of the pool.\nFormat: 'locations/{location}/workforcePools/{workforcePoolId}'",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "Immutable. The resource name of the parent. Format: 'organizations/{org-id}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "session_duration": {
+        "Description": "Duration that the Google Cloud access tokens, console sign-in sessions,\nand 'gcloud' sign-in sessions from this pool are valid.\nMust be greater than 15 minutes (900s) and less than 12 hours (43200s).\nIf 'sessionDuration' is not configured, minted credentials have a default duration of one hour (3600s).\nA duration in seconds with up to nine fractional digits, ending with ''s''. Example: \"'3.5s'\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. The state of the pool.\n * STATE_UNSPECIFIED: State unspecified.\n * ACTIVE: The pool is active, and may be used in Google Cloud policies.\n * DELETED: The pool is soft-deleted. Soft-deleted pools are permanently deleted\n   after approximately 30 days. You can restore a soft-deleted pool using\n   [workforcePools.undelete](https://cloud.google.com/iam/docs/reference/rest/v1/locations.workforcePools/undelete#google.iam.admin.v1.WorkforcePools.UndeleteWorkforcePool).\n   You cannot reuse the ID of a soft-deleted pool until it is permanently deleted.\n   While a pool is deleted, you cannot use it to exchange tokens, or use\n   existing tokens to access resources. If the pool is undeleted, existing\n   tokens grant access again.",
+        "Type": "TypeString"
+    },
+    "workforce_pool_id": {
+        "Description": "The name of the pool. The ID must be a globally unique string of 6 to 63 lowercase letters,\ndigits, or hyphens. It must start with a letter, and cannot have a trailing hyphen.\nThe prefix 'gcp-' is reserved for use by Google, and may not be specified.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

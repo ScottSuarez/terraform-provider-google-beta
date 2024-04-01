@@ -1,0 +1,64 @@
+create_time:
+    Type: TypeString
+    Description: Time the RBAC Role Binding was created in UTC.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: Time the RBAC Role Binding was deleted in UTC.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: Location of the Membership
+    Required: "true"
+membership_id:
+    Type: TypeString
+    Description: Id of the membership
+    Required: "true"
+membership_rbac_role_binding_id:
+    Type: TypeString
+    Description: The client-provided identifier of the RBAC Role Binding.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name for the RBAC Role Binding
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+role:
+    Type: TypeList
+    Description: Role to bind to the principal.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        predefined_role:
+            Type: TypeString
+            Description: 'PredefinedRole is an ENUM representation of the default Kubernetes Roles Possible values: ["UNKNOWN", "ADMIN", "EDIT", "VIEW", "ANTHOS_SUPPORT"]'
+            Required: "true"
+state:
+    Type: TypeList
+    Description: State of the RBAC Role Binding resource.
+    Computed: "true"
+    Properties:
+        code:
+            Type: TypeString
+            Description: Code describes the state of a RBAC Role Binding resource.
+            Computed: "true"
+uid:
+    Type: TypeString
+    Description: Google-generated UUID for this resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the RBAC Role Binding was updated in UTC.
+    Computed: "true"
+user:
+    Type: TypeString
+    Description: |-
+        Principal that is be authorized in the cluster (at least of one the oneof
+        is required). Updating one will unset the other automatically.
+        user is the name of the user as seen by the kubernetes cluster, example
+        "alice" or "alice@domain.tld"
+    Required: "true"
+

@@ -1,0 +1,11 @@
+certificate: TypeString
+certificate_id: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+expire_time: TypeString
+name: TypeString
+name_prefix: TypeString
+private_key: TypeString
+project: TypeString
+self_link: TypeString
+

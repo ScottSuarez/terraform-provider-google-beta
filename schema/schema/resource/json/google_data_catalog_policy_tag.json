@@ -1,0 +1,32 @@
+{
+    "child_policy_tags": {
+        "Computed": true,
+        "Description": "Resource names of child policy tags of this policy tag.",
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "Description of this policy tag. It must: contain only unicode characters, tabs,\nnewlines, carriage returns and page breaks; and be at most 2000 bytes long when\nencoded in UTF-8. If not set, defaults to an empty description.\nIf not set, defaults to an empty description.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "User defined name of this policy tag. It must: be unique within the parent\ntaxonomy; contain only unicode letters, numbers, underscores, dashes and spaces;\nnot start or end with spaces; and be at most 200 bytes long when encoded in UTF-8.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Resource name of this policy tag, whose format is:\n\"projects/{project}/locations/{region}/taxonomies/{taxonomy}/policyTags/{policytag}\"",
+        "Type": "TypeString"
+    },
+    "parent_policy_tag": {
+        "Description": "Resource name of this policy tag's parent policy tag.\nIf empty, it means this policy tag is a top level policy tag.\nIf not set, defaults to an empty string.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "taxonomy": {
+        "Description": "Taxonomy the policy tag is associated with",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

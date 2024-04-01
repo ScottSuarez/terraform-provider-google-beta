@@ -1,0 +1,93 @@
+{
+    "ddos_protection_config": {
+        "Description": "Configuration for Google Cloud Armor DDOS Proctection Config.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "ddos_protection": {
+                "Description": "Google Cloud Armor offers the following options to help protect systems against DDoS attacks:\n- STANDARD: basic always-on protection for network load balancers, protocol forwarding, or VMs with public IP addresses.\n- ADVANCED: additional protections for Managed Protection Plus subscribers who use network load balancers, protocol forwarding, or VMs with public IP addresses.\n- ADVANCED_PREVIEW: flag to enable the security policy in preview mode. Possible values: [\"ADVANCED\", \"ADVANCED_PREVIEW\", \"STANDARD\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "An optional description of this resource. Provide this property when you create the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "fingerprint": {
+        "Computed": true,
+        "Description": "Fingerprint of this resource. This field is used internally during\nupdates of this resource.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource. This identifier is defined by the server.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The Region in which the created Region Security Policy should reside.\nIf it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL for the resource.",
+        "Type": "TypeString"
+    },
+    "self_link_with_policy_id": {
+        "Computed": true,
+        "Description": "Server-defined URL for this resource with the resource id.",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type indicates the intended use of the security policy.\n- CLOUD_ARMOR: Cloud Armor backend security policies can be configured to filter incoming HTTP requests targeting backend services. They filter requests before they hit the origin servers.\n- CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can be configured to filter incoming HTTP requests targeting backend services (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage). They filter requests before the request is served from Google's cache.\n- CLOUD_ARMOR_NETWORK: Cloud Armor network policies can be configured to filter packets targeting network load balancing resources such as backend services, target pools, target instances, and instances with external IPs. They filter requests before the request is served from the application.\nThis field can be set only at resource creation time. Possible values: [\"CLOUD_ARMOR\", \"CLOUD_ARMOR_EDGE\", \"CLOUD_ARMOR_NETWORK\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "user_defined_fields": {
+        "Description": "Definitions of user-defined fields for CLOUD_ARMOR_NETWORK policies.\nA user-defined field consists of up to 4 bytes extracted from a fixed offset in the packet, relative to the IPv4, IPv6, TCP, or UDP header, with an optional mask to select certain bits.\nRules may then specify matching values for these fields.",
+        "Optional": true,
+        "Properties": {
+            "base": {
+                "Description": "The base relative to which 'offset' is measured. Possible values are:\n- IPV4: Points to the beginning of the IPv4 header.\n- IPV6: Points to the beginning of the IPv6 header.\n- TCP: Points to the beginning of the TCP header, skipping over any IPv4 options or IPv6 extension headers. Not present for non-first fragments.\n- UDP: Points to the beginning of the UDP header, skipping over any IPv4 options or IPv6 extension headers. Not present for non-first fragments. Possible values: [\"IPV4\", \"IPV6\", \"TCP\", \"UDP\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "mask": {
+                "Description": "If specified, apply this mask (bitwise AND) to the field to ignore bits before matching.\nEncoded as a hexadecimal number (starting with \"0x\").\nThe last byte of the field (in network byte order) corresponds to the least significant byte of the mask.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "The name of this field. Must be unique within the policy.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "offset": {
+                "Description": "Offset of the first byte of the field (in network byte order) relative to 'base'.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "size": {
+                "Description": "Size of the field in bytes. Valid values: 1-4.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

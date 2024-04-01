@@ -1,0 +1,42 @@
+{
+    "bucket": {
+        "Description": "The name of the bucket.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "custom_attributes": {
+        "Description": " A set of key/value attribute pairs to attach to each Cloud Pub/Sub message published for this notification subscription",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "event_types": {
+        "Description": "List of event type filters for this notification config. If not specified, Cloud Storage will send notifications for all event types. The valid types are: \"OBJECT_FINALIZE\", \"OBJECT_METADATA_UPDATE\", \"OBJECT_DELETE\", \"OBJECT_ARCHIVE\"",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "notification_id": {
+        "Computed": true,
+        "Description": "The ID of the created notification.",
+        "Type": "TypeString"
+    },
+    "object_name_prefix": {
+        "Description": "Specifies a prefix path filter for this notification config. Cloud Storage will only send notifications for objects in this bucket whose names begin with the specified prefix.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "payload_format": {
+        "Description": "The desired content of the Payload. One of \"JSON_API_V1\" or \"NONE\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "The URI of the created resource.",
+        "Type": "TypeString"
+    },
+    "topic": {
+        "Description": "The Cloud Pub/Sub topic to which this subscription publishes. Expects either the  topic name, assumed to belong to the default GCP provider project, or the project-level name,  i.e. projects/my-gcp-project/topics/my-topic or my-topic. If the project is not set in the provider, you will need to use the project-level name.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

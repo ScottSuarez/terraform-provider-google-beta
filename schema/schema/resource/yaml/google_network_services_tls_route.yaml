@@ -1,0 +1,77 @@
+create_time:
+    Type: TypeString
+    Description: Time the TlsRoute was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+gateways:
+    Type: TypeList
+    Description: |-
+        Gateways defines a list of gateways this TlsRoute is attached to, as one of the routing rules to route the requests served by the gateway.
+        Each gateway reference should match the pattern: projects/*/locations/global/gateways/<gateway_name>
+    Optional: "true"
+meshes:
+    Type: TypeList
+    Description: |-
+        Meshes defines a list of meshes this TlsRoute is attached to, as one of the routing rules to route the requests served by the mesh.
+        Each mesh reference should match the pattern: projects/*/locations/global/meshes/<mesh_name>
+        The attached Mesh should be of a type SIDECAR
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the TlsRoute resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+rules:
+    Type: TypeList
+    Description: Rules that define how traffic is routed and handled.
+    Required: "true"
+    Properties:
+        action:
+            Type: TypeList
+            Description: Required. A detailed rule defining how to route traffic.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                destinations:
+                    Type: TypeList
+                    Description: The destination to which traffic should be forwarded.
+                    Optional: "true"
+                    Properties:
+                        service_name:
+                            Type: TypeString
+                            Description: The URL of a BackendService to route traffic to.
+                            Optional: "true"
+                        weight:
+                            Type: TypeInt
+                            Description: Specifies the proportion of requests forwarded to the backend referenced by the serviceName field.
+                            Optional: "true"
+        matches:
+            Type: TypeList
+            Description: Matches define the predicate used to match requests to a given action.
+            Required: "true"
+            Properties:
+                alpn:
+                    Type: TypeList
+                    Description: 'ALPN (Application-Layer Protocol Negotiation) to match against. Examples: "http/1.1", "h2". At least one of sniHost and alpn is required. Up to 5 alpns across all matches can be set.'
+                    Optional: "true"
+                sni_host:
+                    Type: TypeList
+                    Description: |-
+                        SNI (server name indicator) to match against. SNI will be matched against all wildcard domains, i.e. www.example.com will be first matched against www.example.com, then *.example.com, then *.com.
+                        Partial wildcards are not supported, and values like *w.example.com are invalid. At least one of sniHost and alpn is required. Up to 5 sni hosts across all matches can be set.
+                    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the TlsRoute was updated in UTC.
+    Computed: "true"
+

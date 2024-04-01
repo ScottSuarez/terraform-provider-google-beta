@@ -1,0 +1,21 @@
+export_custom_routes:
+    Type: TypeBool
+    Description: Whether to export the custom routes to the peer network.
+    Required: "true"
+import_custom_routes:
+    Type: TypeBool
+    Description: Whether to import the custom routes to the peer network.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: The name of the primary network for the peering.
+    Required: "true"
+peering:
+    Type: TypeString
+    Description: Name of the peering.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,110 @@
+action:
+    Type: TypeString
+    Description: |-
+        The name of the action associated with the intent.
+        Note: The action name must not contain whitespaces.
+    Computed: "true"
+    Optional: "true"
+default_response_platforms:
+    Type: TypeList
+    Description: |-
+        The list of platforms for which the first responses will be copied from the messages in PLATFORM_UNSPECIFIED
+        (i.e. default platform). Possible values: ["FACEBOOK", "SLACK", "TELEGRAM", "KIK", "SKYPE", "LINE", "VIBER", "ACTIONS_ON_GOOGLE", "GOOGLE_HANGOUTS"]
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: The name of this intent to be displayed on the console.
+    Required: "true"
+events:
+    Type: TypeList
+    Description: |-
+        The collection of event names that trigger the intent. If the collection of input contexts is not empty, all of
+        the contexts must be present in the active user session for an event to trigger this intent. See the
+        [events reference](https://cloud.google.com/dialogflow/docs/events-overview) for more details.
+    Optional: "true"
+followup_intent_info:
+    Type: TypeList
+    Description: |-
+        Information about all followup intents that have this intent as a direct or indirect parent. We populate this field
+        only in the output.
+    Computed: "true"
+    Properties:
+        followup_intent_name:
+            Type: TypeString
+            Description: |-
+                The unique identifier of the followup intent.
+                Format: projects/<Project ID>/agent/intents/<Intent ID>.
+            Optional: "true"
+        parent_followup_intent_name:
+            Type: TypeString
+            Description: |-
+                The unique identifier of the followup intent's parent.
+                Format: projects/<Project ID>/agent/intents/<Intent ID>.
+            Optional: "true"
+input_context_names:
+    Type: TypeList
+    Description: |-
+        The list of context names required for this intent to be triggered.
+        Format: projects/<Project ID>/agent/sessions/-/contexts/<Context ID>.
+    Optional: "true"
+is_fallback:
+    Type: TypeBool
+    Description: Indicates whether this is a fallback intent.
+    Computed: "true"
+    Optional: "true"
+ml_disabled:
+    Type: TypeBool
+    Description: |-
+        Indicates whether Machine Learning is disabled for the intent.
+        Note: If mlDisabled setting is set to true, then this intent is not taken into account during inference in ML
+        ONLY match mode. Also, auto-markup in the UI is turned off.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of this intent.
+        Format: projects/<Project ID>/agent/intents/<Intent ID>.
+    Computed: "true"
+parent_followup_intent_name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the parent intent in the chain of followup intents.
+        Format: projects/<Project ID>/agent/intents/<Intent ID>.
+    Computed: "true"
+    Optional: "true"
+priority:
+    Type: TypeInt
+    Description: |-
+        The priority of this intent. Higher numbers represent higher priorities.
+          - If the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds
+          to the Normal priority in the console.
+          - If the supplied value is negative, the intent is ignored in runtime detect intent requests.
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reset_contexts:
+    Type: TypeBool
+    Description: Indicates whether to delete all contexts in the current session when this intent is matched.
+    Computed: "true"
+    Optional: "true"
+root_followup_intent_name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the root intent in the chain of followup intents. It identifies the correct followup
+        intents chain for this intent.
+        Format: projects/<Project ID>/agent/intents/<Intent ID>.
+    Computed: "true"
+webhook_state:
+    Type: TypeString
+    Description: |-
+        Indicates whether webhooks are enabled for the intent.
+        * WEBHOOK_STATE_ENABLED: Webhook is enabled in the agent and in the intent.
+        * WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING: Webhook is enabled in the agent and in the intent. Also, each slot
+        filling prompt is forwarded to the webhook. Possible values: ["WEBHOOK_STATE_ENABLED", "WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING"]
+    Computed: "true"
+    Optional: "true"
+

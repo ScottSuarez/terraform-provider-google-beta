@@ -1,0 +1,79 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was created in UTC.",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was deleted in UTC.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Labels for this Namespace.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for the namespace",
+        "Type": "TypeString"
+    },
+    "namespace_labels": {
+        "Description": "Namespace-level cluster namespace labels. These labels are applied\nto the related namespace of the member clusters bound to the parent\nScope. Scope-level labels ('namespace_labels' in the Fleet Scope\nresource) take precedence over Namespace-level labels if they share\na key. Keys and values must be Kubernetes-conformant.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "scope": {
+        "Description": "The name of the Scope instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "scope_id": {
+        "Description": "Id of the scope",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "scope_namespace_id": {
+        "Description": "The client-provided identifier of the namespace.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the namespace resource.",
+        "Properties": {
+            "code": {
+                "Computed": true,
+                "Description": "Code describes the state of a Namespace resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Google-generated UUID for this resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

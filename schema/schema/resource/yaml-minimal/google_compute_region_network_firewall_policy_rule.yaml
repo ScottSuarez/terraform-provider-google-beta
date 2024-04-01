@@ -1,0 +1,34 @@
+action: TypeString
+description: TypeString
+direction: TypeString
+disabled: TypeBool
+enable_logging: TypeBool
+firewall_policy: TypeString
+kind: TypeString
+match:
+    dest_address_groups: TypeList(TypeString)
+    dest_fqdns: TypeList(TypeString)
+    dest_ip_ranges: TypeList(TypeString)
+    dest_region_codes: TypeList(TypeString)
+    dest_threat_intelligences: TypeList(TypeString)
+    layer4_configs:
+        ip_protocol: TypeString
+        ports: TypeList(TypeString)
+    src_address_groups: TypeList(TypeString)
+    src_fqdns: TypeList(TypeString)
+    src_ip_ranges: TypeList(TypeString)
+    src_region_codes: TypeList(TypeString)
+    src_secure_tags:
+        name: TypeString
+        state: TypeString
+    src_threat_intelligences: TypeList(TypeString)
+priority: TypeInt
+project: TypeString
+region: TypeString
+rule_name: TypeString
+rule_tuple_count: TypeInt
+target_secure_tags:
+    name: TypeString
+    state: TypeString
+target_service_accounts: TypeList(TypeString)
+

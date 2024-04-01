@@ -1,0 +1,61 @@
+{
+    "certificate_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Expire time of the certificate in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "managed": {
+        "Description": "Properties relevant to a managed certificate.  These will be used if the\ncertificate is managed (as indicated by a value of 'MANAGED' in 'type').",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "domains": {
+                "Description": "Domains for which a managed SSL certificate will be valid.  Currently,\nthere can be up to 100 domains in this list.",
+                "MaxItems": 100,
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.\n\n\nThese are in the same namespace as the managed SSL certificates.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "subject_alternative_names": {
+        "Computed": true,
+        "Description": "Domains associated with the certificate via Subject Alternative Name.",
+        "Type": "TypeList"
+    },
+    "type": {
+        "Description": "Enum field whose value is always 'MANAGED' - used to signal to the API\nwhich type this is. Default value: \"MANAGED\" Possible values: [\"MANAGED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

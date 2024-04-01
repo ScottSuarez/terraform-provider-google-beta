@@ -1,0 +1,75 @@
+display_name:
+    Type: TypeString
+    Description: Display name.
+    Computed: "true"
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+error:
+    Type: TypeList
+    Description: The PrivateConnection error in case of failure.
+    Computed: "true"
+    Properties:
+        details:
+            Type: TypeMap
+            Description: A list of messages that carry the error details.
+            Optional: "true"
+        message:
+            Type: TypeString
+            Description: A message containing more information about the error that occurred.
+            Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The name of the location this private connection is located in.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource's name.
+    Computed: "true"
+private_connection_id:
+    Type: TypeString
+    Description: The private connectivity identifier.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: State of the PrivateConnection.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+vpc_peering_config:
+    Type: TypeList
+    Description: |-
+        The VPC Peering configuration is used to create VPC peering
+        between databasemigrationservice and the consumer's VPC.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        subnet:
+            Type: TypeString
+            Description: A free subnet for peering. (CIDR of /29)
+            Required: "true"
+        vpc_name:
+            Type: TypeString
+            Description: |-
+                Fully qualified name of the VPC that Database Migration Service will peer to.
+                Format: projects/{project}/global/{networks}/{name}
+            Required: "true"
+

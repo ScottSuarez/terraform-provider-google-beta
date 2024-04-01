@@ -1,0 +1,172 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels.
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+availability_type:
+    Type: TypeString
+    Description: |-
+        'Availability type of an Instance. Defaults to REGIONAL for both primary and read instances.
+        Note that primary and read instances can have different availability types.
+        Only READ_POOL instance supports ZONAL type. Users can't specify the zone for READ_POOL instance.
+        Zone is automatically chosen from the list of zones in the region specified.
+        Read pool of size 1 can only have zonal availability. Read pools with node count of 2 or more
+        can have regional availability (nodes are present in 2 or more zones in a region).' Possible values: ["AVAILABILITY_TYPE_UNSPECIFIED", "ZONAL", "REGIONAL"]
+    Computed: "true"
+    Optional: "true"
+client_connection_config:
+    Type: TypeList
+    Description: Client connection specific configurations.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        require_connectors:
+            Type: TypeBool
+            Description: 'Configuration to enforce connectors only (ex: AuthProxy) connections to the database.'
+            Optional: "true"
+        ssl_config:
+            Type: TypeList
+            Description: SSL config option for this instance.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ssl_mode:
+                    Type: TypeString
+                    Description: 'SSL mode. Specifies client-server SSL/TLS connection behavior. Possible values: ["ENCRYPTED_ONLY", "ALLOW_UNENCRYPTED_AND_ENCRYPTED"]'
+                    Computed: "true"
+                    Optional: "true"
+cluster:
+    Type: TypeString
+    Description: |-
+        Identifies the alloydb cluster. Must be in the format
+        'projects/{project}/locations/{location}/clusters/{cluster_id}'
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: Time the Instance was created in UTC.
+    Computed: "true"
+database_flags:
+    Type: TypeMap
+    Description: Database flags. Set at instance level. * They are copied from primary instance on read instance creation. * Read instances can set new or override existing flags that are relevant for reads, e.g. for enabling columnar cache on a read instance. Flags set on read instance may or may not be present on primary.
+    Computed: "true"
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: User-settable and human-readable display name for the Instance.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gce_zone:
+    Type: TypeString
+    Description: The Compute Engine zone that the instance should serve from, per https://cloud.google.com/compute/docs/regions-zones This can ONLY be specified for ZONAL instances. If present for a REGIONAL instance, an error will be thrown. If this is absent for a ZONAL instance, instance is created in a random zone with available capacity.
+    Optional: "true"
+instance_id:
+    Type: TypeString
+    Description: The ID of the alloydb instance.
+    Required: "true"
+instance_type:
+    Type: TypeString
+    Description: |-
+        The type of the instance.
+        If the instance type is READ_POOL, provide the associated PRIMARY/SECONDARY instance in the 'depends_on' meta-data attribute.
+        If the instance type is SECONDARY, point to the cluster_type of the associated secondary cluster instead of mentioning SECONDARY.
+        Example: {instance_type = google_alloydb_cluster.<secondary_cluster_name>.cluster_type} instead of {instance_type = SECONDARY}
+        If the instance type is SECONDARY, the terraform delete instance operation does not delete the secondary instance but abandons it instead.
+        Use deletion_policy = "FORCE" in the associated secondary cluster and delete the cluster forcefully to delete the secondary cluster as well its associated secondary instance.
+        Users can undo the delete secondary instance action by importing the deleted secondary instance by calling terraform import. Possible values: ["PRIMARY", "READ_POOL", "SECONDARY"]
+    Required: "true"
+ip_address:
+    Type: TypeString
+    Description: The IP address for the Instance. This is the connection endpoint for an end-user application.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        User-defined labels for the alloydb instance.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+machine_config:
+    Type: TypeList
+    Description: Configurations for the machines that host the underlying database engine.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cpu_count:
+            Type: TypeInt
+            Description: The number of CPU's in the VM instance.
+            Computed: "true"
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the instance resource.
+    Computed: "true"
+query_insights_config:
+    Type: TypeList
+    Description: Configuration for query insights.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        query_plans_per_minute:
+            Type: TypeInt
+            Description: Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 20 is considered valid.
+            Optional: "true"
+        query_string_length:
+            Type: TypeInt
+            Description: Query string length. The default value is 1024. Any integer between 256 and 4500 is considered valid.
+            Optional: "true"
+        record_application_tags:
+            Type: TypeBool
+            Description: Record application tags for an instance. This flag is turned "on" by default.
+            Optional: "true"
+        record_client_address:
+            Type: TypeBool
+            Description: Record client address for an instance. Client address is PII information. This flag is turned "on" by default.
+            Optional: "true"
+read_pool_config:
+    Type: TypeList
+    Description: Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        node_count:
+            Type: TypeInt
+            Description: Read capacity, i.e. number of nodes in a read pool instance.
+            Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: Set to true if the current state of Instance does not match the user's intended state, and the service is actively updating the resource to reconcile them. This can happen due to user-triggered updates or system actions like failover or maintenance.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of the alloydb instance.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: The system-generated UID of the resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Instance was updated in UTC.
+    Computed: "true"
+

@@ -1,0 +1,31 @@
+location: TypeString
+metadata:
+    annotations: TypeMap(TypeString)
+    effective_annotations: TypeMap(TypeString)
+    effective_labels: TypeMap(TypeString)
+    generation: TypeInt
+    labels: TypeMap(TypeString)
+    namespace: TypeString
+    resource_version: TypeString
+    self_link: TypeString
+    terraform_labels: TypeMap(TypeString)
+    uid: TypeString
+name: TypeString
+project: TypeString
+spec:
+    certificate_mode: TypeString
+    force_override: TypeBool
+    route_name: TypeString
+status:
+    conditions:
+        message: TypeString
+        reason: TypeString
+        status: TypeString
+        type: TypeString
+    mapped_route_name: TypeString
+    observed_generation: TypeInt
+    resource_records:
+        name: TypeString
+        rrdata: TypeString
+        type: TypeString
+

@@ -1,0 +1,34 @@
+deleted:
+    Type: TypeBool
+    Description: The current deleted state of the role.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A human-readable description for the role.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the role in the format organizations/{{org_id}}/roles/{{role_id}}. Like id, this field can be used as a reference in other resources such as IAM role bindings.
+    Computed: "true"
+org_id:
+    Type: TypeString
+    Description: The numeric ID of the organization in which you want to create a custom role.
+    Required: "true"
+permissions:
+    Type: TypeSet
+    Description: The names of the permissions this role grants when bound in an IAM policy. At least one permission must be specified.
+    Required: "true"
+    MinItems: "1"
+role_id:
+    Type: TypeString
+    Description: The role id to use for this role.
+    Required: "true"
+stage:
+    Type: TypeString
+    Description: The current launch stage of the role. Defaults to GA.
+    Optional: "true"
+title:
+    Type: TypeString
+    Description: A human-readable title for the role.
+    Required: "true"
+

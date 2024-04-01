@@ -1,0 +1,32 @@
+advanced_settings:
+    audio_export_gcs_destination:
+        uri: TypeString
+    dtmf_settings:
+        enabled: TypeBool
+        finish_digit: TypeString
+        max_digits: TypeInt
+avatar_uri: TypeString
+default_language_code: TypeString
+description: TypeString
+display_name: TypeString
+enable_spell_correction: TypeBool
+enable_stackdriver_logging: TypeBool
+git_integration_settings:
+    github_settings:
+        access_token: TypeString
+        branches: TypeList(TypeString)
+        display_name: TypeString
+        repository_uri: TypeString
+        tracking_branch: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+security_settings: TypeString
+speech_to_text_settings:
+    enable_speech_adaptation: TypeBool
+start_flow: TypeString
+supported_language_codes: TypeList(TypeString)
+text_to_speech_settings:
+    synthesize_speech_configs: TypeString
+time_zone: TypeString
+

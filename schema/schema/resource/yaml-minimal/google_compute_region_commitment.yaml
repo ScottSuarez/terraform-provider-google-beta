@@ -1,0 +1,24 @@
+auto_renew: TypeBool
+category: TypeString
+commitment_id: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+end_timestamp: TypeString
+license_resource:
+    amount: TypeString
+    cores_per_license: TypeString
+    license: TypeString
+name: TypeString
+plan: TypeString
+project: TypeString
+region: TypeString
+resources:
+    accelerator_type: TypeString
+    amount: TypeString
+    type: TypeString
+self_link: TypeString
+start_timestamp: TypeString
+status: TypeString
+status_message: TypeString
+type: TypeString
+

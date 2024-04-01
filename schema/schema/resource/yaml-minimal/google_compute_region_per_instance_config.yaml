@@ -1,0 +1,26 @@
+minimal_action: TypeString
+most_disruptive_allowed_action: TypeString
+name: TypeString
+preserved_state:
+    disk:
+        delete_rule: TypeString
+        device_name: TypeString
+        mode: TypeString
+        source: TypeString
+    external_ip:
+        auto_delete: TypeString
+        interface_name: TypeString
+        ip_address:
+            address: TypeString
+    internal_ip:
+        auto_delete: TypeString
+        interface_name: TypeString
+        ip_address:
+            address: TypeString
+    metadata: TypeMap(TypeString)
+project: TypeString
+region: TypeString
+region_instance_group_manager: TypeString
+remove_instance_on_destroy: TypeBool
+remove_instance_state_on_destroy: TypeBool
+

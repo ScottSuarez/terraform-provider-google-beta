@@ -1,0 +1,36 @@
+all_updates_rule:
+    disable_default_iam_recipients: TypeBool
+    monitoring_notification_channels: TypeList(TypeString)
+    pubsub_topic: TypeString
+    schema_version: TypeString
+amount:
+    last_period_amount: TypeBool
+    specified_amount:
+        currency_code: TypeString
+        nanos: TypeInt
+        units: TypeString
+billing_account: TypeString
+budget_filter:
+    calendar_period: TypeString
+    credit_types: TypeList(TypeString)
+    credit_types_treatment: TypeString
+    custom_period:
+        end_date:
+            day: TypeInt
+            month: TypeInt
+            year: TypeInt
+        start_date:
+            day: TypeInt
+            month: TypeInt
+            year: TypeInt
+    labels: TypeMap(TypeString)
+    projects: TypeSet(TypeString)
+    resource_ancestors: TypeSet(TypeString)
+    services: TypeList(TypeString)
+    subaccounts: TypeList(TypeString)
+display_name: TypeString
+name: TypeString
+threshold_rules:
+    spend_basis: TypeString
+    threshold_percent: TypeFloat
+

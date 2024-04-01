@@ -1,0 +1,420 @@
+{
+    "creation_time": {
+        "Computed": true,
+        "Description": "When the test was created. A timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The human-readable name of the test case, unique within the agent. Limit of 200 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "last_test_result": {
+        "Computed": true,
+        "Description": "The latest test result.",
+        "Properties": {
+            "conversation_turns": {
+                "Description": "The conversation turns uttered during the test case replay in chronological order.",
+                "Optional": true,
+                "Properties": {
+                    "user_input": {
+                        "Description": "The user input.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "enable_sentiment_analysis": {
+                                "Description": "Whether sentiment analysis is enabled.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "injected_parameters": {
+                                "Description": "Parameters that need to be injected into the conversation during intent detection.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "input": {
+                                "Description": "User input. Supports text input, event input, dtmf input in the test case.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "dtmf": {
+                                        "Description": "The DTMF event to be handled.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "digits": {
+                                                "Description": "The dtmf digits.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "finish_digit": {
+                                                "Description": "The finish digit (if any).",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "event": {
+                                        "Description": "The event to be triggered.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "event": {
+                                                "Description": "Name of the event.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "language_code": {
+                                        "Description": "The language of the input. See [Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language) for a list of the currently supported language codes.\nNote that queries in the same session do not necessarily need to specify the same language.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "text": {
+                                        "Description": "The natural language text to be processed.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "text": {
+                                                "Description": "The natural language text to be processed. Text length must not exceed 256 characters.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "is_webhook_enabled": {
+                                "Description": "If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "virtual_agent_output": {
+                        "Description": "The virtual agent output.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "current_page": {
+                                "Description": "The [Page](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.flows.pages#Page) on which the utterance was spoken.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "display_name": {
+                                        "Description": "The human-readable name of the page, unique within the flow.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "name": {
+                                        "Description": "The unique identifier of the page.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/flows/\u003cFlow ID\u003e/pages/\u003cPage ID\u003e.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "differences": {
+                                "Description": "The list of differences between the original run and the replay for this output, if any.",
+                                "Optional": true,
+                                "Properties": {
+                                    "description": {
+                                        "Description": "A human readable description of the diff, showing the actual output vs expected output.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "type": {
+                                        "Description": "The type of diff.\n* INTENT: The intent.\n* PAGE: The page.\n* PARAMETERS: The parameters.\n* UTTERANCE: The message utterance.\n* FLOW: The flow. Possible values: [\"INTENT\", \"PAGE\", \"PARAMETERS\", \"UTTERANCE\", \"FLOW\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "session_parameters": {
+                                "Description": "The session parameters available to the bot at this point.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "status": {
+                                "Description": "Response error from the agent in the test result. If set, other output is empty.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "code": {
+                                        "Description": "The status code, which should be an enum value of google.rpc.Code.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "details": {
+                                        "Description": "A JSON encoded list of messages that carry the error details.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "message": {
+                                        "Description": "A developer-facing error message.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "text_responses": {
+                                "Description": "The text responses from the agent for the turn.",
+                                "Optional": true,
+                                "Properties": {
+                                    "text": {
+                                        "Description": "A collection of text responses.",
+                                        "Optional": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "triggered_intent": {
+                                "Description": "The [Intent](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.intents#Intent) that triggered the response.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "display_name": {
+                                        "Description": "The human-readable name of the intent, unique within the agent.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "name": {
+                                        "Description": "The unique identifier of the intent.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/intents/\u003cIntent ID\u003e.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "environment": {
+                "Description": "Environment where the test was run. If not set, it indicates the draft environment.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "The resource name for the test case result.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/testCases/\u003cTestCase ID\u003e/results/\u003cTestCaseResult ID\u003e.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "test_result": {
+                "Description": "Whether the test case passed in the agent environment.\n* PASSED: The test passed.\n* FAILED: The test did not pass. Possible values: [\"PASSED\", \"FAILED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "test_time": {
+                "Description": "The time that the test was run. A timestamp in RFC3339 text format.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the test case.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/testCases/\u003cTestCase ID\u003e.",
+        "Type": "TypeString"
+    },
+    "notes": {
+        "Description": "Additional freeform notes about the test case. Limit of 400 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The agent to create the test case for.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "tags": {
+        "Description": "Tags are short descriptions that users may apply to test cases for organizational and filtering purposes.\nEach tag should start with \"#\" and has a limit of 30 characters",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "test_case_conversation_turns": {
+        "Description": "The conversation turns uttered when the test case was created, in chronological order. These include the canonical set of agent utterances that should occur when the agent is working properly.",
+        "Optional": true,
+        "Properties": {
+            "user_input": {
+                "Description": "The user input.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enable_sentiment_analysis": {
+                        "Description": "Whether sentiment analysis is enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "injected_parameters": {
+                        "Description": "Parameters that need to be injected into the conversation during intent detection.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "input": {
+                        "Description": "User input. Supports text input, event input, dtmf input in the test case.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "dtmf": {
+                                "Description": "The DTMF event to be handled.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "digits": {
+                                        "Description": "The dtmf digits.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "finish_digit": {
+                                        "Description": "The finish digit (if any).",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "event": {
+                                "Description": "The event to be triggered.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "event": {
+                                        "Description": "Name of the event.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "language_code": {
+                                "Description": "The language of the input. See [Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language) for a list of the currently supported language codes.\nNote that queries in the same session do not necessarily need to specify the same language.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "text": {
+                                "Description": "The natural language text to be processed.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "text": {
+                                        "Description": "The natural language text to be processed. Text length must not exceed 256 characters.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "is_webhook_enabled": {
+                        "Description": "If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "virtual_agent_output": {
+                "Description": "The virtual agent output.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "current_page": {
+                        "Description": "The [Page](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.flows.pages#Page) on which the utterance was spoken.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "display_name": {
+                                "Computed": true,
+                                "Description": "The human-readable name of the page, unique within the flow.",
+                                "Type": "TypeString"
+                            },
+                            "name": {
+                                "Description": "The unique identifier of the page.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/flows/\u003cFlow ID\u003e/pages/\u003cPage ID\u003e.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "session_parameters": {
+                        "Description": "The session parameters available to the bot at this point.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "text_responses": {
+                        "Description": "The text responses from the agent for the turn.",
+                        "Optional": true,
+                        "Properties": {
+                            "text": {
+                                "Description": "A collection of text responses.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "triggered_intent": {
+                        "Description": "The [Intent](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/projects.locations.agents.intents#Intent) that triggered the response.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "display_name": {
+                                "Computed": true,
+                                "Description": "The human-readable name of the intent, unique within the agent.",
+                                "Type": "TypeString"
+                            },
+                            "name": {
+                                "Description": "The unique identifier of the intent.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/intents/\u003cIntent ID\u003e.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "test_config": {
+        "Description": "Config for the test case.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "flow": {
+                "ConflictsWith": "test_config.0.page",
+                "Description": "Flow name to start the test case with.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/flows/\u003cFlow ID\u003e.\nOnly one of flow and page should be set to indicate the starting point of the test case. If neither is set, the test case will start with start page on the default start flow.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "page": {
+                "ConflictsWith": "test_config.0.flow",
+                "Description": "The page to start the test case with.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/flows/\u003cFlow ID\u003e/pages/\u003cPage ID\u003e.\nOnly one of flow and page should be set to indicate the starting point of the test case. If neither is set, the test case will start with start page on the default start flow.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "tracking_parameters": {
+                "Description": "Session parameters to be compared when calculating differences.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

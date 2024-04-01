@@ -1,0 +1,16 @@
+{
+    "names": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

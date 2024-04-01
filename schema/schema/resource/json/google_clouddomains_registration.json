@@ -1,0 +1,404 @@
+{
+    "contact_notices": {
+        "Description": "The list of contact notices that the caller acknowledges. Possible value is PUBLIC_CONTACT_DATA_ACKNOWLEDGEMENT",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "contact_settings": {
+        "Description": "Required. Settings for contact information linked to the Registration.",
+        "MaxItems": 1,
+        "Properties": {
+            "admin_contact": {
+                "Description": "Caution: Anyone with access to this email address, phone number, and/or postal address can take control of the domain.\n\nWarning: For new Registrations, the registrant receives an email confirmation that they must complete within 15 days to\navoid domain suspension.",
+                "MaxItems": 1,
+                "Properties": {
+                    "email": {
+                        "Description": "Required. Email address of the contact.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "fax_number": {
+                        "Description": "Fax number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "phone_number": {
+                        "Description": "Required. Phone number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "postal_address": {
+                        "Description": "Required. Postal address of the contact.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "address_lines": {
+                                "Description": "Unstructured address lines describing the lower levels of an address.\nBecause values in addressLines do not have type information and may sometimes contain multiple values in a single\nfield (e.g. \"Austin, TX\"), it is important that the line order is clear. The order of address lines should be\n\"envelope order\" for the country/region of the address. In places where this can vary (e.g. Japan), address_language\nis used to make it explicit (e.g. \"ja\" for large-to-small ordering and \"ja-Latn\" or \"en\" for small-to-large). This way,\nthe most specific line of an address can be selected based on the language.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "administrative_area": {
+                                "Description": "Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state,\na province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community\n(e.g. \"Barcelona\" and not \"Catalonia\"). Many countries don't use an administrative area in postal addresses. E.g. in Switzerland\nthis should be left unpopulated.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "locality": {
+                                "Description": "Generally refers to the city/town portion of the address. Examples: US city, IT comune, UK post town. In regions of the world\nwhere localities are not well defined or do not fit into this structure well, leave locality empty and use addressLines.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "organization": {
+                                "Description": "The name of the organization at the address.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "postal_code": {
+                                "Description": "Postal code of the address. Not all countries use or require postal codes to be present, but where they are used,\nthey may trigger additional validation with other parts of the address (e.g. state/zip validation in the U.S.A.).",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "recipients": {
+                                "Description": "The recipient at the address. This field may, under certain circumstances, contain multiline information. For example,\nit might contain \"care of\" information.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "region_code": {
+                                "Description": "Required. CLDR region code of the country/region of the address. This is never inferred and it is up to the user to\nensure the value is correct. See https://cldr.unicode.org/ and\nhttps://www.unicode.org/cldr/charts/30/supplemental/territory_information.html for details. Example: \"CH\" for Switzerland.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "privacy": {
+                "Description": "Required. Privacy setting for the contacts associated with the Registration.\nValues are PUBLIC_CONTACT_DATA, PRIVATE_CONTACT_DATA, and REDACTED_CONTACT_DATA",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "registrant_contact": {
+                "Description": "Caution: Anyone with access to this email address, phone number, and/or postal address can take control of the domain.\n\nWarning: For new Registrations, the registrant receives an email confirmation that they must complete within 15 days to\navoid domain suspension.",
+                "MaxItems": 1,
+                "Properties": {
+                    "email": {
+                        "Description": "Required. Email address of the contact.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "fax_number": {
+                        "Description": "Fax number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "phone_number": {
+                        "Description": "Required. Phone number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "postal_address": {
+                        "Description": "Required. Postal address of the contact.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "address_lines": {
+                                "Description": "Unstructured address lines describing the lower levels of an address.\nBecause values in addressLines do not have type information and may sometimes contain multiple values in a single\nfield (e.g. \"Austin, TX\"), it is important that the line order is clear. The order of address lines should be\n\"envelope order\" for the country/region of the address. In places where this can vary (e.g. Japan), address_language\nis used to make it explicit (e.g. \"ja\" for large-to-small ordering and \"ja-Latn\" or \"en\" for small-to-large). This way,\nthe most specific line of an address can be selected based on the language.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "administrative_area": {
+                                "Description": "Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state,\na province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community\n(e.g. \"Barcelona\" and not \"Catalonia\"). Many countries don't use an administrative area in postal addresses. E.g. in Switzerland\nthis should be left unpopulated.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "locality": {
+                                "Description": "Generally refers to the city/town portion of the address. Examples: US city, IT comune, UK post town. In regions of the world\nwhere localities are not well defined or do not fit into this structure well, leave locality empty and use addressLines.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "organization": {
+                                "Description": "The name of the organization at the address.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "postal_code": {
+                                "Description": "Postal code of the address. Not all countries use or require postal codes to be present, but where they are used,\nthey may trigger additional validation with other parts of the address (e.g. state/zip validation in the U.S.A.).",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "recipients": {
+                                "Description": "The recipient at the address. This field may, under certain circumstances, contain multiline information. For example,\nit might contain \"care of\" information.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "region_code": {
+                                "Description": "Required. CLDR region code of the country/region of the address. This is never inferred and it is up to the user to\nensure the value is correct. See https://cldr.unicode.org/ and\nhttps://www.unicode.org/cldr/charts/30/supplemental/territory_information.html for details. Example: \"CH\" for Switzerland.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "technical_contact": {
+                "Description": "Caution: Anyone with access to this email address, phone number, and/or postal address can take control of the domain.\n\nWarning: For new Registrations, the registrant receives an email confirmation that they must complete within 15 days to\navoid domain suspension.",
+                "MaxItems": 1,
+                "Properties": {
+                    "email": {
+                        "Description": "Required. Email address of the contact.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "fax_number": {
+                        "Description": "Fax number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "phone_number": {
+                        "Description": "Required. Phone number of the contact in international format. For example, \"+1-800-555-0123\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "postal_address": {
+                        "Description": "Required. Postal address of the contact.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "address_lines": {
+                                "Description": "Unstructured address lines describing the lower levels of an address.\nBecause values in addressLines do not have type information and may sometimes contain multiple values in a single\nfield (e.g. \"Austin, TX\"), it is important that the line order is clear. The order of address lines should be\n\"envelope order\" for the country/region of the address. In places where this can vary (e.g. Japan), address_language\nis used to make it explicit (e.g. \"ja\" for large-to-small ordering and \"ja-Latn\" or \"en\" for small-to-large). This way,\nthe most specific line of an address can be selected based on the language.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "administrative_area": {
+                                "Description": "Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state,\na province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community\n(e.g. \"Barcelona\" and not \"Catalonia\"). Many countries don't use an administrative area in postal addresses. E.g. in Switzerland\nthis should be left unpopulated.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "locality": {
+                                "Description": "Generally refers to the city/town portion of the address. Examples: US city, IT comune, UK post town. In regions of the world\nwhere localities are not well defined or do not fit into this structure well, leave locality empty and use addressLines.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "organization": {
+                                "Description": "The name of the organization at the address.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "postal_code": {
+                                "Description": "Postal code of the address. Not all countries use or require postal codes to be present, but where they are used,\nthey may trigger additional validation with other parts of the address (e.g. state/zip validation in the U.S.A.).",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "recipients": {
+                                "Description": "The recipient at the address. This field may, under certain circumstances, contain multiline information. For example,\nit might contain \"care of\" information.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "region_code": {
+                                "Description": "Required. CLDR region code of the country/region of the address. This is never inferred and it is up to the user to\nensure the value is correct. See https://cldr.unicode.org/ and\nhttps://www.unicode.org/cldr/charts/30/supplemental/territory_information.html for details. Example: \"CH\" for Switzerland.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. Time at which the automation was created.",
+        "Type": "TypeString"
+    },
+    "dns_settings": {
+        "Description": "Settings controlling the DNS configuration of the Registration.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "custom_dns": {
+                "Description": "Configuration for an arbitrary DNS provider.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "ds_records": {
+                        "Description": "The list of DS records for this domain, which are used to enable DNSSEC. The domain's DNS provider can provide\nthe values to set here. If this field is empty, DNSSEC is disabled.",
+                        "Optional": true,
+                        "Properties": {
+                            "algorithm": {
+                                "Description": "The algorithm used to generate the referenced DNSKEY.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "digest": {
+                                "Description": "The digest generated from the referenced DNSKEY.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "digest_type": {
+                                "Description": "The hash function used to generate the digest of the referenced DNSKEY.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "key_tag": {
+                                "Description": "The key tag of the record. Must be set in range 0 -- 65535.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "name_servers": {
+                        "Description": "Required. A list of name servers that store the DNS zone for this domain. Each name server is a domain\nname, with Unicode domain names expressed in Punycode format.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "glue_records": {
+                "Description": "The list of glue records for this Registration. Commonly empty.",
+                "Optional": true,
+                "Properties": {
+                    "host_name": {
+                        "Description": "Required. Domain name of the host in Punycode format.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "ipv4_addresses": {
+                        "Description": "List of IPv4 addresses corresponding to this host in the standard decimal format (e.g. 198.51.100.1).\nAt least one of ipv4_address and ipv6_address must be set.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "ipv6_addresses": {
+                        "Description": "List of IPv4 addresses corresponding to this host in the standard decimal format (e.g. 198.51.100.1).\nAt least one of ipv4_address and ipv6_address must be set.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "domain_name": {
+        "Description": "Required. The domain name. Unicode domain names must be expressed in Punycode format.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "domain_notices": {
+        "Description": "The list of domain notices that you acknowledge. Possible value is HSTS_PRELOADED",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Output only. Time at which the automation was updated.",
+        "Type": "TypeString"
+    },
+    "issues": {
+        "Computed": true,
+        "Description": "Output only. The set of issues with the Registration that require attention.",
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of labels associated with the Registration.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "management_settings": {
+        "Computed": true,
+        "Description": "Settings for management of the Registration, including renewal, billing, and transfer",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "preferred_renewal_method": {
+                "AtLeastOneOf": "management_settings.0.preferred_renewal_method, management_settings.0.transfer_lock_state",
+                "Computed": true,
+                "Description": "The desired renewal method for this Registration. The actual renewalMethod is automatically updated to reflect this choice.\nIf unset or equal to RENEWAL_METHOD_UNSPECIFIED, the actual renewalMethod is treated as if it were set to AUTOMATIC_RENEWAL.\nYou cannot use RENEWAL_DISABLED during resource creation, and you can update the renewal status only when the Registration\nresource has state ACTIVE or SUSPENDED.\n\nWhen preferredRenewalMethod is set to AUTOMATIC_RENEWAL, the actual renewalMethod can be set to RENEWAL_DISABLED in case of\nproblems with the billing account or reported domain abuse. In such cases, check the issues field on the Registration. After\nthe problem is resolved, the renewalMethod is automatically updated to preferredRenewalMethod in a few hours.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "renewal_method": {
+                "Computed": true,
+                "Description": "Output only. The actual renewal method for this Registration. When preferredRenewalMethod is set to AUTOMATIC_RENEWAL,\nthe actual renewalMethod can be equal to RENEWAL_DISABLED—for example, when there are problems with the billing account\nor reported domain abuse. In such cases, check the issues field on the Registration. After the problem is resolved, the\nrenewalMethod is automatically updated to preferredRenewalMethod in a few hours.",
+                "Type": "TypeString"
+            },
+            "transfer_lock_state": {
+                "AtLeastOneOf": "management_settings.0.preferred_renewal_method, management_settings.0.transfer_lock_state",
+                "Computed": true,
+                "Description": "Controls whether the domain can be transferred to another registrar. Values are UNLOCKED or LOCKED.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. Name of the Registration resource, in the format projects/*/locations/*/registrations/\u003cdomain_name\u003e.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "register_failure_reason": {
+        "Computed": true,
+        "Description": "Output only. The reason the domain registration failed. Only set for domains in REGISTRATION_FAILED state.",
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. The current state of the Registration.",
+        "Type": "TypeString"
+    },
+    "supported_privacy": {
+        "Computed": true,
+        "Description": "Output only. Set of options for the contactSettings.privacy field that this Registration supports.",
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "yearly_price": {
+        "Description": "Required. Yearly price to register or renew the domain. The value that should be put here can be obtained from\nregistrations.retrieveRegisterParameters or registrations.searchDomains calls.",
+        "MaxItems": 1,
+        "Properties": {
+            "currency_code": {
+                "Description": "The three-letter currency code defined in ISO 4217.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "units": {
+                "Description": "The whole units of the amount. For example if currencyCode is \"USD\", then 1 unit is one US dollar.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

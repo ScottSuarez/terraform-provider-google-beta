@@ -1,0 +1,148 @@
+autoscaling_config:
+    Type: TypeList
+    Description: |-
+        The autoscaling configuration. Autoscaling is enabled if this field is set.
+        When autoscaling is enabled, num_nodes and processing_units are treated as,
+        OUTPUT_ONLY fields and reflect the current compute capacity allocated to
+        the instance.
+    Optional: "true"
+    ExactlyOneOf: num_nodes, processing_units, autoscaling_config
+    MaxItems: "1"
+    Properties:
+        autoscaling_limits:
+            Type: TypeList
+            Description: |-
+                Defines scale in controls to reduce the risk of response latency
+                and outages due to abrupt scale-in events. Users can define the minimum and
+                maximum compute capacity allocated to the instance, and the autoscaler will
+                only scale within that range. Users can either use nodes or processing
+                units to specify the limits, but should use the same unit to set both the
+                min_limit and max_limit.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                max_nodes:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies maximum number of nodes allocated to the instance. If set, this number
+                        should be greater than or equal to min_nodes.
+                    Optional: "true"
+                max_processing_units:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies maximum number of processing units allocated to the instance.
+                        If set, this number should be multiples of 1000 and be greater than or equal to
+                        min_processing_units.
+                    Optional: "true"
+                min_nodes:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies number of nodes allocated to the instance. If set, this number
+                        should be greater than or equal to 1.
+                    Optional: "true"
+                min_processing_units:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies minimum number of processing units allocated to the instance.
+                        If set, this number should be multiples of 1000.
+                    Optional: "true"
+        autoscaling_targets:
+            Type: TypeList
+            Description: |-
+                Defines scale in controls to reduce the risk of response latency
+                and outages due to abrupt scale-in events
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                high_priority_cpu_utilization_percent:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies the target high priority cpu utilization percentage that the autoscaler
+                        should be trying to achieve for the instance.
+                        This number is on a scale from 0 (no utilization) to 100 (full utilization)..
+                    Optional: "true"
+                storage_utilization_percent:
+                    Type: TypeInt
+                    Description: |-
+                        Specifies the target storage utilization percentage that the autoscaler
+                        should be trying to achieve for the instance.
+                        This number is on a scale from 0 (no utilization) to 100 (full utilization).
+                    Optional: "true"
+config:
+    Type: TypeString
+    Description: |-
+        The name of the instance's configuration (similar but not
+        quite the same as a region) which defines the geographic placement and
+        replication of your databases in this instance. It determines where your data
+        is stored. Values are typically of the form 'regional-europe-west1' , 'us-central' etc.
+        In order to obtain a valid list please consult the
+        [Configuration section of the docs](https://cloud.google.com/spanner/docs/instances).
+    Required: "true"
+display_name:
+    Type: TypeString
+    Description: |-
+        The descriptive name for this instance as it appears in UIs. Must be
+        unique per project and between 4 and 30 characters in length.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+force_destroy:
+    Type: TypeBool
+    Description: |-
+        When deleting a spanner instance, this boolean option will delete all backups of this instance.
+        This must be set to true if you created a backup manually in the console.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        An object containing a list of "key": value pairs.
+        Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        A unique identifier for the instance, which cannot be changed after
+        the instance is created. The name must be between 6 and 30 characters
+        in length.
+
+
+        If not provided, a random string starting with 'tf-' will be selected.
+    Computed: "true"
+    Optional: "true"
+num_nodes:
+    Type: TypeInt
+    Description: |-
+        The number of nodes allocated to this instance. Exactly one of either node_count or processing_units
+        must be present in terraform.
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: num_nodes, processing_units, autoscaling_config
+processing_units:
+    Type: TypeInt
+    Description: |-
+        The number of processing units allocated to this instance. Exactly one of processing_units
+        or node_count must be present in terraform.
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: num_nodes, processing_units, autoscaling_config
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: 'Instance status: ''CREATING'' or ''READY''.'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

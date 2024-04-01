@@ -1,0 +1,16 @@
+create_time: TypeString
+dhcp_address_ranges:
+    first_address: TypeString
+    last_address: TypeString
+gateway_id: TypeString
+gateway_ip: TypeString
+ip_cidr_range: TypeString
+name: TypeString
+parent: TypeString
+standard_config: TypeBool
+state: TypeString
+type: TypeString
+uid: TypeString
+update_time: TypeString
+vlan_id: TypeInt
+

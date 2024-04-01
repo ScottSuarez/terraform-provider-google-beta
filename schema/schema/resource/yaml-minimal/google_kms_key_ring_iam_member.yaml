@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+key_ring_id: TypeString
+member: TypeString
+role: TypeString
+

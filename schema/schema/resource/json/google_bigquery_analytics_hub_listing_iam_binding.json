@@ -1,0 +1,51 @@
+{
+    "condition": {
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "expression": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "title": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "data_exchange_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "listing_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "members": {
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,80 @@
+{
+    "container_image": {
+        "Description": "Use a container image to start the notebook instance.",
+        "ExactlyOneOf": "vm_image, container_image",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "repository": {
+                "Description": "The path to the container image repository.\nFor example: gcr.io/{project_id}/{imageName}",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "tag": {
+                "Description": "The tag of the container image. If not specified, this defaults to the latest tag.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Instance creation time",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A brief description of this environment.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Display name of this environment for the UI.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "A reference to the zone where the machine resides.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name specified for the Environment instance.\nFormat: projects/{project_id}/locations/{location}/environments/{environmentId}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "post_startup_script": {
+        "Description": "Path to a Bash script that automatically runs after a notebook instance fully boots up.\nThe path must be a URL or Cloud Storage path. Example: \"gs://path-to-file/file-name\"",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vm_image": {
+        "Description": "Use a Compute Engine VM image to start the notebook instance.",
+        "ExactlyOneOf": "vm_image, container_image",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "image_family": {
+                "Description": "Use this VM image family to find the image; the newest image in this family will be used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "image_name": {
+                "Description": "Use VM image name to find the image.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "project": {
+                "Description": "The name of the Google Cloud project that this VM image belongs to.\nFormat: projects/{project_id}",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

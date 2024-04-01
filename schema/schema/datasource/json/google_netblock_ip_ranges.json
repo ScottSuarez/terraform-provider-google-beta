@@ -1,0 +1,18 @@
+{
+    "cidr_blocks": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "cidr_blocks_ipv4": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "cidr_blocks_ipv6": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "range_type": {
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

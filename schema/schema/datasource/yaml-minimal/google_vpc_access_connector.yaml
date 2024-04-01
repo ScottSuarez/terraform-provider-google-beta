@@ -1,0 +1,17 @@
+connected_projects: TypeList(TypeString)
+ip_cidr_range: TypeString
+machine_type: TypeString
+max_instances: TypeInt
+max_throughput: TypeInt
+min_instances: TypeInt
+min_throughput: TypeInt
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+state: TypeString
+subnet:
+    name: TypeString
+    project_id: TypeString
+

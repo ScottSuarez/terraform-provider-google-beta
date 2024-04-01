@@ -1,0 +1,34 @@
+backup_config:
+    all_namespaces: TypeBool
+    encryption_key:
+        gcp_kms_encryption_key: TypeString
+    include_secrets: TypeBool
+    include_volume_data: TypeBool
+    selected_applications:
+        namespaced_names:
+            name: TypeString
+            namespace: TypeString
+    selected_namespaces:
+        namespaces: TypeList(TypeString)
+backup_schedule:
+    cron_schedule: TypeString
+    paused: TypeBool
+cluster: TypeString
+deactivated: TypeBool
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+protected_pod_count: TypeInt
+retention_policy:
+    backup_delete_lock_days: TypeInt
+    backup_retain_days: TypeInt
+    locked: TypeBool
+state: TypeString
+state_reason: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+

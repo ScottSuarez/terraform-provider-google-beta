@@ -1,0 +1,39 @@
+export_custom_routes:
+    Type: TypeBool
+    Description: Whether to export the custom routes to the peer network. Defaults to false.
+    Computed: "true"
+export_subnet_routes_with_public_ip:
+    Type: TypeBool
+    Computed: "true"
+import_custom_routes:
+    Type: TypeBool
+    Description: Whether to export the custom routes from the peer network. Defaults to false.
+    Computed: "true"
+import_subnet_routes_with_public_ip:
+    Type: TypeBool
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: Name of the peering.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: The primary network of the peering.
+    Required: "true"
+peer_network:
+    Type: TypeString
+    Description: The peer network in the peering. The peer network may belong to a different project.
+    Computed: "true"
+stack_type:
+    Type: TypeString
+    Description: 'Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Possible values: ["IPV4_ONLY", "IPV4_IPV6"]'
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: State for the peering, either ACTIVE or INACTIVE. The peering is ACTIVE when there's a matching configuration in the peer network.
+    Computed: "true"
+state_details:
+    Type: TypeString
+    Description: Details about the current state of the peering.
+    Computed: "true"
+

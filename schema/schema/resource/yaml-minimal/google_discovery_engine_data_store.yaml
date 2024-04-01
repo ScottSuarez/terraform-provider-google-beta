@@ -1,0 +1,12 @@
+content_config: TypeString
+create_advanced_site_search: TypeBool
+create_time: TypeString
+data_store_id: TypeString
+default_schema_id: TypeString
+display_name: TypeString
+industry_vertical: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+solution_types: TypeList(TypeString)
+

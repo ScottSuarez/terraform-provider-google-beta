@@ -1,0 +1,6 @@
+bucket: TypeString
+domain: TypeString
+email: TypeString
+entity: TypeString
+role: TypeString
+

@@ -1,0 +1,17 @@
+create_time: TypeString
+description: TypeString
+edge_services_cidr: TypeString
+external_ip:
+    enabled: TypeBool
+    state: TypeString
+internet_access:
+    enabled: TypeBool
+    state: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+uid: TypeString
+update_time: TypeString
+vmware_engine_network: TypeString
+vmware_engine_network_canonical: TypeString
+

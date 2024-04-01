@@ -1,0 +1,18 @@
+{
+    "entitytype": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "featurestore": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

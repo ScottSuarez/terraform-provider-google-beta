@@ -1,0 +1,11 @@
+authorized_network: TypeString
+domain_resource: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+peering_id: TypeString
+project: TypeString
+status: TypeString
+status_message: TypeString
+terraform_labels: TypeMap(TypeString)
+

@@ -1,0 +1,17 @@
+backend_metastores:
+    metastore_type: TypeString
+    name: TypeString
+    rank: TypeString
+effective_labels: TypeMap(TypeString)
+endpoint_uri: TypeString
+federation_id: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+state_message: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+version: TypeString
+

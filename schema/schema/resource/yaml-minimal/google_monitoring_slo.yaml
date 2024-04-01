@@ -1,0 +1,61 @@
+basic_sli:
+    availability:
+        enabled: TypeBool
+    latency:
+        threshold: TypeString
+    location: TypeSet(TypeString)
+    method: TypeSet(TypeString)
+    version: TypeSet(TypeString)
+calendar_period: TypeString
+display_name: TypeString
+goal: TypeFloat
+name: TypeString
+project: TypeString
+request_based_sli:
+    distribution_cut:
+        distribution_filter: TypeString
+        range:
+            max: TypeFloat
+            min: TypeFloat
+    good_total_ratio:
+        bad_service_filter: TypeString
+        good_service_filter: TypeString
+        total_service_filter: TypeString
+rolling_period_days: TypeInt
+service: TypeString
+slo_id: TypeString
+user_labels: TypeMap(TypeString)
+windows_based_sli:
+    good_bad_metric_filter: TypeString
+    good_total_ratio_threshold:
+        basic_sli_performance:
+            availability:
+                enabled: TypeBool
+            latency:
+                threshold: TypeString
+            location: TypeSet(TypeString)
+            method: TypeSet(TypeString)
+            version: TypeSet(TypeString)
+        performance:
+            distribution_cut:
+                distribution_filter: TypeString
+                range:
+                    max: TypeFloat
+                    min: TypeFloat
+            good_total_ratio:
+                bad_service_filter: TypeString
+                good_service_filter: TypeString
+                total_service_filter: TypeString
+        threshold: TypeFloat
+    metric_mean_in_range:
+        range:
+            max: TypeFloat
+            min: TypeFloat
+        time_series: TypeString
+    metric_sum_in_range:
+        range:
+            max: TypeFloat
+            min: TypeFloat
+        time_series: TypeString
+    window_period: TypeString
+

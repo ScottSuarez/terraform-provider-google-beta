@@ -1,0 +1,13 @@
+env_id:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+org_id:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+

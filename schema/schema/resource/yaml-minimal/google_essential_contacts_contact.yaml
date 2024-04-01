@@ -1,0 +1,6 @@
+email: TypeString
+language_tag: TypeString
+name: TypeString
+notification_category_subscriptions: TypeList(TypeString)
+parent: TypeString
+

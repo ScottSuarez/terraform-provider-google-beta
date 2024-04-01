@@ -1,0 +1,246 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Optional. Annotations on the cluster. This field has the same
+        restrictions as Kubernetes annotations. The total size of all keys and
+        values combined is limited to 256k. Key can have 2 segments: prefix (optional)
+        and name (required), separated by a slash (/). Prefix must be a DNS subdomain.
+        Name must be 63 characters or less, begin and end with alphanumerics,
+        with dashes (-), underscores (_), dots (.), and alphanumerics between.
+
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+authorization:
+    Type: TypeList
+    Description: Configuration related to the cluster RBAC settings.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        admin_groups:
+            Type: TypeList
+            Description: |-
+                Groups that can perform operations as a cluster admin. A managed
+                ClusterRoleBinding will be created to grant the 'cluster-admin' ClusterRole
+                to the groups. Up to ten admin groups can be provided.
+
+                For more info on RBAC, see
+                https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+            Optional: "true"
+        admin_users:
+            Type: TypeList
+            Description: |-
+                Users that can perform operations as a cluster admin. A managed
+                ClusterRoleBinding will be created to grant the 'cluster-admin' ClusterRole
+                to the users. Up to ten admin users can be provided.
+
+                For more info on RBAC, see
+                https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+            Optional: "true"
+binary_authorization:
+    Type: TypeList
+    Description: Binary Authorization configuration.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        evaluation_mode:
+            Type: TypeString
+            Description: 'Configure Binary Authorization evaluation mode. Possible values: ["DISABLED", "PROJECT_SINGLETON_POLICY_ENFORCE"]'
+            Optional: "true"
+cluster_region:
+    Type: TypeString
+    Description: |-
+        Output only. The region where this cluster runs.
+
+        For EKS clusters, this is an AWS region. For AKS clusters,
+        this is an Azure region.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. The time at which this cluster was created.
+    Computed: "true"
+deletion_policy:
+    Type: TypeString
+    Description: Policy to determine what flags to send on delete.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: |-
+        A human readable description of this attached cluster. Cannot be longer
+        than 255 UTF-8 encoded bytes.
+    Optional: "true"
+distribution:
+    Type: TypeString
+    Description: |-
+        The Kubernetes distribution of the underlying attached cluster. Supported values:
+        "eks", "aks".
+    Required: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+errors:
+    Type: TypeList
+    Description: A set of errors found in the cluster.
+    Computed: "true"
+    Properties:
+        message:
+            Type: TypeString
+            Description: Human-friendly description of the error.
+            Optional: "true"
+fleet:
+    Type: TypeList
+    Description: Fleet configuration.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        membership:
+            Type: TypeString
+            Description: |-
+                The name of the managed Hub Membership resource associated to this
+                cluster. Membership names are formatted as
+                projects/<project-number>/locations/global/membership/<cluster-id>.
+            Computed: "true"
+        project:
+            Type: TypeString
+            Description: The number of the Fleet host project where this cluster will be registered.
+            Required: "true"
+kubernetes_version:
+    Type: TypeString
+    Description: The Kubernetes version of the cluster.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+logging_config:
+    Type: TypeList
+    Description: Logging configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        component_config:
+            Type: TypeList
+            Description: The configuration of the logging components
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enable_components:
+                    Type: TypeList
+                    Description: 'The components to be enabled. Possible values: ["SYSTEM_COMPONENTS", "WORKLOADS"]'
+                    Optional: "true"
+monitoring_config:
+    Type: TypeList
+    Description: Monitoring configuration.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        managed_prometheus_config:
+            Type: TypeList
+            Description: Enable Google Cloud Managed Service for Prometheus in the cluster.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Enable Managed Collection.
+                    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of this resource.
+    Required: "true"
+oidc_config:
+    Type: TypeList
+    Description: |-
+        OIDC discovery information of the target cluster.
+
+        Kubernetes Service Account (KSA) tokens are JWT tokens signed by the cluster
+        API server. This fields indicates how GCP services
+        validate KSA tokens in order to allow system workloads (such as GKE Connect
+        and telemetry agents) to authenticate back to GCP.
+
+        Both clusters with public and private issuer URLs are supported.
+        Clusters with public issuers only need to specify the 'issuer_url' field
+        while clusters with private issuers need to provide both
+        'issuer_url' and 'jwks'.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        issuer_url:
+            Type: TypeString
+            Description: A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://'
+            Required: "true"
+        jwks:
+            Type: TypeString
+            Description: OIDC verification keys in JWKS format (RFC 7517).
+            Optional: "true"
+platform_version:
+    Type: TypeString
+    Description: The platform version for the cluster (e.g. '1.23.0-gke.1').
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+proxy_config:
+    Type: TypeList
+    Description: Support for proxy configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kubernetes_secret:
+            Type: TypeList
+            Description: The Kubernetes Secret resource that contains the HTTP(S) proxy configuration.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: Name of the kubernetes secret containing the proxy config.
+                    Required: "true"
+                namespace:
+                    Type: TypeString
+                    Description: Namespace of the kubernetes secret containing the proxy config.
+                    Required: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the cluster.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: |-
+        The current state of the cluster. Possible values:
+        STATE_UNSPECIFIED, PROVISIONING, RUNNING, RECONCILING, STOPPING, ERROR,
+        DEGRADED
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: A globally unique identifier for the cluster.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time at which this cluster was last updated.
+    Computed: "true"
+workload_identity_config:
+    Type: TypeList
+    Description: Workload Identity settings.
+    Computed: "true"
+    Properties:
+        identity_provider:
+            Type: TypeString
+            Description: |-
+                The ID of the OIDC Identity Provider (IdP) associated to
+                the Workload Identity Pool.
+            Optional: "true"
+        issuer_uri:
+            Type: TypeString
+            Description: The OIDC issuer URL for this cluster.
+            Optional: "true"
+        workload_pool:
+            Type: TypeString
+            Description: The Workload Identity Pool associated to the cluster.
+            Optional: "true"
+

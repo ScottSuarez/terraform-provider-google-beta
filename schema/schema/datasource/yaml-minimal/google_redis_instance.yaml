@@ -1,0 +1,61 @@
+alternative_location_id: TypeString
+auth_enabled: TypeBool
+auth_string: TypeString
+authorized_network: TypeString
+connect_mode: TypeString
+create_time: TypeString
+current_location_id: TypeString
+customer_managed_key: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+host: TypeString
+labels: TypeMap(TypeString)
+location_id: TypeString
+maintenance_policy:
+    create_time: TypeString
+    description: TypeString
+    update_time: TypeString
+    weekly_maintenance_window:
+        day: TypeString
+        duration: TypeString
+        start_time:
+            hours: TypeInt
+            minutes: TypeInt
+            nanos: TypeInt
+            seconds: TypeInt
+maintenance_schedule:
+    end_time: TypeString
+    schedule_deadline_time: TypeString
+    start_time: TypeString
+memory_size_gb: TypeInt
+name: TypeString
+nodes:
+    id: TypeString
+    zone: TypeString
+persistence_config:
+    persistence_mode: TypeString
+    rdb_next_snapshot_time: TypeString
+    rdb_snapshot_period: TypeString
+    rdb_snapshot_start_time: TypeString
+persistence_iam_identity: TypeString
+port: TypeInt
+project: TypeString
+read_endpoint: TypeString
+read_endpoint_port: TypeInt
+read_replicas_mode: TypeString
+redis_configs: TypeMap(TypeString)
+redis_version: TypeString
+region: TypeString
+replica_count: TypeInt
+reserved_ip_range: TypeString
+secondary_ip_range: TypeString
+server_ca_certs:
+    cert: TypeString
+    create_time: TypeString
+    expire_time: TypeString
+    serial_number: TypeString
+    sha1_fingerprint: TypeString
+terraform_labels: TypeMap(TypeString)
+tier: TypeString
+transit_encryption_mode: TypeString
+

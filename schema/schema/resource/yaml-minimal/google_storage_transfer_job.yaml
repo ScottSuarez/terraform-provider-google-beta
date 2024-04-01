@@ -1,0 +1,71 @@
+creation_time: TypeString
+deletion_time: TypeString
+description: TypeString
+event_stream:
+    event_stream_expiration_time: TypeString
+    event_stream_start_time: TypeString
+    name: TypeString
+last_modification_time: TypeString
+name: TypeString
+notification_config:
+    event_types: TypeSet(TypeString)
+    payload_format: TypeString
+    pubsub_topic: TypeString
+project: TypeString
+schedule:
+    repeat_interval: TypeString
+    schedule_end_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+    schedule_start_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+    start_time_of_day:
+        hours: TypeInt
+        minutes: TypeInt
+        nanos: TypeInt
+        seconds: TypeInt
+status: TypeString
+transfer_spec:
+    aws_s3_data_source:
+        aws_access_key:
+            access_key_id: TypeString
+            secret_access_key: TypeString
+        bucket_name: TypeString
+        path: TypeString
+        role_arn: TypeString
+    azure_blob_storage_data_source:
+        azure_credentials:
+            sas_token: TypeString
+        container: TypeString
+        path: TypeString
+        storage_account: TypeString
+    gcs_data_sink:
+        bucket_name: TypeString
+        path: TypeString
+    gcs_data_source:
+        bucket_name: TypeString
+        path: TypeString
+    http_data_source:
+        list_url: TypeString
+    object_conditions:
+        exclude_prefixes: TypeList(TypeString)
+        include_prefixes: TypeList(TypeString)
+        last_modified_before: TypeString
+        last_modified_since: TypeString
+        max_time_elapsed_since_last_modification: TypeString
+        min_time_elapsed_since_last_modification: TypeString
+    posix_data_sink:
+        root_directory: TypeString
+    posix_data_source:
+        root_directory: TypeString
+    sink_agent_pool_name: TypeString
+    source_agent_pool_name: TypeString
+    transfer_options:
+        delete_objects_from_source_after_transfer: TypeBool
+        delete_objects_unique_in_sink: TypeBool
+        overwrite_objects_already_existing_in_sink: TypeBool
+        overwrite_when: TypeString
+

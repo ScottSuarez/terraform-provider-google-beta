@@ -1,0 +1,58 @@
+default_version:
+    Type: TypeList
+    Description: |-
+        The default version of the model. This version will be used to handle
+        prediction requests that do not specify a version.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        name:
+            Type: TypeString
+            Description: The name specified for the version when it was created.
+            Required: "true"
+description:
+    Type: TypeString
+    Description: The description specified for the model when it was created.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        One or more labels that you can add, to organize your models.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name specified for the model.
+    Required: "true"
+online_prediction_console_logging:
+    Type: TypeBool
+    Description: If true, online prediction nodes send stderr and stdout streams to Stackdriver Logging
+    Optional: "true"
+online_prediction_logging:
+    Type: TypeBool
+    Description: If true, online prediction access logs are sent to StackDriver Logging.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+regions:
+    Type: TypeList
+    Description: |-
+        The list of regions where the model is going to be deployed.
+        Currently only one region per model is supported
+    Optional: "true"
+    MaxItems: "1"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

@@ -1,0 +1,118 @@
+aes_encryption:
+    Type: TypeBool
+    Description: Enables AES-128 and AES-256 encryption for Kerberos-based communication with Active Directory.
+    Optional: "true"
+backup_operators:
+    Type: TypeList
+    Description: Domain user/group accounts to be added to the Backup Operators group of the SMB service. The Backup Operators group allows members to backup and restore files regardless of whether they have read or write access to the files. Comma-separated list.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: 'Create time of the active directory. A timestamp in RFC3339 UTC "Zulu" format. Examples: "2023-06-22T09:13:01.617Z".'
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource.
+    Optional: "true"
+dns:
+    Type: TypeString
+    Description: Comma separated list of DNS server IP addresses for the Active Directory domain.
+    Required: "true"
+domain:
+    Type: TypeString
+    Description: Fully qualified domain name for the Active Directory domain.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+encrypt_dc_connections:
+    Type: TypeBool
+    Description: If enabled, traffic between the SMB server to Domain Controller (DC) will be encrypted.
+    Optional: "true"
+kdc_hostname:
+    Type: TypeString
+    Description: Hostname of the Active Directory server used as Kerberos Key Distribution Center. Only requried for volumes using kerberized NFSv4.1
+    Optional: "true"
+kdc_ip:
+    Type: TypeString
+    Description: IP address of the Active Directory server used as Kerberos Key Distribution Center.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels as key value pairs. Example: '{ "owner": "Bob", "department": "finance", "purpose": "testing" }'.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+ldap_signing:
+    Type: TypeBool
+    Description: Specifies whether or not the LDAP traffic needs to be signed.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Name of the region for the policy to apply to.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the Active Directory pool. Needs to be unique per location.
+    Required: "true"
+net_bios_prefix:
+    Type: TypeString
+    Description: |-
+        NetBIOS name prefix of the server to be created.
+        A five-character random ID is generated automatically, for example, -6f9a, and appended to the prefix. The full UNC share path will have the following format:
+        '\\NetBIOS_PREFIX-ABCD.DOMAIN_NAME\SHARE_NAME'
+    Required: "true"
+nfs_users_with_ldap:
+    Type: TypeBool
+    Description: |-
+        Local UNIX users on clients without valid user information in Active Directory are blocked from access to LDAP enabled volumes.
+        This option can be used to temporarily switch such volumes to AUTH_SYS authentication (user ID + 1-16 groups).
+    Optional: "true"
+organizational_unit:
+    Type: TypeString
+    Description: |-
+        Name of the Organizational Unit where you intend to create the computer account for NetApp Volumes.
+        Defaults to 'CN=Computers' if left empty.
+    Computed: "true"
+    Optional: "true"
+password:
+    Type: TypeString
+    Description: Password for specified username. Note - Manual changes done to the password will not be detected. Terraform will not re-apply the password, unless you use a new password in Terraform.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+security_operators:
+    Type: TypeList
+    Description: Domain accounts that require elevated privileges such as 'SeSecurityPrivilege' to manage security logs. Comma-separated list.
+    Optional: "true"
+site:
+    Type: TypeString
+    Description: |-
+        Specifies an Active Directory site to manage domain controller selection.
+        Use when Active Directory domain controllers in multiple regions are configured. Defaults to 'Default-First-Site-Name' if left empty.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The state of the Active Directory policy (not the Active Directory itself).
+    Computed: "true"
+state_details:
+    Type: TypeString
+    Description: The state details of the Active Directory.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+username:
+    Type: TypeString
+    Description: Username for the Active Directory account with permissions to create the compute account within the specified organizational unit.
+    Required: "true"
+

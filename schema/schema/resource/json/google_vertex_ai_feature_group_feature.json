@@ -1,0 +1,58 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the FeatureGroup was created in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "The description of the FeatureGroup.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "feature_group": {
+        "Description": "The name of the Feature Group.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "The labels with user-defined metadata to organize your FeatureGroup.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The resource name of the Feature Group Feature.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region for the resource. It should be the same as the feature group's region.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the FeatureGroup was last updated in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "version_column_name": {
+        "Computed": true,
+        "Description": "The name of the BigQuery Table/View column hosting data for this version. If no value is provided, will use featureId.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

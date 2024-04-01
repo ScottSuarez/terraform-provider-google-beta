@@ -1,0 +1,76 @@
+alert_strategy:
+    auto_close: TypeString
+    notification_channel_strategy:
+        notification_channel_names: TypeList(TypeString)
+        renotify_interval: TypeString
+    notification_rate_limit:
+        period: TypeString
+combiner: TypeString
+conditions:
+    condition_absent:
+        aggregations:
+            alignment_period: TypeString
+            cross_series_reducer: TypeString
+            group_by_fields: TypeList(TypeString)
+            per_series_aligner: TypeString
+        duration: TypeString
+        filter: TypeString
+        trigger:
+            count: TypeInt
+            percent: TypeFloat
+    condition_matched_log:
+        filter: TypeString
+        label_extractors: TypeMap(TypeString)
+    condition_monitoring_query_language:
+        duration: TypeString
+        evaluation_missing_data: TypeString
+        query: TypeString
+        trigger:
+            count: TypeInt
+            percent: TypeFloat
+    condition_prometheus_query_language:
+        alert_rule: TypeString
+        duration: TypeString
+        evaluation_interval: TypeString
+        labels: TypeMap(TypeString)
+        query: TypeString
+        rule_group: TypeString
+    condition_threshold:
+        aggregations:
+            alignment_period: TypeString
+            cross_series_reducer: TypeString
+            group_by_fields: TypeList(TypeString)
+            per_series_aligner: TypeString
+        comparison: TypeString
+        denominator_aggregations:
+            alignment_period: TypeString
+            cross_series_reducer: TypeString
+            group_by_fields: TypeList(TypeString)
+            per_series_aligner: TypeString
+        denominator_filter: TypeString
+        duration: TypeString
+        evaluation_missing_data: TypeString
+        filter: TypeString
+        forecast_options:
+            forecast_horizon: TypeString
+        threshold_value: TypeFloat
+        trigger:
+            count: TypeInt
+            percent: TypeFloat
+    display_name: TypeString
+    name: TypeString
+creation_record:
+    mutate_time: TypeString
+    mutated_by: TypeString
+display_name: TypeString
+documentation:
+    content: TypeString
+    mime_type: TypeString
+    subject: TypeString
+enabled: TypeBool
+name: TypeString
+notification_channels: TypeList(TypeString)
+project: TypeString
+severity: TypeString
+user_labels: TypeMap(TypeString)
+

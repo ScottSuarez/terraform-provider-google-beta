@@ -1,0 +1,102 @@
+{
+    "boolean_policy": {
+        "Computed": true,
+        "Description": "A boolean policy is a constraint that is either enforced or not.",
+        "Properties": {
+            "enforced": {
+                "Computed": true,
+                "Description": "If true, then the Policy is enforced. If false, then any configuration is acceptable.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "constraint": {
+        "Description": "The name of the Constraint the Policy is configuring, for example, serviceuser.services.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "The etag of the organization policy. etag is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other.",
+        "Type": "TypeString"
+    },
+    "list_policy": {
+        "Computed": true,
+        "Description": "A policy that can define specific values that are allowed or denied for the given constraint. It can also be used to allow or deny all values. ",
+        "Properties": {
+            "allow": {
+                "Computed": true,
+                "Description": "One or the other must be set.",
+                "Properties": {
+                    "all": {
+                        "Computed": true,
+                        "Description": "The policy allows or denies all values.",
+                        "Type": "TypeBool"
+                    },
+                    "values": {
+                        "Computed": true,
+                        "Description": "The policy can define specific values that are allowed or denied.",
+                        "Type": "TypeSet"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "deny": {
+                "Computed": true,
+                "Description": "One or the other must be set.",
+                "Properties": {
+                    "all": {
+                        "Computed": true,
+                        "Description": "The policy allows or denies all values.",
+                        "Type": "TypeBool"
+                    },
+                    "values": {
+                        "Computed": true,
+                        "Description": "The policy can define specific values that are allowed or denied.",
+                        "Type": "TypeSet"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "inherit_from_parent": {
+                "Computed": true,
+                "Description": "If set to true, the values from the effective Policy of the parent resource are inherited, meaning the values set in this Policy are added to the values inherited up the hierarchy.",
+                "Type": "TypeBool"
+            },
+            "suggested_value": {
+                "Computed": true,
+                "Description": "The Google Cloud Console will try to default to a configuration that matches the value specified in this field.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Description": "The project ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "restore_policy": {
+        "Computed": true,
+        "Description": "A restore policy is a constraint to restore the default policy.",
+        "Properties": {
+            "default": {
+                "Computed": true,
+                "Description": "May only be set to true. If set, then the default Policy is restored.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds, representing when the variable was last updated. Example: \"2016-10-09T12:33:37.578138407Z\".",
+        "Type": "TypeString"
+    },
+    "version": {
+        "Computed": true,
+        "Description": "Version of the Policy. Default version is 0.",
+        "Type": "TypeInt"
+    }
+}

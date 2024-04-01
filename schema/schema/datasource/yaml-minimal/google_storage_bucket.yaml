@@ -1,0 +1,57 @@
+autoclass:
+    enabled: TypeBool
+    terminal_storage_class: TypeString
+cors:
+    max_age_seconds: TypeInt
+    method: TypeList(TypeString)
+    origin: TypeList(TypeString)
+    response_header: TypeList(TypeString)
+custom_placement_config:
+    data_locations: TypeSet(TypeString)
+default_event_based_hold: TypeBool
+effective_labels: TypeMap(TypeString)
+enable_object_retention: TypeBool
+encryption:
+    default_kms_key_name: TypeString
+force_destroy: TypeBool
+labels: TypeMap(TypeString)
+lifecycle_rule:
+    action:
+        storage_class: TypeString
+        type: TypeString
+    condition:
+        age: TypeInt
+        created_before: TypeString
+        custom_time_before: TypeString
+        days_since_custom_time: TypeInt
+        days_since_noncurrent_time: TypeInt
+        matches_prefix: TypeList(TypeString)
+        matches_storage_class: TypeList(TypeString)
+        matches_suffix: TypeList(TypeString)
+        no_age: TypeBool
+        noncurrent_time_before: TypeString
+        num_newer_versions: TypeInt
+        with_state: TypeString
+location: TypeString
+logging:
+    log_bucket: TypeString
+    log_object_prefix: TypeString
+name: TypeString
+project: TypeString
+public_access_prevention: TypeString
+requester_pays: TypeBool
+retention_policy:
+    is_locked: TypeBool
+    retention_period: TypeInt
+rpo: TypeString
+self_link: TypeString
+storage_class: TypeString
+terraform_labels: TypeMap(TypeString)
+uniform_bucket_level_access: TypeBool
+url: TypeString
+versioning:
+    enabled: TypeBool
+website:
+    main_page_suffix: TypeString
+    not_found_page: TypeString
+

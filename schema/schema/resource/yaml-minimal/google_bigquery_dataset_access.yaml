@@ -1,0 +1,23 @@
+api_updated_member: TypeBool
+dataset:
+    dataset:
+        dataset_id: TypeString
+        project_id: TypeString
+    target_types: TypeList(TypeString)
+dataset_id: TypeString
+domain: TypeString
+group_by_email: TypeString
+iam_member: TypeString
+project: TypeString
+role: TypeString
+routine:
+    dataset_id: TypeString
+    project_id: TypeString
+    routine_id: TypeString
+special_group: TypeString
+user_by_email: TypeString
+view:
+    dataset_id: TypeString
+    project_id: TypeString
+    table_id: TypeString
+

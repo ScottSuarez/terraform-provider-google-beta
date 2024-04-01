@@ -1,0 +1,309 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        An RFC3339 timestamp in UTC time. This in the format of yyyy-MM-ddTHH:mm:ss.SSSZ.
+        The milliseconds portion (".SSS") is optional.
+    Computed: "true"
+creator:
+    Type: TypeString
+    Description: Output only. Email address of entity that sent original CreateInstance request.
+    Computed: "true"
+disable_proxy_access:
+    Type: TypeBool
+    Description: Optional. If true, the workbench instance will not register with the proxy.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gce_setup:
+    Type: TypeList
+    Description: The definition of how to configure a VM instance outside of Resources and Identity.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        accelerator_configs:
+            Type: TypeList
+            Description: |-
+                The hardware accelerators used on this instance. If you use accelerators, make sure that your configuration has
+                [enough vCPUs and memory to support the 'machine_type' you have selected](https://cloud.google.com/compute/docs/gpus/#gpus-list).
+                Currently supports only one accelerator configuration.
+            Optional: "true"
+            Properties:
+                core_count:
+                    Type: TypeString
+                    Description: Optional. Count of cores of this accelerator.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: 'Optional. Type of this accelerator. Possible values: ["NVIDIA_TESLA_P100", "NVIDIA_TESLA_V100", "NVIDIA_TESLA_P4", "NVIDIA_TESLA_T4", "NVIDIA_TESLA_A100", "NVIDIA_A100_80GB", "NVIDIA_L4", "NVIDIA_TESLA_T4_VWS", "NVIDIA_TESLA_P100_VWS", "NVIDIA_TESLA_P4_VWS"]'
+                    Optional: "true"
+        boot_disk:
+            Type: TypeList
+            Description: The definition of a boot disk.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disk_encryption:
+                    Type: TypeString
+                    Description: |-
+                        Optional. Input only. Disk encryption method used on the boot and
+                        data disks, defaults to GMEK. Possible values: ["GMEK", "CMEK"]
+                    Computed: "true"
+                    Optional: "true"
+                disk_size_gb:
+                    Type: TypeString
+                    Description: |-
+                        Optional. The size of the boot disk in GB attached to this instance,
+                        up to a maximum of 64000 GB (64 TB). If not specified, this defaults to the
+                        recommended value of 150GB.
+                    Computed: "true"
+                    Optional: "true"
+                disk_type:
+                    Type: TypeString
+                    Description: 'Optional. Indicates the type of the disk. Possible values: ["PD_STANDARD", "PD_SSD", "PD_BALANCED", "PD_EXTREME"]'
+                    Computed: "true"
+                    Optional: "true"
+                kms_key:
+                    Type: TypeString
+                    Description: |-
+                        'Optional. Input only. The KMS key used to encrypt the disks, only
+                        applicable if disk_encryption is CMEK. Format: 'projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}'
+                        Learn more about using your own encryption keys.'
+                    Optional: "true"
+        data_disks:
+            Type: TypeList
+            Description: Data disks attached to the VM instance. Currently supports only one data disk.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disk_encryption:
+                    Type: TypeString
+                    Description: |-
+                        Optional. Input only. Disk encryption method used on the boot
+                        and data disks, defaults to GMEK. Possible values: ["GMEK", "CMEK"]
+                    Computed: "true"
+                    Optional: "true"
+                disk_size_gb:
+                    Type: TypeString
+                    Description: |-
+                        Optional. The size of the disk in GB attached to this VM instance,
+                        up to a maximum of 64000 GB (64 TB). If not specified, this defaults to
+                        100.
+                    Computed: "true"
+                    Optional: "true"
+                disk_type:
+                    Type: TypeString
+                    Description: 'Optional. Input only. Indicates the type of the disk. Possible values: ["PD_STANDARD", "PD_SSD", "PD_BALANCED", "PD_EXTREME"]'
+                    Optional: "true"
+                kms_key:
+                    Type: TypeString
+                    Description: |-
+                        'Optional. Input only. The KMS key used to encrypt the disks,
+                        only applicable if disk_encryption is CMEK. Format: 'projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}'
+                        Learn more about using your own encryption keys.'
+                    Optional: "true"
+        disable_public_ip:
+            Type: TypeBool
+            Description: Optional. If true, no external IP will be assigned to this VM instance.
+            Computed: "true"
+            Optional: "true"
+        enable_ip_forwarding:
+            Type: TypeBool
+            Description: |-
+                Optional. Flag to enable ip forwarding or not, default false/off.
+                https://cloud.google.com/vpc/docs/using-routes#canipforward
+            Optional: "true"
+        machine_type:
+            Type: TypeString
+            Description: Optional. The machine type of the VM instance. https://cloud.google.com/compute/docs/machine-resource
+            Computed: "true"
+            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: Optional. Custom metadata to apply to this instance.
+            Computed: "true"
+            Optional: "true"
+        network_interfaces:
+            Type: TypeList
+            Description: The network interfaces for the VM. Supports only one interface.
+            Computed: "true"
+            Optional: "true"
+            Properties:
+                network:
+                    Type: TypeString
+                    Description: Optional. The name of the VPC that this VM instance is in.
+                    Computed: "true"
+                    Optional: "true"
+                nic_type:
+                    Type: TypeString
+                    Description: |-
+                        Optional. The type of vNIC to be used on this interface. This
+                        may be gVNIC or VirtioNet. Possible values: ["VIRTIO_NET", "GVNIC"]
+                    Optional: "true"
+                subnet:
+                    Type: TypeString
+                    Description: Optional. The name of the subnet that this VM instance is in.
+                    Computed: "true"
+                    Optional: "true"
+        service_accounts:
+            Type: TypeList
+            Description: The service account that serves as an identity for the VM instance. Currently supports only one service account.
+            Computed: "true"
+            Optional: "true"
+            Properties:
+                email:
+                    Type: TypeString
+                    Description: Optional. Email address of the service account.
+                    Computed: "true"
+                    Optional: "true"
+                scopes:
+                    Type: TypeList
+                    Description: |-
+                        Output only. The list of scopes to be made available for this
+                        service account. Set by the CLH to https://www.googleapis.com/auth/cloud-platform
+                    Computed: "true"
+        tags:
+            Type: TypeList
+            Description: |-
+                Optional. The Compute Engine tags to add to instance (see [Tagging
+                instances](https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+            Computed: "true"
+            Optional: "true"
+        vm_image:
+            Type: TypeList
+            Description: |-
+                Definition of a custom Compute Engine virtual machine image for starting
+                a workbench instance with the environment installed directly on the VM.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                family:
+                    Type: TypeString
+                    Description: |-
+                        Optional. Use this VM image family to find the image; the newest
+                        image in this family will be used.
+                    Optional: "true"
+                name:
+                    Type: TypeString
+                    Description: Optional. Use VM image name to find the image.
+                    Optional: "true"
+                project:
+                    Type: TypeString
+                    Description: |-
+                        The name of the Google Cloud project that this VM image belongs to.
+                        Format: {project_id}
+                    Optional: "true"
+health_info:
+    Type: TypeList
+    Description: |-
+        'Output only. Additional information about instance health. Example:
+        healthInfo": { "docker_proxy_agent_status": "1", "docker_status": "1", "jupyterlab_api_status":
+        "-1", "jupyterlab_status": "-1", "updated": "2020-10-18 09:40:03.573409" }'
+    Computed: "true"
+    Properties: {}
+health_state:
+    Type: TypeString
+    Description: Output only. Instance health_state.
+    Computed: "true"
+instance_id:
+    Type: TypeString
+    Description: Required. User-defined unique ID of this instance.
+    Optional: "true"
+instance_owners:
+    Type: TypeList
+    Description: |-
+        'Optional. Input only. The owner of this instance after creation. Format:
+        'alias@example.com' Currently supports one owner only. If not specified, all of
+        the service account users of your VM instance''s service account can use the instance.'
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. Labels to apply to this instance. These can be later modified
+        by the UpdateInstance method.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Part of 'parent'. See documentation of 'projectsId'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: 'The name of this workbench instance. Format: ''projects/{project_id}/locations/{location}/instances/{instance_id}'''
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+proxy_uri:
+    Type: TypeString
+    Description: Output only. The proxy endpoint that is used to access the Jupyter notebook.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: Output only. The state of this instance.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        An RFC3339 timestamp in UTC time. This in the format of yyyy-MM-ddTHH:mm:ss.SSSZ.
+        The milliseconds portion (".SSS") is optional.
+    Computed: "true"
+upgrade_history:
+    Type: TypeList
+    Description: Output only. The upgrade history of this instance.
+    Computed: "true"
+    Properties:
+        action:
+            Type: TypeString
+            Description: Optional. Action. Rolloback or Upgrade.
+            Optional: "true"
+        container_image:
+            Type: TypeString
+            Description: Optional. The container image before this instance upgrade.
+            Optional: "true"
+        create_time:
+            Type: TypeString
+            Description: |-
+                An RFC3339 timestamp in UTC time. This in the format of yyyy-MM-ddTHH:mm:ss.SSSZ.
+                The milliseconds portion (".SSS") is optional.
+            Optional: "true"
+        framework:
+            Type: TypeString
+            Description: Optional. The framework of this workbench instance.
+            Optional: "true"
+        snapshot:
+            Type: TypeString
+            Description: Optional. The snapshot of the boot disk of this workbench instance before upgrade.
+            Optional: "true"
+        state:
+            Type: TypeString
+            Description: Output only. The state of this instance upgrade history entry.
+            Computed: "true"
+        target_version:
+            Type: TypeString
+            Description: Optional. Target VM Version, like m63.
+            Optional: "true"
+        version:
+            Type: TypeString
+            Description: Optional. The version of the workbench instance before this upgrade.
+            Optional: "true"
+        vm_image:
+            Type: TypeString
+            Description: Optional. The VM image before this instance upgrade.
+            Optional: "true"
+

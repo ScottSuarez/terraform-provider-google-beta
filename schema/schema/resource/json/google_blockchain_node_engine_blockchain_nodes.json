@@ -1,0 +1,167 @@
+{
+    "blockchain_node_id": {
+        "Description": "ID of the requesting object.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "blockchain_type": {
+        "Description": "User-provided key-value pairs Possible values: [\"ETHEREUM\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "connection_info": {
+        "Computed": true,
+        "Description": "The connection information through which to interact with a blockchain node.",
+        "Properties": {
+            "endpoint_info": {
+                "Computed": true,
+                "Description": "The endpoint information through which to interact with a blockchain node.",
+                "Properties": {
+                    "json_rpc_api_endpoint": {
+                        "Computed": true,
+                        "Description": "The assigned URL for the node JSON-RPC API endpoint.",
+                        "Type": "TypeString"
+                    },
+                    "websockets_api_endpoint": {
+                        "Computed": true,
+                        "Description": "The assigned URL for the node WebSockets API endpoint.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "service_attachment": {
+                "Computed": true,
+                "Description": "A service attachment that exposes a node, and has the following format: projects/{project}/regions/{region}/serviceAttachments/{service_attachment_name}",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp at which the blockchain node was first created.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "ethereum_details": {
+        "Description": "User-provided key-value pairs",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_endpoints": {
+                "Computed": true,
+                "Description": "User-provided key-value pairs",
+                "Properties": {
+                    "beacon_api_endpoint": {
+                        "Computed": true,
+                        "Description": "The assigned URL for the node's Beacon API endpoint.",
+                        "Type": "TypeString"
+                    },
+                    "beacon_prometheus_metrics_api_endpoint": {
+                        "Computed": true,
+                        "Description": "The assigned URL for the node's Beacon Prometheus metrics endpoint.",
+                        "Type": "TypeString"
+                    },
+                    "execution_client_prometheus_metrics_api_endpoint": {
+                        "Computed": true,
+                        "Description": "The assigned URL for the node's execution client's Prometheus metrics endpoint.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "api_enable_admin": {
+                "Description": "Enables JSON-RPC access to functions in the admin namespace. Defaults to false.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "api_enable_debug": {
+                "Description": "Enables JSON-RPC access to functions in the debug namespace. Defaults to false.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "consensus_client": {
+                "Description": "The consensus client Possible values: [\"CONSENSUS_CLIENT_UNSPECIFIED\", \"LIGHTHOUSE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "execution_client": {
+                "Description": "The execution client Possible values: [\"EXECUTION_CLIENT_UNSPECIFIED\", \"GETH\", \"ERIGON\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "geth_details": {
+                "Description": "User-provided key-value pairs",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "garbage_collection_mode": {
+                        "Description": "Blockchain garbage collection modes. Only applicable when NodeType is FULL or ARCHIVE. Possible values: [\"FULL\", \"ARCHIVE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "network": {
+                "Description": "The Ethereum environment being accessed. Possible values: [\"MAINNET\", \"TESTNET_GOERLI_PRATER\", \"TESTNET_SEPOLIA\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "node_type": {
+                "Description": "The type of Ethereum node. Possible values: [\"LIGHT\", \"FULL\", \"ARCHIVE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "validator_config": {
+                "Description": "Configuration for validator-related parameters on the beacon client, and for any managed validator client.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "mev_relay_urls": {
+                        "Description": "URLs for MEV-relay services to use for block building. When set, a managed MEV-boost service is configured on the beacon client.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "User-provided key-value pairs\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Location of Blockchain Node being created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully qualified name of the blockchain node. e.g. projects/my-project/locations/us-central1/blockchainNodes/my-node.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp at which the blockchain node was last updated.",
+        "Type": "TypeString"
+    }
+}

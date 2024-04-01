@@ -1,0 +1,23 @@
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+host_config:
+    api: TypeString
+    git_http: TypeString
+    git_ssh: TypeString
+    html: TypeString
+instance_id: TypeString
+kms_key: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+private_config:
+    ca_pool: TypeString
+    http_service_attachment: TypeString
+    is_private: TypeBool
+    ssh_service_attachment: TypeString
+project: TypeString
+state: TypeString
+state_note: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

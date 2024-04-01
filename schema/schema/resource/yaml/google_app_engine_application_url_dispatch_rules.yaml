@@ -1,0 +1,28 @@
+dispatch_rules:
+    Type: TypeList
+    Description: Rules to match an HTTP request and dispatch that request to a service.
+    Required: "true"
+    Properties:
+        domain:
+            Type: TypeString
+            Description: |-
+                Domain name to match against. The wildcard "*" is supported if specified before a period: "*.".
+                Defaults to matching all domains: "*".
+            Optional: "true"
+        path:
+            Type: TypeString
+            Description: |-
+                Pathname within the host. Must start with a "/". A single "*" can be included at the end of the path.
+                The sum of the lengths of the domain and path may not exceed 100 characters.
+            Required: "true"
+        service:
+            Type: TypeString
+            Description: |-
+                Pathname within the host. Must start with a "/". A single "*" can be included at the end of the path.
+                The sum of the lengths of the domain and path may not exceed 100 characters.
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,90 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        Output only. The creation time of the table. A timestamp in RFC3339 UTC
+        "Zulu" format, with nanosecond resolution and up to nine fractional
+        digits. Examples: "2014-10-02T15:01:23Z" and
+        "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+database:
+    Type: TypeString
+    Description: The id of the parent database.
+    Optional: "true"
+delete_time:
+    Type: TypeString
+    Description: |-
+        Output only. The deletion time of the table. Only set after the
+        table is deleted. A timestamp in RFC3339 UTC "Zulu" format, with
+        nanosecond resolution and up to nine fractional digits. Examples:
+        "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        The checksum of a table object computed by the server based on the value
+        of other fields. It may be sent on update requests to ensure the client
+        has an up-to-date value before proceeding. It is only checked for update
+        table operations.
+    Computed: "true"
+expire_time:
+    Type: TypeString
+    Description: |-
+        Output only. The time when this table is considered expired. Only set
+        after the table is deleted. A timestamp in RFC3339 UTC "Zulu" format,
+        with nanosecond resolution and up to nine fractional digits. Examples:
+        "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+hive_options:
+    Type: TypeList
+    Description: Options of a Hive table.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        parameters:
+            Type: TypeMap
+            Description: |-
+                Stores user supplied Hive table parameters. An object containing a
+                list of "key": value pairs.
+                Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+            Optional: "true"
+        storage_descriptor:
+            Type: TypeList
+            Description: Stores physical storage information on the data.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                input_format:
+                    Type: TypeString
+                    Description: The fully qualified Java class name of the input format.
+                    Optional: "true"
+                location_uri:
+                    Type: TypeString
+                    Description: Cloud Storage folder URI where the table data is stored, starting with "gs://".
+                    Optional: "true"
+                output_format:
+                    Type: TypeString
+                    Description: The fully qualified Java class name of the output format.
+                    Optional: "true"
+        table_type:
+            Type: TypeString
+            Description: Hive table type. For example, MANAGED_TABLE, EXTERNAL_TABLE.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Output only. The name of the Table. Format:
+        projects/{project_id_or_number}/locations/{locationId}/catalogs/{catalogId}/databases/{databaseId}/tables/{tableId}
+    Required: "true"
+type:
+    Type: TypeString
+    Description: 'The database type. Possible values: ["HIVE"]'
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Output only. The last modification time of the table. A timestamp in
+        RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and
+        "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

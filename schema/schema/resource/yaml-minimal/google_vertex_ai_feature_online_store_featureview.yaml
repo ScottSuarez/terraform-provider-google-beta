@@ -1,0 +1,24 @@
+big_query_source:
+    entity_id_columns: TypeList(TypeString)
+    uri: TypeString
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+feature_online_store: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+sync_config:
+    cron: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+vector_search_config:
+    brute_force_config: {}
+    crowding_column: TypeString
+    distance_measure_type: TypeString
+    embedding_column: TypeString
+    embedding_dimension: TypeInt
+    filter_columns: TypeList(TypeString)
+    tree_ah_config:
+        leaf_node_embedding_count: TypeString
+

@@ -1,0 +1,20 @@
+disabled: TypeBool
+display_name: TypeString
+enable_spell_correction: TypeBool
+enable_stackdriver_logging: TypeBool
+generic_web_service:
+    allowed_ca_certs: TypeList(TypeString)
+    request_headers: TypeMap(TypeString)
+    uri: TypeString
+name: TypeString
+parent: TypeString
+security_settings: TypeString
+service_directory:
+    generic_web_service:
+        allowed_ca_certs: TypeList(TypeString)
+        request_headers: TypeMap(TypeString)
+        uri: TypeString
+    service: TypeString
+start_flow: TypeString
+timeout: TypeString
+

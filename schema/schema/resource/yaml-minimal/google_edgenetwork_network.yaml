@@ -1,0 +1,11 @@
+create_time: TypeString
+description: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+mtu: TypeInt
+name: TypeString
+network_id: TypeString
+project: TypeString
+update_time: TypeString
+zone: TypeString
+

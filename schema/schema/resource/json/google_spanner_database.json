@@ -1,0 +1,62 @@
+{
+    "database_dialect": {
+        "Computed": true,
+        "Description": "The dialect of the Cloud Spanner Database.\nIf it is not provided, \"GOOGLE_STANDARD_SQL\" will be used. Possible values: [\"GOOGLE_STANDARD_SQL\", \"POSTGRESQL\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ddl": {
+        "Description": "An optional list of DDL statements to run inside the newly created\ndatabase. Statements can create tables, indexes, etc. These statements\nexecute atomically with the creation of the database: if there is an\nerror in any statement, the database is not created.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "deletion_protection": {
+        "Description": "Whether or not to allow Terraform to destroy the database. Defaults to true. Unless this field is set to false\nin Terraform state, a 'terraform destroy' or 'terraform apply' that would delete the database will fail.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "enable_drop_protection": {
+        "Description": "Whether drop protection is enabled for this database. Defaults to false.\nDrop protection is different from\nthe \"deletion_protection\" attribute in the following ways:\n(1) \"deletion_protection\" only protects the database from deletions in Terraform.\nwhereas setting “enableDropProtection” to true protects the database from deletions in all interfaces.\n(2) Setting \"enableDropProtection\" to true also prevents the deletion of the parent instance containing the database.\n\"deletion_protection\" attribute does not provide protection against the deletion of the parent instance.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "encryption_config": {
+        "Description": "Encryption configuration for the database",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "kms_key_name": {
+                "Description": "Fully qualified name of the KMS key to use to encrypt this database. This key must exist\nin the same location as the Spanner Database.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "instance": {
+        "Description": "The instance to create the database on.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "A unique identifier for the database, which cannot be changed after\nthe instance is created. Values are of the form [a-z][-a-z0-9]*[a-z0-9].",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "An explanation of the status of the database.",
+        "Type": "TypeString"
+    },
+    "version_retention_period": {
+        "Computed": true,
+        "Description": "The retention period for the database. The retention period must be between 1 hour\nand 7 days, and can be specified in days, hours, minutes, or seconds. For example,\nthe values 1d, 24h, 1440m, and 86400s are equivalent. Default value is 1h.\nIf this property is used, you must avoid adding new DDL statements to 'ddl' that\nupdate the database's version_retention_period.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

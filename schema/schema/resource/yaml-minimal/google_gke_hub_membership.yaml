@@ -1,0 +1,14 @@
+authority:
+    issuer: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+endpoint:
+    gke_cluster:
+        resource_link: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+membership_id: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

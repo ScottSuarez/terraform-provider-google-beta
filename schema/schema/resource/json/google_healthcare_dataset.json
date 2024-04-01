@@ -1,0 +1,28 @@
+{
+    "location": {
+        "Description": "The location for the Dataset.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name for the Dataset.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "The fully qualified name of this dataset",
+        "Type": "TypeString"
+    },
+    "time_zone": {
+        "Computed": true,
+        "Description": "The default timezone used by this dataset. Must be a either a valid IANA time zone name such as\n\"America/New_York\" or empty, which defaults to UTC. This is used for parsing times in resources\n(e.g., HL7 messages) where no explicit timezone is specified.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

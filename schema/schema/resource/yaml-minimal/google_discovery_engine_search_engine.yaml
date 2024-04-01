@@ -1,0 +1,16 @@
+collection_id: TypeString
+common_config:
+    company_name: TypeString
+create_time: TypeString
+data_store_ids: TypeList(TypeString)
+display_name: TypeString
+engine_id: TypeString
+industry_vertical: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+search_engine_config:
+    search_add_ons: TypeList(TypeString)
+    search_tier: TypeString
+update_time: TypeString
+

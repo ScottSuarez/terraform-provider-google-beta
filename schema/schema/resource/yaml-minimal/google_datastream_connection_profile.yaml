@@ -1,0 +1,46 @@
+bigquery_profile: {}
+connection_profile_id: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+forward_ssh_connectivity:
+    hostname: TypeString
+    password: TypeString
+    port: TypeInt
+    private_key: TypeString
+    username: TypeString
+gcs_profile:
+    bucket: TypeString
+    root_path: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+mysql_profile:
+    hostname: TypeString
+    password: TypeString
+    port: TypeInt
+    ssl_config:
+        ca_certificate: TypeString
+        ca_certificate_set: TypeBool
+        client_certificate: TypeString
+        client_certificate_set: TypeBool
+        client_key: TypeString
+        client_key_set: TypeBool
+    username: TypeString
+name: TypeString
+oracle_profile:
+    connection_attributes: TypeMap(TypeString)
+    database_service: TypeString
+    hostname: TypeString
+    password: TypeString
+    port: TypeInt
+    username: TypeString
+postgresql_profile:
+    database: TypeString
+    hostname: TypeString
+    password: TypeString
+    port: TypeInt
+    username: TypeString
+private_connectivity:
+    private_connection: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

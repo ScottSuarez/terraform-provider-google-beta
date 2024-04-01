@@ -1,0 +1,54 @@
+ca_certificate:
+    Type: TypeString
+    Description: The CA certificate on the external server. Include only if SSL/TLS is used on the external server.
+    Optional: "true"
+client_certificate:
+    Type: TypeString
+    Description: The client certificate on the external server. Required only for server-client authentication. Include only if SSL/TLS is used on the external server.
+    Optional: "true"
+client_key:
+    Type: TypeString
+    Description: The private key file for the client certificate on the external server. Required only for server-client authentication. Include only if SSL/TLS is used on the external server.
+    Optional: "true"
+database_version:
+    Type: TypeString
+    Description: 'The MySQL version running on your source database server. Possible values: ["MYSQL_5_6", "MYSQL_5_7", "MYSQL_8_0", "POSTGRES_9_6", "POSTGRES_10", "POSTGRES_11", "POSTGRES_12", "POSTGRES_13", "POSTGRES_14"]'
+    Required: "true"
+dump_file_path:
+    Type: TypeString
+    Description: A file in the bucket that contains the data from the external server.
+    Optional: "true"
+host:
+    Type: TypeString
+    Description: The IPv4 address and port for the external server, or the the DNS address for the external server. If the external server is hosted on Cloud SQL, the port is 5432.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the source representation instance. Use any valid Cloud SQL instance name.
+    Required: "true"
+password:
+    Type: TypeString
+    Description: The password for the replication user account.
+    Optional: "true"
+port:
+    Type: TypeInt
+    Description: |-
+        The externally accessible port for the source database server.
+        Defaults to 3306.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: |-
+        The Region in which the created instance should reside.
+        If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+username:
+    Type: TypeString
+    Description: The replication user account on the external server.
+    Optional: "true"
+

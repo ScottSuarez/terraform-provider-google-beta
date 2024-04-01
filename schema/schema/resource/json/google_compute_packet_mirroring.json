@@ -1,0 +1,118 @@
+{
+    "collector_ilb": {
+        "Description": "The Forwarding Rule resource (of type load_balancing_scheme=INTERNAL)\nthat will be used as collector for mirrored traffic. The\nspecified forwarding rule must have is_mirroring_collector\nset to true.",
+        "MaxItems": 1,
+        "Properties": {
+            "url": {
+                "Description": "The URL of the forwarding rule.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "A human-readable description of the rule.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "filter": {
+        "Description": "A filter for mirrored traffic.  If unset, all traffic is mirrored.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cidr_ranges": {
+                "Description": "IP CIDR ranges that apply as a filter on the source (ingress) or\ndestination (egress) IP in the IP header. Only IPv4 is supported.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "direction": {
+                "Description": "Direction of traffic to mirror. Default value: \"BOTH\" Possible values: [\"INGRESS\", \"EGRESS\", \"BOTH\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "ip_protocols": {
+                "Description": "Possible IP protocols including tcp, udp, icmp and esp",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "mirrored_resources": {
+        "Description": "A means of specifying which resources to mirror.",
+        "MaxItems": 1,
+        "Properties": {
+            "instances": {
+                "AtLeastOneOf": "mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags",
+                "Description": "All the listed instances will be mirrored.  Specify at most 50.",
+                "Optional": true,
+                "Properties": {
+                    "url": {
+                        "Description": "The URL of the instances where this rule should be active.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "subnetworks": {
+                "AtLeastOneOf": "mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags",
+                "Description": "All instances in one of these subnetworks will be mirrored.",
+                "Optional": true,
+                "Properties": {
+                    "url": {
+                        "Description": "The URL of the subnetwork where this rule should be active.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "tags": {
+                "AtLeastOneOf": "mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags",
+                "Description": "All instances with these tags will be mirrored.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of the packet mirroring rule",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "Specifies the mirrored VPC network. Only packets in this network\nwill be mirrored. All mirrored VMs should have a NIC in the given\nnetwork. All mirrored subnetworks should belong to the given network.",
+        "MaxItems": 1,
+        "Properties": {
+            "url": {
+                "Description": "The full self_link URL of the network where this rule is active.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "priority": {
+        "Computed": true,
+        "Description": "Since only one rule can be active at a time, priority is\nused to break ties in the case of two rules that apply to\nthe same instances.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The Region in which the created address should reside.\nIf it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

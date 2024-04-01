@@ -1,0 +1,100 @@
+client_certificate:
+    Type: TypeList
+    Description: Defines a mechanism to provision client identity (public and private keys) for peer to peer authentication. The presence of this dictates mTLS.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        certificate_provider_instance:
+            Type: TypeList
+            Description: The certificate provider instance specification that will be passed to the data plane, which will be used to load necessary credential information.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                plugin_instance:
+                    Type: TypeString
+                    Description: Plugin instance name, used to locate and load CertificateProvider instance configuration. Set to "google_cloud_private_spiffe" to use Certificate Authority Service certificate provider instance.
+                    Required: "true"
+        grpc_endpoint:
+            Type: TypeList
+            Description: gRPC specific configuration to access the gRPC server to obtain the cert and private key.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                target_uri:
+                    Type: TypeString
+                    Description: The target URI of the gRPC endpoint. Only UDS path is supported, and should start with "unix:".
+                    Required: "true"
+create_time:
+    Type: TypeString
+    Description: Time the ClientTlsPolicy was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of label tags associated with the ClientTlsPolicy resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The location of the client tls policy.
+        The default value is 'global'.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the ClientTlsPolicy resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+server_validation_ca:
+    Type: TypeList
+    Description: Defines the mechanism to obtain the Certificate Authority certificate to validate the server certificate. If empty, client does not validate the server certificate.
+    Optional: "true"
+    Properties:
+        certificate_provider_instance:
+            Type: TypeList
+            Description: The certificate provider instance specification that will be passed to the data plane, which will be used to load necessary credential information.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                plugin_instance:
+                    Type: TypeString
+                    Description: Plugin instance name, used to locate and load CertificateProvider instance configuration. Set to "google_cloud_private_spiffe" to use Certificate Authority Service certificate provider instance.
+                    Required: "true"
+        grpc_endpoint:
+            Type: TypeList
+            Description: gRPC specific configuration to access the gRPC server to obtain the cert and private key.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                target_uri:
+                    Type: TypeString
+                    Description: The target URI of the gRPC endpoint. Only UDS path is supported, and should start with "unix:".
+                    Required: "true"
+sni:
+    Type: TypeString
+    Description: 'Server Name Indication string to present to the server during TLS handshake. E.g: "secure.example.com".'
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the ClientTlsPolicy was updated in UTC.
+    Computed: "true"
+

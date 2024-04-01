@@ -1,0 +1,32 @@
+config:
+    allowed_event_types: TypeList(TypeString)
+    create_time: TypeString
+    eventarc_channel: TypeString
+    extension_ref: TypeString
+    extension_version: TypeString
+    name: TypeString
+    params: TypeMap(TypeString)
+    populated_postinstall_content: TypeString
+    system_params: TypeMap(TypeString)
+create_time: TypeString
+error_status:
+    code: TypeInt
+    details: TypeList(TypeMap)
+    message: TypeString
+etag: TypeString
+instance_id: TypeString
+last_operation_name: TypeString
+last_operation_type: TypeString
+name: TypeString
+project: TypeString
+runtime_data:
+    fatal_error:
+        error_message: TypeString
+    processing_state:
+        detail_message: TypeString
+        state: TypeString
+    state_update_time: TypeString
+service_account_email: TypeString
+state: TypeString
+update_time: TypeString
+

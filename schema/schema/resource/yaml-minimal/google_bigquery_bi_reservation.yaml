@@ -1,0 +1,10 @@
+location: TypeString
+name: TypeString
+preferred_tables:
+    dataset_id: TypeString
+    project_id: TypeString
+    table_id: TypeString
+project: TypeString
+size: TypeInt
+update_time: TypeString
+

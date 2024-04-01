@@ -1,0 +1,150 @@
+asset_status:
+    Type: TypeList
+    Description: Output only. Aggregated status of the underlying assets of the zone.
+    Computed: "true"
+    Properties:
+        active_assets:
+            Type: TypeInt
+            Description: Number of active assets.
+            Computed: "true"
+        security_policy_applying_assets:
+            Type: TypeInt
+            Description: Number of assets that are in process of updating the security policy on attached resources.
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the status.
+            Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. The time when the zone was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Optional. Description of the zone.
+    Optional: "true"
+discovery_spec:
+    Type: TypeList
+    Description: Required. Specification of the discovery feature applied to data in this zone.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        csv_options:
+            Type: TypeList
+            Description: Optional. Configuration for CSV data.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                delimiter:
+                    Type: TypeString
+                    Description: Optional. The delimiter being used to separate values. This defaults to ','.
+                    Optional: "true"
+                disable_type_inference:
+                    Type: TypeBool
+                    Description: Optional. Whether to disable the inference of data type for CSV data. If true, all columns will be registered as strings.
+                    Optional: "true"
+                encoding:
+                    Type: TypeString
+                    Description: Optional. The character encoding of the data. The default is UTF-8.
+                    Optional: "true"
+                header_rows:
+                    Type: TypeInt
+                    Description: Optional. The number of rows to interpret as header rows that should be skipped when reading data rows.
+                    Optional: "true"
+        enabled:
+            Type: TypeBool
+            Description: Required. Whether discovery is enabled.
+            Required: "true"
+        exclude_patterns:
+            Type: TypeList
+            Description: Optional. The list of patterns to apply for selecting data to exclude during discovery. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.
+            Optional: "true"
+        include_patterns:
+            Type: TypeList
+            Description: Optional. The list of patterns to apply for selecting data to include during discovery if only a subset of the data should considered. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.
+            Optional: "true"
+        json_options:
+            Type: TypeList
+            Description: Optional. Configuration for Json data.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disable_type_inference:
+                    Type: TypeBool
+                    Description: Optional. Whether to disable the inference of data type for Json data. If true, all columns will be registered as their primitive types (strings, number or boolean).
+                    Optional: "true"
+                encoding:
+                    Type: TypeString
+                    Description: Optional. The character encoding of the data. The default is UTF-8.
+                    Optional: "true"
+        schedule:
+            Type: TypeString
+            Description: 'Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running discovery periodically. Successive discovery runs must be scheduled at least 60 minutes apart. The default value is to run discovery every 60 minutes. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "CRON_TZ=${IANA_TIME_ZONE}" or TZ=${IANA_TIME_ZONE}". The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, "CRON_TZ=America/New_York 1 * * * *", or "TZ=America/New_York 1 * * * *".'
+            Computed: "true"
+            Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Optional. User friendly display name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. User defined labels for the zone.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+lake:
+    Type: TypeString
+    Description: The lake for the resource
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the zone.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+resource_spec:
+    Type: TypeList
+    Description: Required. Immutable. Specification of the resources that are referenced by the assets within this zone.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        location_type:
+            Type: TypeString
+            Description: 'Required. Immutable. The location type of the resources that are allowed to be attached to the assets within this zone. Possible values: LOCATION_TYPE_UNSPECIFIED, SINGLE_REGION, MULTI_REGION'
+            Required: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. Current state of the zone. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'Required. Immutable. The type of the zone. Possible values: TYPE_UNSPECIFIED, RAW, CURATED'
+    Required: "true"
+uid:
+    Type: TypeString
+    Description: Output only. System generated globally unique ID for the zone. This ID will be different if the zone is deleted and re-created with the same name.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The time when the zone was last updated.
+    Computed: "true"
+

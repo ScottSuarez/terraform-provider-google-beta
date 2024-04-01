@@ -1,0 +1,228 @@
+create_time: TypeString
+dag_timeout: TypeString
+effective_labels: unknown
+jobs:
+    hadoop_job:
+        archive_uris: TypeList(TypeString)
+        args: TypeList(TypeString)
+        file_uris: TypeList(TypeString)
+        jar_file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        main_class: TypeString
+        main_jar_file_uri: TypeString
+        properties: TypeMap(TypeString)
+    hive_job:
+        continue_on_failure: TypeBool
+        jar_file_uris: TypeList(TypeString)
+        properties: TypeMap(TypeString)
+        query_file_uri: TypeString
+        query_list:
+            queries: TypeList(TypeString)
+        script_variables: TypeMap(TypeString)
+    labels: TypeMap(TypeString)
+    pig_job:
+        continue_on_failure: TypeBool
+        jar_file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        properties: TypeMap(TypeString)
+        query_file_uri: TypeString
+        query_list:
+            queries: TypeList(TypeString)
+        script_variables: TypeMap(TypeString)
+    prerequisite_step_ids: TypeList(TypeString)
+    presto_job:
+        client_tags: TypeList(TypeString)
+        continue_on_failure: TypeBool
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        output_format: TypeString
+        properties: TypeMap(TypeString)
+        query_file_uri: TypeString
+        query_list:
+            queries: TypeList(TypeString)
+    pyspark_job:
+        archive_uris: TypeList(TypeString)
+        args: TypeList(TypeString)
+        file_uris: TypeList(TypeString)
+        jar_file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        main_python_file_uri: TypeString
+        properties: TypeMap(TypeString)
+        python_file_uris: TypeList(TypeString)
+    scheduling:
+        max_failures_per_hour: TypeInt
+        max_failures_total: TypeInt
+    spark_job:
+        archive_uris: TypeList(TypeString)
+        args: TypeList(TypeString)
+        file_uris: TypeList(TypeString)
+        jar_file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        main_class: TypeString
+        main_jar_file_uri: TypeString
+        properties: TypeMap(TypeString)
+    spark_r_job:
+        archive_uris: TypeList(TypeString)
+        args: TypeList(TypeString)
+        file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        main_r_file_uri: TypeString
+        properties: TypeMap(TypeString)
+    spark_sql_job:
+        jar_file_uris: TypeList(TypeString)
+        logging_config:
+            driver_log_levels: TypeMap(TypeString)
+        properties: TypeMap(TypeString)
+        query_file_uri: TypeString
+        query_list:
+            queries: TypeList(TypeString)
+        script_variables: TypeMap(TypeString)
+    step_id: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+parameters:
+    description: TypeString
+    fields: TypeList(TypeString)
+    name: TypeString
+    validation:
+        regex:
+            regexes: TypeList(TypeString)
+        values:
+            values: TypeList(TypeString)
+placement:
+    cluster_selector:
+        cluster_labels: TypeMap(TypeString)
+        zone: TypeString
+    managed_cluster:
+        cluster_name: TypeString
+        config:
+            autoscaling_config:
+                policy: TypeString
+            encryption_config:
+                gce_pd_kms_key_name: TypeString
+            endpoint_config:
+                enable_http_port_access: TypeBool
+                http_ports: TypeMap(TypeString)
+            gce_cluster_config:
+                internal_ip_only: TypeBool
+                metadata: TypeMap(TypeString)
+                network: TypeString
+                node_group_affinity:
+                    node_group: TypeString
+                private_ipv6_google_access: TypeString
+                reservation_affinity:
+                    consume_reservation_type: TypeString
+                    key: TypeString
+                    values: TypeList(TypeString)
+                service_account: TypeString
+                service_account_scopes: TypeList(TypeString)
+                shielded_instance_config:
+                    enable_integrity_monitoring: TypeBool
+                    enable_secure_boot: TypeBool
+                    enable_vtpm: TypeBool
+                subnetwork: TypeString
+                tags: TypeSet(TypeString)
+                zone: TypeString
+            gke_cluster_config:
+                namespaced_gke_deployment_target:
+                    cluster_namespace: TypeString
+                    target_gke_cluster: TypeString
+            initialization_actions:
+                executable_file: TypeString
+                execution_timeout: TypeString
+            lifecycle_config:
+                auto_delete_time: TypeString
+                auto_delete_ttl: TypeString
+                idle_delete_ttl: TypeString
+                idle_start_time: TypeString
+            master_config:
+                accelerators:
+                    accelerator_count: TypeInt
+                    accelerator_type: TypeString
+                disk_config:
+                    boot_disk_size_gb: TypeInt
+                    boot_disk_type: TypeString
+                    num_local_ssds: TypeInt
+                image: TypeString
+                instance_names: TypeList(TypeString)
+                is_preemptible: TypeBool
+                machine_type: TypeString
+                managed_group_config:
+                    instance_group_manager_name: TypeString
+                    instance_template_name: TypeString
+                min_cpu_platform: TypeString
+                num_instances: TypeInt
+                preemptibility: TypeString
+            metastore_config:
+                dataproc_metastore_service: TypeString
+            secondary_worker_config:
+                accelerators:
+                    accelerator_count: TypeInt
+                    accelerator_type: TypeString
+                disk_config:
+                    boot_disk_size_gb: TypeInt
+                    boot_disk_type: TypeString
+                    num_local_ssds: TypeInt
+                image: TypeString
+                instance_names: TypeList(TypeString)
+                is_preemptible: TypeBool
+                machine_type: TypeString
+                managed_group_config:
+                    instance_group_manager_name: TypeString
+                    instance_template_name: TypeString
+                min_cpu_platform: TypeString
+                num_instances: TypeInt
+                preemptibility: TypeString
+            security_config:
+                kerberos_config:
+                    cross_realm_trust_admin_server: TypeString
+                    cross_realm_trust_kdc: TypeString
+                    cross_realm_trust_realm: TypeString
+                    cross_realm_trust_shared_password: TypeString
+                    enable_kerberos: TypeBool
+                    kdc_db_key: TypeString
+                    key_password: TypeString
+                    keystore: TypeString
+                    keystore_password: TypeString
+                    kms_key: TypeString
+                    realm: TypeString
+                    root_principal_password: TypeString
+                    tgt_lifetime_hours: TypeInt
+                    truststore: TypeString
+                    truststore_password: TypeString
+            software_config:
+                image_version: TypeString
+                optional_components: TypeList(TypeString)
+                properties: TypeMap(TypeString)
+            staging_bucket: TypeString
+            temp_bucket: TypeString
+            worker_config:
+                accelerators:
+                    accelerator_count: TypeInt
+                    accelerator_type: TypeString
+                disk_config:
+                    boot_disk_size_gb: TypeInt
+                    boot_disk_type: TypeString
+                    num_local_ssds: TypeInt
+                image: TypeString
+                instance_names: TypeList(TypeString)
+                is_preemptible: TypeBool
+                machine_type: TypeString
+                managed_group_config:
+                    instance_group_manager_name: TypeString
+                    instance_template_name: TypeString
+                min_cpu_platform: TypeString
+                num_instances: TypeInt
+                preemptibility: TypeString
+        labels: TypeMap(TypeString)
+project: TypeString
+terraform_labels: unknown
+update_time: TypeString
+version: TypeInt
+

@@ -1,0 +1,18 @@
+{
+    "consumer_project": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "service_name": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

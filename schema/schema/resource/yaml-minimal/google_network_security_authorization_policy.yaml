@@ -1,0 +1,22 @@
+action: TypeString
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+rules:
+    destinations:
+        hosts: TypeList(TypeString)
+        http_header_match:
+            header_name: TypeString
+            regex_match: TypeString
+        methods: TypeList(TypeString)
+        ports: TypeList(TypeInt)
+    sources:
+        ip_blocks: TypeList(TypeString)
+        principals: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

@@ -1,0 +1,83 @@
+display_name:
+    Type: TypeString
+    Description: The display name of the rule.
+    Optional: "true"
+etag:
+    Type: TypeString
+    Description: The hash of the resource. Used internally during updates.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the policy.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: The attachment point is identified by its URL-encoded full resource name.
+    Required: "true"
+rules:
+    Type: TypeList
+    Description: Rules to be applied.
+    Required: "true"
+    Properties:
+        deny_rule:
+            Type: TypeList
+            Description: A deny rule in an IAM deny policy.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                denial_condition:
+                    Type: TypeList
+                    Description: User defined CEVAL expression. A CEVAL expression is used to specify match criteria such as origin.ip, source.region_code and contents in the request header.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        description:
+                            Type: TypeString
+                            Description: |-
+                                Description of the expression. This is a longer text which describes the expression,
+                                e.g. when hovered over it in a UI.
+                            Optional: "true"
+                        expression:
+                            Type: TypeString
+                            Description: Textual representation of an expression in Common Expression Language syntax.
+                            Required: "true"
+                        location:
+                            Type: TypeString
+                            Description: |-
+                                String indicating the location of the expression for error reporting,
+                                e.g. a file name and a position in the file.
+                            Optional: "true"
+                        title:
+                            Type: TypeString
+                            Description: |-
+                                Title for the expression, i.e. a short string describing its purpose.
+                                This can be used e.g. in UIs which allow to enter the expression.
+                            Optional: "true"
+                denied_permissions:
+                    Type: TypeList
+                    Description: |-
+                        The permissions that are explicitly denied by this rule. Each permission uses the format '{service-fqdn}/{resource}.{verb}',
+                        where '{service-fqdn}' is the fully qualified domain name for the service. For example, 'iam.googleapis.com/roles.list'.
+                    Optional: "true"
+                denied_principals:
+                    Type: TypeList
+                    Description: The identities that are prevented from using one or more permissions on Google Cloud resources.
+                    Optional: "true"
+                exception_permissions:
+                    Type: TypeList
+                    Description: |-
+                        Specifies the permissions that this rule excludes from the set of denied permissions given by deniedPermissions.
+                        If a permission appears in deniedPermissions and in exceptionPermissions then it will not be denied.
+                        The excluded permissions can be specified using the same syntax as deniedPermissions.
+                    Optional: "true"
+                exception_principals:
+                    Type: TypeList
+                    Description: |-
+                        The identities that are excluded from the deny rule, even if they are listed in the deniedPrincipals.
+                        For example, you could add a Google group to the deniedPrincipals, then exclude specific users who belong to that group.
+                    Optional: "true"
+        description:
+            Type: TypeString
+            Description: The description of the rule.
+            Optional: "true"
+

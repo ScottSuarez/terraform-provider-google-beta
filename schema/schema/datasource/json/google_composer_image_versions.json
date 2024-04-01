@@ -1,0 +1,26 @@
+{
+    "image_versions": {
+        "Computed": true,
+        "Properties": {
+            "image_version_id": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "supported_python_versions": {
+                "Computed": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

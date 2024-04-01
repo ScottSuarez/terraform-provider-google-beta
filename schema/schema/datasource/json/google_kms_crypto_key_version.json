@@ -1,0 +1,40 @@
+{
+    "algorithm": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "crypto_key": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "protection_level": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "public_key": {
+        "Computed": true,
+        "Properties": {
+            "algorithm": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "pem": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "version": {
+        "Optional": true,
+        "Type": "TypeInt"
+    }
+}

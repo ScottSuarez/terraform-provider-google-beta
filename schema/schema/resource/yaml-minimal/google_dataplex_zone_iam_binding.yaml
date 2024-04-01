@@ -1,0 +1,12 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+dataplex_zone: TypeString
+etag: TypeString
+lake: TypeString
+location: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+

@@ -1,0 +1,68 @@
+display_name:
+    Type: TypeString
+    Description: The display name of the rule.
+    Optional: "true"
+etag:
+    Type: TypeString
+    Description: The hash of the resource. Used internally during updates.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the policy.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: The attachment point is identified by its URL-encoded full resource name.
+    Required: "true"
+rules:
+    Type: TypeList
+    Description: Rules to be applied.
+    Required: "true"
+    Properties:
+        access_boundary_rule:
+            Type: TypeList
+            Description: An access boundary rule in an IAM policy.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                availability_condition:
+                    Type: TypeList
+                    Description: The availability condition further constrains the access allowed by the access boundary rule.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        description:
+                            Type: TypeString
+                            Description: |-
+                                Description of the expression. This is a longer text which describes the expression,
+                                e.g. when hovered over it in a UI.
+                            Optional: "true"
+                        expression:
+                            Type: TypeString
+                            Description: Textual representation of an expression in Common Expression Language syntax.
+                            Required: "true"
+                        location:
+                            Type: TypeString
+                            Description: |-
+                                String indicating the location of the expression for error reporting,
+                                e.g. a file name and a position in the file.
+                            Optional: "true"
+                        title:
+                            Type: TypeString
+                            Description: |-
+                                Title for the expression, i.e. a short string describing its purpose.
+                                This can be used e.g. in UIs which allow to enter the expression.
+                            Optional: "true"
+                available_permissions:
+                    Type: TypeList
+                    Description: A list of permissions that may be allowed for use on the specified resource.
+                    Optional: "true"
+                available_resource:
+                    Type: TypeString
+                    Description: The full resource name of a Google Cloud resource entity.
+                    Optional: "true"
+        description:
+            Type: TypeString
+            Description: The description of the rule.
+            Optional: "true"
+

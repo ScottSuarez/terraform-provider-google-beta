@@ -1,0 +1,21 @@
+description:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Required: "true"
+network:
+    Type: TypeString
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+

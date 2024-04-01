@@ -1,0 +1,37 @@
+{
+    "client_id": {
+        "Description": "The client id of an OAuth client.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "client_secret": {
+        "Description": "The client secret of the OAuth client, to enable OIDC code flow.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Human friendly display name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enabled": {
+        "Description": "If this config allows users to sign in with the provider.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "issuer": {
+        "Description": "For OIDC Idps, the issuer identifier.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the OauthIdpConfig. Must start with 'oidc.'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

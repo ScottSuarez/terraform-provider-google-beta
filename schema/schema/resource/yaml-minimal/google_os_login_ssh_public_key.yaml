@@ -1,0 +1,6 @@
+expiration_time_usec: TypeString
+fingerprint: TypeString
+key: TypeString
+project: TypeString
+user: TypeString
+

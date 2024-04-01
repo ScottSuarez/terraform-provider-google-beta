@@ -1,0 +1,12 @@
+instance:
+    Type: TypeString
+    Required: "true"
+latest_recovery_time:
+    Type: TypeString
+    Description: Timestamp, identifies the latest recovery time of the source instance.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

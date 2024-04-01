@@ -1,0 +1,16 @@
+bucket:
+    Type: TypeString
+    Required: "true"
+object:
+    Type: TypeString
+    Required: "true"
+predefined_acl:
+    Type: TypeString
+    Optional: "true"
+    ConflictsWith: role_entity
+role_entity:
+    Type: TypeSet
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: predefined_acl
+

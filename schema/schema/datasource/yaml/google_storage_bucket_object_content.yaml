@@ -1,0 +1,106 @@
+bucket:
+    Type: TypeString
+    Description: The name of the containing bucket.
+    Required: "true"
+cache_control:
+    Type: TypeString
+    Description: Cache-Control directive to specify caching behavior of object data. If omitted and object is accessible to all anonymous users, the default will be public, max-age=3600
+    Computed: "true"
+content:
+    Type: TypeString
+    Description: 'Data as string to be uploaded. Must be defined if source is not. Note: The content field is marked as sensitive. To view the raw contents of the object, please define an output.'
+    Optional: "true"
+content_disposition:
+    Type: TypeString
+    Description: Content-Disposition of the object data.
+    Computed: "true"
+content_encoding:
+    Type: TypeString
+    Description: Content-Encoding of the object data.
+    Computed: "true"
+content_language:
+    Type: TypeString
+    Description: Content-Language of the object data.
+    Computed: "true"
+content_type:
+    Type: TypeString
+    Description: Content-Type of the object data. Defaults to "application/octet-stream" or "text/plain; charset=utf-8".
+    Computed: "true"
+crc32c:
+    Type: TypeString
+    Description: Base 64 CRC32 hash of the uploaded data.
+    Computed: "true"
+customer_encryption:
+    Type: TypeList
+    Description: Encryption key; encoded using base64.
+    Computed: "true"
+    Properties:
+        encryption_algorithm:
+            Type: TypeString
+            Description: 'The encryption algorithm. Default: AES256'
+            Computed: "true"
+        encryption_key:
+            Type: TypeString
+            Description: Base64 encoded customer supplied encryption key.
+            Computed: "true"
+detect_md5hash:
+    Type: TypeString
+    Computed: "true"
+event_based_hold:
+    Type: TypeBool
+    Description: Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any).
+    Computed: "true"
+kms_key_name:
+    Type: TypeString
+    Description: Resource name of the Cloud KMS key that will be used to encrypt the object. Overrides the object metadata's kmsKeyName value, if any.
+    Computed: "true"
+md5hash:
+    Type: TypeString
+    Description: Base 64 MD5 hash of the uploaded data.
+    Computed: "true"
+media_link:
+    Type: TypeString
+    Description: A url reference to download this object.
+    Computed: "true"
+metadata:
+    Type: TypeMap
+    Description: User-provided metadata, in key/value pairs.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the object. If you're interpolating the name of this object, see output_name instead.
+    Required: "true"
+output_name:
+    Type: TypeString
+    Description: The name of the object. Use this field in interpolations with google_storage_object_acl to recreate google_storage_object_acl resources when your google_storage_bucket_object is recreated.
+    Computed: "true"
+retention:
+    Type: TypeList
+    Description: Object level retention configuration.
+    Computed: "true"
+    Properties:
+        mode:
+            Type: TypeString
+            Description: 'The object retention mode. Supported values include: "Unlocked", "Locked".'
+            Computed: "true"
+        retain_until_time:
+            Type: TypeString
+            Description: Time in RFC 3339 (e.g. 2030-01-01T02:03:04Z) until which object retention protects this object.
+            Computed: "true"
+self_link:
+    Type: TypeString
+    Description: A url reference to this object.
+    Computed: "true"
+source:
+    Type: TypeString
+    Description: A path to the data you want to upload. Must be defined if content is not.
+    Computed: "true"
+storage_class:
+    Type: TypeString
+    Description: 'The StorageClass of the new bucket object. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE. If not provided, this defaults to the bucket''s default storage class or to a standard class.'
+    Computed: "true"
+temporary_hold:
+    Type: TypeBool
+    Description: Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.
+    Computed: "true"
+

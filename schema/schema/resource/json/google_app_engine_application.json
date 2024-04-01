@@ -1,0 +1,121 @@
+{
+    "app_id": {
+        "Computed": true,
+        "Description": "Identifier of the app.",
+        "Type": "TypeString"
+    },
+    "auth_domain": {
+        "Computed": true,
+        "Description": "The domain to authenticate users with when using App Engine's User API.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "code_bucket": {
+        "Computed": true,
+        "Description": "The GCS bucket code is being stored in for this app.",
+        "Type": "TypeString"
+    },
+    "database_type": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "default_bucket": {
+        "Computed": true,
+        "Description": "The GCS bucket content is being stored in for this app.",
+        "Type": "TypeString"
+    },
+    "default_hostname": {
+        "Computed": true,
+        "Description": "The default hostname for this app.",
+        "Type": "TypeString"
+    },
+    "feature_settings": {
+        "Computed": true,
+        "Description": "A block of optional settings to configure specific App Engine features:",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "split_health_checks": {
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "gcr_domain": {
+        "Computed": true,
+        "Description": "The GCR domain used for storing managed Docker images for this app.",
+        "Type": "TypeString"
+    },
+    "iap": {
+        "Computed": true,
+        "Description": "Settings for enabling Cloud Identity Aware Proxy",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enabled": {
+                "Description": "Adapted for use with the app",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "oauth2_client_id": {
+                "Description": "OAuth2 client ID to use for the authentication flow.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "oauth2_client_secret": {
+                "Description": "OAuth2 client secret to use for the authentication flow. The SHA-256 hash of the value is returned in the oauth2ClientSecretSha256 field.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "oauth2_client_secret_sha256": {
+                "Computed": true,
+                "Description": "Hex-encoded SHA-256 hash of the client secret.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location_id": {
+        "Description": "The location to serve the app from.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Unique name of the app.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project ID to create the application under.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "serving_status": {
+        "Computed": true,
+        "Description": "The serving status of the app.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "url_dispatch_rule": {
+        "Computed": true,
+        "Description": "A list of dispatch rule blocks. Each block has a domain, path, and service field.",
+        "Properties": {
+            "domain": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "path": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "service": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

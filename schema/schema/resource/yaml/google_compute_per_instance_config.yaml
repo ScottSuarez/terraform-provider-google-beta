@@ -1,0 +1,133 @@
+instance_group_manager:
+    Type: TypeString
+    Description: The instance group manager this instance config is part of.
+    Required: "true"
+minimal_action:
+    Type: TypeString
+    Description: |-
+        The minimal action to perform on the instance during an update.
+        Default is 'NONE'. Possible values are:
+        * REPLACE
+        * RESTART
+        * REFRESH
+        * NONE
+    Optional: "true"
+most_disruptive_allowed_action:
+    Type: TypeString
+    Description: |-
+        The most disruptive action to perform on the instance during an update.
+        Default is 'REPLACE'. Possible values are:
+        * REPLACE
+        * RESTART
+        * REFRESH
+        * NONE
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name for this per-instance config and its corresponding instance.
+    Required: "true"
+preserved_state:
+    Type: TypeList
+    Description: The preserved state for this instance.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        disk:
+            Type: TypeSet
+            Description: Stateful disks for the instance.
+            Optional: "true"
+            Properties:
+                delete_rule:
+                    Type: TypeString
+                    Description: |-
+                        A value that prescribes what should happen to the stateful disk when the VM instance is deleted.
+                        The available options are 'NEVER' and 'ON_PERMANENT_INSTANCE_DELETION'.
+                        'NEVER' - detach the disk when the VM is deleted, but do not delete the disk.
+                        'ON_PERMANENT_INSTANCE_DELETION' will delete the stateful disk when the VM is permanently
+                        deleted from the instance group. Default value: "NEVER" Possible values: ["NEVER", "ON_PERMANENT_INSTANCE_DELETION"]
+                    Optional: "true"
+                device_name:
+                    Type: TypeString
+                    Description: A unique device name that is reflected into the /dev/ tree of a Linux operating system running within the instance.
+                    Required: "true"
+                mode:
+                    Type: TypeString
+                    Description: 'The mode of the disk. Default value: "READ_WRITE" Possible values: ["READ_ONLY", "READ_WRITE"]'
+                    Optional: "true"
+                source:
+                    Type: TypeString
+                    Description: |-
+                        The URI of an existing persistent disk to attach under the specified device-name in the format
+                        'projects/project-id/zones/zone/disks/disk-name'.
+                    Required: "true"
+        external_ip:
+            Type: TypeSet
+            Description: Preserved external IPs defined for this instance. This map is keyed with the name of the network interface.
+            Optional: "true"
+            Properties:
+                auto_delete:
+                    Type: TypeString
+                    Description: 'These stateful IPs will never be released during autohealing, update or VM instance recreate operations. This flag is used to configure if the IP reservation should be deleted after it is no longer used by the group, e.g. when the given instance or the whole group is deleted. Default value: "NEVER" Possible values: ["NEVER", "ON_PERMANENT_INSTANCE_DELETION"]'
+                    Optional: "true"
+                interface_name:
+                    Type: TypeString
+                    Required: "true"
+                ip_address:
+                    Type: TypeList
+                    Description: Ip address representation
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        address:
+                            Type: TypeString
+                            Description: The URL of the reservation for this IP address.
+                            Optional: "true"
+        internal_ip:
+            Type: TypeSet
+            Description: Preserved internal IPs defined for this instance. This map is keyed with the name of the network interface.
+            Optional: "true"
+            Properties:
+                auto_delete:
+                    Type: TypeString
+                    Description: 'These stateful IPs will never be released during autohealing, update or VM instance recreate operations. This flag is used to configure if the IP reservation should be deleted after it is no longer used by the group, e.g. when the given instance or the whole group is deleted. Default value: "NEVER" Possible values: ["NEVER", "ON_PERMANENT_INSTANCE_DELETION"]'
+                    Optional: "true"
+                interface_name:
+                    Type: TypeString
+                    Required: "true"
+                ip_address:
+                    Type: TypeList
+                    Description: Ip address representation
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        address:
+                            Type: TypeString
+                            Description: The URL of the reservation for this IP address.
+                            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: Preserved metadata defined for this instance. This is a list of key->value pairs.
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+remove_instance_on_destroy:
+    Type: TypeBool
+    Description: |-
+        When true, deleting this config will immediately remove the underlying instance.
+        When false, deleting this config will use the behavior as determined by remove_instance_on_destroy.
+    Optional: "true"
+remove_instance_state_on_destroy:
+    Type: TypeBool
+    Description: |-
+        When true, deleting this config will immediately remove any specified state from the underlying instance.
+        When false, deleting this config will *not* immediately remove any state from the underlying instance.
+        State will be removed on the next instance recreation or update.
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: Zone where the containing instance group manager is located
+    Computed: "true"
+    Optional: "true"
+

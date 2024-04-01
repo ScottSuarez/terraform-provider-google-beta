@@ -1,0 +1,18 @@
+bucket_id: TypeString
+cmek_settings:
+    kms_key_name: TypeString
+    kms_key_version_name: TypeString
+    name: TypeString
+    service_account_id: TypeString
+description: TypeString
+enable_analytics: TypeBool
+index_configs:
+    field_path: TypeString
+    type: TypeString
+lifecycle_state: TypeString
+location: TypeString
+locked: TypeBool
+name: TypeString
+project: TypeString
+retention_days: TypeInt
+

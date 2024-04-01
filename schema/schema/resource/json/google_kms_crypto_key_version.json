@@ -1,0 +1,91 @@
+{
+    "algorithm": {
+        "Computed": true,
+        "Description": "The CryptoKeyVersionAlgorithm that this CryptoKeyVersion supports.",
+        "Type": "TypeString"
+    },
+    "attestation": {
+        "Computed": true,
+        "Description": "Statement that was generated and signed by the HSM at key creation time. Use this statement to verify attributes of the key as stored on the HSM, independently of Google.\nOnly provided for key versions with protectionLevel HSM.",
+        "Properties": {
+            "cert_chains": {
+                "Description": "The certificate chains needed to validate the attestation",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "cavium_certs": {
+                        "Description": "Cavium certificate chain corresponding to the attestation.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "google_card_certs": {
+                        "Description": "Google card certificate chain corresponding to the attestation.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "google_partition_certs": {
+                        "Description": "Google partition certificate chain corresponding to the attestation.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "content": {
+                "Computed": true,
+                "Description": "The attestation data provided by the HSM when the key operation was performed.",
+                "Type": "TypeString"
+            },
+            "external_protection_level_options": {
+                "Description": "ExternalProtectionLevelOptions stores a group of additional fields for configuring a CryptoKeyVersion that are specific to the EXTERNAL protection level and EXTERNAL_VPC protection levels.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "ekm_connection_key_path": {
+                        "Description": "The path to the external key material on the EKM when using EkmConnection e.g., \"v0/my/key\". Set this field instead of externalKeyUri when using an EkmConnection.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "external_key_uri": {
+                        "Description": "The URI for an external resource that this CryptoKeyVersion represents.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "format": {
+                "Computed": true,
+                "Description": "The format of the attestation data.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "crypto_key": {
+        "Description": "The name of the cryptoKey associated with the CryptoKeyVersions.\nFormat: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyring}}/cryptoKeys/{{cryptoKey}}''",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "generate_time": {
+        "Computed": true,
+        "Description": "The time this CryptoKeyVersion key material was generated",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for this CryptoKeyVersion.",
+        "Type": "TypeString"
+    },
+    "protection_level": {
+        "Computed": true,
+        "Description": "The ProtectionLevel describing how crypto operations are performed with this CryptoKeyVersion.",
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the CryptoKeyVersion. Possible values: [\"PENDING_GENERATION\", \"ENABLED\", \"DISABLED\", \"DESTROYED\", \"DESTROY_SCHEDULED\", \"PENDING_IMPORT\", \"IMPORT_FAILED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "location": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "valid_versions": {
+        "Computed": true,
+        "Type": "TypeList"
+    }
+}

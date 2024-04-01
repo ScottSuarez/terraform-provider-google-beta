@@ -1,0 +1,17 @@
+config:
+    redirects:
+        glob: TypeString
+        location: TypeString
+        regex: TypeString
+        status_code: TypeInt
+    rewrites:
+        function: TypeString
+        glob: TypeString
+        regex: TypeString
+        run:
+            region: TypeString
+            service_id: TypeString
+name: TypeString
+site_id: TypeString
+version_id: TypeString
+

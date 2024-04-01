@@ -1,0 +1,62 @@
+{
+    "capacity": {
+        "Description": "Capacity of the Address Group.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Free-text description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "items": {
+        "Description": "List of items.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the AddressGroup resource.\nAn object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of the gateway security policy.\nThe default value is 'global'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the AddressGroup resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The name of the parent this address group belongs to. Format: organizations/{organization_id} or projects/{project_id}.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Description": "The type of the Address Group. Possible values are \"IPV4\" or \"IPV6\". Possible values: [\"IPV4\", \"IPV6\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

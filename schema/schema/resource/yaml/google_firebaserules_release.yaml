@@ -1,0 +1,26 @@
+create_time:
+    Type: TypeString
+    Description: Output only. Time the release was created.
+    Computed: "true"
+disabled:
+    Type: TypeBool
+    Description: Disable the release to keep it from being served. The response code of NOT_FOUND will be given for executables generated from this Release.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: 'Format: `projects/{project_id}/releases/{release_id}`\Firestore Rules Releases will **always** have the name ''cloud.firestore'''
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+ruleset_name:
+    Type: TypeString
+    Description: Name of the `Ruleset` referred to by this `Release`. The `Ruleset` must exist for the `Release` to be created.
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. Time the release was updated.
+    Computed: "true"
+

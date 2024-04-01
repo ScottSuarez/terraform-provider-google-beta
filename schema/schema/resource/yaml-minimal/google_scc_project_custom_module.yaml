@@ -1,0 +1,27 @@
+ancestor_module: TypeString
+custom_config:
+    custom_output:
+        properties:
+            name: TypeString
+            value_expression:
+                description: TypeString
+                expression: TypeString
+                location: TypeString
+                title: TypeString
+    description: TypeString
+    predicate:
+        description: TypeString
+        expression: TypeString
+        location: TypeString
+        title: TypeString
+    recommendation: TypeString
+    resource_selector:
+        resource_types: TypeList(TypeString)
+    severity: TypeString
+display_name: TypeString
+enablement_state: TypeString
+last_editor: TypeString
+name: TypeString
+project: TypeString
+update_time: TypeString
+

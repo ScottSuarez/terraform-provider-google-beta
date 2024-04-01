@@ -1,0 +1,21 @@
+archive_size_bytes: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+disk_size_gb: TypeInt
+family: TypeString
+filter: TypeString
+image_encryption_key_sha256: TypeString
+image_id: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+licenses: TypeList(TypeString)
+most_recent: TypeBool
+name: TypeString
+project: TypeString
+self_link: TypeString
+source_disk: TypeString
+source_disk_encryption_key_sha256: TypeString
+source_disk_id: TypeString
+source_image_id: TypeString
+status: TypeString
+

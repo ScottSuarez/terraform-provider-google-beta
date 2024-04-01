@@ -1,0 +1,34 @@
+application_id:
+    Type: TypeString
+    Description: The Azure Active Directory Application ID.
+    Required: "true"
+certificate:
+    Type: TypeString
+    Description: Output only. The PEM encoded x509 certificate.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Output only. The time at which this resource was created.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of this resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+tenant_id:
+    Type: TypeString
+    Description: The Azure Active Directory Tenant ID.
+    Required: "true"
+uid:
+    Type: TypeString
+    Description: Output only. A globally unique identifier for the client.
+    Computed: "true"
+

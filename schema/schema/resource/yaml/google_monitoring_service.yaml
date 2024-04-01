@@ -1,0 +1,64 @@
+basic_service:
+    Type: TypeList
+    Description: |-
+        A well-known service type, defined by its service type and service labels.
+        Valid values of service types and services labels are described at
+        https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring/api/api-structures#basic-svc-w-basic-sli
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        service_labels:
+            Type: TypeMap
+            Description: |-
+                Labels that specify the resource that emits the monitoring data
+                which is used for SLO reporting of this 'Service'.
+            Optional: "true"
+        service_type:
+            Type: TypeString
+            Description: |-
+                The type of service that this basic service defines, e.g.
+                APP_ENGINE service type
+            Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Name used for UI elements listing this Service.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The full resource name for this service. The syntax is:
+        projects/[PROJECT_ID]/services/[SERVICE_ID].
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+service_id:
+    Type: TypeString
+    Description: |-
+        An optional service ID to use. If not given, the server will generate a
+        service ID.
+    Required: "true"
+telemetry:
+    Type: TypeList
+    Description: Configuration for how to query telemetry on a Service.
+    Computed: "true"
+    Properties:
+        resource_name:
+            Type: TypeString
+            Description: |-
+                The full name of the resource that defines this service.
+                Formatted as described in
+                https://cloud.google.com/apis/design/resource_names.
+            Optional: "true"
+user_labels:
+    Type: TypeMap
+    Description: |-
+        Labels which have been used to annotate the service. Label keys must start
+        with a letter. Label keys and values may contain lowercase letters,
+        numbers, underscores, and dashes. Label keys and values have a maximum
+        length of 63 characters, and must be less than 128 bytes in size. Up to 64
+        label entries may be stored. For labels which do not have a semantic value,
+        the empty string may be supplied for the label value.
+    Optional: "true"
+

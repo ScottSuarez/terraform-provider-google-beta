@@ -1,0 +1,78 @@
+boolean_policy:
+    Type: TypeList
+    Description: A boolean policy is a constraint that is either enforced or not.
+    Computed: "true"
+    Properties:
+        enforced:
+            Type: TypeBool
+            Description: If true, then the Policy is enforced. If false, then any configuration is acceptable.
+            Computed: "true"
+constraint:
+    Type: TypeString
+    Description: The name of the Constraint the Policy is configuring, for example, serviceuser.services.
+    Required: "true"
+etag:
+    Type: TypeString
+    Description: The etag of the organization policy. etag is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other.
+    Computed: "true"
+list_policy:
+    Type: TypeList
+    Description: 'A policy that can define specific values that are allowed or denied for the given constraint. It can also be used to allow or deny all values. '
+    Computed: "true"
+    Properties:
+        allow:
+            Type: TypeList
+            Description: One or the other must be set.
+            Computed: "true"
+            Properties:
+                all:
+                    Type: TypeBool
+                    Description: The policy allows or denies all values.
+                    Computed: "true"
+                values:
+                    Type: TypeSet
+                    Description: The policy can define specific values that are allowed or denied.
+                    Computed: "true"
+        deny:
+            Type: TypeList
+            Description: One or the other must be set.
+            Computed: "true"
+            Properties:
+                all:
+                    Type: TypeBool
+                    Description: The policy allows or denies all values.
+                    Computed: "true"
+                values:
+                    Type: TypeSet
+                    Description: The policy can define specific values that are allowed or denied.
+                    Computed: "true"
+        inherit_from_parent:
+            Type: TypeBool
+            Description: If set to true, the values from the effective Policy of the parent resource are inherited, meaning the values set in this Policy are added to the values inherited up the hierarchy.
+            Computed: "true"
+        suggested_value:
+            Type: TypeString
+            Description: The Google Cloud Console will try to default to a configuration that matches the value specified in this field.
+            Computed: "true"
+project:
+    Type: TypeString
+    Description: The project ID.
+    Required: "true"
+restore_policy:
+    Type: TypeList
+    Description: A restore policy is a constraint to restore the default policy.
+    Computed: "true"
+    Properties:
+        default:
+            Type: TypeBool
+            Description: May only be set to true. If set, then the default Policy is restored.
+            Computed: "true"
+update_time:
+    Type: TypeString
+    Description: 'The timestamp in RFC3339 UTC "Zulu" format, accurate to nanoseconds, representing when the variable was last updated. Example: "2016-10-09T12:33:37.578138407Z".'
+    Computed: "true"
+version:
+    Type: TypeInt
+    Description: Version of the Policy. Default version is 0.
+    Computed: "true"
+

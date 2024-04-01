@@ -1,0 +1,133 @@
+{
+    "big_query_source": {
+        "Description": "Configures how data is supposed to be extracted from a BigQuery source to be loaded onto the FeatureOnlineStore.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "entity_id_columns": {
+                "Description": "Columns to construct entityId / row keys. Start by supporting 1 only.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "uri": {
+                "Description": "The BigQuery view URI that will be materialized on each sync trigger based on FeatureView.SyncConfig.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the featureOnlinestore was created in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "feature_online_store": {
+        "Description": "The name of the FeatureOnlineStore to use for the featureview.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "A set of key/value label pairs to assign to this FeatureView.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "Name of the FeatureView. This value may be up to 60 characters, and valid characters are [a-z0-9_]. The first character cannot be a number.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region for the resource. It should be the same as the featureonlinestore region.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "sync_config": {
+        "Description": "Configures when data is to be synced/updated for this FeatureView. At the end of the sync the latest featureValues for each entityId of this FeatureView are made ready for online serving.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cron": {
+                "Computed": true,
+                "Description": "Cron schedule (https://en.wikipedia.org/wiki/Cron) to launch scheduled runs.\nTo explicitly set a timezone to the cron tab, apply a prefix in the cron tab: \"CRON_TZ=${IANA_TIME_ZONE}\" or \"TZ=${IANA_TIME_ZONE}\".",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the featureOnlinestore was last updated in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "vector_search_config": {
+        "Description": "Configuration for vector search. It contains the required configurations to create an index from source data, so that approximate nearest neighbor (a.k.a ANN) algorithms search can be performed during online serving.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "brute_force_config": {
+                "Description": "Configuration options for using brute force search, which simply implements the standard linear search in the database for each query. It is primarily meant for benchmarking and to generate the ground truth for approximate search.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "crowding_column": {
+                "Description": "Column of crowding. This column contains crowding attribute which is a constraint on a neighbor list produced by nearest neighbor search requiring that no more than some value k' of the k neighbors returned have the same value of crowdingAttribute.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "distance_measure_type": {
+                "Description": "The distance measure used in nearest neighbor search.\nFor details on allowed values, see the [API documentation](https://cloud.google.com/vertex-ai/docs/reference/rest/v1beta1/projects.locations.featureOnlineStores.featureViews#DistanceMeasureType). Possible values: [\"SQUARED_L2_DISTANCE\", \"COSINE_DISTANCE\", \"DOT_PRODUCT_DISTANCE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "embedding_column": {
+                "Description": "Column of embedding. This column contains the source data to create index for vector search.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "embedding_dimension": {
+                "Description": "The number of dimensions of the input embedding.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "filter_columns": {
+                "Description": "Columns of features that are used to filter vector search results.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "tree_ah_config": {
+                "Description": "Configuration options for the tree-AH algorithm (Shallow tree + Asymmetric Hashing). Please refer to this paper for more details: https://arxiv.org/abs/1908.10396",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "leaf_node_embedding_count": {
+                        "Computed": true,
+                        "Description": "Number of embeddings on each leaf node. The default value is 1000 if not set.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

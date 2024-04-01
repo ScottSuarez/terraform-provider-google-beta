@@ -1,0 +1,8 @@
+assignee: TypeString
+job_type: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+reservation: TypeString
+state: TypeString
+

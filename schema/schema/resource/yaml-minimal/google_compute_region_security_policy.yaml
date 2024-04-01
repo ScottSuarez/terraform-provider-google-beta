@@ -1,0 +1,18 @@
+ddos_protection_config:
+    ddos_protection: TypeString
+description: TypeString
+fingerprint: TypeString
+name: TypeString
+policy_id: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+self_link_with_policy_id: TypeString
+type: TypeString
+user_defined_fields:
+    base: TypeString
+    mask: TypeString
+    name: TypeString
+    offset: TypeInt
+    size: TypeInt
+

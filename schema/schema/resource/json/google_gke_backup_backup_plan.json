@@ -1,0 +1,197 @@
+{
+    "backup_config": {
+        "Description": "Defines the configuration of Backups created via this BackupPlan.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "all_namespaces": {
+                "Description": "If True, include all namespaced resources.",
+                "ExactlyOneOf": "backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "encryption_key": {
+                "Description": "This defines a customer managed encryption key that will be used to encrypt the \"config\"\nportion (the Kubernetes resources) of Backups created via this plan.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "gcp_kms_encryption_key": {
+                        "Description": "Google Cloud KMS encryption key. Format: projects/*/locations/*/keyRings/*/cryptoKeys/*",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "include_secrets": {
+                "Computed": true,
+                "Description": "This flag specifies whether Kubernetes Secret resources should be included\nwhen they fall into the scope of Backups.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "include_volume_data": {
+                "Computed": true,
+                "Description": "This flag specifies whether volume data should be backed up when PVCs are\nincluded in the scope of a Backup.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "selected_applications": {
+                "Description": "A list of namespaced Kubernetes Resources.",
+                "ExactlyOneOf": "backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "namespaced_names": {
+                        "Description": "A list of namespaced Kubernetes resources.",
+                        "Properties": {
+                            "name": {
+                                "Description": "The name of a Kubernetes Resource.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "namespace": {
+                                "Description": "The namespace of a Kubernetes Resource.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "selected_namespaces": {
+                "Description": "If set, include just the resources in the listed namespaces.",
+                "ExactlyOneOf": "backup_config.0.all_namespaces, backup_config.0.selected_namespaces, backup_config.0.selected_applications",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "namespaces": {
+                        "Description": "A list of Kubernetes Namespaces.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "backup_schedule": {
+        "Description": "Defines a schedule for automatic Backup creation via this BackupPlan.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cron_schedule": {
+                "Description": "A standard cron string that defines a repeating schedule for\ncreating Backups via this BackupPlan.\nIf this is defined, then backupRetainDays must also be defined.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "paused": {
+                "Computed": true,
+                "Description": "This flag denotes whether automatic Backup creation is paused for this BackupPlan.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cluster": {
+        "Description": "The source cluster from which Backups will be created via this BackupPlan.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "deactivated": {
+        "Computed": true,
+        "Description": "This flag indicates whether this BackupPlan has been deactivated.\nSetting this field to True locks the BackupPlan such that no further updates will be allowed\n(except deletes), including the deactivated field itself. It also prevents any new Backups\nfrom being created via this BackupPlan (including scheduled Backups).",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "User specified descriptive string for this BackupPlan.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "etag is used for optimistic concurrency control as a way to help prevent simultaneous\nupdates of a backup plan from overwriting each other. It is strongly suggested that\nsystems make use of the 'etag' in the read-modify-write cycle to perform BackupPlan updates\nin order to avoid race conditions: An etag is returned in the response to backupPlans.get,\nand systems are expected to put that etag in the request to backupPlans.patch or\nbackupPlans.delete to ensure that their change will be applied to the same version of the resource.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Description: A set of custom labels supplied by the user.\nA list of key-\u003evalue pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The region of the Backup Plan.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The full name of the BackupPlan Resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "protected_pod_count": {
+        "Computed": true,
+        "Description": "The number of Kubernetes Pods backed up in the last successful Backup created via this BackupPlan.",
+        "Type": "TypeInt"
+    },
+    "retention_policy": {
+        "Description": "RetentionPolicy governs lifecycle of Backups created under this plan.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "backup_delete_lock_days": {
+                "Computed": true,
+                "Description": "Minimum age for a Backup created via this BackupPlan (in days).\nMust be an integer value between 0-90 (inclusive).\nA Backup created under this BackupPlan will not be deletable\nuntil it reaches Backup's (create time + backup_delete_lock_days).\nUpdating this field of a BackupPlan does not affect existing Backups.\nBackups created after a successful update will inherit this new value.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "backup_retain_days": {
+                "Computed": true,
+                "Description": "The default maximum age of a Backup created via this BackupPlan.\nThis field MUST be an integer value \u003e= 0 and \u003c= 365. If specified,\na Backup created under this BackupPlan will be automatically deleted\nafter its age reaches (createTime + backupRetainDays).\nIf not specified, Backups created under this BackupPlan will NOT be\nsubject to automatic deletion. Updating this field does NOT affect\nexisting Backups under it. Backups created AFTER a successful update\nwill automatically pick up the new value.\nNOTE: backupRetainDays must be \u003e= backupDeleteLockDays.\nIf cronSchedule is defined, then this must be \u003c= 360 * the creation interval.]",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "locked": {
+                "Computed": true,
+                "Description": "This flag denotes whether the retention policy of this BackupPlan is locked.\nIf set to True, no further update is allowed on this policy, including\nthe locked field itself.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The State of the BackupPlan.",
+        "Type": "TypeString"
+    },
+    "state_reason": {
+        "Computed": true,
+        "Description": "Detailed description of why BackupPlan is in its current state.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Server generated, unique identifier of UUID format.",
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,236 @@
+{
+    "cloud_logging_config": {
+        "Computed": true,
+        "Description": "Cloud logging configuration",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enable_logging": {
+                "Description": "If set, enable query logging for this ManagedZone. False by default, making logging opt-in.",
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "creation_time": {
+        "Computed": true,
+        "Description": "The time that this resource was created on the server.\nThis is in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A textual description field. Defaults to 'Managed by Terraform'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "dns_name": {
+        "Description": "The DNS name of this managed zone, for instance \"example.com.\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "dnssec_config": {
+        "Description": "DNSSEC configuration",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "default_key_specs": {
+                "AtLeastOneOf": "dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs",
+                "Computed": true,
+                "Description": "Specifies parameters that will be used for generating initial DnsKeys\nfor this ManagedZone. If you provide a spec for keySigning or zoneSigning,\nyou must also provide one for the other.\ndefault_key_specs can only be updated when the state is 'off'.",
+                "Optional": true,
+                "Properties": {
+                    "algorithm": {
+                        "Description": "String mnemonic specifying the DNSSEC algorithm of this key Possible values: [\"ecdsap256sha256\", \"ecdsap384sha384\", \"rsasha1\", \"rsasha256\", \"rsasha512\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "key_length": {
+                        "Description": "Length of the keys in bits",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "key_type": {
+                        "Description": "Specifies whether this is a key signing key (KSK) or a zone\nsigning key (ZSK). Key signing keys have the Secure Entry\nPoint flag set and, when active, will only be used to sign\nresource record sets of type DNSKEY. Zone signing keys do\nnot have the Secure Entry Point flag set and will be used\nto sign all other types of resource record sets. Possible values: [\"keySigning\", \"zoneSigning\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "kind": {
+                        "Description": "Identifies what kind of resource this is",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "kind": {
+                "AtLeastOneOf": "dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs",
+                "Description": "Identifies what kind of resource this is",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "non_existence": {
+                "AtLeastOneOf": "dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs",
+                "Computed": true,
+                "Description": "Specifies the mechanism used to provide authenticated denial-of-existence responses.\nnon_existence can only be updated when the state is 'off'. Possible values: [\"nsec\", \"nsec3\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "AtLeastOneOf": "dnssec_config.0.kind, dnssec_config.0.non_existence, dnssec_config.0.state, dnssec_config.0.default_key_specs",
+                "Description": "Specifies whether DNSSEC is enabled, and what mode it is in Possible values: [\"off\", \"on\", \"transfer\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "force_destroy": {
+        "Description": "Set this true to delete all records in the zone.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "forwarding_config": {
+        "Description": "The presence for this field indicates that outbound forwarding is enabled\nfor this zone. The value of this field contains the set of destinations\nto forward to.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "target_name_servers": {
+                "Description": "List of target name servers to forward to. Cloud DNS will\nselect the best available name server if more than\none target is given.",
+                "Properties": {
+                    "forwarding_path": {
+                        "Description": "Forwarding path for this TargetNameServer. If unset or 'default' Cloud DNS will make forwarding\ndecision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go\nto the Internet. When set to 'private', Cloud DNS will always send queries through VPC for this target Possible values: [\"default\", \"private\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "ipv4_address": {
+                        "Description": "IPv4 address of a target name server.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "A set of key/value label pairs to assign to this ManagedZone.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "managed_zone_id": {
+        "Computed": true,
+        "Description": "Unique identifier for the resource; defined by the server.",
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "User assigned name for this resource.\nMust be unique within the project.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name_servers": {
+        "Computed": true,
+        "Description": "Delegate your managed_zone to these virtual name servers;\ndefined by the server",
+        "Type": "TypeList"
+    },
+    "peering_config": {
+        "Description": "The presence of this field indicates that DNS Peering is enabled for this\nzone. The value of this field contains the network to peer with.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "target_network": {
+                "Description": "The network with which to peer.",
+                "MaxItems": 1,
+                "Properties": {
+                    "network_url": {
+                        "Description": "The id or fully qualified URL of the VPC network to forward queries to.\nThis should be formatted like 'projects/{project}/global/networks/{network}' or\n'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "private_visibility_config": {
+        "Description": "For privately visible zones, the set of Virtual Private Cloud\nresources that the zone is visible from. At least one of 'gke_clusters' or 'networks' must be specified.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "gke_clusters": {
+                "Description": "The list of Google Kubernetes Engine clusters that can see this zone.",
+                "Optional": true,
+                "Properties": {
+                    "gke_cluster_name": {
+                        "Description": "The resource name of the cluster to bind this ManagedZone to.\nThis should be specified in the format like\n'projects/*/locations/*/clusters/*'",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "networks": {
+                "Description": "The list of VPC networks that can see this zone. Until the provider updates to use the Terraform 0.12 SDK in a future release, you\nmay experience issues with this resource while updating. If you've defined a 'networks' block and\nadd another 'networks' block while keeping the old block, Terraform will see an incorrect diff\nand apply an incorrect update to the resource. If you encounter this issue, remove all 'networks'\nblocks in an update and then apply another update adding all of them back simultaneously.",
+                "Optional": true,
+                "Properties": {
+                    "network_url": {
+                        "Description": "The id or fully qualified URL of the VPC network to bind to.\nThis should be formatted like 'projects/{project}/global/networks/{network}' or\n'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reverse_lookup": {
+        "Description": "Specifies if this is a managed reverse lookup zone. If true, Cloud DNS will resolve reverse\nlookup queries using automatically configured records for VPC resources. This only applies\nto networks listed under 'private_visibility_config'.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "service_directory_config": {
+        "Description": "The presence of this field indicates that this zone is backed by Service Directory. The value of this field contains information related to the namespace associated with the zone.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "namespace": {
+                "Description": "The namespace associated with the zone.",
+                "MaxItems": 1,
+                "Properties": {
+                    "namespace_url": {
+                        "Description": "The fully qualified or partial URL of the service directory namespace that should be\nassociated with the zone. This should be formatted like\n'https://servicedirectory.googleapis.com/v1/projects/{project}/locations/{location}/namespaces/{namespace_id}'\nor simply 'projects/{project}/locations/{location}/namespaces/{namespace_id}'\nIgnored for 'public' visibility zones.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "visibility": {
+        "Description": "The zone's visibility: public zones are exposed to the Internet,\nwhile private zones are visible only to Virtual Private Cloud resources. Default value: \"public\" Possible values: [\"private\", \"public\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

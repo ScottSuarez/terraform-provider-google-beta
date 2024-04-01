@@ -1,0 +1,76 @@
+{
+    "authority": {
+        "Description": "Authority encodes how Google will recognize identities from this Membership.\nSee the workload identity documentation for more details:\nhttps://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "issuer": {
+                "Description": "A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://' and // be a valid\nwith length \u003c2000 characters. For example: 'https://container.googleapis.com/v1/projects/my-project/locations/us-west1/clusters/my-cluster' (must be 'locations' rather than 'zones'). If the cluster is provisioned with Terraform, this is '\"https://container.googleapis.com/v1/${google_container_cluster.my-cluster.id}\"'.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "The name of this entity type to be displayed on the console. This field is unavailable in v1 of the API.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "endpoint": {
+        "Description": "If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "gke_cluster": {
+                "Description": "If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "resource_link": {
+                        "Description": "Self-link of the GCP resource for the GKE cluster.\nFor example: '//container.googleapis.com/projects/my-project/zones/us-west1-a/clusters/my-cluster'.\nIt can be at the most 1000 characters in length. If the cluster is provisioned with Terraform,\nthis can be '\"//container.googleapis.com/${google_container_cluster.my-cluster.id}\"' or\n'google_container_cluster.my-cluster.id'.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Labels to apply to this membership.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Location of the membership.\nThe default value is 'global'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "membership_id": {
+        "Description": "The client-provided identifier of the membership.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the membership.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

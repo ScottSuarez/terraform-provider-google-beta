@@ -1,0 +1,88 @@
+{
+    "archive_size_bytes": {
+        "Computed": true,
+        "Type": "TypeInt"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "disk_size_gb": {
+        "Computed": true,
+        "Type": "TypeInt"
+    },
+    "family": {
+        "Computed": true,
+        "ExactlyOneOf": "name, family, filter",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "filter": {
+        "ExactlyOneOf": "name, family, filter",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "image_encryption_key_sha256": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "image_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "label_fingerprint": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Type": "TypeMap"
+    },
+    "licenses": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "most_recent": {
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "ExactlyOneOf": "name, family, filter",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "source_disk": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "source_disk_encryption_key_sha256": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "source_disk_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "source_image_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "status": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

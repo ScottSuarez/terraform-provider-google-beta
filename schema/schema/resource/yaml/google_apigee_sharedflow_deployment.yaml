@@ -1,0 +1,21 @@
+environment:
+    Type: TypeString
+    Description: The resource ID of the environment.
+    Required: "true"
+org_id:
+    Type: TypeString
+    Description: The Apigee Organization associated with the Apigee instance
+    Required: "true"
+revision:
+    Type: TypeString
+    Description: Revision of the Sharedflow to be deployed.
+    Required: "true"
+service_account:
+    Type: TypeString
+    Description: The service account represents the identity of the deployed proxy, and determines what permissions it has. The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.
+    Optional: "true"
+sharedflow_id:
+    Type: TypeString
+    Description: Id of the Sharedflow to be deployed.
+    Required: "true"
+

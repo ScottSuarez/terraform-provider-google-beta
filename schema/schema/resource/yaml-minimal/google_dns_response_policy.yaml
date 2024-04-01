@@ -1,0 +1,8 @@
+description: TypeString
+gke_clusters:
+    gke_cluster_name: TypeString
+networks:
+    network_url: TypeString
+project: TypeString
+response_policy_name: TypeString
+

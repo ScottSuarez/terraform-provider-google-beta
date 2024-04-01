@@ -1,0 +1,855 @@
+cluster_config:
+    Type: TypeList
+    Description: Allows you to configure various aspects of the cluster.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        autoscaling_config:
+            Type: TypeList
+            Description: The autoscaling policy config associated with the cluster.
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                policy_uri:
+                    Type: TypeString
+                    Description: The autoscaling policy used by the cluster.
+                    Required: "true"
+        auxiliary_node_groups:
+            Type: TypeList
+            Description: The node group settings.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            Properties:
+                node_group:
+                    Type: TypeList
+                    Description: Node group configuration.
+                    Required: "true"
+                    Properties:
+                        name:
+                            Type: TypeString
+                            Description: The Node group resource name.
+                            Computed: "true"
+                        node_group_config:
+                            Type: TypeList
+                            Description: The node group instance group configuration.
+                            Computed: "true"
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                accelerators:
+                                    Type: TypeSet
+                                    Description: The Compute Engine accelerator (GPU) configuration for these instances. Can be specified multiple times.
+                                    Optional: "true"
+                                    Properties:
+                                        accelerator_count:
+                                            Type: TypeInt
+                                            Description: The number of the accelerator cards of this type exposed to this instance. Often restricted to one of 1, 2, 4, or 8.
+                                            Required: "true"
+                                        accelerator_type:
+                                            Type: TypeString
+                                            Description: The short name of the accelerator type to expose to this instance. For example, nvidia-tesla-k80.
+                                            Required: "true"
+                                disk_config:
+                                    Type: TypeList
+                                    Description: Disk Config
+                                    Computed: "true"
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        boot_disk_size_gb:
+                                            Type: TypeInt
+                                            Description: 'Size of the primary disk attached to each node, specified in GB. The primary disk contains the boot volume and system libraries, and the smallest allowed disk size is 10GB. GCP will default to a predetermined computed value if not set (currently 500GB). Note: If SSDs are not attached, it also contains the HDFS data blocks and Hadoop working directories.'
+                                            Computed: "true"
+                                            Optional: "true"
+                                        boot_disk_type:
+                                            Type: TypeString
+                                            Description: The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard". Defaults to "pd-standard".
+                                            Optional: "true"
+                                        num_local_ssds:
+                                            Type: TypeInt
+                                            Description: The amount of local SSD disks that will be attached to each master cluster node. Defaults to 0.
+                                            Computed: "true"
+                                            Optional: "true"
+                                instance_names:
+                                    Type: TypeList
+                                    Description: List of auxiliary node group instance names which have been assigned to the cluster.
+                                    Computed: "true"
+                                machine_type:
+                                    Type: TypeString
+                                    Description: The name of a Google Compute Engine machine type to create for the master
+                                    Computed: "true"
+                                    Optional: "true"
+                                min_cpu_platform:
+                                    Type: TypeString
+                                    Description: The name of a minimum generation of CPU family for the auxiliary node group. If not specified, GCP will default to a predetermined computed value for each zone.
+                                    Computed: "true"
+                                    Optional: "true"
+                                num_instances:
+                                    Type: TypeInt
+                                    Description: Specifies the number of auxiliary nodes to create. If not specified, GCP will default to a predetermined computed value.
+                                    Computed: "true"
+                                    Optional: "true"
+                        roles:
+                            Type: TypeList
+                            Description: Node group roles.
+                            Required: "true"
+                node_group_id:
+                    Type: TypeString
+                    Description: A node group ID. Generated if not specified. The ID must contain only letters (a-z, A-Z), numbers (0-9), underscores (_), and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of from 3 to 33 characters.
+                    Computed: "true"
+                    Optional: "true"
+        bucket:
+            Type: TypeString
+            Description: ' The name of the cloud storage bucket ultimately used to house the staging data for the cluster. If staging_bucket is specified, it will contain this value, otherwise it will be the auto generated name.'
+            Computed: "true"
+        dataproc_metric_config:
+            Type: TypeList
+            Description: The config for Dataproc metrics.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                metrics:
+                    Type: TypeList
+                    Description: Metrics sources to enable.
+                    Required: "true"
+                    Properties:
+                        metric_overrides:
+                            Type: TypeSet
+                            Description: Specify one or more [available OSS metrics] (https://cloud.google.com/dataproc/docs/guides/monitoring#available_oss_metrics) to collect.
+                            Optional: "true"
+                        metric_source:
+                            Type: TypeString
+                            Description: A source for the collection of Dataproc OSS metrics (see [available OSS metrics] (https://cloud.google.com//dataproc/docs/guides/monitoring#available_oss_metrics)).
+                            Required: "true"
+        encryption_config:
+            Type: TypeList
+            Description: The Customer managed encryption keys settings for the cluster.
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                kms_key_name:
+                    Type: TypeString
+                    Description: The Cloud KMS key name to use for PD disk encryption for all instances in the cluster.
+                    Required: "true"
+        endpoint_config:
+            Type: TypeList
+            Description: The config settings for port access on the cluster. Structure defined below.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                enable_http_port_access:
+                    Type: TypeBool
+                    Description: The flag to enable http access to specific ports on the cluster from external sources (aka Component Gateway). Defaults to false.
+                    Required: "true"
+                http_ports:
+                    Type: TypeMap
+                    Description: The map of port descriptions to URLs. Will only be populated if enable_http_port_access is true.
+                    Computed: "true"
+        gce_cluster_config:
+            Type: TypeList
+            Description: Common config settings for resources of Google Compute Engine cluster instances, applicable to all instances in the cluster.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                internal_ip_only:
+                    Type: TypeBool
+                    Description: 'By default, clusters are not restricted to internal IP addresses, and will have ephemeral external IP addresses assigned to each instance. If set to true, all instances in the cluster will only have internal IP addresses. Note: Private Google Access (also known as privateIpGoogleAccess) must be enabled on the subnetwork that the cluster will be launched in.'
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                metadata:
+                    Type: TypeMap
+                    Description: A map of the Compute Engine metadata entries to add to all instances
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                network:
+                    Type: TypeString
+                    Description: The name or self_link of the Google Compute Engine network to the cluster will be part of. Conflicts with subnetwork. If neither is specified, this defaults to the "default" network.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                    ConflictsWith: cluster_config.0.gce_cluster_config.0.subnetwork
+                node_group_affinity:
+                    Type: TypeList
+                    Description: Node Group Affinity for sole-tenant clusters.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                    MaxItems: "1"
+                    Properties:
+                        node_group_uri:
+                            Type: TypeString
+                            Description: The URI of a sole-tenant that the cluster will be created on.
+                            Required: "true"
+                reservation_affinity:
+                    Type: TypeList
+                    Description: Reservation Affinity for consuming Zonal reservation.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                    MaxItems: "1"
+                    Properties:
+                        consume_reservation_type:
+                            Type: TypeString
+                            Description: Type of reservation to consume.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.reservation_affinity.0.consume_reservation_type, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.key, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.values
+                        key:
+                            Type: TypeString
+                            Description: Corresponds to the label key of reservation resource.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.reservation_affinity.0.consume_reservation_type, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.key, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.values
+                        values:
+                            Type: TypeSet
+                            Description: Corresponds to the label values of reservation resource.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.reservation_affinity.0.consume_reservation_type, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.key, cluster_config.0.gce_cluster_config.0.reservation_affinity.0.values
+                service_account:
+                    Type: TypeString
+                    Description: The service account to be used by the Node VMs. If not specified, the "default" service account is used.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                service_account_scopes:
+                    Type: TypeSet
+                    Description: The set of Google API scopes to be made available on all of the node VMs under the service_account specified. These can be either FQDNs, or scope aliases.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                shielded_instance_config:
+                    Type: TypeList
+                    Description: Shielded Instance Config for clusters using Compute Engine Shielded VMs.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                    MaxItems: "1"
+                    Properties:
+                        enable_integrity_monitoring:
+                            Type: TypeBool
+                            Description: Defines whether instances have integrity monitoring enabled.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_secure_boot, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_vtpm, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_integrity_monitoring
+                        enable_secure_boot:
+                            Type: TypeBool
+                            Description: Defines whether instances have Secure Boot enabled.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_secure_boot, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_vtpm, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_integrity_monitoring
+                        enable_vtpm:
+                            Type: TypeBool
+                            Description: Defines whether instances have the vTPM enabled.
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_secure_boot, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_vtpm, cluster_config.0.gce_cluster_config.0.shielded_instance_config.0.enable_integrity_monitoring
+                subnetwork:
+                    Type: TypeString
+                    Description: The name or self_link of the Google Compute Engine subnetwork the cluster will be part of. Conflicts with network.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                    ConflictsWith: cluster_config.0.gce_cluster_config.0.network
+                tags:
+                    Type: TypeSet
+                    Description: The list of instance tags applied to instances in the cluster. Tags are used to identify valid sources or targets for network firewalls.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+                zone:
+                    Type: TypeString
+                    Description: 'The GCP zone where your data is stored and used (i.e. where the master and the worker nodes will be created in). If region is set to ''global'' (default) then zone is mandatory, otherwise GCP is able to make use of Auto Zone Placement to determine this automatically for you. Note: This setting additionally determines and restricts which computing resources are available for use with other configs such as cluster_config.master_config.machine_type and cluster_config.worker_config.machine_type.'
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.gce_cluster_config.0.zone, cluster_config.0.gce_cluster_config.0.network, cluster_config.0.gce_cluster_config.0.subnetwork, cluster_config.0.gce_cluster_config.0.tags, cluster_config.0.gce_cluster_config.0.service_account, cluster_config.0.gce_cluster_config.0.service_account_scopes, cluster_config.0.gce_cluster_config.0.internal_ip_only, cluster_config.0.gce_cluster_config.0.shielded_instance_config, cluster_config.0.gce_cluster_config.0.metadata, cluster_config.0.gce_cluster_config.0.reservation_affinity, cluster_config.0.gce_cluster_config.0.node_group_affinity
+        initialization_action:
+            Type: TypeList
+            Description: Commands to execute on each node after config is completed. You can specify multiple versions of these.
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            Properties:
+                script:
+                    Type: TypeString
+                    Description: The script to be executed during initialization of the cluster. The script must be a GCS file with a gs:// prefix.
+                    Required: "true"
+                timeout_sec:
+                    Type: TypeInt
+                    Description: The maximum duration (in seconds) which script is allowed to take to execute its action. GCP will default to a predetermined computed value if not set (currently 300).
+                    Optional: "true"
+        lifecycle_config:
+            Type: TypeList
+            Description: The settings for auto deletion cluster schedule.
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                auto_delete_time:
+                    Type: TypeString
+                    Description: 'The time when cluster will be auto-deleted. A timestamp in RFC3339 UTC "Zulu" format, accurate to nanoseconds. Example: "2014-10-02T15:01:23.045123456Z".'
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.lifecycle_config.0.idle_delete_ttl, cluster_config.0.lifecycle_config.0.auto_delete_time
+                idle_delete_ttl:
+                    Type: TypeString
+                    Description: 'The duration to keep the cluster alive while idling (no jobs running). After this TTL, the cluster will be deleted. Valid range: [10m, 14d].'
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.lifecycle_config.0.idle_delete_ttl, cluster_config.0.lifecycle_config.0.auto_delete_time
+                idle_start_time:
+                    Type: TypeString
+                    Description: Time when the cluster became idle (most recent job finished) and became eligible for deletion due to idleness.
+                    Computed: "true"
+        master_config:
+            Type: TypeList
+            Description: The Compute Engine config settings for the cluster's master instance.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                accelerators:
+                    Type: TypeSet
+                    Description: The Compute Engine accelerator (GPU) configuration for these instances. Can be specified multiple times.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators
+                    Properties:
+                        accelerator_count:
+                            Type: TypeInt
+                            Description: The number of the accelerator cards of this type exposed to this instance. Often restricted to one of 1, 2, 4, or 8.
+                            Required: "true"
+                        accelerator_type:
+                            Type: TypeString
+                            Description: The short name of the accelerator type to expose to this instance. For example, nvidia-tesla-k80.
+                            Required: "true"
+                disk_config:
+                    Type: TypeList
+                    Description: Disk Config
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators, cluster_config.0.master_config.0.disk_config
+                    MaxItems: "1"
+                    Properties:
+                        boot_disk_size_gb:
+                            Type: TypeInt
+                            Description: 'Size of the primary disk attached to each node, specified in GB. The primary disk contains the boot volume and system libraries, and the smallest allowed disk size is 10GB. GCP will default to a predetermined computed value if not set (currently 500GB). Note: If SSDs are not attached, it also contains the HDFS data blocks and Hadoop working directories.'
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.master_config.0.disk_config.0.num_local_ssds, cluster_config.0.master_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.master_config.0.disk_config.0.boot_disk_type
+                        boot_disk_type:
+                            Type: TypeString
+                            Description: The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard". Defaults to "pd-standard".
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.master_config.0.disk_config.0.num_local_ssds, cluster_config.0.master_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.master_config.0.disk_config.0.boot_disk_type
+                        num_local_ssds:
+                            Type: TypeInt
+                            Description: The amount of local SSD disks that will be attached to each master cluster node. Defaults to 0.
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.master_config.0.disk_config.0.num_local_ssds, cluster_config.0.master_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.master_config.0.disk_config.0.boot_disk_type
+                image_uri:
+                    Type: TypeString
+                    Description: The URI for the image to use for this master
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators
+                instance_names:
+                    Type: TypeList
+                    Description: List of master instance names which have been assigned to the cluster.
+                    Computed: "true"
+                machine_type:
+                    Type: TypeString
+                    Description: The name of a Google Compute Engine machine type to create for the master
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators
+                min_cpu_platform:
+                    Type: TypeString
+                    Description: The name of a minimum generation of CPU family for the master. If not specified, GCP will default to a predetermined computed value for each zone.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators
+                num_instances:
+                    Type: TypeInt
+                    Description: Specifies the number of master nodes to create. If not specified, GCP will default to a predetermined computed value.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.master_config.0.num_instances, cluster_config.0.master_config.0.image_uri, cluster_config.0.master_config.0.machine_type, cluster_config.0.master_config.0.accelerators
+        metastore_config:
+            Type: TypeList
+            Description: Specifies a Metastore configuration.
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                dataproc_metastore_service:
+                    Type: TypeString
+                    Description: Resource name of an existing Dataproc Metastore service.
+                    Required: "true"
+        preemptible_worker_config:
+            Type: TypeList
+            Description: The Google Compute Engine config settings for the additional (aka preemptible) instances in a cluster.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                disk_config:
+                    Type: TypeList
+                    Description: Disk Config
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.num_instances, cluster_config.0.preemptible_worker_config.0.preemptibility, cluster_config.0.preemptible_worker_config.0.disk_config
+                    MaxItems: "1"
+                    Properties:
+                        boot_disk_size_gb:
+                            Type: TypeInt
+                            Description: 'Size of the primary disk attached to each preemptible worker node, specified in GB. The smallest allowed disk size is 10GB. GCP will default to a predetermined computed value if not set (currently 500GB). Note: If SSDs are not attached, it also contains the HDFS data blocks and Hadoop working directories.'
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_type
+                        boot_disk_type:
+                            Type: TypeString
+                            Description: The disk type of the primary disk attached to each preemptible worker node. Such as "pd-ssd" or "pd-standard". Defaults to "pd-standard".
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_type
+                        num_local_ssds:
+                            Type: TypeInt
+                            Description: The amount of local SSD disks that will be attached to each preemptible worker node. Defaults to 0.
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.preemptible_worker_config.0.disk_config.0.boot_disk_type
+                instance_flexibility_policy:
+                    Type: TypeList
+                    Description: Instance flexibility Policy allowing a mixture of VM shapes and provisioning models.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.num_instances, cluster_config.0.preemptible_worker_config.0.preemptibility, cluster_config.0.preemptible_worker_config.0.disk_config, cluster_config.0.preemptible_worker_config.0.instance_flexibility_policy
+                    MaxItems: "1"
+                    Properties:
+                        instance_selection_list:
+                            Type: TypeList
+                            Description: List of instance selection options that the group will use when creating new VMs.
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.instance_flexibility_policy.0.instance_selection_list
+                            Properties:
+                                machine_types:
+                                    Type: TypeList
+                                    Description: Full machine-type names, e.g. "n1-standard-16".
+                                    Computed: "true"
+                                    Optional: "true"
+                                rank:
+                                    Type: TypeInt
+                                    Description: Preference of this instance selection. Lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
+                                    Computed: "true"
+                                    Optional: "true"
+                        instance_selection_results:
+                            Type: TypeList
+                            Description: A list of instance selection results in the group.
+                            Computed: "true"
+                            Properties:
+                                machine_type:
+                                    Type: TypeString
+                                    Description: Full machine-type names, e.g. "n1-standard-16".
+                                    Computed: "true"
+                                vm_count:
+                                    Type: TypeInt
+                                    Description: Number of VM provisioned with the machine_type.
+                                    Computed: "true"
+                instance_names:
+                    Type: TypeList
+                    Description: List of preemptible instance names which have been assigned to the cluster.
+                    Computed: "true"
+                num_instances:
+                    Type: TypeInt
+                    Description: Specifies the number of preemptible nodes to create. Defaults to 0.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.num_instances, cluster_config.0.preemptible_worker_config.0.preemptibility, cluster_config.0.preemptible_worker_config.0.disk_config
+                preemptibility:
+                    Type: TypeString
+                    Description: Specifies the preemptibility of the secondary nodes. Defaults to PREEMPTIBLE.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.preemptible_worker_config.0.num_instances, cluster_config.0.preemptible_worker_config.0.preemptibility, cluster_config.0.preemptible_worker_config.0.disk_config
+        security_config:
+            Type: TypeList
+            Description: Security related configuration.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                kerberos_config:
+                    Type: TypeList
+                    Description: Kerberos related configuration
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        cross_realm_trust_admin_server:
+                            Type: TypeString
+                            Description: The admin server (IP or hostname) for the remote trusted realm in a cross realm trust relationship.
+                            Optional: "true"
+                        cross_realm_trust_kdc:
+                            Type: TypeString
+                            Description: The KDC (IP or hostname) for the remote trusted realm in a cross realm trust relationship.
+                            Optional: "true"
+                        cross_realm_trust_realm:
+                            Type: TypeString
+                            Description: The remote realm the Dataproc on-cluster KDC will trust, should the user enable cross realm trust.
+                            Optional: "true"
+                        cross_realm_trust_shared_password_uri:
+                            Type: TypeString
+                            Description: |-
+                                The Cloud Storage URI of a KMS encrypted file containing the shared password between the on-cluster
+                                Kerberos realm and the remote trusted realm, in a cross realm trust relationship.
+                            Optional: "true"
+                        enable_kerberos:
+                            Type: TypeBool
+                            Description: Flag to indicate whether to Kerberize the cluster.
+                            Optional: "true"
+                        kdc_db_key_uri:
+                            Type: TypeString
+                            Description: The Cloud Storage URI of a KMS encrypted file containing the master key of the KDC database.
+                            Optional: "true"
+                        key_password_uri:
+                            Type: TypeString
+                            Description: The Cloud Storage URI of a KMS encrypted file containing the password to the user provided key. For the self-signed certificate, this password is generated by Dataproc.
+                            Optional: "true"
+                        keystore_password_uri:
+                            Type: TypeString
+                            Description: |-
+                                The Cloud Storage URI of a KMS encrypted file containing
+                                the password to the user provided keystore. For the self-signed certificate, this password is generated
+                                by Dataproc
+                            Optional: "true"
+                        keystore_uri:
+                            Type: TypeString
+                            Description: The Cloud Storage URI of the keystore file used for SSL encryption. If not provided, Dataproc will provide a self-signed certificate.
+                            Optional: "true"
+                        kms_key_uri:
+                            Type: TypeString
+                            Description: The uri of the KMS key used to encrypt various sensitive files.
+                            Required: "true"
+                        realm:
+                            Type: TypeString
+                            Description: The name of the on-cluster Kerberos realm. If not specified, the uppercased domain of hostnames will be the realm.
+                            Optional: "true"
+                        root_principal_password_uri:
+                            Type: TypeString
+                            Description: The cloud Storage URI of a KMS encrypted file containing the root principal password.
+                            Required: "true"
+                        tgt_lifetime_hours:
+                            Type: TypeInt
+                            Description: The lifetime of the ticket granting ticket, in hours.
+                            Optional: "true"
+                        truststore_password_uri:
+                            Type: TypeString
+                            Description: The Cloud Storage URI of a KMS encrypted file containing the password to the user provided truststore. For the self-signed certificate, this password is generated by Dataproc.
+                            Optional: "true"
+                        truststore_uri:
+                            Type: TypeString
+                            Description: The Cloud Storage URI of the truststore file used for SSL encryption. If not provided, Dataproc will provide a self-signed certificate.
+                            Optional: "true"
+        software_config:
+            Type: TypeList
+            Description: The config settings for software inside the cluster.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                image_version:
+                    Type: TypeString
+                    Description: The Cloud Dataproc image version to use for the cluster - this controls the sets of software versions installed onto the nodes when you create clusters. If not specified, defaults to the latest version.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.software_config.0.image_version, cluster_config.0.software_config.0.override_properties, cluster_config.0.software_config.0.optional_components
+                optional_components:
+                    Type: TypeSet
+                    Description: The set of optional components to activate on the cluster.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.software_config.0.image_version, cluster_config.0.software_config.0.override_properties, cluster_config.0.software_config.0.optional_components
+                override_properties:
+                    Type: TypeMap
+                    Description: A list of override and additional properties (key/value pairs) used to modify various aspects of the common configuration files used when creating a cluster.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.software_config.0.image_version, cluster_config.0.software_config.0.override_properties, cluster_config.0.software_config.0.optional_components
+                properties:
+                    Type: TypeMap
+                    Description: A list of the properties used to set the daemon config files. This will include any values supplied by the user via cluster_config.software_config.override_properties
+                    Computed: "true"
+        staging_bucket:
+            Type: TypeString
+            Description: 'The Cloud Storage staging bucket used to stage files, such as Hadoop jars, between client machines and the cluster. Note: If you don''t explicitly specify a staging_bucket then GCP will auto create / assign one for you. However, you are not guaranteed an auto generated bucket which is solely dedicated to your cluster; it may be shared with other clusters in the same region/zone also choosing to use the auto generation option.'
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+        temp_bucket:
+            Type: TypeString
+            Description: 'The Cloud Storage temp bucket used to store ephemeral cluster and jobs data, such as Spark and MapReduce history files. Note: If you don''t explicitly specify a temp_bucket then GCP will auto create / assign one for you.'
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+        worker_config:
+            Type: TypeList
+            Description: The Compute Engine config settings for the cluster's worker instances.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: cluster_config.0.staging_bucket, cluster_config.0.temp_bucket, cluster_config.0.gce_cluster_config, cluster_config.0.master_config, cluster_config.0.worker_config, cluster_config.0.preemptible_worker_config, cluster_config.0.security_config, cluster_config.0.software_config, cluster_config.0.initialization_action, cluster_config.0.encryption_config, cluster_config.0.autoscaling_config, cluster_config.0.metastore_config, cluster_config.0.lifecycle_config, cluster_config.0.endpoint_config, cluster_config.0.dataproc_metric_config, cluster_config.0.auxiliary_node_groups
+            MaxItems: "1"
+            Properties:
+                accelerators:
+                    Type: TypeSet
+                    Description: The Compute Engine accelerator (GPU) configuration for these instances. Can be specified multiple times.
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+                    Properties:
+                        accelerator_count:
+                            Type: TypeInt
+                            Description: The number of the accelerator cards of this type exposed to this instance. Often restricted to one of 1, 2, 4, or 8.
+                            Required: "true"
+                        accelerator_type:
+                            Type: TypeString
+                            Description: The short name of the accelerator type to expose to this instance. For example, nvidia-tesla-k80.
+                            Required: "true"
+                disk_config:
+                    Type: TypeList
+                    Description: Disk Config
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances, cluster_config.0.worker_config.0.disk_config
+                    MaxItems: "1"
+                    Properties:
+                        boot_disk_size_gb:
+                            Type: TypeInt
+                            Description: 'Size of the primary disk attached to each node, specified in GB. The primary disk contains the boot volume and system libraries, and the smallest allowed disk size is 10GB. GCP will default to a predetermined computed value if not set (currently 500GB). Note: If SSDs are not attached, it also contains the HDFS data blocks and Hadoop working directories.'
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.worker_config.0.disk_config.0.boot_disk_type
+                        boot_disk_type:
+                            Type: TypeString
+                            Description: The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard". Defaults to "pd-standard".
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.worker_config.0.disk_config.0.boot_disk_type
+                        num_local_ssds:
+                            Type: TypeInt
+                            Description: The amount of local SSD disks that will be attached to each master cluster node. Defaults to 0.
+                            Computed: "true"
+                            Optional: "true"
+                            AtLeastOneOf: cluster_config.0.worker_config.0.disk_config.0.num_local_ssds, cluster_config.0.worker_config.0.disk_config.0.boot_disk_size_gb, cluster_config.0.worker_config.0.disk_config.0.boot_disk_type
+                image_uri:
+                    Type: TypeString
+                    Description: The URI for the image to use for this master/worker
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+                instance_names:
+                    Type: TypeList
+                    Description: List of master/worker instance names which have been assigned to the cluster.
+                    Computed: "true"
+                machine_type:
+                    Type: TypeString
+                    Description: The name of a Google Compute Engine machine type to create for the master/worker
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+                min_cpu_platform:
+                    Type: TypeString
+                    Description: The name of a minimum generation of CPU family for the master/worker. If not specified, GCP will default to a predetermined computed value for each zone.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+                min_num_instances:
+                    Type: TypeInt
+                    Description: The minimum number of primary worker instances to create.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+                num_instances:
+                    Type: TypeInt
+                    Description: Specifies the number of worker nodes to create. If not specified, GCP will default to a predetermined computed value.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: cluster_config.0.worker_config.0.num_instances, cluster_config.0.worker_config.0.image_uri, cluster_config.0.worker_config.0.machine_type, cluster_config.0.worker_config.0.accelerators, cluster_config.0.worker_config.0.min_num_instances
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+graceful_decommission_timeout:
+    Type: TypeString
+    Description: The timeout duration which allows graceful decomissioning when you change the number of worker nodes directly through a terraform apply
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        The list of the labels (key/value pairs) configured on the resource and to be applied to instances in the cluster.
+        				
+        				**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        				Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the cluster, unique within the project and zone.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the cluster will exist. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region in which the cluster and associated nodes will be created in. Defaults to global.
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+virtual_cluster_config:
+    Type: TypeList
+    Description: The virtual cluster config is used when creating a Dataproc cluster that does not directly control the underlying compute resources, for example, when creating a Dataproc-on-GKE cluster. Dataproc may set default values, and values may change when clusters are updated. Exactly one of config or virtualClusterConfig must be specified.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        auxiliary_services_config:
+            Type: TypeList
+            Description: Auxiliary services configuration for a Cluster.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: virtual_cluster_config.0.staging_bucket, virtual_cluster_config.0.auxiliary_services_config, virtual_cluster_config.0.kubernetes_cluster_config
+            MaxItems: "1"
+            Properties:
+                metastore_config:
+                    Type: TypeList
+                    Description: The Hive Metastore configuration for this workload.
+                    Optional: "true"
+                    AtLeastOneOf: virtual_cluster_config.0.auxiliary_services_config.0.metastore_config, virtual_cluster_config.0.auxiliary_services_config.0.spark_history_server_config
+                    MaxItems: "1"
+                    Properties:
+                        dataproc_metastore_service:
+                            Type: TypeString
+                            Description: The Hive Metastore configuration for this workload.
+                            Optional: "true"
+                            AtLeastOneOf: virtual_cluster_config.0.auxiliary_services_config.0.metastore_config.0.dataproc_metastore_service
+                spark_history_server_config:
+                    Type: TypeList
+                    Description: The Spark History Server configuration for the workload.
+                    Optional: "true"
+                    AtLeastOneOf: virtual_cluster_config.0.auxiliary_services_config.0.metastore_config, virtual_cluster_config.0.auxiliary_services_config.0.spark_history_server_config
+                    MaxItems: "1"
+                    Properties:
+                        dataproc_cluster:
+                            Type: TypeString
+                            Description: Resource name of an existing Dataproc Cluster to act as a Spark History Server for the workload.
+                            Optional: "true"
+                            AtLeastOneOf: virtual_cluster_config.0.auxiliary_services_config.0.spark_history_server_config.0.dataproc_cluster
+        kubernetes_cluster_config:
+            Type: TypeList
+            Description: The configuration for running the Dataproc cluster on Kubernetes.
+            Computed: "true"
+            Optional: "true"
+            AtLeastOneOf: virtual_cluster_config.0.staging_bucket, virtual_cluster_config.0.auxiliary_services_config, virtual_cluster_config.0.kubernetes_cluster_config
+            MaxItems: "1"
+            Properties:
+                gke_cluster_config:
+                    Type: TypeList
+                    Description: The configuration for running the Dataproc cluster on GKE.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gke_cluster_target:
+                            Type: TypeString
+                            Description: 'A target GKE cluster to deploy to. It must be in the same project and region as the Dataproc cluster (the GKE cluster can be zonal or regional). Format: ''projects/{project}/locations/{location}/clusters/{cluster_id}'''
+                            Optional: "true"
+                            AtLeastOneOf: virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.gke_cluster_target, virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.node_pool_target
+                        node_pool_target:
+                            Type: TypeList
+                            Description: GKE node pools where workloads will be scheduled. At least one node pool must be assigned the DEFAULT GkeNodePoolTarget.Role. If a GkeNodePoolTarget is not specified, Dataproc constructs a DEFAULT GkeNodePoolTarget.
+                            Optional: "true"
+                            AtLeastOneOf: virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.gke_cluster_target, virtual_cluster_config.0.kubernetes_cluster_config.0.gke_cluster_config.0.node_pool_target
+                            MinItems: "1"
+                            Properties:
+                                node_pool:
+                                    Type: TypeString
+                                    Description: 'The target GKE node pool. Format: ''projects/{project}/locations/{location}/clusters/{cluster}/nodePools/{nodePool}'''
+                                    Required: "true"
+                                node_pool_config:
+                                    Type: TypeList
+                                    Description: Input only. The configuration for the GKE node pool.
+                                    Computed: "true"
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        autoscaling:
+                                            Type: TypeList
+                                            Description: The autoscaler configuration for this node pool. The autoscaler is enabled only when a valid configuration is present.
+                                            Computed: "true"
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                max_node_count:
+                                                    Type: TypeInt
+                                                    Description: The maximum number of nodes in the node pool. Must be >= minNodeCount, and must be > 0.
+                                                    Optional: "true"
+                                                min_node_count:
+                                                    Type: TypeInt
+                                                    Description: The minimum number of nodes in the node pool. Must be >= 0 and <= maxNodeCount.
+                                                    Optional: "true"
+                                        config:
+                                            Type: TypeList
+                                            Description: The node pool configuration.
+                                            Computed: "true"
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                local_ssd_count:
+                                                    Type: TypeInt
+                                                    Description: The minimum number of nodes in the node pool. Must be >= 0 and <= maxNodeCount.
+                                                    Optional: "true"
+                                                machine_type:
+                                                    Type: TypeString
+                                                    Description: The name of a Compute Engine machine type.
+                                                    Optional: "true"
+                                                min_cpu_platform:
+                                                    Type: TypeString
+                                                    Description: Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or a newer CPU platform. Specify the friendly names of CPU platforms, such as "Intel Haswell" or "Intel Sandy Bridge".
+                                                    Optional: "true"
+                                                preemptible:
+                                                    Type: TypeBool
+                                                    Description: Whether the nodes are created as preemptible VM instances. Preemptible nodes cannot be used in a node pool with the CONTROLLER role or in the DEFAULT node pool if the CONTROLLER role is not assigned (the DEFAULT node pool will assume the CONTROLLER role).
+                                                    Optional: "true"
+                                                spot:
+                                                    Type: TypeBool
+                                                    Description: Spot flag for enabling Spot VM, which is a rebrand of the existing preemptible flag.
+                                                    Optional: "true"
+                                        locations:
+                                            Type: TypeSet
+                                            Description: The list of Compute Engine zones where node pool nodes associated with a Dataproc on GKE virtual cluster will be located.
+                                            Required: "true"
+                                roles:
+                                    Type: TypeSet
+                                    Description: The roles associated with the GKE node pool.
+                                    Required: "true"
+                kubernetes_namespace:
+                    Type: TypeString
+                    Description: A namespace within the Kubernetes cluster to deploy into. If this namespace does not exist, it is created. If it exists, Dataproc verifies that another Dataproc VirtualCluster is not installed into it. If not specified, the name of the Dataproc Cluster is used.
+                    Optional: "true"
+                    AtLeastOneOf: virtual_cluster_config.0.kubernetes_cluster_config.0.kubernetes_namespace
+                kubernetes_software_config:
+                    Type: TypeList
+                    Description: The software configuration for this Dataproc cluster running on Kubernetes.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        component_version:
+                            Type: TypeMap
+                            Description: The components that should be installed in this Dataproc cluster. The key must be a string from the KubernetesComponent enumeration. The value is the version of the software to be installed.
+                            Required: "true"
+                        properties:
+                            Type: TypeMap
+                            Description: The properties to set on daemon config files. Property keys are specified in prefix:property format, for example spark:spark.kubernetes.container.image.
+                            Computed: "true"
+                            Optional: "true"
+        staging_bucket:
+            Type: TypeString
+            Description: A Cloud Storage bucket used to stage job dependencies, config files, and job driver console output. If you do not specify a staging bucket, Cloud Dataproc will determine a Cloud Storage location (US, ASIA, or EU) for your cluster's staging bucket according to the Compute Engine zone where your cluster is deployed, and then create and manage this project-level, per-location bucket.
+            Optional: "true"
+            AtLeastOneOf: virtual_cluster_config.0.staging_bucket, virtual_cluster_config.0.auxiliary_services_config, virtual_cluster_config.0.kubernetes_cluster_config
+

@@ -1,0 +1,40 @@
+{
+    "ancestor": {
+        "Description": "Policy for including ancestors in the index. Default value: \"NONE\" Possible values: [\"NONE\", \"ALL_ANCESTORS\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "index_id": {
+        "Computed": true,
+        "Description": "The index id.",
+        "Type": "TypeString"
+    },
+    "kind": {
+        "Description": "The entity kind which the index applies to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "properties": {
+        "Description": "An ordered list of properties to index on.",
+        "MinItems": 1,
+        "Optional": true,
+        "Properties": {
+            "direction": {
+                "Description": "The direction the index should optimize for sorting. Possible values: [\"ASCENDING\", \"DESCENDING\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "The property name to index.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

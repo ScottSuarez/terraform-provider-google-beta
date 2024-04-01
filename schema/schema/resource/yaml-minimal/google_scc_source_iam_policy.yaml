@@ -1,0 +1,5 @@
+etag: TypeString
+organization: TypeString
+policy_data: TypeString
+source: TypeString
+

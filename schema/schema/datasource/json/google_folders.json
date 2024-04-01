@@ -1,0 +1,44 @@
+{
+    "folders": {
+        "Computed": true,
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "delete_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "display_name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "etag": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "parent": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "parent_id": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

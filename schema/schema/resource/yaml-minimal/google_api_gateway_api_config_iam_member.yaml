@@ -1,0 +1,11 @@
+api: TypeString
+api_config: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+member: TypeString
+project: TypeString
+role: TypeString
+

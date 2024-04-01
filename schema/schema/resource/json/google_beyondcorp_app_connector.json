@@ -1,0 +1,63 @@
+{
+    "display_name": {
+        "Description": "An arbitrary user-provided name for the AppConnector.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "ID of the AppConnector.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "principal_info": {
+        "Description": "Principal information about the Identity of the AppConnector.",
+        "MaxItems": 1,
+        "Properties": {
+            "service_account": {
+                "Description": "ServiceAccount represents a GCP service account.",
+                "MaxItems": 1,
+                "Properties": {
+                    "email": {
+                        "Description": "Email address of the service account.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region of the AppConnector.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Represents the different states of a AppConnector.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

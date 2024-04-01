@@ -1,0 +1,149 @@
+{
+    "ancestor_module": {
+        "Computed": true,
+        "Description": "If empty, indicates that the custom module was created in the organization, folder,\nor project in which you are viewing the custom module. Otherwise, ancestor_module\nspecifies the organization or folder from which the custom module is inherited.",
+        "Type": "TypeString"
+    },
+    "custom_config": {
+        "Description": "The user specified custom configuration for the module.",
+        "MaxItems": 1,
+        "Properties": {
+            "custom_output": {
+                "Description": "Custom output properties.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "properties": {
+                        "Description": "A list of custom output properties to add to the finding.",
+                        "Optional": true,
+                        "Properties": {
+                            "name": {
+                                "Description": "Name of the property for the custom output.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "value_expression": {
+                                "Description": "The CEL expression for the custom output. A resource property can be specified\nto return the value of the property or a text string enclosed in quotation marks.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "description": {
+                                        "Description": "Description of the expression. This is a longer text which describes the\nexpression, e.g. when hovered over it in a UI.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "expression": {
+                                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "location": {
+                                        "Description": "String indicating the location of the expression for error reporting, e.g. a\nfile name and a position in the file.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "title": {
+                                        "Description": "Title for the expression, i.e. a short string describing its purpose. This can\nbe used e.g. in UIs which allow to enter the expression.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "description": {
+                "Description": "Text that describes the vulnerability or misconfiguration that the custom\nmodule detects. This explanation is returned with each finding instance to\nhelp investigators understand the detected issue. The text must be enclosed in quotation marks.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "predicate": {
+                "Description": "The CEL expression to evaluate to produce findings. When the expression evaluates\nto true against a resource, a finding is generated.",
+                "MaxItems": 1,
+                "Properties": {
+                    "description": {
+                        "Description": "Description of the expression. This is a longer text which describes the\nexpression, e.g. when hovered over it in a UI.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "expression": {
+                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "location": {
+                        "Description": "String indicating the location of the expression for error reporting, e.g. a\nfile name and a position in the file.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "title": {
+                        "Description": "Title for the expression, i.e. a short string describing its purpose. This can\nbe used e.g. in UIs which allow to enter the expression.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "recommendation": {
+                "Description": "An explanation of the recommended steps that security teams can take to resolve\nthe detected issue. This explanation is returned with each finding generated by\nthis module in the nextSteps property of the finding JSON.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "resource_selector": {
+                "Description": "The resource types that the custom module operates on. Each custom module\ncan specify up to 5 resource types.",
+                "MaxItems": 1,
+                "Properties": {
+                    "resource_types": {
+                        "Description": "The resource types to run the detector on.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "severity": {
+                "Description": "The severity to assign to findings generated by the module. Possible values: [\"CRITICAL\", \"HIGH\", \"MEDIUM\", \"LOW\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "The display name of the Security Health Analytics custom module. This\ndisplay name becomes the finding category for all findings that are\nreturned by this custom module. The display name must be between 1 and\n128 characters, start with a lowercase letter, and contain alphanumeric\ncharacters or underscores only.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enablement_state": {
+        "Description": "The enablement state of the custom module. Possible values: [\"ENABLED\", \"DISABLED\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "folder": {
+        "Description": "Numerical ID of the parent folder.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "last_editor": {
+        "Computed": true,
+        "Description": "The editor that last updated the custom module.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the custom module. Its format is \"folders/{folder_id}/securityHealthAnalyticsSettings/customModules/{customModule}\".\nThe id {customModule} is server-generated and is not user settable. It will be a numeric id containing 1-20 digits.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time at which the custom module was last updated.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

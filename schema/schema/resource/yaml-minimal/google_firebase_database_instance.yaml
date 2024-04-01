@@ -1,0 +1,9 @@
+database_url: TypeString
+desired_state: TypeString
+instance_id: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+state: TypeString
+type: TypeString
+

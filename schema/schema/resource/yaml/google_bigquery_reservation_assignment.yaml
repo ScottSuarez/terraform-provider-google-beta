@@ -1,0 +1,31 @@
+assignee:
+    Type: TypeString
+    Description: The resource which will use the reservation. E.g. projects/myproject, folders/123, organizations/456.
+    Required: "true"
+job_type:
+    Type: TypeString
+    Description: 'Types of job, which could be specified when using the reservation. Possible values: JOB_TYPE_UNSPECIFIED, PIPELINE, QUERY'
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Output only. The resource name of the assignment.
+    Computed: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+reservation:
+    Type: TypeString
+    Description: The reservation for the resource
+    Required: "true"
+state:
+    Type: TypeString
+    Description: 'Assignment will remain in PENDING state if no active capacity commitment is present. It will become ACTIVE when some capacity commitment becomes active. Possible values: STATE_UNSPECIFIED, PENDING, ACTIVE'
+    Computed: "true"
+

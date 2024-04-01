@@ -1,0 +1,31 @@
+delivery_config:
+    Type: TypeList
+    Description: The settings for this subscription's message delivery.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        delivery_requirement:
+            Type: TypeString
+            Description: 'When this subscription should send messages to subscribers relative to messages persistence in storage. Possible values: ["DELIVER_IMMEDIATELY", "DELIVER_AFTER_STORED", "DELIVERY_REQUIREMENT_UNSPECIFIED"]'
+            Required: "true"
+name:
+    Type: TypeString
+    Description: Name of the subscription.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the pubsub lite topic.
+    Optional: "true"
+topic:
+    Type: TypeString
+    Description: A reference to a Topic resource.
+    Required: "true"
+zone:
+    Type: TypeString
+    Description: The zone of the pubsub lite topic.
+    Optional: "true"
+

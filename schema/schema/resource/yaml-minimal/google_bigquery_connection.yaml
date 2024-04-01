@@ -1,0 +1,43 @@
+aws:
+    access_role:
+        iam_role_id: TypeString
+        identity: TypeString
+azure:
+    application: TypeString
+    client_id: TypeString
+    customer_tenant_id: TypeString
+    federated_application_client_id: TypeString
+    identity: TypeString
+    object_id: TypeString
+    redirect_uri: TypeString
+cloud_resource:
+    service_account_id: TypeString
+cloud_spanner:
+    database: TypeString
+    database_role: TypeString
+    max_parallelism: TypeInt
+    use_data_boost: TypeBool
+    use_parallelism: TypeBool
+    use_serverless_analytics: TypeBool
+cloud_sql:
+    credential:
+        password: TypeString
+        username: TypeString
+    database: TypeString
+    instance_id: TypeString
+    service_account_id: TypeString
+    type: TypeString
+connection_id: TypeString
+description: TypeString
+friendly_name: TypeString
+has_credential: TypeBool
+location: TypeString
+name: TypeString
+project: TypeString
+spark:
+    metastore_service_config:
+        metastore_service: TypeString
+    service_account_id: TypeString
+    spark_history_server_config:
+        dataproc_cluster: TypeString
+

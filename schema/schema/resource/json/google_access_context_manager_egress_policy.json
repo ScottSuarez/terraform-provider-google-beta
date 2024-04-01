@@ -1,0 +1,12 @@
+{
+    "egress_policy_name": {
+        "Description": "The name of the Service Perimeter to add this resource to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "resource": {
+        "Description": "A GCP resource that is inside of the service perimeter.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

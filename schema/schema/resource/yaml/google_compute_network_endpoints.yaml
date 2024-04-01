@@ -1,0 +1,43 @@
+network_endpoint_group:
+    Type: TypeString
+    Description: The network endpoint group these endpoints are part of.
+    Required: "true"
+network_endpoints:
+    Type: TypeSet
+    Description: |-
+        The network endpoints to be added to the enclosing network endpoint group
+        (NEG). Each endpoint specifies an IP address and port, along with
+        additional information depending on the NEG type.
+    Optional: "true"
+    Properties:
+        instance:
+            Type: TypeString
+            Description: |-
+                The name for a specific VM instance that the IP address belongs to.
+                This is required for network endpoints of type GCE_VM_IP_PORT.
+                The instance must be in the same zone as the network endpoint group.
+            Optional: "true"
+        ip_address:
+            Type: TypeString
+            Description: |-
+                IPv4 address of network endpoint. The IP address must belong
+                to a VM in GCE (either the primary IP or as part of an aliased IP
+                range).
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: |-
+                Port number of network endpoint.
+                **Note** 'port' is required unless the Network Endpoint Group is created
+                with the type of 'GCE_VM_IP'
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: Zone where the containing network endpoint group is located.
+    Computed: "true"
+    Optional: "true"
+

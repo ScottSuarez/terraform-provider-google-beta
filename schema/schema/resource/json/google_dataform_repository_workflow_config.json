@@ -1,0 +1,126 @@
+{
+    "cron_schedule": {
+        "Description": "Optional. Optional schedule (in cron format) for automatic creation of compilation results.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "invocation_config": {
+        "Description": "Optional. If left unset, a default InvocationConfig will be used.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "fully_refresh_incremental_tables_enabled": {
+                "Description": "Optional. When set to true, any incremental tables will be fully refreshed.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "included_tags": {
+                "Description": "Optional. The set of tags to include.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "included_targets": {
+                "Description": "Optional. The set of action identifiers to include.",
+                "Optional": true,
+                "Properties": {
+                    "database": {
+                        "Description": "The action's database (Google Cloud project ID).",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "name": {
+                        "Description": "The action's name, within database and schema.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "schema": {
+                        "Description": "The action's schema (BigQuery dataset ID), within database.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "service_account": {
+                "Description": "Optional. The service account to run workflow invocations under.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "transitive_dependencies_included": {
+                "Description": "Optional. When set to true, transitive dependencies of included actions will be executed.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "transitive_dependents_included": {
+                "Description": "Optional. When set to true, transitive dependents of included actions will be executed.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The workflow's name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "recent_scheduled_execution_records": {
+        "Computed": true,
+        "Description": "Records of the 10 most recent scheduled execution attempts, ordered in in descending order of executionTime. Updated whenever automatic creation of a workflow invocation is triggered by cronSchedule.",
+        "Properties": {
+            "error_status": {
+                "Computed": true,
+                "Description": "The error status encountered upon this attempt to create the workflow invocation, if the attempt was unsuccessful.",
+                "Properties": {
+                    "code": {
+                        "Computed": true,
+                        "Description": "The status code, which should be an enum value of google.rpc.Code.",
+                        "Type": "TypeInt"
+                    },
+                    "message": {
+                        "Computed": true,
+                        "Description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "execution_time": {
+                "Computed": true,
+                "Description": "The timestamp of this workflow attempt.",
+                "Type": "TypeString"
+            },
+            "workflow_invocation": {
+                "Computed": true,
+                "Description": "The name of the created workflow invocation, if one was successfully created. In the format projects/*/locations/*/repositories/*/workflowInvocations/*.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "region": {
+        "Description": "A reference to the region",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "release_config": {
+        "Description": "The name of the release config whose releaseCompilationResult should be executed. Must be in the format projects/*/locations/*/repositories/*/releaseConfigs/*.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "repository": {
+        "Description": "A reference to the Dataform repository",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "time_zone": {
+        "Description": "Optional. Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If left unspecified, the default is UTC.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

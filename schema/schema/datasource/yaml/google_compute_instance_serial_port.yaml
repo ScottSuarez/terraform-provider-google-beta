@@ -1,0 +1,18 @@
+contents:
+    Type: TypeString
+    Computed: "true"
+instance:
+    Type: TypeString
+    Required: "true"
+port:
+    Type: TypeInt
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

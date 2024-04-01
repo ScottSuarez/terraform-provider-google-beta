@@ -1,0 +1,173 @@
+backfill_all:
+    mysql_excluded_objects:
+        mysql_databases:
+            database: TypeString
+            mysql_tables:
+                mysql_columns:
+                    collation: TypeString
+                    column: TypeString
+                    data_type: TypeString
+                    length: TypeInt
+                    nullable: TypeBool
+                    ordinal_position: TypeInt
+                    primary_key: TypeBool
+                table: TypeString
+    oracle_excluded_objects:
+        oracle_schemas:
+            oracle_tables:
+                oracle_columns:
+                    column: TypeString
+                    data_type: TypeString
+                    encoding: TypeString
+                    length: TypeInt
+                    nullable: TypeBool
+                    ordinal_position: TypeInt
+                    precision: TypeInt
+                    primary_key: TypeBool
+                    scale: TypeInt
+                table: TypeString
+            schema: TypeString
+    postgresql_excluded_objects:
+        postgresql_schemas:
+            postgresql_tables:
+                postgresql_columns:
+                    column: TypeString
+                    data_type: TypeString
+                    length: TypeInt
+                    nullable: TypeBool
+                    ordinal_position: TypeInt
+                    precision: TypeInt
+                    primary_key: TypeBool
+                    scale: TypeInt
+                table: TypeString
+            schema: TypeString
+backfill_none: {}
+customer_managed_encryption_key: TypeString
+desired_state: TypeString
+destination_config:
+    bigquery_destination_config:
+        data_freshness: TypeString
+        single_target_dataset:
+            dataset_id: TypeString
+        source_hierarchy_datasets:
+            dataset_template:
+                dataset_id_prefix: TypeString
+                kms_key_name: TypeString
+                location: TypeString
+    destination_connection_profile: TypeString
+    gcs_destination_config:
+        avro_file_format: {}
+        file_rotation_interval: TypeString
+        file_rotation_mb: TypeInt
+        json_file_format:
+            compression: TypeString
+            schema_file_format: TypeString
+        path: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+source_config:
+    mysql_source_config:
+        exclude_objects:
+            mysql_databases:
+                database: TypeString
+                mysql_tables:
+                    mysql_columns:
+                        collation: TypeString
+                        column: TypeString
+                        data_type: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        primary_key: TypeBool
+                    table: TypeString
+        include_objects:
+            mysql_databases:
+                database: TypeString
+                mysql_tables:
+                    mysql_columns:
+                        collation: TypeString
+                        column: TypeString
+                        data_type: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        primary_key: TypeBool
+                    table: TypeString
+        max_concurrent_backfill_tasks: TypeInt
+        max_concurrent_cdc_tasks: TypeInt
+    oracle_source_config:
+        drop_large_objects: {}
+        exclude_objects:
+            oracle_schemas:
+                oracle_tables:
+                    oracle_columns:
+                        column: TypeString
+                        data_type: TypeString
+                        encoding: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        precision: TypeInt
+                        primary_key: TypeBool
+                        scale: TypeInt
+                    table: TypeString
+                schema: TypeString
+        include_objects:
+            oracle_schemas:
+                oracle_tables:
+                    oracle_columns:
+                        column: TypeString
+                        data_type: TypeString
+                        encoding: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        precision: TypeInt
+                        primary_key: TypeBool
+                        scale: TypeInt
+                    table: TypeString
+                schema: TypeString
+        max_concurrent_backfill_tasks: TypeInt
+        max_concurrent_cdc_tasks: TypeInt
+        stream_large_objects: {}
+    postgresql_source_config:
+        exclude_objects:
+            postgresql_schemas:
+                postgresql_tables:
+                    postgresql_columns:
+                        column: TypeString
+                        data_type: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        precision: TypeInt
+                        primary_key: TypeBool
+                        scale: TypeInt
+                    table: TypeString
+                schema: TypeString
+        include_objects:
+            postgresql_schemas:
+                postgresql_tables:
+                    postgresql_columns:
+                        column: TypeString
+                        data_type: TypeString
+                        length: TypeInt
+                        nullable: TypeBool
+                        ordinal_position: TypeInt
+                        precision: TypeInt
+                        primary_key: TypeBool
+                        scale: TypeInt
+                    table: TypeString
+                schema: TypeString
+        max_concurrent_backfill_tasks: TypeInt
+        publication: TypeString
+        replication_slot: TypeString
+    source_connection_profile: TypeString
+state: TypeString
+stream_id: TypeString
+terraform_labels: TypeMap(TypeString)
+

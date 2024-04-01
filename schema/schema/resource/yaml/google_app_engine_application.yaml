@@ -1,0 +1,95 @@
+app_id:
+    Type: TypeString
+    Description: Identifier of the app.
+    Computed: "true"
+auth_domain:
+    Type: TypeString
+    Description: The domain to authenticate users with when using App Engine's User API.
+    Computed: "true"
+    Optional: "true"
+code_bucket:
+    Type: TypeString
+    Description: The GCS bucket code is being stored in for this app.
+    Computed: "true"
+database_type:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+default_bucket:
+    Type: TypeString
+    Description: The GCS bucket content is being stored in for this app.
+    Computed: "true"
+default_hostname:
+    Type: TypeString
+    Description: The default hostname for this app.
+    Computed: "true"
+feature_settings:
+    Type: TypeList
+    Description: 'A block of optional settings to configure specific App Engine features:'
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        split_health_checks:
+            Type: TypeBool
+            Required: "true"
+gcr_domain:
+    Type: TypeString
+    Description: The GCR domain used for storing managed Docker images for this app.
+    Computed: "true"
+iap:
+    Type: TypeList
+    Description: Settings for enabling Cloud Identity Aware Proxy
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Adapted for use with the app
+            Optional: "true"
+        oauth2_client_id:
+            Type: TypeString
+            Description: OAuth2 client ID to use for the authentication flow.
+            Required: "true"
+        oauth2_client_secret:
+            Type: TypeString
+            Description: OAuth2 client secret to use for the authentication flow. The SHA-256 hash of the value is returned in the oauth2ClientSecretSha256 field.
+            Required: "true"
+        oauth2_client_secret_sha256:
+            Type: TypeString
+            Description: Hex-encoded SHA-256 hash of the client secret.
+            Computed: "true"
+location_id:
+    Type: TypeString
+    Description: The location to serve the app from.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Unique name of the app.
+    Computed: "true"
+project:
+    Type: TypeString
+    Description: The project ID to create the application under.
+    Computed: "true"
+    Optional: "true"
+serving_status:
+    Type: TypeString
+    Description: The serving status of the app.
+    Computed: "true"
+    Optional: "true"
+url_dispatch_rule:
+    Type: TypeList
+    Description: A list of dispatch rule blocks. Each block has a domain, path, and service field.
+    Computed: "true"
+    Properties:
+        domain:
+            Type: TypeString
+            Computed: "true"
+        path:
+            Type: TypeString
+            Computed: "true"
+        service:
+            Type: TypeString
+            Computed: "true"
+

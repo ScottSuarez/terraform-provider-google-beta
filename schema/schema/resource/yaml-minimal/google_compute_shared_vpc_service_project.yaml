@@ -1,0 +1,4 @@
+deletion_policy: TypeString
+host_project: TypeString
+service_project: TypeString
+

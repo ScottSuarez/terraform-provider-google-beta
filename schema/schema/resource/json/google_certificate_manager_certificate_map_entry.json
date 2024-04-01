@@ -1,0 +1,69 @@
+{
+    "certificates": {
+        "Description": "A set of Certificates defines for the given hostname.\nThere can be defined up to fifteen certificates in each Certificate Map Entry.\nEach certificate must match pattern projects/*/locations/*/certificates/*.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation timestamp of a Certificate Map Entry. Timestamp in RFC3339 UTC \"Zulu\" format,\nwith nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A human-readable description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "hostname": {
+        "Description": "A Hostname (FQDN, e.g. example.com) or a wildcard hostname expression (*.example.com)\nfor a set of hostnames with common suffix. Used as Server Name Indication (SNI) for\nselecting a proper certificate.",
+        "ExactlyOneOf": "hostname, matcher",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Set of labels associated with a Certificate Map Entry.\nAn object containing a list of \"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "map": {
+        "Description": "A map entry that is inputted into the cetrificate map",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "matcher": {
+        "Description": "A predefined matcher for particular cases, other than SNI selection",
+        "ExactlyOneOf": "hostname, matcher",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "A user-defined name of the Certificate Map Entry. Certificate Map Entry\nnames must be unique globally and match pattern\n'projects/*/locations/*/certificateMaps/*/certificateMapEntries/*'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "A serving state of this Certificate Map Entry.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Update timestamp of a Certificate Map Entry. Timestamp in RFC3339 UTC \"Zulu\" format,\nwith nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

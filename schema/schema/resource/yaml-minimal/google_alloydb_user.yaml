@@ -1,0 +1,7 @@
+cluster: TypeString
+database_roles: TypeList(TypeString)
+name: TypeString
+password: TypeString
+user_id: TypeString
+user_type: TypeString
+

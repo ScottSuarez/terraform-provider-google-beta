@@ -1,0 +1,44 @@
+{
+    "deleted": {
+        "Computed": true,
+        "Description": "The current deleted state of the role.",
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "A human-readable description for the role.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of the role in the format projects/{{project}}/roles/{{role_id}}. Like id, this field can be used as a reference in other resources such as IAM role bindings.",
+        "Type": "TypeString"
+    },
+    "permissions": {
+        "Description": "The names of the permissions this role grants when bound in an IAM policy. At least one permission must be specified.",
+        "MinItems": 1,
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project that the service account will be created in. Defaults to the provider project configuration.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role_id": {
+        "Description": "The camel case role id to use for this role. Cannot contain - characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "stage": {
+        "Description": "The current launch stage of the role. Defaults to GA.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "title": {
+        "Description": "A human-readable title for the role.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

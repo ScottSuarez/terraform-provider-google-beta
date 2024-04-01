@@ -1,0 +1,38 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "folder": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "folder_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "lifecycle_state": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "lookup_organization": {
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "organization": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

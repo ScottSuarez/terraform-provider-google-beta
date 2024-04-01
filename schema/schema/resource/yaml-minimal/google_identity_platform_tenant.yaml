@@ -1,0 +1,7 @@
+allow_password_signup: TypeBool
+disable_auth: TypeBool
+display_name: TypeString
+enable_email_link_signin: TypeBool
+name: TypeString
+project: TypeString
+

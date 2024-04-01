@@ -1,0 +1,57 @@
+{
+    "admin": {
+        "Description": "The name of delegated administrator account used to perform Active Directory operations.\nIf not specified, setupadmin will be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "authorized_networks": {
+        "Description": "The full names of the Google Compute Engine networks the domain instance is connected to. The domain is only available on networks listed in authorizedNetworks.\nIf CIDR subnets overlap between networks, domain creation will fail.",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "domain_name": {
+        "Description": "The fully qualified domain name. e.g. mydomain.myorganization.com, with the restrictions,\nhttps://cloud.google.com/managed-microsoft-ad/reference/rest/v1/projects.locations.global.domains.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "fqdn": {
+        "Computed": true,
+        "Description": "The fully-qualified domain name of the exposed domain used by clients to connect to the service.\nSimilar to what would be chosen for an Active Directory set up on an internal network.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Resource labels that can contain user-provided metadata\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "locations": {
+        "Description": "Locations where domain needs to be provisioned. [regions][compute/docs/regions-zones/]\ne.g. us-west1 or us-east4 Service supports up to 4 locations at once. Each location will use a /26 block.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique name of the domain using the format: 'projects/{project}/locations/global/domains/{domainName}'.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reserved_ip_range": {
+        "Description": "The CIDR range of internal addresses that are reserved for this domain. Reserved networks must be /24 or larger.\nRanges must be unique and non-overlapping with existing subnets in authorizedNetworks",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

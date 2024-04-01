@@ -1,0 +1,38 @@
+{
+    "condition": {
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "expression": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "title": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "member": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The numeric ID of the organization in which you want to manage the audit logging config.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "role": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

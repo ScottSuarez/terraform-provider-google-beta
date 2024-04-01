@@ -1,0 +1,11 @@
+display_name: TypeString
+mesh_uid: TypeString
+name: TypeString
+project: TypeString
+service_id: TypeString
+service_name: TypeString
+service_namespace: TypeString
+telemetry:
+    resource_name: TypeString
+user_labels: TypeMap(TypeString)
+

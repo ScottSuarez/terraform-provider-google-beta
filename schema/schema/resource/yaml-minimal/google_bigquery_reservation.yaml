@@ -1,0 +1,12 @@
+autoscale:
+    current_slots: TypeInt
+    max_slots: TypeInt
+concurrency: TypeInt
+edition: TypeString
+ignore_idle_slots: TypeBool
+location: TypeString
+multi_region_auxiliary: TypeBool
+name: TypeString
+project: TypeString
+slot_capacity: TypeInt
+

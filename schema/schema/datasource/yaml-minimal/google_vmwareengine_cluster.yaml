@@ -1,0 +1,10 @@
+management: TypeBool
+name: TypeString
+node_type_configs:
+    custom_core_count: TypeInt
+    node_count: TypeInt
+    node_type_id: TypeString
+parent: TypeString
+state: TypeString
+uid: TypeString
+

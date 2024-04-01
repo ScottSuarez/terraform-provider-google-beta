@@ -1,0 +1,10 @@
+custom_support_level: TypeString
+full_resource_name: TypeString
+permissions:
+    api_disabled: TypeBool
+    custom_support_level: TypeString
+    name: TypeString
+    stage: TypeString
+    title: TypeString
+stages: TypeList(TypeString)
+

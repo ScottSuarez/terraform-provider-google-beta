@@ -1,0 +1,80 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        Creation timestamp of a Certificate Map. Timestamp is in RFC3339 UTC "Zulu" format,
+        accurate to nanoseconds with up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A human-readable description of the resource.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gclb_targets:
+    Type: TypeList
+    Description: A list of target proxies that use this Certificate Map
+    Computed: "true"
+    Properties:
+        ip_configs:
+            Type: TypeList
+            Description: An IP configuration where this Certificate Map is serving
+            Optional: "true"
+            Properties:
+                ip_address:
+                    Type: TypeString
+                    Description: An external IP address
+                    Optional: "true"
+                ports:
+                    Type: TypeList
+                    Description: A list of ports
+                    Optional: "true"
+        target_https_proxy:
+            Type: TypeString
+            Description: |-
+                Proxy name must be in the format projects/*/locations/*/targetHttpsProxies/*.
+                This field is part of a union field 'target_proxy': Only one of 'targetHttpsProxy' or
+                'targetSslProxy' may be set.
+            Optional: "true"
+        target_ssl_proxy:
+            Type: TypeString
+            Description: |-
+                Proxy name must be in the format projects/*/locations/*/targetSslProxies/*.
+                This field is part of a union field 'target_proxy': Only one of 'targetHttpsProxy' or
+                'targetSslProxy' may be set.
+            Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of labels associated with a Certificate Map resource.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        A user-defined name of the Certificate Map. Certificate Map names must be unique
+        globally and match the pattern 'projects/*/locations/*/certificateMaps/*'.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Update timestamp of a Certificate Map. Timestamp is in RFC3339 UTC "Zulu" format,
+        accurate to nanoseconds with up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

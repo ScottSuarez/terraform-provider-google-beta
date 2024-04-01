@@ -1,0 +1,8 @@
+description: TypeString
+gateway_ipv4: TypeString
+internal_ipv6_range: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+subnetworks_self_links: TypeList(TypeString)
+

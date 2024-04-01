@@ -1,0 +1,15 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+trust_stores:
+    intermediate_cas:
+        pem_certificate: TypeString
+    trust_anchors:
+        pem_certificate: TypeString
+update_time: TypeString
+

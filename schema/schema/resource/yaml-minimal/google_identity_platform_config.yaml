@@ -1,0 +1,40 @@
+authorized_domains: TypeList(TypeString)
+autodelete_anonymous_users: TypeBool
+blocking_functions:
+    forward_inbound_credentials:
+        access_token: TypeBool
+        id_token: TypeBool
+        refresh_token: TypeBool
+    triggers:
+        event_type: TypeString
+        function_uri: TypeString
+        update_time: TypeString
+name: TypeString
+project: TypeString
+quota:
+    sign_up_quota_config:
+        quota: TypeInt
+        quota_duration: TypeString
+        start_time: TypeString
+sign_in:
+    allow_duplicate_emails: TypeBool
+    anonymous:
+        enabled: TypeBool
+    email:
+        enabled: TypeBool
+        password_required: TypeBool
+    hash_config:
+        algorithm: TypeString
+        memory_cost: TypeInt
+        rounds: TypeInt
+        salt_separator: TypeString
+        signer_key: TypeString
+    phone_number:
+        enabled: TypeBool
+        test_phone_numbers: TypeMap(TypeString)
+sms_region_config:
+    allow_by_default:
+        disallowed_regions: TypeList(TypeString)
+    allowlist_only:
+        allowed_regions: TypeList(TypeString)
+

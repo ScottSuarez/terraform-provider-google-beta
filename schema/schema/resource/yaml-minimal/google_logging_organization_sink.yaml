@@ -1,0 +1,16 @@
+bigquery_options:
+    use_partitioned_tables: TypeBool
+description: TypeString
+destination: TypeString
+disabled: TypeBool
+exclusions:
+    description: TypeString
+    disabled: TypeBool
+    filter: TypeString
+    name: TypeString
+filter: TypeString
+include_children: TypeBool
+name: TypeString
+org_id: TypeString
+writer_identity: TypeString
+

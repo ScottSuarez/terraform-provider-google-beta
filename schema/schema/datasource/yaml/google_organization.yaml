@@ -1,0 +1,25 @@
+create_time:
+    Type: TypeString
+    Computed: "true"
+directory_customer_id:
+    Type: TypeString
+    Computed: "true"
+domain:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: organization
+lifecycle_state:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+org_id:
+    Type: TypeString
+    Computed: "true"
+organization:
+    Type: TypeString
+    Optional: "true"
+    ConflictsWith: domain
+

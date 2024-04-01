@@ -1,0 +1,621 @@
+admin_cluster_membership:
+    Type: TypeString
+    Description: |-
+        The admin cluster this VMware User Cluster belongs to.
+        This is the full resource name of the admin cluster's hub membership.
+        In the future, references to other resource types might be allowed if
+        admin clusters are modeled as their own resources.
+    Required: "true"
+annotations:
+    Type: TypeMap
+    Description: |-
+        Annotations on the VMware User Cluster.
+        This field has the same restrictions as Kubernetes annotations.
+        The total size of all keys and values combined is limited to 256k.
+        Key can have 2 segments: prefix (optional) and name (required),
+        separated by a slash (/).
+        Prefix must be a DNS subdomain.
+        Name must be 63 characters or less, begin and end with alphanumerics,
+        with dashes (-), underscores (_), dots (.), and alphanumerics between.
+
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+anti_affinity_groups:
+    Type: TypeList
+    Description: |-
+        AAGConfig specifies whether to spread VMware User Cluster nodes across at
+        least three physical hosts in the datacenter.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        aag_config_disabled:
+            Type: TypeBool
+            Description: |-
+                Spread nodes across at least three physical hosts (requires at least three
+                hosts).
+                Enabled by default.
+            Required: "true"
+authorization:
+    Type: TypeList
+    Description: RBAC policy that will be applied and managed by GKE On-Prem.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        admin_users:
+            Type: TypeList
+            Description: |-
+                Users that will be granted the cluster-admin role on the cluster, providing
+                full access to the cluster.
+            Optional: "true"
+            Properties:
+                username:
+                    Type: TypeString
+                    Description: The name of the user, e.g. 'my-gcp-id@gmail.com'.
+                    Required: "true"
+auto_repair_config:
+    Type: TypeList
+    Description: Configuration for auto repairing.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether auto repair is enabled.
+            Required: "true"
+control_plane_node:
+    Type: TypeList
+    Description: VMware User Cluster control plane nodes must have either 1 or 3 replicas.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        auto_resize_config:
+            Type: TypeList
+            Description: AutoResizeConfig provides auto resizing configurations.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether to enable control plane node auto resizing.
+                    Required: "true"
+        cpus:
+            Type: TypeInt
+            Description: |-
+                The number of CPUs for each admin cluster node that serve as control planes
+                for this VMware User Cluster. (default: 4 CPUs)
+            Optional: "true"
+        memory:
+            Type: TypeInt
+            Description: |-
+                The megabytes of memory for each admin cluster node that serves as a
+                control plane for this VMware User Cluster (default: 8192 MB memory).
+            Optional: "true"
+        replicas:
+            Type: TypeInt
+            Description: |-
+                The number of control plane nodes for this VMware User Cluster.
+                (default: 1 replica).
+            Optional: "true"
+        vsphere_config:
+            Type: TypeList
+            Description: Vsphere-specific config.
+            Computed: "true"
+            Properties:
+                datastore:
+                    Type: TypeString
+                    Description: The Vsphere datastore used by the Control Plane Node.
+                    Computed: "true"
+                storage_policy_name:
+                    Type: TypeString
+                    Description: The Vsphere storage policy used by the control plane Node.
+                    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: The time at which VMware User Cluster was created.
+    Computed: "true"
+dataplane_v2:
+    Type: TypeList
+    Description: VmwareDataplaneV2Config specifies configuration for Dataplane V2.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        advanced_networking:
+            Type: TypeBool
+            Description: Enable advanced networking which requires dataplane_v2_enabled to be set true.
+            Optional: "true"
+        dataplane_v2_enabled:
+            Type: TypeBool
+            Description: Enables Dataplane V2.
+            Optional: "true"
+        windows_dataplane_v2_enabled:
+            Type: TypeBool
+            Description: Enable Dataplane V2 for clusters with Windows nodes.
+            Optional: "true"
+delete_time:
+    Type: TypeString
+    Description: The time at which VMware User Cluster was deleted.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A human readable description of this VMware User Cluster.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+enable_control_plane_v2:
+    Type: TypeBool
+    Description: Enable control plane V2. Default to false.
+    Optional: "true"
+endpoint:
+    Type: TypeString
+    Description: The DNS name of VMware User Cluster's API server.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        This checksum is computed by the server based on the value of other
+        fields, and may be sent on update and delete requests to ensure the
+        client has an up-to-date value before proceeding.
+        Allows clients to perform consistent read-modify-writes
+        through optimistic concurrency control.
+    Computed: "true"
+fleet:
+    Type: TypeList
+    Description: Fleet configuration for the cluster.
+    Computed: "true"
+    Properties:
+        membership:
+            Type: TypeString
+            Description: |-
+                The name of the managed Hub Membership resource associated to this cluster.
+                Membership names are formatted as
+                'projects/<project-number>/locations/<location>/memberships/<cluster-id>'.
+            Computed: "true"
+load_balancer:
+    Type: TypeList
+    Description: Load Balancer configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        f5_config:
+            Type: TypeList
+            Description: Configuration for F5 Big IP typed load balancers.
+            Optional: "true"
+            ExactlyOneOf: load_balancer.0.f5_config, load_balancer.0.manual_lb_config, load_balancer.0.metal_lb_config
+            MaxItems: "1"
+            Properties:
+                address:
+                    Type: TypeString
+                    Description: The load balancer's IP address.
+                    Optional: "true"
+                partition:
+                    Type: TypeString
+                    Description: |-
+                        he preexisting partition to be used by the load balancer. T
+                        his partition is usually created for the admin cluster for example:
+                        'my-f5-admin-partition'.
+                    Optional: "true"
+                snat_pool:
+                    Type: TypeString
+                    Description: The pool name. Only necessary, if using SNAT.
+                    Computed: "true"
+                    Optional: "true"
+        manual_lb_config:
+            Type: TypeList
+            Description: Manually configured load balancers.
+            Optional: "true"
+            ExactlyOneOf: load_balancer.0.f5_config, load_balancer.0.manual_lb_config, load_balancer.0.metal_lb_config
+            MaxItems: "1"
+            Properties:
+                control_plane_node_port:
+                    Type: TypeInt
+                    Description: |-
+                        NodePort for control plane service. The Kubernetes API server in the admin
+                        cluster is implemented as a Service of type NodePort (ex. 30968).
+                    Computed: "true"
+                    Optional: "true"
+                ingress_http_node_port:
+                    Type: TypeInt
+                    Description: |-
+                        NodePort for ingress service's http. The ingress service in the admin
+                        cluster is implemented as a Service of type NodePort (ex. 32527).
+                    Computed: "true"
+                    Optional: "true"
+                ingress_https_node_port:
+                    Type: TypeInt
+                    Description: |-
+                        NodePort for ingress service's https. The ingress service in the admin
+                        cluster is implemented as a Service of type NodePort (ex. 30139).
+                    Computed: "true"
+                    Optional: "true"
+                konnectivity_server_node_port:
+                    Type: TypeInt
+                    Description: |-
+                        NodePort for konnectivity server service running as a sidecar in each
+                        kube-apiserver pod (ex. 30564).
+                    Computed: "true"
+                    Optional: "true"
+        metal_lb_config:
+            Type: TypeList
+            Description: Configuration for MetalLB typed load balancers.
+            Optional: "true"
+            ExactlyOneOf: load_balancer.0.f5_config, load_balancer.0.manual_lb_config, load_balancer.0.metal_lb_config
+            MaxItems: "1"
+            Properties:
+                address_pools:
+                    Type: TypeList
+                    Description: |-
+                        AddressPools is a list of non-overlapping IP pools used by load balancer
+                        typed services. All addresses must be routable to load balancer nodes.
+                        IngressVIP must be included in the pools.
+                    Required: "true"
+                    Properties:
+                        addresses:
+                            Type: TypeList
+                            Description: |-
+                                The addresses that are part of this pool. Each address
+                                must be either in the CIDR form (1.2.3.0/24) or range
+                                form (1.2.3.1-1.2.3.5).
+                            Required: "true"
+                        avoid_buggy_ips:
+                            Type: TypeBool
+                            Description: |-
+                                If true, avoid using IPs ending in .0 or .255.
+                                This avoids buggy consumer devices mistakenly dropping IPv4 traffic for
+                                those special IP addresses.
+                            Computed: "true"
+                            Optional: "true"
+                        manual_assign:
+                            Type: TypeBool
+                            Description: If true, prevent IP addresses from being automatically assigned.
+                            Computed: "true"
+                            Optional: "true"
+                        pool:
+                            Type: TypeString
+                            Description: The name of the address pool.
+                            Required: "true"
+        vip_config:
+            Type: TypeList
+            Description: The VIPs used by the load balancer.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                control_plane_vip:
+                    Type: TypeString
+                    Description: The VIP which you previously set aside for the Kubernetes API of this cluster.
+                    Optional: "true"
+                ingress_vip:
+                    Type: TypeString
+                    Description: The VIP which you previously set aside for ingress traffic into this cluster.
+                    Optional: "true"
+local_name:
+    Type: TypeString
+    Description: |-
+        The object name of the VMware OnPremUserCluster custom resource on the
+        associated admin cluster. This field is used to support conflicting
+        names when enrolling existing clusters to the API. When used as a part of
+        cluster enrollment, this field will differ from the ID in the resource
+        name. For new clusters, this field will match the user provided cluster ID
+        and be visible in the last component of the resource name. It is not
+        modifiable.
+
+        All users should use this name to access their cluster using gkectl or
+        kubectl and should expect to see the local name when viewing admin
+        cluster controller logs.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The VMware cluster name.
+    Required: "true"
+network_config:
+    Type: TypeList
+    Description: The VMware User Cluster network configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        control_plane_v2_config:
+            Type: TypeList
+            Description: Configuration for control plane V2 mode.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                control_plane_ip_block:
+                    Type: TypeList
+                    Description: Static IP addresses for the control plane nodes.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gateway:
+                            Type: TypeString
+                            Description: The network gateway used by the VMware User Cluster.
+                            Optional: "true"
+                        ips:
+                            Type: TypeList
+                            Description: The node's network configurations used by the VMware User Cluster.
+                            Optional: "true"
+                            Properties:
+                                hostname:
+                                    Type: TypeString
+                                    Description: Hostname of the machine. VM's name will be used if this field is empty.
+                                    Computed: "true"
+                                    Optional: "true"
+                                ip:
+                                    Type: TypeString
+                                    Description: IP could be an IP address (like 1.2.3.4) or a CIDR (like 1.2.3.0/24).
+                                    Optional: "true"
+                        netmask:
+                            Type: TypeString
+                            Description: The netmask used by the VMware User Cluster.
+                            Optional: "true"
+        dhcp_ip_config:
+            Type: TypeList
+            Description: Configuration settings for a DHCP IP configuration.
+            Computed: "true"
+            Optional: "true"
+            ExactlyOneOf: network_config.0.static_ip_config, network_config.0.dhcp_ip_config
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: |-
+                        enabled is a flag to mark if DHCP IP allocation is
+                        used for VMware user clusters.
+                    Required: "true"
+        host_config:
+            Type: TypeList
+            Description: Represents common network settings irrespective of the host's IP address.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                dns_search_domains:
+                    Type: TypeList
+                    Description: DNS search domains.
+                    Optional: "true"
+                dns_servers:
+                    Type: TypeList
+                    Description: DNS servers.
+                    Optional: "true"
+                ntp_servers:
+                    Type: TypeList
+                    Description: NTP servers.
+                    Optional: "true"
+        pod_address_cidr_blocks:
+            Type: TypeList
+            Description: |-
+                All pods in the cluster are assigned an RFC1918 IPv4 address from these ranges.
+                Only a single range is supported. This field cannot be changed after creation.
+            Required: "true"
+        service_address_cidr_blocks:
+            Type: TypeList
+            Description: |-
+                All services in the cluster are assigned an RFC1918 IPv4 address
+                from these ranges. Only a single range is supported.. This field
+                cannot be changed after creation.
+            Required: "true"
+        static_ip_config:
+            Type: TypeList
+            Description: Configuration settings for a static IP configuration.
+            Optional: "true"
+            ExactlyOneOf: network_config.0.static_ip_config, network_config.0.dhcp_ip_config
+            MaxItems: "1"
+            Properties:
+                ip_blocks:
+                    Type: TypeList
+                    Description: Represents the configuration values for static IP allocation to nodes.
+                    Required: "true"
+                    Properties:
+                        gateway:
+                            Type: TypeString
+                            Description: The network gateway used by the VMware User Cluster.
+                            Required: "true"
+                        ips:
+                            Type: TypeList
+                            Description: The node's network configurations used by the VMware User Cluster.
+                            Required: "true"
+                            Properties:
+                                hostname:
+                                    Type: TypeString
+                                    Description: Hostname of the machine. VM's name will be used if this field is empty.
+                                    Computed: "true"
+                                    Optional: "true"
+                                ip:
+                                    Type: TypeString
+                                    Description: IP could be an IP address (like 1.2.3.4) or a CIDR (like 1.2.3.0/24).
+                                    Required: "true"
+                        netmask:
+                            Type: TypeString
+                            Description: The netmask used by the VMware User Cluster.
+                            Required: "true"
+        vcenter_network:
+            Type: TypeString
+            Description: vcenter_network specifies vCenter network name. Inherited from the admin cluster.
+            Computed: "true"
+on_prem_version:
+    Type: TypeString
+    Description: The Anthos clusters on the VMware version for your user cluster.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the VMware User Cluster.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of this cluster.
+    Computed: "true"
+status:
+    Type: TypeList
+    Description: ResourceStatus representing detailed cluster state.
+    Computed: "true"
+    Properties:
+        conditions:
+            Type: TypeList
+            Description: ResourceConditions provide a standard mechanism for higher-level status reporting from user cluster controller.
+            Computed: "true"
+            Properties:
+                last_transition_time:
+                    Type: TypeString
+                    Description: Last time the condition transit from one status to another.
+                    Computed: "true"
+                message:
+                    Type: TypeString
+                    Description: Human-readable message indicating details about last transition.
+                    Computed: "true"
+                reason:
+                    Type: TypeString
+                    Description: Machine-readable message indicating details about last transition.
+                    Computed: "true"
+                state:
+                    Type: TypeString
+                    Description: The lifecycle state of the condition.
+                    Computed: "true"
+                type:
+                    Type: TypeString
+                    Description: |-
+                        Type of the condition.
+                        (e.g., ClusterRunning, NodePoolRunning or ServerSidePreflightReady)
+                    Computed: "true"
+        error_message:
+            Type: TypeString
+            Description: |-
+                Human-friendly representation of the error message from the user cluster
+                controller. The error message can be temporary as the user cluster
+                controller creates a cluster or node pool. If the error message persists
+                for a longer period of time, it can be used to surface error message to
+                indicate real problems requiring user intervention.
+            Computed: "true"
+storage:
+    Type: TypeList
+    Description: Storage configuration.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        vsphere_csi_disabled:
+            Type: TypeBool
+            Description: |-
+                Whether or not to deploy vSphere CSI components in the VMware User Cluster.
+                Enabled by default.
+            Required: "true"
+uid:
+    Type: TypeString
+    Description: The unique identifier of the VMware User Cluster.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time at which VMware User Cluster was last updated.
+    Computed: "true"
+upgrade_policy:
+    Type: TypeList
+    Description: Specifies upgrade policy for the cluster.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        control_plane_only:
+            Type: TypeBool
+            Description: Controls whether the upgrade applies to the control plane only.
+            Optional: "true"
+validation_check:
+    Type: TypeList
+    Description: ValidationCheck represents the result of the preflight check job.
+    Computed: "true"
+    Properties:
+        options:
+            Type: TypeString
+            Description: Options used for the validation check.
+            Computed: "true"
+        scenario:
+            Type: TypeString
+            Description: The scenario when the preflight checks were run..
+            Computed: "true"
+        status:
+            Type: TypeList
+            Description: Specifies the detailed validation check status
+            Computed: "true"
+            Properties:
+                result:
+                    Type: TypeList
+                    Description: Individual checks which failed as part of the Preflight check execution.
+                    Computed: "true"
+                    Properties:
+                        category:
+                            Type: TypeString
+                            Description: The category of the validation.
+                            Computed: "true"
+                        description:
+                            Type: TypeString
+                            Description: The description of the validation check.
+                            Computed: "true"
+                        details:
+                            Type: TypeString
+                            Description: Detailed failure information, which might be unformatted.
+                            Computed: "true"
+                        options:
+                            Type: TypeString
+                            Description: Options used for the validation check.
+                            Computed: "true"
+                        reason:
+                            Type: TypeString
+                            Description: A human-readable message of the check failure.
+                            Computed: "true"
+vcenter:
+    Type: TypeList
+    Description: |-
+        VmwareVCenterConfig specifies vCenter config for the user cluster.
+        Inherited from the admin cluster.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        address:
+            Type: TypeString
+            Description: The vCenter IP address.
+            Computed: "true"
+        ca_cert_data:
+            Type: TypeString
+            Description: Contains the vCenter CA certificate public key for SSL verification.
+            Optional: "true"
+        cluster:
+            Type: TypeString
+            Description: The name of the vCenter cluster for the user cluster.
+            Optional: "true"
+        datacenter:
+            Type: TypeString
+            Description: The name of the vCenter datacenter for the user cluster.
+            Optional: "true"
+        datastore:
+            Type: TypeString
+            Description: The name of the vCenter datastore for the user cluster.
+            Optional: "true"
+        folder:
+            Type: TypeString
+            Description: The name of the vCenter folder for the user cluster.
+            Optional: "true"
+        resource_pool:
+            Type: TypeString
+            Description: The name of the vCenter resource pool for the user cluster.
+            Optional: "true"
+        storage_policy_name:
+            Type: TypeString
+            Description: The name of the vCenter storage policy for the user cluster.
+            Optional: "true"
+vm_tracking_enabled:
+    Type: TypeBool
+    Description: Enable VM tracking.
+    Computed: "true"
+    Optional: "true"
+

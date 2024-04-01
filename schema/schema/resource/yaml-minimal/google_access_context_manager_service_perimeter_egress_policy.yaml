@@ -1,0 +1,16 @@
+egress_from:
+    identities: TypeList(TypeString)
+    identity_type: TypeString
+    source_restriction: TypeString
+    sources:
+        access_level: TypeString
+egress_to:
+    external_resources: TypeList(TypeString)
+    operations:
+        method_selectors:
+            method: TypeString
+            permission: TypeString
+        service_name: TypeString
+    resources: TypeList(TypeString)
+perimeter: TypeString
+

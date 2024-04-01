@@ -1,0 +1,11 @@
+data_exchange_id: TypeString
+description: TypeString
+display_name: TypeString
+documentation: TypeString
+icon: TypeString
+listing_count: TypeInt
+location: TypeString
+name: TypeString
+primary_contact: TypeString
+project: TypeString
+

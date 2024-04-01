@@ -1,0 +1,16 @@
+create_time: TypeString
+database: TypeString
+delete_time: TypeString
+etag: TypeString
+expire_time: TypeString
+hive_options:
+    parameters: TypeMap(TypeString)
+    storage_descriptor:
+        input_format: TypeString
+        location_uri: TypeString
+        output_format: TypeString
+    table_type: TypeString
+name: TypeString
+type: TypeString
+update_time: TypeString
+

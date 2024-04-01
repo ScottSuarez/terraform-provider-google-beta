@@ -1,0 +1,13 @@
+description: TypeString
+effective_labels: TypeMap(TypeString)
+interface:
+    id: TypeInt
+    ip_address: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+redundancy_type: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+

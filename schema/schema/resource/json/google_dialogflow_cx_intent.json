@@ -1,0 +1,123 @@
+{
+    "description": {
+        "Description": "Human readable description for better understanding an intent like its scope, content, result etc. Maximum character limit: 140 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The human-readable name of the intent, unique within the agent.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "is_default_negative_intent": {
+        "Description": "Marks this as the [Default Negative Intent](https://cloud.google.com/dialogflow/cx/docs/concept/intent#negative) for an agent. When you create an agent, a Default Negative Intent is created automatically.\nThe Default Negative Intent cannot be deleted; deleting the 'google_dialogflow_cx_intent' resource does nothing to the underlying GCP resources.\n\n~\u003e Avoid having multiple 'google_dialogflow_cx_intent' resources linked to the same agent with 'is_default_negative_intent = true' because they will compete to control a single Default Negative Intent resource in GCP.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "is_default_welcome_intent": {
+        "Description": "Marks this as the [Default Welcome Intent](https://cloud.google.com/dialogflow/cx/docs/concept/intent#welcome) for an agent. When you create an agent, a Default Welcome Intent is created automatically.\nThe Default Welcome Intent cannot be deleted; deleting the 'google_dialogflow_cx_intent' resource does nothing to the underlying GCP resources.\n\n~\u003e Avoid having multiple 'google_dialogflow_cx_intent' resources linked to the same agent with 'is_default_welcome_intent = true' because they will compete to control a single Default Welcome Intent resource in GCP.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "is_fallback": {
+        "Description": "Indicates whether this is a fallback intent. Currently only default fallback intent is allowed in the agent, which is added upon agent creation.\nAdding training phrases to fallback intent is useful in the case of requests that are mistakenly matched, since training phrases assigned to fallback intents act as negative examples that triggers no-match event.\nTo manage the fallback intent, set 'is_default_negative_intent = true'",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "labels": {
+        "Description": "The key/value metadata to label an intent. Labels can contain lowercase letters, digits and the symbols '-' and '_'. International characters are allowed, including letters from unicase alphabets. Keys must start with a letter. Keys and values can be no longer than 63 characters and no more than 128 bytes.\nPrefix \"sys-\" is reserved for Dialogflow defined labels. Currently allowed Dialogflow defined labels include: * sys-head * sys-contextual The above labels do not require value. \"sys-head\" means the intent is a head intent. \"sys.contextual\" means the intent is a contextual intent.\nAn object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "language_code": {
+        "Description": "The language of the following fields in intent:\nIntent.training_phrases.parts.text\nIf not specified, the agent's default language is used. Many languages are supported. Note: languages must be enabled in the agent before they can be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the intent.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/intents/\u003cIntent ID\u003e.",
+        "Type": "TypeString"
+    },
+    "parameters": {
+        "Description": "The collection of parameters associated with the intent.",
+        "Optional": true,
+        "Properties": {
+            "entity_type": {
+                "Description": "The entity type of the parameter.\nFormat: projects/-/locations/-/agents/-/entityTypes/\u003cSystem Entity Type ID\u003e for system entity types (for example, projects/-/locations/-/agents/-/entityTypes/sys.date), or projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/entityTypes/\u003cEntity Type ID\u003e for developer entity types.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "id": {
+                "Description": "The unique identifier of the parameter. This field is used by training phrases to annotate their parts.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "is_list": {
+                "Description": "Indicates whether the parameter represents a list of values.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "redact": {
+                "Description": "Indicates whether the parameter content should be redacted in log. If redaction is enabled, the parameter content will be replaced by parameter name during logging.\nNote: the parameter content is subject to redaction if either parameter level redaction or entity type level redaction is enabled.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "parent": {
+        "Description": "The agent to create an intent for.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Description": "The priority of this intent. Higher numbers represent higher priorities.\nIf the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds to the Normal priority in the console.\nIf the supplied value is negative, the intent is ignored in runtime detect intent requests.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "training_phrases": {
+        "Description": "The collection of training phrases the agent is trained on to identify the intent.",
+        "Optional": true,
+        "Properties": {
+            "id": {
+                "Computed": true,
+                "Description": "The unique identifier of the training phrase.",
+                "Type": "TypeString"
+            },
+            "parts": {
+                "Description": "The ordered list of training phrase parts. The parts are concatenated in order to form the training phrase.\nNote: The API does not automatically annotate training phrases like the Dialogflow Console does.\nNote: Do not forget to include whitespace at part boundaries, so the training phrase is well formatted when the parts are concatenated.\nIf the training phrase does not need to be annotated with parameters, you just need a single part with only the Part.text field set.\nIf you want to annotate the training phrase, you must create multiple parts, where the fields of each part are populated in one of two ways:\nPart.text is set to a part of the phrase that has no parameters.\nPart.text is set to a part of the phrase that you want to annotate, and the parameterId field is set.",
+                "Properties": {
+                    "parameter_id": {
+                        "Description": "The parameter used to annotate this part of the training phrase. This field is required for annotated parts of the training phrase.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "text": {
+                        "Description": "The text for this part.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "repeat_count": {
+                "Description": "Indicates how many times this example was added to the intent.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

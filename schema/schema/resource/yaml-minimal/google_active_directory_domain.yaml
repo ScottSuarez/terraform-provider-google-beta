@@ -1,0 +1,12 @@
+admin: TypeString
+authorized_networks: TypeSet(TypeString)
+domain_name: TypeString
+effective_labels: TypeMap(TypeString)
+fqdn: TypeString
+labels: TypeMap(TypeString)
+locations: TypeList(TypeString)
+name: TypeString
+project: TypeString
+reserved_ip_range: TypeString
+terraform_labels: TypeMap(TypeString)
+

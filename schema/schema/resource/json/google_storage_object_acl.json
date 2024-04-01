@@ -1,0 +1,21 @@
+{
+    "bucket": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "object": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "predefined_acl": {
+        "ConflictsWith": "role_entity",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role_entity": {
+        "Computed": true,
+        "ConflictsWith": "predefined_acl",
+        "Optional": true,
+        "Type": "TypeSet"
+    }
+}

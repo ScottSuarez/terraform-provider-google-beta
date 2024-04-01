@@ -1,0 +1,15 @@
+application_matcher: TypeString
+basic_profile: TypeString
+create_time: TypeString
+description: TypeString
+enabled: TypeBool
+gateway_security_policy: TypeString
+location: TypeString
+name: TypeString
+priority: TypeInt
+project: TypeString
+self_link: TypeString
+session_matcher: TypeString
+tls_inspection_enabled: TypeBool
+update_time: TypeString
+

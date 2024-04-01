@@ -1,0 +1,56 @@
+{
+    "active_key_version": {
+        "Description": "The asymmetric crypto key version to use for signing approval requests.\nEmpty active_key_version indicates that a Google-managed key should be used for signing.\nThis property will be ignored if set by an ancestor of the resource, and new non-empty values may not be set.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ancestor_has_active_key_version": {
+        "Computed": true,
+        "Description": "If the field is true, that indicates that an ancestor of this Folder has set active_key_version.",
+        "Type": "TypeBool"
+    },
+    "enrolled_ancestor": {
+        "Computed": true,
+        "Description": "If the field is true, that indicates that at least one service is enrolled for Access Approval in one or more ancestors of the Folder.",
+        "Type": "TypeBool"
+    },
+    "enrolled_services": {
+        "Description": "A list of Google Cloud Services for which the given resource has Access Approval enrolled.\nAccess requests for the resource given by name against any of these services contained here will be required\nto have explicit approval. Enrollment can only be done on an all or nothing basis.\n\nA maximum of 10 enrolled services will be enforced, to be expanded as the set of supported services is expanded.",
+        "Properties": {
+            "cloud_product": {
+                "Description": "The product for which Access Approval will be enrolled. Allowed values are listed (case-sensitive):\n  * all\n  * App Engine\n  * BigQuery\n  * Cloud Bigtable\n  * Cloud Key Management Service\n  * Compute Engine\n  * Cloud Dataflow\n  * Cloud Identity and Access Management\n  * Cloud Pub/Sub\n  * Cloud Storage\n  * Persistent Disk\n\nNote: These values are supported as input, but considered a legacy format:\n  * all\n  * appengine.googleapis.com\n  * bigquery.googleapis.com\n  * bigtable.googleapis.com\n  * cloudkms.googleapis.com\n  * compute.googleapis.com\n  * dataflow.googleapis.com\n  * iam.googleapis.com\n  * pubsub.googleapis.com\n  * storage.googleapis.com",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "enrollment_level": {
+                "Description": "The enrollment level of the service. Default value: \"BLOCK_ALL\" Possible values: [\"BLOCK_ALL\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "folder_id": {
+        "Description": "ID of the folder of the access approval settings.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "invalid_key_version": {
+        "Computed": true,
+        "Description": "If the field is true, that indicates that there is some configuration issue with the active_key_version\nconfigured on this Folder (e.g. it doesn't exist or the Access Approval service account doesn't have the\ncorrect permissions on it, etc.) This key version is not necessarily the effective key version at this level,\nas key versions are inherited top-down.",
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the settings. Format is \"folders/{folder_id}/accessApprovalSettings\"",
+        "Type": "TypeString"
+    },
+    "notification_emails": {
+        "Computed": true,
+        "Description": "A list of email addresses to which notifications relating to approval requests should be sent.\nNotifications relating to a resource will be sent to all emails in the settings of ancestor\nresources of that resource. A maximum of 50 email addresses are allowed.",
+        "MaxItems": 50,
+        "Optional": true,
+        "Type": "TypeSet"
+    }
+}

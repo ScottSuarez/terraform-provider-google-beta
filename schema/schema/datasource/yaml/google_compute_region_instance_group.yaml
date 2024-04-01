@@ -1,0 +1,40 @@
+instances:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        instance:
+            Type: TypeString
+            Required: "true"
+        named_ports:
+            Type: TypeList
+            Computed: "true"
+            Properties:
+                name:
+                    Type: TypeString
+                    Required: "true"
+                port:
+                    Type: TypeInt
+                    Required: "true"
+        status:
+            Type: TypeString
+            Required: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+size:
+    Type: TypeInt
+    Computed: "true"
+

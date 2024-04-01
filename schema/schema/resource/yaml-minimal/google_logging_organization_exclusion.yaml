@@ -1,0 +1,6 @@
+description: TypeString
+disabled: TypeBool
+filter: TypeString
+name: TypeString
+org_id: TypeString
+

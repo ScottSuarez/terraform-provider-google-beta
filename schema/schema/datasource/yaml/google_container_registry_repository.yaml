@@ -1,0 +1,11 @@
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Optional: "true"
+repository_url:
+    Type: TypeString
+    Computed: "true"
+

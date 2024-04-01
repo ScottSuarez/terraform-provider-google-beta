@@ -1,0 +1,60 @@
+{
+    "auto_create_network": {
+        "Description": "Create the 'default' network automatically.  Default true. If set to false, the default network will be deleted.  Note that, for quota purposes, you will still need to have 1 network slot available to create the project successfully, even if you set auto_create_network to false, since the network will exist momentarily.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "billing_account": {
+        "Description": "The alphanumeric ID of the billing account this project belongs to. The user or service account performing this operation with Terraform must have Billing Account Administrator privileges (roles/billing.admin) in the organization. See Google Cloud Billing API Access Control for more details.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "folder_id": {
+        "ConflictsWith": "org_id",
+        "Description": "The numeric ID of the folder this project should be created under. Only one of org_id or folder_id may be specified. If the folder_id is specified, then the project is created under the specified folder. Changing this forces the project to be migrated to the newly specified folder.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "A set of key/value label pairs to assign to the project.\n\t\t\t\t\n\t\t\t\t**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\n\t\t\t\tPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The display name of the project.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "number": {
+        "Computed": true,
+        "Description": "The numeric identifier of the project.",
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "ConflictsWith": "folder_id",
+        "Description": "The numeric ID of the organization this project belongs to. Changing this forces a new project to be created.  Only one of org_id or folder_id may be specified. If the org_id is specified then the project is created at the top level. Changing this forces the project to be migrated to the newly specified organization.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project_id": {
+        "Description": "The project ID. Changing this forces a new project to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "skip_delete": {
+        "Computed": true,
+        "Description": "If true, the Terraform resource can be deleted without deleting the Project via the Google API.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

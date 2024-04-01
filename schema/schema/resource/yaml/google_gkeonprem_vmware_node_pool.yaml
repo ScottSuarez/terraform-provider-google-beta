@@ -1,0 +1,226 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Annotations on the node Pool.
+        This field has the same restrictions as Kubernetes annotations.
+        The total size of all keys and values combined is limited to 256k.
+        Key can have 2 segments: prefix (optional) and name (required),
+        separated by a slash (/).
+        Prefix must be a DNS subdomain.
+        Name must be 63 characters or less, begin and end with alphanumerics,
+        with dashes (-), underscores (_), dots (.), and alphanumerics between.
+
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+config:
+    Type: TypeList
+    Description: The node configuration of the node pool.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        boot_disk_size_gb:
+            Type: TypeInt
+            Description: VMware disk size to be used during creation.
+            Optional: "true"
+        cpus:
+            Type: TypeInt
+            Description: The number of CPUs for each node in the node pool.
+            Optional: "true"
+        enable_load_balancer:
+            Type: TypeBool
+            Description: |-
+                Allow node pool traffic to be load balanced. Only works for clusters with
+                MetalLB load balancers.
+            Optional: "true"
+        image:
+            Type: TypeString
+            Description: The OS image name in vCenter, only valid when using Windows.
+            Optional: "true"
+        image_type:
+            Type: TypeString
+            Description: |-
+                The OS image to be used for each node in a node pool.
+                Currently 'cos', 'ubuntu', 'ubuntu_containerd' and 'windows' are supported.
+            Required: "true"
+        labels:
+            Type: TypeMap
+            Description: |-
+                The map of Kubernetes labels (key/value pairs) to be applied to each node.
+                These will added in addition to any default label(s) that
+                Kubernetes may apply to the node.
+                In case of conflict in label keys, the applied set may differ depending on
+                the Kubernetes version -- it's best to assume the behavior is undefined
+                and conflicts should be avoided.
+            Computed: "true"
+            Optional: "true"
+        memory_mb:
+            Type: TypeInt
+            Description: The megabytes of memory for each node in the node pool.
+            Optional: "true"
+        replicas:
+            Type: TypeInt
+            Description: The number of nodes in the node pool.
+            Optional: "true"
+        taints:
+            Type: TypeList
+            Description: The initial taints assigned to nodes of this node pool.
+            Optional: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: 'Available taint effects. Possible values: ["EFFECT_UNSPECIFIED", "NO_SCHEDULE", "PREFER_NO_SCHEDULE", "NO_EXECUTE"]'
+                    Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key associated with the effect.
+                    Required: "true"
+                value:
+                    Type: TypeString
+                    Description: Value associated with the effect.
+                    Required: "true"
+        vsphere_config:
+            Type: TypeList
+            Description: Specifies the vSphere config for node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                datastore:
+                    Type: TypeString
+                    Description: The name of the vCenter datastore. Inherited from the user cluster.
+                    Optional: "true"
+                host_groups:
+                    Type: TypeList
+                    Description: Vsphere host groups to apply to all VMs in the node pool
+                    Optional: "true"
+                tags:
+                    Type: TypeList
+                    Description: Tags to apply to VMs.
+                    Optional: "true"
+                    Properties:
+                        category:
+                            Type: TypeString
+                            Description: The Vsphere tag category.
+                            Optional: "true"
+                        tag:
+                            Type: TypeString
+                            Description: The Vsphere tag name.
+                            Optional: "true"
+create_time:
+    Type: TypeString
+    Description: The time the cluster was created, in RFC3339 text format.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: The time the cluster was deleted, in RFC3339 text format.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: The display name for the node pool.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        This checksum is computed by the server based on the value of other
+        fields, and may be sent on update and delete requests to ensure the
+        client has an up-to-date value before proceeding.
+        Allows clients to perform consistent read-modify-writes
+        through optimistic concurrency control.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location of the resource.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The vmware node pool name.
+    Required: "true"
+node_pool_autoscaling:
+    Type: TypeList
+    Description: Node Pool autoscaling config for the node pool.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        max_replicas:
+            Type: TypeInt
+            Description: Maximum number of replicas in the NodePool.
+            Required: "true"
+        min_replicas:
+            Type: TypeInt
+            Description: Minimum number of replicas in the NodePool.
+            Required: "true"
+on_prem_version:
+    Type: TypeString
+    Description: Anthos version for the node pool. Defaults to the user cluster version.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the node pool.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of this cluster.
+    Computed: "true"
+status:
+    Type: TypeList
+    Description: ResourceStatus representing detailed cluster state.
+    Computed: "true"
+    Properties:
+        conditions:
+            Type: TypeList
+            Description: ResourceConditions provide a standard mechanism for higher-level status reporting from user cluster controller.
+            Computed: "true"
+            Properties:
+                last_transition_time:
+                    Type: TypeString
+                    Description: Last time the condition transit from one status to another.
+                    Computed: "true"
+                message:
+                    Type: TypeString
+                    Description: Human-readable message indicating details about last transition.
+                    Computed: "true"
+                reason:
+                    Type: TypeString
+                    Description: Machine-readable message indicating details about last transition.
+                    Computed: "true"
+                state:
+                    Type: TypeString
+                    Description: The lifecycle state of the condition.
+                    Computed: "true"
+                type:
+                    Type: TypeString
+                    Description: |-
+                        Type of the condition.
+                        (e.g., ClusterRunning, NodePoolRunning or ServerSidePreflightReady)
+                    Computed: "true"
+        error_message:
+            Type: TypeString
+            Description: |-
+                Human-friendly representation of the error message from the user cluster
+                controller. The error message can be temporary as the user cluster
+                controller creates a cluster or node pool. If the error message persists
+                for a longer period of time, it can be used to surface error message to
+                indicate real problems requiring user intervention.
+            Computed: "true"
+uid:
+    Type: TypeString
+    Description: The unique identifier of the node pool.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time the cluster was last updated, in RFC3339 text format.
+    Computed: "true"
+vmware_cluster:
+    Type: TypeString
+    Description: The cluster this node pool belongs to.
+    Required: "true"
+

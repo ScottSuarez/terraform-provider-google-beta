@@ -1,0 +1,8 @@
+bucket:
+    Type: TypeString
+    Required: "true"
+role_entity:
+    Type: TypeSet
+    Computed: "true"
+    Optional: "true"
+

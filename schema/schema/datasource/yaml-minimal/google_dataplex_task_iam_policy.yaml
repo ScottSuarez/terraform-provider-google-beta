@@ -1,0 +1,7 @@
+etag: TypeString
+lake: TypeString
+location: TypeString
+policy_data: TypeString
+project: TypeString
+task_id: TypeString
+

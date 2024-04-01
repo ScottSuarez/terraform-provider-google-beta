@@ -1,0 +1,27 @@
+{
+    "action": {
+        "Description": "The action to take if this rule matches. Possible values: [\"UNSPECIFIED_ACTION\", \"ALLOW\", \"DENY\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional string description of this rule.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Description": "A positive integer that defines the order of rule evaluation.\nRules with the lowest priority are evaluated first.\n\nA default rule at priority Int32.MaxValue matches all IPv4 and\nIPv6 traffic when no previous rule matches. Only the action of\nthis rule can be modified by the user.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "source_range": {
+        "Description": "IP address or range, defined using CIDR notation, of requests that this rule applies to.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

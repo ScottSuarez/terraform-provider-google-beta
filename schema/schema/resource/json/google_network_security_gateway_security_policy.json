@@ -1,0 +1,42 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the gateway security policy.\nThe default value is 'global'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Name is of the form projects/{project}/locations/{location}/gatewaySecurityPolicies/{gatewaySecurityPolicy}\ngatewaySecurityPolicy should match the pattern:(^a-z?$).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "tls_inspection_policy": {
+        "Description": "Name of a TlsInspectionPolicy resource that defines how TLS inspection is performed for any rule that enables it.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

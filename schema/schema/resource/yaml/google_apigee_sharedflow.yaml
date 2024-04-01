@@ -1,0 +1,46 @@
+config_bundle:
+    Type: TypeString
+    Description: Path to the config zip bundle
+    Required: "true"
+detect_md5hash:
+    Type: TypeString
+    Description: A hash of local config bundle in string, user needs to use a Terraform Hash function of their choice. A change in hash will trigger an update.
+    Optional: "true"
+latest_revision_id:
+    Type: TypeString
+    Description: The id of the most recently created revision for this shared flow.
+    Computed: "true"
+md5hash:
+    Type: TypeString
+    Description: Base 64 MD5 hash of the uploaded config bundle.
+    Computed: "true"
+meta_data:
+    Type: TypeList
+    Description: Metadata describing the shared flow.
+    Computed: "true"
+    Properties:
+        created_at:
+            Type: TypeString
+            Description: Time at which the API proxy was created, in milliseconds since epoch.
+            Computed: "true"
+        last_modified_at:
+            Type: TypeString
+            Description: Time at which the API proxy was most recently modified, in milliseconds since epoch.
+            Computed: "true"
+        sub_type:
+            Type: TypeString
+            Description: The type of entity described
+            Computed: "true"
+name:
+    Type: TypeString
+    Description: The ID of the shared flow.
+    Required: "true"
+org_id:
+    Type: TypeString
+    Description: The Apigee Organization name associated with the Apigee instance.
+    Required: "true"
+revision:
+    Type: TypeList
+    Description: A list of revisions of this shared flow.
+    Computed: "true"
+

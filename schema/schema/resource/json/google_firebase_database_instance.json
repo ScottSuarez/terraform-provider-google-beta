@@ -1,0 +1,42 @@
+{
+    "database_url": {
+        "Computed": true,
+        "Description": "The database URL in the form of https://{instance-id}.firebaseio.com for us-central1 instances\nor https://{instance-id}.{region}.firebasedatabase.app in other regions.",
+        "Type": "TypeString"
+    },
+    "desired_state": {
+        "Description": "The intended database state.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "instance_id": {
+        "Description": "The globally unique identifier of the Firebase Realtime Database instance.\nInstance IDs cannot be reused after deletion.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully-qualified resource name of the Firebase Realtime Database, in the\nformat: projects/PROJECT_NUMBER/locations/REGION_IDENTIFIER/instances/INSTANCE_ID\nPROJECT_NUMBER: The Firebase project's ['ProjectNumber'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number)\nLearn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510).",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "A reference to the region where the Firebase Realtime database resides.\nCheck all [available regions](https://firebase.google.com/docs/projects/locations#rtdb-locations)",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current database state. Set desired_state to :DISABLED to disable the database and :ACTIVE to reenable the database",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The database type.\nEach project can create one default Firebase Realtime Database, which cannot be deleted once created.\nCreating user Databases is only available for projects on the Blaze plan.\nProjects can be upgraded using the Cloud Billing API https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo. Default value: \"USER_DATABASE\" Possible values: [\"DEFAULT_DATABASE\", \"USER_DATABASE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

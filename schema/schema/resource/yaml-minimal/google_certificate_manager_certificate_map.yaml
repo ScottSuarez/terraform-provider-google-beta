@@ -1,0 +1,15 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+gclb_targets:
+    ip_configs:
+        ip_address: TypeString
+        ports: TypeList(TypeInt)
+    target_https_proxy: TypeString
+    target_ssl_proxy: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

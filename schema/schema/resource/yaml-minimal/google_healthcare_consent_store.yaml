@@ -1,0 +1,8 @@
+dataset: TypeString
+default_consent_ttl: TypeString
+effective_labels: TypeMap(TypeString)
+enable_consent_create_on_update: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+terraform_labels: TypeMap(TypeString)
+

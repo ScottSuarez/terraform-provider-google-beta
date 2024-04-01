@@ -1,0 +1,12 @@
+location: TypeString
+management_uri:
+    api: TypeString
+    web_ui: TypeString
+name: TypeString
+networks:
+    network: TypeString
+    peering_mode: TypeString
+oauth2_client_id: TypeString
+project: TypeString
+type: TypeString
+

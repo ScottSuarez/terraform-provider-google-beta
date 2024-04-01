@@ -1,0 +1,96 @@
+{
+    "action": {
+        "Computed": true,
+        "Description": "The name of the action associated with the intent.\nNote: The action name must not contain whitespaces.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "default_response_platforms": {
+        "Description": "The list of platforms for which the first responses will be copied from the messages in PLATFORM_UNSPECIFIED\n(i.e. default platform). Possible values: [\"FACEBOOK\", \"SLACK\", \"TELEGRAM\", \"KIK\", \"SKYPE\", \"LINE\", \"VIBER\", \"ACTIONS_ON_GOOGLE\", \"GOOGLE_HANGOUTS\"]",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "The name of this intent to be displayed on the console.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "events": {
+        "Description": "The collection of event names that trigger the intent. If the collection of input contexts is not empty, all of\nthe contexts must be present in the active user session for an event to trigger this intent. See the\n[events reference](https://cloud.google.com/dialogflow/docs/events-overview) for more details.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "followup_intent_info": {
+        "Computed": true,
+        "Description": "Information about all followup intents that have this intent as a direct or indirect parent. We populate this field\nonly in the output.",
+        "Properties": {
+            "followup_intent_name": {
+                "Description": "The unique identifier of the followup intent.\nFormat: projects/\u003cProject ID\u003e/agent/intents/\u003cIntent ID\u003e.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "parent_followup_intent_name": {
+                "Description": "The unique identifier of the followup intent's parent.\nFormat: projects/\u003cProject ID\u003e/agent/intents/\u003cIntent ID\u003e.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "input_context_names": {
+        "Description": "The list of context names required for this intent to be triggered.\nFormat: projects/\u003cProject ID\u003e/agent/sessions/-/contexts/\u003cContext ID\u003e.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "is_fallback": {
+        "Computed": true,
+        "Description": "Indicates whether this is a fallback intent.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "ml_disabled": {
+        "Computed": true,
+        "Description": "Indicates whether Machine Learning is disabled for the intent.\nNote: If mlDisabled setting is set to true, then this intent is not taken into account during inference in ML\nONLY match mode. Also, auto-markup in the UI is turned off.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of this intent.\nFormat: projects/\u003cProject ID\u003e/agent/intents/\u003cIntent ID\u003e.",
+        "Type": "TypeString"
+    },
+    "parent_followup_intent_name": {
+        "Computed": true,
+        "Description": "The unique identifier of the parent intent in the chain of followup intents.\nFormat: projects/\u003cProject ID\u003e/agent/intents/\u003cIntent ID\u003e.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Computed": true,
+        "Description": "The priority of this intent. Higher numbers represent higher priorities.\n  - If the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds\n  to the Normal priority in the console.\n  - If the supplied value is negative, the intent is ignored in runtime detect intent requests.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reset_contexts": {
+        "Computed": true,
+        "Description": "Indicates whether to delete all contexts in the current session when this intent is matched.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "root_followup_intent_name": {
+        "Computed": true,
+        "Description": "The unique identifier of the root intent in the chain of followup intents. It identifies the correct followup\nintents chain for this intent.\nFormat: projects/\u003cProject ID\u003e/agent/intents/\u003cIntent ID\u003e.",
+        "Type": "TypeString"
+    },
+    "webhook_state": {
+        "Computed": true,
+        "Description": "Indicates whether webhooks are enabled for the intent.\n* WEBHOOK_STATE_ENABLED: Webhook is enabled in the agent and in the intent.\n* WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING: Webhook is enabled in the agent and in the intent. Also, each slot\nfilling prompt is forwarded to the webhook. Possible values: [\"WEBHOOK_STATE_ENABLED\", \"WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

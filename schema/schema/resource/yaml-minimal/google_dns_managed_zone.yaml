@@ -1,0 +1,40 @@
+cloud_logging_config:
+    enable_logging: TypeBool
+creation_time: TypeString
+description: TypeString
+dns_name: TypeString
+dnssec_config:
+    default_key_specs:
+        algorithm: TypeString
+        key_length: TypeInt
+        key_type: TypeString
+        kind: TypeString
+    kind: TypeString
+    non_existence: TypeString
+    state: TypeString
+effective_labels: TypeMap(TypeString)
+force_destroy: TypeBool
+forwarding_config:
+    target_name_servers:
+        forwarding_path: TypeString
+        ipv4_address: TypeString
+labels: TypeMap(TypeString)
+managed_zone_id: TypeInt
+name: TypeString
+name_servers: TypeList(TypeString)
+peering_config:
+    target_network:
+        network_url: TypeString
+private_visibility_config:
+    gke_clusters:
+        gke_cluster_name: TypeString
+    networks:
+        network_url: TypeString
+project: TypeString
+reverse_lookup: TypeBool
+service_directory_config:
+    namespace:
+        namespace_url: TypeString
+terraform_labels: TypeMap(TypeString)
+visibility: TypeString
+

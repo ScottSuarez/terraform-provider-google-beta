@@ -1,0 +1,67 @@
+alternative_name_server_config:
+    Type: TypeList
+    Description: |-
+        Sets an alternative name server for the associated networks.
+        When specified, all DNS queries are forwarded to a name server that you choose.
+        Names such as .internal are not available when an alternative name server is specified.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        target_name_servers:
+            Type: TypeSet
+            Description: |-
+                Sets an alternative name server for the associated networks. When specified,
+                all DNS queries are forwarded to a name server that you choose. Names such as .internal
+                are not available when an alternative name server is specified.
+            Required: "true"
+            Properties:
+                forwarding_path:
+                    Type: TypeString
+                    Description: |-
+                        Forwarding path for this TargetNameServer. If unset or 'default' Cloud DNS will make forwarding
+                        decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
+                        to the Internet. When set to 'private', Cloud DNS will always send queries through VPC for this target Possible values: ["default", "private"]
+                    Optional: "true"
+                ipv4_address:
+                    Type: TypeString
+                    Description: IPv4 address to forward to.
+                    Required: "true"
+description:
+    Type: TypeString
+    Description: A textual description field. Defaults to 'Managed by Terraform'.
+    Optional: "true"
+enable_inbound_forwarding:
+    Type: TypeBool
+    Description: |-
+        Allows networks bound to this policy to receive DNS queries sent
+        by VMs or applications over VPN connections. When enabled, a
+        virtual IP address will be allocated from each of the sub-networks
+        that are bound to this policy.
+    Optional: "true"
+enable_logging:
+    Type: TypeBool
+    Description: |-
+        Controls whether logging is enabled for the networks bound to this policy.
+        Defaults to no logging if not set.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: User assigned name for this policy.
+    Required: "true"
+networks:
+    Type: TypeSet
+    Description: List of network names specifying networks to which this policy is applied.
+    Optional: "true"
+    Properties:
+        network_url:
+            Type: TypeString
+            Description: |-
+                The id or fully qualified URL of the VPC network to forward queries to.
+                This should be formatted like 'projects/{project}/global/networks/{network}' or
+                'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

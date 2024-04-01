@@ -1,0 +1,57 @@
+managed_zone: TypeString
+name: TypeString
+project: TypeString
+routing_policy:
+    enable_geo_fencing: TypeBool
+    geo:
+        health_checked_targets:
+            internal_load_balancers:
+                ip_address: TypeString
+                ip_protocol: TypeString
+                load_balancer_type: TypeString
+                network_url: TypeString
+                port: TypeString
+                project: TypeString
+                region: TypeString
+        location: TypeString
+        rrdatas: TypeList(TypeString)
+    primary_backup:
+        backup_geo:
+            health_checked_targets:
+                internal_load_balancers:
+                    ip_address: TypeString
+                    ip_protocol: TypeString
+                    load_balancer_type: TypeString
+                    network_url: TypeString
+                    port: TypeString
+                    project: TypeString
+                    region: TypeString
+            location: TypeString
+            rrdatas: TypeList(TypeString)
+        enable_geo_fencing_for_backups: TypeBool
+        primary:
+            internal_load_balancers:
+                ip_address: TypeString
+                ip_protocol: TypeString
+                load_balancer_type: TypeString
+                network_url: TypeString
+                port: TypeString
+                project: TypeString
+                region: TypeString
+        trickle_ratio: TypeFloat
+    wrr:
+        health_checked_targets:
+            internal_load_balancers:
+                ip_address: TypeString
+                ip_protocol: TypeString
+                load_balancer_type: TypeString
+                network_url: TypeString
+                port: TypeString
+                project: TypeString
+                region: TypeString
+        rrdatas: TypeList(TypeString)
+        weight: TypeFloat
+rrdatas: TypeList(TypeString)
+ttl: TypeInt
+type: TypeString
+

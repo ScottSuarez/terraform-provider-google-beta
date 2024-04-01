@@ -1,0 +1,18 @@
+{
+    "bucket_name": {
+        "Description": "The bucket to store reports in.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "prefix": {
+        "Description": "A prefix for the reports, for instance, the project name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project to set the export bucket on. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

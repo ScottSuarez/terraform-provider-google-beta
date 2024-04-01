@@ -1,0 +1,154 @@
+ancestor_module:
+    Type: TypeString
+    Description: |-
+        If empty, indicates that the custom module was created in the organization, folder,
+        or project in which you are viewing the custom module. Otherwise, ancestor_module
+        specifies the organization or folder from which the custom module is inherited.
+    Computed: "true"
+custom_config:
+    Type: TypeList
+    Description: The user specified custom configuration for the module.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        custom_output:
+            Type: TypeList
+            Description: Custom output properties.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                properties:
+                    Type: TypeList
+                    Description: A list of custom output properties to add to the finding.
+                    Optional: "true"
+                    Properties:
+                        name:
+                            Type: TypeString
+                            Description: Name of the property for the custom output.
+                            Optional: "true"
+                        value_expression:
+                            Type: TypeList
+                            Description: |-
+                                The CEL expression for the custom output. A resource property can be specified
+                                to return the value of the property or a text string enclosed in quotation marks.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                description:
+                                    Type: TypeString
+                                    Description: |-
+                                        Description of the expression. This is a longer text which describes the
+                                        expression, e.g. when hovered over it in a UI.
+                                    Optional: "true"
+                                expression:
+                                    Type: TypeString
+                                    Description: Textual representation of an expression in Common Expression Language syntax.
+                                    Required: "true"
+                                location:
+                                    Type: TypeString
+                                    Description: |-
+                                        String indicating the location of the expression for error reporting, e.g. a
+                                        file name and a position in the file.
+                                    Optional: "true"
+                                title:
+                                    Type: TypeString
+                                    Description: |-
+                                        Title for the expression, i.e. a short string describing its purpose. This can
+                                        be used e.g. in UIs which allow to enter the expression.
+                                    Optional: "true"
+        description:
+            Type: TypeString
+            Description: |-
+                Text that describes the vulnerability or misconfiguration that the custom
+                module detects. This explanation is returned with each finding instance to
+                help investigators understand the detected issue. The text must be enclosed in quotation marks.
+            Optional: "true"
+        predicate:
+            Type: TypeList
+            Description: |-
+                The CEL expression to evaluate to produce findings. When the expression evaluates
+                to true against a resource, a finding is generated.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                description:
+                    Type: TypeString
+                    Description: |-
+                        Description of the expression. This is a longer text which describes the
+                        expression, e.g. when hovered over it in a UI.
+                    Optional: "true"
+                expression:
+                    Type: TypeString
+                    Description: Textual representation of an expression in Common Expression Language syntax.
+                    Required: "true"
+                location:
+                    Type: TypeString
+                    Description: |-
+                        String indicating the location of the expression for error reporting, e.g. a
+                        file name and a position in the file.
+                    Optional: "true"
+                title:
+                    Type: TypeString
+                    Description: |-
+                        Title for the expression, i.e. a short string describing its purpose. This can
+                        be used e.g. in UIs which allow to enter the expression.
+                    Optional: "true"
+        recommendation:
+            Type: TypeString
+            Description: |-
+                An explanation of the recommended steps that security teams can take to resolve
+                the detected issue. This explanation is returned with each finding generated by
+                this module in the nextSteps property of the finding JSON.
+            Required: "true"
+        resource_selector:
+            Type: TypeList
+            Description: |-
+                The resource types that the custom module operates on. Each custom module
+                can specify up to 5 resource types.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                resource_types:
+                    Type: TypeList
+                    Description: The resource types to run the detector on.
+                    Required: "true"
+        severity:
+            Type: TypeString
+            Description: 'The severity to assign to findings generated by the module. Possible values: ["CRITICAL", "HIGH", "MEDIUM", "LOW"]'
+            Required: "true"
+display_name:
+    Type: TypeString
+    Description: |-
+        The display name of the Security Health Analytics custom module. This
+        display name becomes the finding category for all findings that are
+        returned by this custom module. The display name must be between 1 and
+        128 characters, start with a lowercase letter, and contain alphanumeric
+        characters or underscores only.
+    Required: "true"
+enablement_state:
+    Type: TypeString
+    Description: 'The enablement state of the custom module. Possible values: ["ENABLED", "DISABLED"]'
+    Required: "true"
+folder:
+    Type: TypeString
+    Description: Numerical ID of the parent folder.
+    Required: "true"
+last_editor:
+    Type: TypeString
+    Description: The editor that last updated the custom module.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name of the custom module. Its format is "folders/{folder_id}/securityHealthAnalyticsSettings/customModules/{customModule}".
+        The id {customModule} is server-generated and is not user settable. It will be a numeric id containing 1-20 digits.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time at which the custom module was last updated.
+
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and
+        up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

@@ -1,0 +1,74 @@
+create_time:
+    Type: TypeString
+    Description: Time the Namespace was created in UTC.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: Time the Namespace was deleted in UTC.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels for this Namespace.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name for the namespace
+    Computed: "true"
+namespace_labels:
+    Type: TypeMap
+    Description: |-
+        Namespace-level cluster namespace labels. These labels are applied
+        to the related namespace of the member clusters bound to the parent
+        Scope. Scope-level labels ('namespace_labels' in the Fleet Scope
+        resource) take precedence over Namespace-level labels if they share
+        a key. Keys and values must be Kubernetes-conformant.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+scope:
+    Type: TypeString
+    Description: The name of the Scope instance.
+    Required: "true"
+scope_id:
+    Type: TypeString
+    Description: Id of the scope
+    Required: "true"
+scope_namespace_id:
+    Type: TypeString
+    Description: The client-provided identifier of the namespace.
+    Required: "true"
+state:
+    Type: TypeList
+    Description: State of the namespace resource.
+    Computed: "true"
+    Properties:
+        code:
+            Type: TypeString
+            Description: Code describes the state of a Namespace resource.
+            Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Google-generated UUID for this resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Namespace was updated in UTC.
+    Computed: "true"
+

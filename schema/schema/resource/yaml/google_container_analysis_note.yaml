@@ -1,0 +1,85 @@
+attestation_authority:
+    Type: TypeList
+    Description: |-
+        Note kind that represents a logical attestation "role" or "authority".
+        For example, an organization might have one AttestationAuthority for
+        "QA" and one for "build". This Note is intended to act strictly as a
+        grouping mechanism for the attached Occurrences (Attestations). This
+        grouping mechanism also provides a security boundary, since IAM ACLs
+        gate the ability for a principle to attach an Occurrence to a given
+        Note. It also provides a single point of lookup to find all attached
+        Attestation Occurrences, even if they don't all live in the same
+        project.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        hint:
+            Type: TypeList
+            Description: |-
+                This submessage provides human-readable hints about the purpose of
+                the AttestationAuthority. Because the name of a Note acts as its
+                resource reference, it is important to disambiguate the canonical
+                name of the Note (which might be a UUID for security purposes)
+                from "readable" names more suitable for debug output. Note that
+                these hints should NOT be used to look up AttestationAuthorities
+                in security sensitive contexts, such as when looking up
+                Attestations to verify.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                human_readable_name:
+                    Type: TypeString
+                    Description: |-
+                        The human readable name of this Attestation Authority, for
+                        example "qa".
+                    Required: "true"
+create_time:
+    Type: TypeString
+    Description: The time this note was created.
+    Computed: "true"
+expiration_time:
+    Type: TypeString
+    Description: Time of expiration for this note. Leave empty if note does not expire.
+    Optional: "true"
+kind:
+    Type: TypeString
+    Description: The type of analysis this note describes
+    Computed: "true"
+long_description:
+    Type: TypeString
+    Description: A detailed description of the note
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the note.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+related_note_names:
+    Type: TypeSet
+    Description: Names of other notes related to this note.
+    Optional: "true"
+related_url:
+    Type: TypeSet
+    Description: URLs associated with this note and related metadata.
+    Optional: "true"
+    Properties:
+        label:
+            Type: TypeString
+            Description: Label to describe usage of the URL
+            Optional: "true"
+        url:
+            Type: TypeString
+            Description: Specific URL associated with the resource.
+            Required: "true"
+short_description:
+    Type: TypeString
+    Description: A one sentence description of the note.
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: The time this note was last updated.
+    Computed: "true"
+

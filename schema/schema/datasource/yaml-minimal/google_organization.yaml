@@ -1,0 +1,8 @@
+create_time: TypeString
+directory_customer_id: TypeString
+domain: TypeString
+lifecycle_state: TypeString
+name: TypeString
+org_id: TypeString
+organization: TypeString
+

@@ -1,0 +1,102 @@
+create_time:
+    Type: TypeString
+    Description: Time the security profile was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of the security profile. The Max length is 512 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: |-
+        This checksum is computed by the server based on the value of other fields,
+        and may be sent on update and delete requests to ensure the client has an up-to-date
+        value before proceeding.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        A map of key/value label pairs to assign to the resource.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The location of the security profile.
+        The default value is 'global'.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the security profile resource.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The name of the parent this security profile belongs to.
+        Format: organizations/{organization_id}.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+threat_prevention_profile:
+    Type: TypeList
+    Description: The threat prevention configuration for the security profile.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        severity_overrides:
+            Type: TypeList
+            Description: The configuration for overriding threats actions by severity match.
+            Optional: "true"
+            Properties:
+                action:
+                    Type: TypeString
+                    Description: 'Threat action override. Possible values: ["ALERT", "ALLOW", "DEFAULT_ACTION", "DENY"]'
+                    Required: "true"
+                severity:
+                    Type: TypeString
+                    Description: 'Severity level to match. Possible values: ["CRITICAL", "HIGH", "INFORMATIONAL", "LOW", "MEDIUM"]'
+                    Required: "true"
+        threat_overrides:
+            Type: TypeList
+            Description: |-
+                The configuration for overriding threats actions by threat id match.
+                If a threat is matched both by configuration provided in severity overrides
+                and threat overrides, the threat overrides action is applied.
+            Optional: "true"
+            Properties:
+                action:
+                    Type: TypeString
+                    Description: 'Threat action. Possible values: ["ALERT", "ALLOW", "DEFAULT_ACTION", "DENY"]'
+                    Required: "true"
+                threat_id:
+                    Type: TypeString
+                    Description: Vendor-specific ID of a threat to override.
+                    Required: "true"
+                type:
+                    Type: TypeString
+                    Description: Type of threat.
+                    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'The type of security profile. Possible values: ["THREAT_PREVENTION"]'
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Time the security profile was updated in UTC.
+    Computed: "true"
+

@@ -1,0 +1,165 @@
+{
+    "description": {
+        "Description": "A description of the info type.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "dictionary": {
+        "Description": "Dictionary which defines the rule.",
+        "ExactlyOneOf": "dictionary, regex, large_custom_dictionary",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cloud_storage_path": {
+                "Description": "Newline-delimited file of words in Cloud Storage. Only a single file is accepted.",
+                "ExactlyOneOf": "dictionary.0.word_list, dictionary.0.cloud_storage_path",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "path": {
+                        "Description": "A url representing a file or path (no wildcards) in Cloud Storage. Example: 'gs://[BUCKET_NAME]/dictionary.txt'",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "word_list": {
+                "Description": "List of words or phrases to search for.",
+                "ExactlyOneOf": "dictionary.0.word_list, dictionary.0.cloud_storage_path",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "words": {
+                        "Description": "Words or phrases defining the dictionary. The dictionary must contain at least one\nphrase and every phrase must contain at least 2 characters that are letters or digits.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "User set display name of the info type.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "large_custom_dictionary": {
+        "Description": "Dictionary which defines the rule.",
+        "ExactlyOneOf": "dictionary, regex, large_custom_dictionary",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "big_query_field": {
+                "Description": "Field in a BigQuery table where each cell represents a dictionary phrase.",
+                "ExactlyOneOf": "large_custom_dictionary.0.cloud_storage_file_set, large_custom_dictionary.0.big_query_field",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "field": {
+                        "Description": "Designated field in the BigQuery table.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "name": {
+                                "Description": "Name describing the field.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "table": {
+                        "Description": "Field in a BigQuery table where each cell represents a dictionary phrase.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "dataset_id": {
+                                "Description": "The dataset ID of the table.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "project_id": {
+                                "Description": "The Google Cloud Platform project ID of the project containing the table.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "table_id": {
+                                "Description": "The name of the table.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "cloud_storage_file_set": {
+                "Description": "Set of files containing newline-delimited lists of dictionary phrases.",
+                "ExactlyOneOf": "large_custom_dictionary.0.cloud_storage_file_set, large_custom_dictionary.0.big_query_field",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "url": {
+                        "Description": "The url, in the format 'gs://\u003cbucket\u003e/\u003cpath\u003e'. Trailing wildcard in the path is allowed.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "output_path": {
+                "Description": "Location to store dictionary artifacts in Google Cloud Storage. These files will only be accessible by project owners and the DLP API.\nIf any of these artifacts are modified, the dictionary is considered invalid and can no longer be used.",
+                "MaxItems": 1,
+                "Properties": {
+                    "path": {
+                        "Description": "A url representing a file or path (no wildcards) in Cloud Storage. Example: 'gs://[BUCKET_NAME]/dictionary.txt'",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the info type. Set by the server.",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The parent of the info type in any of the following formats:\n\n* 'projects/{{project}}'\n* 'projects/{{project}}/locations/{{location}}'\n* 'organizations/{{organization_id}}'\n* 'organizations/{{organization_id}}/locations/{{location}}'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "regex": {
+        "Description": "Regular expression which defines the rule.",
+        "ExactlyOneOf": "dictionary, regex, large_custom_dictionary",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "group_indexes": {
+                "Description": "The index of the submatch to extract as findings. When not specified, the entire match is returned. No more than 3 may be included.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "pattern": {
+                "Description": "Pattern defining the regular expression.\nIts syntax (https://github.com/google/re2/wiki/Syntax) can be found under the google/re2 repository on GitHub.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "stored_info_type_id": {
+        "Computed": true,
+        "Description": "The storedInfoType ID can contain uppercase and lowercase letters, numbers, and hyphens;\nthat is, it must match the regular expression: [a-zA-Z\\d-_]+. The maximum length is 100\ncharacters. Can be empty to allow the system to generate one.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

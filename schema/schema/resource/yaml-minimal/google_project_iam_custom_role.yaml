@@ -1,0 +1,9 @@
+deleted: TypeBool
+description: TypeString
+name: TypeString
+permissions: TypeSet(TypeString)
+project: TypeString
+role_id: TypeString
+stage: TypeString
+title: TypeString
+

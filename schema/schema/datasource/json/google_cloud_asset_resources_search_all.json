@@ -1,0 +1,56 @@
+{
+    "asset_types": {
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "query": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "results": {
+        "Computed": true,
+        "Properties": {
+            "additional_attributes": {
+                "Computed": true,
+                "Type": "TypeList"
+            },
+            "asset_type": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "description": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "display_name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Type": "TypeMap"
+            },
+            "location": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "network_tags": {
+                "Computed": true,
+                "Type": "TypeList"
+            },
+            "project": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "scope": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

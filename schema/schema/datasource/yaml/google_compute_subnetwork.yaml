@@ -1,0 +1,44 @@
+description:
+    Type: TypeString
+    Computed: "true"
+gateway_address:
+    Type: TypeString
+    Computed: "true"
+internal_ipv6_prefix:
+    Type: TypeString
+    Computed: "true"
+ip_cidr_range:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Optional: "true"
+network:
+    Type: TypeString
+    Computed: "true"
+private_ip_google_access:
+    Type: TypeBool
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+secondary_ip_range:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        ip_cidr_range:
+            Type: TypeString
+            Computed: "true"
+        range_name:
+            Type: TypeString
+            Computed: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,17 @@
+dataset: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+notification_config:
+    pubsub_topic: TypeString
+notification_configs:
+    filter: TypeString
+    pubsub_topic: TypeString
+parser_config:
+    allow_null_header: TypeBool
+    schema: TypeString
+    segment_terminator: TypeString
+    version: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+

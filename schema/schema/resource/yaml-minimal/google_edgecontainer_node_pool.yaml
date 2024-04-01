@@ -1,0 +1,20 @@
+cluster: TypeString
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+local_disk_encryption:
+    kms_key: TypeString
+    kms_key_active_version: TypeString
+    kms_key_state: TypeString
+location: TypeString
+machine_filter: TypeString
+name: TypeString
+node_config:
+    labels: TypeMap(TypeString)
+node_count: TypeInt
+node_location: TypeString
+node_version: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

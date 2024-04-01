@@ -1,0 +1,315 @@
+{
+    "alternative_location_id": {
+        "Computed": true,
+        "Description": "Only applicable to STANDARD_HA tier which protects the instance\nagainst zonal failures by provisioning it across two zones.\nIf provided, it must be a different zone from the one provided in\n[locationId].",
+        "Type": "TypeString"
+    },
+    "auth_enabled": {
+        "Computed": true,
+        "Description": "Optional. Indicates whether OSS Redis AUTH is enabled for the\ninstance. If set to \"true\" AUTH is enabled on the instance.\nDefault value is \"false\" meaning AUTH is disabled.",
+        "Type": "TypeBool"
+    },
+    "auth_string": {
+        "Computed": true,
+        "Description": "AUTH String set on the instance. This field will only be populated if auth_enabled is true.",
+        "Type": "TypeString"
+    },
+    "authorized_network": {
+        "Computed": true,
+        "Description": "The full name of the Google Compute Engine network to which the\ninstance is connected. If left unspecified, the default network\nwill be used.",
+        "Type": "TypeString"
+    },
+    "connect_mode": {
+        "Computed": true,
+        "Description": "The connection mode of the Redis instance. Default value: \"DIRECT_PEERING\" Possible values: [\"DIRECT_PEERING\", \"PRIVATE_SERVICE_ACCESS\"]",
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time the instance was created in RFC3339 UTC \"Zulu\" format,\naccurate to nanoseconds.",
+        "Type": "TypeString"
+    },
+    "current_location_id": {
+        "Computed": true,
+        "Description": "The current zone where the Redis endpoint is placed.\nFor Basic Tier instances, this will always be the same as the\n[locationId] provided by the user at creation time. For Standard Tier\ninstances, this can be either [locationId] or [alternativeLocationId]\nand can change after a failover event.",
+        "Type": "TypeString"
+    },
+    "customer_managed_key": {
+        "Computed": true,
+        "Description": "Optional. The KMS key reference that you want to use to encrypt the data at rest for this Redis\ninstance. If this is provided, CMEK is enabled.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "An arbitrary and optional user-provided name for the instance.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "host": {
+        "Computed": true,
+        "Description": "Hostname or IP address of the exposed Redis endpoint used by clients\nto connect to the service.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Resource labels to represent user provided metadata.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "location_id": {
+        "Computed": true,
+        "Description": "The zone where the instance will be provisioned. If not provided,\nthe service will choose a zone for the instance. For STANDARD_HA tier,\ninstances will be created across two zones for protection against\nzonal failures. If [alternativeLocationId] is also provided, it must\nbe different from [locationId].",
+        "Type": "TypeString"
+    },
+    "maintenance_policy": {
+        "Computed": true,
+        "Description": "Maintenance policy for an instance.",
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Description": "Output only. The time when the policy was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "description": {
+                "Computed": true,
+                "Description": "Optional. Description of what this policy is for.\nCreate/Update methods return INVALID_ARGUMENT if the\nlength is greater than 512.",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Output only. The time when the policy was last updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "weekly_maintenance_window": {
+                "Computed": true,
+                "Description": "Optional. Maintenance window that is applied to resources covered by this policy.\nMinimum 1. For the current version, the maximum number\nof weekly_window is expected to be one.",
+                "Properties": {
+                    "day": {
+                        "Computed": true,
+                        "Description": "Required. The day of week that maintenance updates occur.\n\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\n- MONDAY: Monday\n- TUESDAY: Tuesday\n- WEDNESDAY: Wednesday\n- THURSDAY: Thursday\n- FRIDAY: Friday\n- SATURDAY: Saturday\n- SUNDAY: Sunday Possible values: [\"DAY_OF_WEEK_UNSPECIFIED\", \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                        "Type": "TypeString"
+                    },
+                    "duration": {
+                        "Computed": true,
+                        "Description": "Output only. Duration of the maintenance window.\nThe current window is fixed at 1 hour.\nA duration in seconds with up to nine fractional digits,\nterminated by 's'. Example: \"3.5s\".",
+                        "Type": "TypeString"
+                    },
+                    "start_time": {
+                        "Computed": true,
+                        "Description": "Required. Start time of the window in UTC time.",
+                        "Properties": {
+                            "hours": {
+                                "Computed": true,
+                                "Description": "Hours of day in 24 hour format. Should be from 0 to 23.\nAn API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
+                                "Type": "TypeInt"
+                            },
+                            "minutes": {
+                                "Computed": true,
+                                "Description": "Minutes of hour of day. Must be from 0 to 59.",
+                                "Type": "TypeInt"
+                            },
+                            "nanos": {
+                                "Computed": true,
+                                "Description": "Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.",
+                                "Type": "TypeInt"
+                            },
+                            "seconds": {
+                                "Computed": true,
+                                "Description": "Seconds of minutes of the time. Must normally be from 0 to 59.\nAn API may allow the value 60 if it allows leap-seconds.",
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "maintenance_schedule": {
+        "Computed": true,
+        "Description": "Upcoming maintenance schedule.",
+        "Properties": {
+            "end_time": {
+                "Computed": true,
+                "Description": "Output only. The end time of any upcoming scheduled maintenance for this instance.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "schedule_deadline_time": {
+                "Computed": true,
+                "Description": "Output only. The deadline that the maintenance schedule start time\ncan not go beyond, including reschedule.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "start_time": {
+                "Computed": true,
+                "Description": "Output only. The start time of any upcoming scheduled maintenance for this instance.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "memory_size_gb": {
+        "Computed": true,
+        "Description": "Redis memory size in GiB.",
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "The ID of the instance or a fully qualified identifier for the instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "nodes": {
+        "Computed": true,
+        "Description": "Output only. Info per node.",
+        "Properties": {
+            "id": {
+                "Computed": true,
+                "Description": "Node identifying string. e.g. 'node-0', 'node-1'",
+                "Type": "TypeString"
+            },
+            "zone": {
+                "Computed": true,
+                "Description": "Location of the node.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "persistence_config": {
+        "Computed": true,
+        "Description": "Persistence configuration for an instance.",
+        "Properties": {
+            "persistence_mode": {
+                "Computed": true,
+                "Description": "Optional. Controls whether Persistence features are enabled. If not provided, the existing value will be used.\n\n- DISABLED: \tPersistence is disabled for the instance, and any existing snapshots are deleted.\n- RDB: RDB based Persistence is enabled. Possible values: [\"DISABLED\", \"RDB\"]",
+                "Type": "TypeString"
+            },
+            "rdb_next_snapshot_time": {
+                "Computed": true,
+                "Description": "Output only. The next time that a snapshot attempt is scheduled to occur.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up\nto nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            },
+            "rdb_snapshot_period": {
+                "Computed": true,
+                "Description": "Optional. Available snapshot periods for scheduling.\n\n- ONE_HOUR:\tSnapshot every 1 hour.\n- SIX_HOURS:\tSnapshot every 6 hours.\n- TWELVE_HOURS:\tSnapshot every 12 hours.\n- TWENTY_FOUR_HOURS:\tSnapshot every 24 hours. Possible values: [\"ONE_HOUR\", \"SIX_HOURS\", \"TWELVE_HOURS\", \"TWENTY_FOUR_HOURS\"]",
+                "Type": "TypeString"
+            },
+            "rdb_snapshot_start_time": {
+                "Computed": true,
+                "Description": "Optional. Date and time that the first snapshot was/will be attempted,\nand to which future snapshots will be aligned. If not provided,\nthe current time will be used.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution\nand up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "persistence_iam_identity": {
+        "Computed": true,
+        "Description": "Output only. Cloud IAM identity used by import / export operations\nto transfer data to/from Cloud Storage. Format is \"serviceAccount:\".\nThe value may change over time for a given instance so should be\nchecked before each import/export operation.",
+        "Type": "TypeString"
+    },
+    "port": {
+        "Computed": true,
+        "Description": "The port number of the exposed Redis endpoint.",
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "read_endpoint": {
+        "Computed": true,
+        "Description": "Output only. Hostname or IP address of the exposed readonly Redis endpoint. Standard tier only.\nTargets all healthy replica nodes in instance. Replication is asynchronous and replica nodes\nwill exhibit some lag behind the primary. Write requests must target 'host'.",
+        "Type": "TypeString"
+    },
+    "read_endpoint_port": {
+        "Computed": true,
+        "Description": "Output only. The port number of the exposed readonly redis endpoint. Standard tier only.\nWrite requests should target 'port'.",
+        "Type": "TypeInt"
+    },
+    "read_replicas_mode": {
+        "Computed": true,
+        "Description": "Optional. Read replica mode. Can only be specified when trying to create the instance.\nIf not set, Memorystore Redis backend will default to READ_REPLICAS_DISABLED.\n- READ_REPLICAS_DISABLED: If disabled, read endpoint will not be provided and the\ninstance cannot scale up or down the number of replicas.\n- READ_REPLICAS_ENABLED: If enabled, read endpoint will be provided and the instance\ncan scale up and down the number of replicas. Possible values: [\"READ_REPLICAS_DISABLED\", \"READ_REPLICAS_ENABLED\"]",
+        "Type": "TypeString"
+    },
+    "redis_configs": {
+        "Computed": true,
+        "Description": "Redis configuration parameters, according to http://redis.io/topics/config.\nPlease check Memorystore documentation for the list of supported parameters:\nhttps://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#Instance.FIELDS.redis_configs",
+        "Type": "TypeMap"
+    },
+    "redis_version": {
+        "Computed": true,
+        "Description": "The version of Redis software. If not provided, latest supported\nversion will be used. Please check the API documentation linked\nat the top for the latest valid values.",
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The name of the Redis region of the instance.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "replica_count": {
+        "Computed": true,
+        "Description": "Optional. The number of replica nodes. The valid range for the Standard Tier with\nread replicas enabled is [1-5] and defaults to 2. If read replicas are not enabled\nfor a Standard Tier instance, the only valid value is 1 and the default is 1.\nThe valid value for basic tier is 0 and the default is also 0.",
+        "Type": "TypeInt"
+    },
+    "reserved_ip_range": {
+        "Computed": true,
+        "Description": "The CIDR range of internal addresses that are reserved for this\ninstance. If not provided, the service will choose an unused /29\nblock, for example, 10.0.0.0/29 or 192.168.0.0/29. Ranges must be\nunique and non-overlapping with existing subnets in an authorized\nnetwork.",
+        "Type": "TypeString"
+    },
+    "secondary_ip_range": {
+        "Computed": true,
+        "Description": "Optional. Additional IP range for node placement. Required when enabling read replicas on\nan existing instance. For DIRECT_PEERING mode value must be a CIDR range of size /28, or\n\"auto\". For PRIVATE_SERVICE_ACCESS mode value must be the name of an allocated address\nrange associated with the private service access connection, or \"auto\".",
+        "Type": "TypeString"
+    },
+    "server_ca_certs": {
+        "Computed": true,
+        "Description": "List of server CA certificates for the instance.",
+        "Properties": {
+            "cert": {
+                "Computed": true,
+                "Description": "The certificate data in PEM format.",
+                "Type": "TypeString"
+            },
+            "create_time": {
+                "Computed": true,
+                "Description": "The time when the certificate was created.",
+                "Type": "TypeString"
+            },
+            "expire_time": {
+                "Computed": true,
+                "Description": "The time when the certificate expires.",
+                "Type": "TypeString"
+            },
+            "serial_number": {
+                "Computed": true,
+                "Description": "Serial number, as extracted from the certificate.",
+                "Type": "TypeString"
+            },
+            "sha1_fingerprint": {
+                "Computed": true,
+                "Description": "Sha1 Fingerprint of the certificate.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "tier": {
+        "Computed": true,
+        "Description": "The service tier of the instance. Must be one of these values:\n\n- BASIC: standalone instance\n- STANDARD_HA: highly available primary/replica instances Default value: \"BASIC\" Possible values: [\"BASIC\", \"STANDARD_HA\"]",
+        "Type": "TypeString"
+    },
+    "transit_encryption_mode": {
+        "Computed": true,
+        "Description": "The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance.\n\n- SERVER_AUTHENTICATION: Client to Server traffic encryption enabled with server authentication Default value: \"DISABLED\" Possible values: [\"SERVER_AUTHENTICATION\", \"DISABLED\"]",
+        "Type": "TypeString"
+    }
+}

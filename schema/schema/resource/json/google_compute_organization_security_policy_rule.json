@@ -1,0 +1,102 @@
+{
+    "action": {
+        "Description": "The Action to perform when the client connection triggers the rule. Can currently be either\n\"allow\", \"deny\" or \"goto_next\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A description of the rule.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "direction": {
+        "Description": "The direction in which this rule applies. If unspecified an INGRESS rule is created. Possible values: [\"INGRESS\", \"EGRESS\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enable_logging": {
+        "Description": "Denotes whether to enable logging for a particular rule.\nIf logging is enabled, logs will be exported to the\nconfigured export destination in Stackdriver.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "match": {
+        "Description": "A match condition that incoming traffic is evaluated against. If it evaluates to true, the corresponding 'action' is enforced.",
+        "MaxItems": 1,
+        "Properties": {
+            "config": {
+                "Description": "The configuration options for matching the rule.",
+                "MaxItems": 1,
+                "Properties": {
+                    "dest_ip_ranges": {
+                        "Description": "Destination IP address range in CIDR format. Required for\nEGRESS rules.",
+                        "ExactlyOneOf": "match.0.config.0.src_ip_ranges, match.0.config.0.dest_ip_ranges",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "layer4_config": {
+                        "Description": "Pairs of IP protocols and ports that the rule should match.",
+                        "Properties": {
+                            "ip_protocol": {
+                                "Description": "The IP protocol to which this rule applies. The protocol\ntype is required when creating a firewall rule.\nThis value can either be one of the following well\nknown protocol strings (tcp, udp, icmp, esp, ah, ipip, sctp),\nor the IP protocol number.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "ports": {
+                                "Description": "An optional list of ports to which this rule applies. This field\nis only applicable for UDP or TCP protocol. Each entry must be\neither an integer or a range. If not specified, this rule\napplies to connections through any port.\n\nExample inputs include: [\"22\"], [\"80\",\"443\"], and\n[\"12345-12349\"].",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "src_ip_ranges": {
+                        "Description": "Source IP address range in CIDR format. Required for\nINGRESS rules.",
+                        "ExactlyOneOf": "match.0.config.0.src_ip_ranges, match.0.config.0.dest_ip_ranges",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "description": {
+                "Description": "A description of the rule.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "versioned_expr": {
+                "Description": "Preconfigured versioned expression. For organization security policy rules,\nthe only supported type is \"FIREWALL\". Default value: \"FIREWALL\" Possible values: [\"FIREWALL\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "policy_id": {
+        "Description": "The ID of the OrganizationSecurityPolicy this rule applies to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "preview": {
+        "Description": "If set to true, the specified action is not enforced.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "priority": {
+        "Description": "An integer indicating the priority of a rule in the list. The priority must be a value\nbetween 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the\nhighest priority and 2147483647 is the lowest prority.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "target_resources": {
+        "Description": "A list of network resource URLs to which this rule applies.\nThis field allows you to control which network's VMs get\nthis rule. If this field is left blank, all VMs\nwithin the organization will receive the rule.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "target_service_accounts": {
+        "Description": "A list of service accounts indicating the sets of\ninstances that are applied with this rule.",
+        "Optional": true,
+        "Type": "TypeList"
+    }
+}

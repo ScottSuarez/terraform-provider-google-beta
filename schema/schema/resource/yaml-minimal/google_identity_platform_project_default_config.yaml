@@ -1,0 +1,19 @@
+name: TypeString
+project: TypeString
+sign_in:
+    allow_duplicate_emails: TypeBool
+    anonymous:
+        enabled: TypeBool
+    email:
+        enabled: TypeBool
+        password_required: TypeBool
+    hash_config:
+        algorithm: TypeString
+        memory_cost: TypeInt
+        rounds: TypeInt
+        salt_separator: TypeString
+        signer_key: TypeString
+    phone_number:
+        enabled: TypeBool
+        test_phone_numbers: TypeMap(TypeString)
+

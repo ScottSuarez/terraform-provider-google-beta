@@ -1,0 +1,226 @@
+{
+    "description": {
+        "Computed": true,
+        "Description": "An optional description of this resource. Provide this property when you create the resource.",
+        "Type": "TypeString"
+    },
+    "disk_consistency_group_policy": {
+        "Computed": true,
+        "Description": "Replication consistency group for asynchronous disk replication.",
+        "Properties": {
+            "enabled": {
+                "Computed": true,
+                "Description": "Enable disk consistency on the resource policy.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "group_placement_policy": {
+        "Computed": true,
+        "Description": "Resource policy for instances used for placement configuration.",
+        "Properties": {
+            "availability_domain_count": {
+                "Computed": true,
+                "Description": "The number of availability domains instances will be spread across. If two instances are in different\navailability domain, they will not be put in the same low latency network",
+                "Type": "TypeInt"
+            },
+            "collocation": {
+                "Computed": true,
+                "Description": "Collocation specifies whether to place VMs inside the same availability domain on the same low-latency network.\nSpecify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count'. If compute instances are created\nwith a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy\nattached. Possible values: [\"COLLOCATED\"]",
+                "Type": "TypeString"
+            },
+            "max_distance": {
+                "Computed": true,
+                "Description": "Specifies the number of max logical switches.",
+                "Type": "TypeInt"
+            },
+            "vm_count": {
+                "Computed": true,
+                "Description": "Number of VMs in this placement group. Google does not recommend that you use this field\nunless you use a compact policy and you want your policy to work only if it contains this\nexact number of VMs.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "instance_schedule_policy": {
+        "Computed": true,
+        "Description": "Resource policy for scheduling instance operations.",
+        "Properties": {
+            "expiration_time": {
+                "Computed": true,
+                "Description": "The expiration time of the schedule. The timestamp is an RFC3339 string.",
+                "Type": "TypeString"
+            },
+            "start_time": {
+                "Computed": true,
+                "Description": "The start time of the schedule. The timestamp is an RFC3339 string.",
+                "Type": "TypeString"
+            },
+            "time_zone": {
+                "Computed": true,
+                "Description": "Specifies the time zone to be used in interpreting the schedule. The value of this field must be a time zone name\nfrom the tz database: http://en.wikipedia.org/wiki/Tz_database.",
+                "Type": "TypeString"
+            },
+            "vm_start_schedule": {
+                "Computed": true,
+                "Description": "Specifies the schedule for starting instances.",
+                "Properties": {
+                    "schedule": {
+                        "Computed": true,
+                        "Description": "Specifies the frequency for the operation, using the unix-cron format.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "vm_stop_schedule": {
+                "Computed": true,
+                "Description": "Specifies the schedule for stopping instances.",
+                "Properties": {
+                    "schedule": {
+                        "Computed": true,
+                        "Description": "Specifies the frequency for the operation, using the unix-cron format.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of the resource, provided by the client when initially creating\nthe resource. The resource name must be 1-63 characters long, and comply\nwith RFC1035. Specifically, the name must be 1-63 characters long and\nmatch the regular expression '[a-z]([-a-z0-9]*[a-z0-9])'? which means the\nfirst character must be a lowercase letter, and all following characters\nmust be a dash, lowercase letter, or digit, except the last character,\nwhich cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "Region where resource policy resides.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "snapshot_schedule_policy": {
+        "Computed": true,
+        "Description": "Policy for creating snapshots of persistent disks.",
+        "Properties": {
+            "retention_policy": {
+                "Computed": true,
+                "Description": "Retention policy applied to snapshots created by this resource policy.",
+                "Properties": {
+                    "max_retention_days": {
+                        "Computed": true,
+                        "Description": "Maximum age of the snapshot that is allowed to be kept.",
+                        "Type": "TypeInt"
+                    },
+                    "on_source_disk_delete": {
+                        "Computed": true,
+                        "Description": "Specifies the behavior to apply to scheduled snapshots when\nthe source disk is deleted. Default value: \"KEEP_AUTO_SNAPSHOTS\" Possible values: [\"KEEP_AUTO_SNAPSHOTS\", \"APPLY_RETENTION_POLICY\"]",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "schedule": {
+                "Computed": true,
+                "Description": "Contains one of an 'hourlySchedule', 'dailySchedule', or 'weeklySchedule'.",
+                "Properties": {
+                    "daily_schedule": {
+                        "Computed": true,
+                        "Description": "The policy will execute every nth day at the specified time.",
+                        "Properties": {
+                            "days_in_cycle": {
+                                "Computed": true,
+                                "Description": "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle. Days in cycle for snapshot schedule policy must be 1.",
+                                "Type": "TypeInt"
+                            },
+                            "start_time": {
+                                "Computed": true,
+                                "Description": "This must be in UTC format that resolves to one of\n00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example,\nboth 13:00-5 and 08:00 are valid.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "hourly_schedule": {
+                        "Computed": true,
+                        "Description": "The policy will execute every nth hour starting at the specified time.",
+                        "Properties": {
+                            "hours_in_cycle": {
+                                "Computed": true,
+                                "Description": "The number of hours between snapshots.",
+                                "Type": "TypeInt"
+                            },
+                            "start_time": {
+                                "Computed": true,
+                                "Description": "Time within the window to start the operations.\nIt must be in an hourly format \"HH:MM\",\nwhere HH : [00-23] and MM : [00] GMT.\neg: 21:00",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "weekly_schedule": {
+                        "Computed": true,
+                        "Description": "Allows specifying a snapshot time for each day of the week.",
+                        "Properties": {
+                            "day_of_weeks": {
+                                "Computed": true,
+                                "Description": "May contain up to seven (one for each day of the week) snapshot times.",
+                                "Properties": {
+                                    "day": {
+                                        "Computed": true,
+                                        "Description": "The day of the week to create the snapshot. e.g. MONDAY Possible values: [\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                                        "Type": "TypeString"
+                                    },
+                                    "start_time": {
+                                        "Computed": true,
+                                        "Description": "Time within the window to start the operations.\nIt must be in format \"HH:MM\", where HH : [00-23] and MM : [00-00] GMT.",
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeSet"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "snapshot_properties": {
+                "Computed": true,
+                "Description": "Properties with which the snapshots are created, such as labels.",
+                "Properties": {
+                    "chain_name": {
+                        "Computed": true,
+                        "Description": "Creates the new snapshot in the snapshot chain labeled with the\nspecified name. The chain name must be 1-63 characters long and comply\nwith RFC1035.",
+                        "Type": "TypeString"
+                    },
+                    "guest_flush": {
+                        "Computed": true,
+                        "Description": "Whether to perform a 'guest aware' snapshot.",
+                        "Type": "TypeBool"
+                    },
+                    "labels": {
+                        "Computed": true,
+                        "Description": "A set of key-value pairs.",
+                        "Type": "TypeMap"
+                    },
+                    "storage_locations": {
+                        "Computed": true,
+                        "Description": "Cloud Storage bucket location to store the auto snapshot\n(regional or multi-regional)",
+                        "Type": "TypeSet"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

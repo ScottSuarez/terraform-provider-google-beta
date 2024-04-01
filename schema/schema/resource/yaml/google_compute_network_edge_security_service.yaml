@@ -1,0 +1,43 @@
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Free-text description of the resource.
+    Optional: "true"
+fingerprint:
+    Type: TypeString
+    Description: |-
+        Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a NetworkEdgeSecurityService.
+        An up-to-date fingerprint must be provided in order to update the NetworkEdgeSecurityService, otherwise the request will fail with error 412 conditionNotMet.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: Name of the resource. Provided by the client when the resource is created.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the gateway security policy.
+    Optional: "true"
+security_policy:
+    Type: TypeString
+    Description: The resource URL for the network edge security service associated with this network edge security service.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL for the resource.
+    Computed: "true"
+self_link_with_service_id:
+    Type: TypeString
+    Description: Server-defined URL for this resource with the resource id.
+    Computed: "true"
+service_id:
+    Type: TypeString
+    Description: The unique identifier for the resource. This identifier is defined by the server.
+    Computed: "true"
+

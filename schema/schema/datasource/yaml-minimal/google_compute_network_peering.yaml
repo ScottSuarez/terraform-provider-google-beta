@@ -1,0 +1,11 @@
+export_custom_routes: TypeBool
+export_subnet_routes_with_public_ip: TypeBool
+import_custom_routes: TypeBool
+import_subnet_routes_with_public_ip: TypeBool
+name: TypeString
+network: TypeString
+peer_network: TypeString
+stack_type: TypeString
+state: TypeString
+state_details: TypeString
+

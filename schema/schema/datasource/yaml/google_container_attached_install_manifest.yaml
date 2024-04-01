@@ -1,0 +1,16 @@
+cluster_id:
+    Type: TypeString
+    Required: "true"
+location:
+    Type: TypeString
+    Required: "true"
+manifest:
+    Type: TypeString
+    Computed: "true"
+platform_version:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Required: "true"
+

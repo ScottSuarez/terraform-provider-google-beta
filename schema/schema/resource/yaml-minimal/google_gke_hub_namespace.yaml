@@ -1,0 +1,16 @@
+create_time: TypeString
+delete_time: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+namespace_labels: TypeMap(TypeString)
+project: TypeString
+scope: TypeString
+scope_id: TypeString
+scope_namespace_id: TypeString
+state:
+    code: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+

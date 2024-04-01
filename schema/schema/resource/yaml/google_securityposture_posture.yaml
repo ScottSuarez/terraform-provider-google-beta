@@ -1,0 +1,397 @@
+create_time:
+    Type: TypeString
+    Description: Time the Posture was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Description of the posture.
+    Optional: "true"
+etag:
+    Type: TypeString
+    Description: For Resource freshness validation (https://google.aip.dev/154)
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: 'Location of the resource, eg: global.'
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Name of the posture.
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: The parent of the resource, an organization. Format should be 'organizations/{organization_id}'.
+    Required: "true"
+policy_sets:
+    Type: TypeList
+    Description: List of policy sets for the posture.
+    Optional: "true"
+    Properties:
+        description:
+            Type: TypeString
+            Description: Description of the policy set.
+            Optional: "true"
+        policies:
+            Type: TypeList
+            Description: List of security policy
+            Optional: "true"
+            Properties:
+                compliance_standards:
+                    Type: TypeList
+                    Description: Mapping for policy to security standards and controls.
+                    Optional: "true"
+                    Properties:
+                        control:
+                            Type: TypeString
+                            Description: Mapping of security controls for the policy.
+                            Optional: "true"
+                        standard:
+                            Type: TypeString
+                            Description: Mapping of compliance standards for the policy.
+                            Optional: "true"
+                constraint:
+                    Type: TypeList
+                    Description: 'Policy constraint definition.It can have the definition of one of following constraints: orgPolicyConstraint orgPolicyConstraintCustom securityHealthAnalyticsModule securityHealthAnalyticsCustomModule'
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        org_policy_constraint:
+                            Type: TypeList
+                            Description: Organization policy canned constraint definition.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                canned_constraint_id:
+                                    Type: TypeString
+                                    Description: Organization policy canned constraint Id
+                                    Required: "true"
+                                policy_rules:
+                                    Type: TypeList
+                                    Description: Definition of policy rules
+                                    Required: "true"
+                                    Properties:
+                                        allow_all:
+                                            Type: TypeBool
+                                            Description: Setting this to true means that all values are allowed. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                        deny_all:
+                                            Type: TypeBool
+                                            Description: Setting this to true means that all values are denied. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                        enforce:
+                                            Type: TypeBool
+                                            Description: |-
+                                                If 'true', then the policy is enforced. If 'false', then any configuration is acceptable.
+                                                This field can be set only in policies for boolean constraints.
+                                            Optional: "true"
+                                        expr:
+                                            Type: TypeList
+                                            Description: |-
+                                                Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.
+                                                This page details the objects and attributes that are used to the build the CEL expressions for
+                                                custom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                description:
+                                                    Type: TypeString
+                                                    Description: Description of the expression
+                                                    Optional: "true"
+                                                expression:
+                                                    Type: TypeString
+                                                    Description: Textual representation of an expression in Common Expression Language syntax.
+                                                    Required: "true"
+                                                location:
+                                                    Type: TypeString
+                                                    Description: String indicating the location of the expression for error reporting, e.g. a file name and a position in the file
+                                                    Optional: "true"
+                                                title:
+                                                    Type: TypeString
+                                                    Description: Title for the expression, i.e. a short string describing its purpose.
+                                                    Optional: "true"
+                                        values:
+                                            Type: TypeList
+                                            Description: List of values to be used for this policy rule. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allowed_values:
+                                                    Type: TypeList
+                                                    Description: List of values allowed at this resource.
+                                                    Optional: "true"
+                                                denied_values:
+                                                    Type: TypeList
+                                                    Description: List of values denied at this resource.
+                                                    Optional: "true"
+                        org_policy_constraint_custom:
+                            Type: TypeList
+                            Description: Organization policy custom constraint policy definition.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                custom_constraint:
+                                    Type: TypeList
+                                    Description: Organization policy custom constraint definition.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        action_type:
+                                            Type: TypeString
+                                            Description: 'The action to take if the condition is met. Possible values: ["ALLOW", "DENY"]'
+                                            Required: "true"
+                                        condition:
+                                            Type: TypeString
+                                            Description: A CEL condition that refers to a supported service resource, for example 'resource.management.autoUpgrade == false'. For details about CEL usage, see [Common Expression Language](https://cloud.google.com/resource-manager/docs/organization-policy/creating-managing-custom-constraints#common_expression_language).
+                                            Required: "true"
+                                        description:
+                                            Type: TypeString
+                                            Description: A human-friendly description of the constraint to display as an error message when the policy is violated.
+                                            Optional: "true"
+                                        display_name:
+                                            Type: TypeString
+                                            Description: A human-friendly name for the constraint.
+                                            Optional: "true"
+                                        method_types:
+                                            Type: TypeList
+                                            Description: A list of RESTful methods for which to enforce the constraint. Can be 'CREATE', 'UPDATE', or both. Not all Google Cloud services support both methods. To see supported methods for each service, find the service in [Supported services](https://cloud.google.com/resource-manager/docs/organization-policy/custom-constraint-supported-services).
+                                            Required: "true"
+                                            MinItems: "1"
+                                        name:
+                                            Type: TypeString
+                                            Description: Immutable. The name of the custom constraint. This is unique within the organization.
+                                            Required: "true"
+                                        resource_types:
+                                            Type: TypeList
+                                            Description: Immutable. The fully qualified name of the Google Cloud REST resource containing the object and field you want to restrict. For example, 'container.googleapis.com/NodePool'.
+                                            Required: "true"
+                                            MinItems: "1"
+                                policy_rules:
+                                    Type: TypeList
+                                    Description: Definition of policy rules
+                                    Required: "true"
+                                    Properties:
+                                        allow_all:
+                                            Type: TypeBool
+                                            Description: Setting this to true means that all values are allowed. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                        deny_all:
+                                            Type: TypeBool
+                                            Description: Setting this to true means that all values are denied. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                        enforce:
+                                            Type: TypeBool
+                                            Description: |-
+                                                If 'true', then the policy is enforced. If 'false', then any configuration is acceptable.
+                                                This field can be set only in policies for boolean constraints.
+                                            Optional: "true"
+                                        expr:
+                                            Type: TypeList
+                                            Description: |-
+                                                Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.
+                                                This page details the objects and attributes that are used to the build the CEL expressions for
+                                                custom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                description:
+                                                    Type: TypeString
+                                                    Description: Description of the expression
+                                                    Optional: "true"
+                                                expression:
+                                                    Type: TypeString
+                                                    Description: Textual representation of an expression in Common Expression Language syntax.
+                                                    Required: "true"
+                                                location:
+                                                    Type: TypeString
+                                                    Description: String indicating the location of the expression for error reporting, e.g. a file name and a position in the file
+                                                    Optional: "true"
+                                                title:
+                                                    Type: TypeString
+                                                    Description: Title for the expression, i.e. a short string describing its purpose.
+                                                    Optional: "true"
+                                        values:
+                                            Type: TypeList
+                                            Description: List of values to be used for this policy rule. This field can be set only in policies for list constraints.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allowed_values:
+                                                    Type: TypeList
+                                                    Description: List of values allowed at this resource.
+                                                    Optional: "true"
+                                                denied_values:
+                                                    Type: TypeList
+                                                    Description: List of values denied at this resource.
+                                                    Optional: "true"
+                        security_health_analytics_custom_module:
+                            Type: TypeList
+                            Description: Definition of Security Health Analytics Custom Module.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                config:
+                                    Type: TypeList
+                                    Description: Custom module details.
+                                    Required: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        custom_output:
+                                            Type: TypeList
+                                            Description: |-
+                                                Custom output properties. A set of optional name-value pairs that define custom source properties to
+                                                return with each finding that is generated by the custom module. The custom
+                                                source properties that are defined here are included in the finding JSON
+                                                under 'sourceProperties'.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                properties:
+                                                    Type: TypeList
+                                                    Description: A list of custom output properties to add to the finding.
+                                                    Optional: "true"
+                                                    Properties:
+                                                        name:
+                                                            Type: TypeString
+                                                            Description: Name of the property for the custom output.
+                                                            Required: "true"
+                                                        value_expression:
+                                                            Type: TypeList
+                                                            Description: |-
+                                                                The CEL expression for the custom output. A resource property can be
+                                                                specified to return the value of the property or a text string enclosed
+                                                                in quotation marks.
+                                                            Optional: "true"
+                                                            MaxItems: "1"
+                                                            Properties:
+                                                                description:
+                                                                    Type: TypeString
+                                                                    Description: Description of the expression
+                                                                    Optional: "true"
+                                                                expression:
+                                                                    Type: TypeString
+                                                                    Description: Textual representation of an expression in Common Expression Language syntax.
+                                                                    Required: "true"
+                                                                location:
+                                                                    Type: TypeString
+                                                                    Description: String indicating the location of the expression for error reporting, e.g. a file name and a position in the file
+                                                                    Optional: "true"
+                                                                title:
+                                                                    Type: TypeString
+                                                                    Description: Title for the expression, i.e. a short string describing its purpose.
+                                                                    Optional: "true"
+                                        description:
+                                            Type: TypeString
+                                            Description: |-
+                                                Text that describes the vulnerability or misconfiguration that the custom
+                                                module detects.
+                                            Optional: "true"
+                                        predicate:
+                                            Type: TypeList
+                                            Description: |-
+                                                The CEL expression to evaluate to produce findings.When the expression
+                                                evaluates to true against a resource, a finding is generated.
+                                            Required: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                description:
+                                                    Type: TypeString
+                                                    Description: Description of the expression
+                                                    Optional: "true"
+                                                expression:
+                                                    Type: TypeString
+                                                    Description: Textual representation of an expression in Common Expression Language syntax.
+                                                    Required: "true"
+                                                location:
+                                                    Type: TypeString
+                                                    Description: String indicating the location of the expression for error reporting, e.g. a file name and a position in the file
+                                                    Optional: "true"
+                                                title:
+                                                    Type: TypeString
+                                                    Description: Title for the expression, i.e. a short string describing its purpose.
+                                                    Optional: "true"
+                                        recommendation:
+                                            Type: TypeString
+                                            Description: |-
+                                                An explanation of the recommended steps that security teams can take to
+                                                resolve the detected issue
+                                            Optional: "true"
+                                        resource_selector:
+                                            Type: TypeList
+                                            Description: |-
+                                                The resource types that the custom module operates on. Each custom module
+                                                can specify up to 5 resource types.
+                                            Required: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                resource_types:
+                                                    Type: TypeList
+                                                    Description: The resource types to run the detector on.
+                                                    Required: "true"
+                                        severity:
+                                            Type: TypeString
+                                            Description: 'The severity to assign to findings generated by the module. Possible values: ["SEVERITY_UNSPECIFIED", "CRITICAL", "HIGH", "MEDIUM", "LOW"]'
+                                            Required: "true"
+                                display_name:
+                                    Type: TypeString
+                                    Description: |-
+                                        The display name of the Security Health Analytics custom module. This
+                                        display name becomes the finding category for all findings that are
+                                        returned by this custom module.
+                                    Optional: "true"
+                                id:
+                                    Type: TypeString
+                                    Description: A server generated id of custom module.
+                                    Computed: "true"
+                                module_enablement_state:
+                                    Type: TypeString
+                                    Description: 'The state of enablement for the module at its level of the resource hierarchy. Possible values: ["ENABLEMENT_STATE_UNSPECIFIED", "ENABLED", "DISABLED"]'
+                                    Optional: "true"
+                        security_health_analytics_module:
+                            Type: TypeList
+                            Description: Security Health Analytics built-in detector definition.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                module_enablement_state:
+                                    Type: TypeString
+                                    Description: 'The state of enablement for the module at its level of the resource hierarchy. Possible values: ["ENABLEMENT_STATE_UNSPECIFIED", "ENABLED", "DISABLED"]'
+                                    Optional: "true"
+                                module_name:
+                                    Type: TypeString
+                                    Description: 'The name of the module eg: BIGQUERY_TABLE_CMEK_DISABLED.'
+                                    Required: "true"
+                description:
+                    Type: TypeString
+                    Description: Description of the policy.
+                    Optional: "true"
+                policy_id:
+                    Type: TypeString
+                    Description: ID of the policy.
+                    Required: "true"
+        policy_set_id:
+            Type: TypeString
+            Description: ID of the policy set.
+            Required: "true"
+posture_id:
+    Type: TypeString
+    Description: Id of the posture. It is an immutable field.
+    Required: "true"
+reconciling:
+    Type: TypeBool
+    Description: If set, there are currently changes in flight to the posture.
+    Computed: "true"
+revision_id:
+    Type: TypeString
+    Description: Revision_id of the posture.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: |-
+        State of the posture. Update to state field should not be triggered along with
+        with other field updates. Possible values: ["DEPRECATED", "DRAFT", "ACTIVE"]
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Posture was updated in UTC.
+    Computed: "true"
+

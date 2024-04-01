@@ -1,0 +1,44 @@
+annotations: TypeMap(TypeString)
+authorization:
+    admin_groups: TypeList(TypeString)
+    admin_users: TypeList(TypeString)
+binary_authorization:
+    evaluation_mode: TypeString
+cluster_region: TypeString
+create_time: TypeString
+deletion_policy: TypeString
+description: TypeString
+distribution: TypeString
+effective_annotations: TypeMap(TypeString)
+errors:
+    message: TypeString
+fleet:
+    membership: TypeString
+    project: TypeString
+kubernetes_version: TypeString
+location: TypeString
+logging_config:
+    component_config:
+        enable_components: TypeList(TypeString)
+monitoring_config:
+    managed_prometheus_config:
+        enabled: TypeBool
+name: TypeString
+oidc_config:
+    issuer_url: TypeString
+    jwks: TypeString
+platform_version: TypeString
+project: TypeString
+proxy_config:
+    kubernetes_secret:
+        name: TypeString
+        namespace: TypeString
+reconciling: TypeBool
+state: TypeString
+uid: TypeString
+update_time: TypeString
+workload_identity_config:
+    identity_provider: TypeString
+    issuer_uri: TypeString
+    workload_pool: TypeString
+

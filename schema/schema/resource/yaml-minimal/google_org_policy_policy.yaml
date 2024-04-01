@@ -1,0 +1,38 @@
+dry_run_spec:
+    etag: TypeString
+    inherit_from_parent: TypeBool
+    reset: TypeBool
+    rules:
+        allow_all: TypeString
+        condition:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+        deny_all: TypeString
+        enforce: TypeString
+        values:
+            allowed_values: TypeList(TypeString)
+            denied_values: TypeList(TypeString)
+    update_time: TypeString
+etag: TypeString
+name: TypeString
+parent: TypeString
+spec:
+    etag: TypeString
+    inherit_from_parent: TypeBool
+    reset: TypeBool
+    rules:
+        allow_all: TypeString
+        condition:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+        deny_all: TypeString
+        enforce: TypeString
+        values:
+            allowed_values: TypeList(TypeString)
+            denied_values: TypeList(TypeString)
+    update_time: TypeString
+

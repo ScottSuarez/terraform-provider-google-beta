@@ -1,0 +1,58 @@
+annotations: TypeMap(TypeString)
+authorization:
+    admin_groups:
+        group: TypeString
+    admin_users:
+        username: TypeString
+azure_region: TypeString
+azure_services_authentication:
+    application_id: TypeString
+    tenant_id: TypeString
+client: TypeString
+control_plane:
+    database_encryption:
+        key_id: TypeString
+    main_volume:
+        size_gib: TypeInt
+    proxy_config:
+        resource_group_id: TypeString
+        secret_id: TypeString
+    replica_placements:
+        azure_availability_zone: TypeString
+        subnet_id: TypeString
+    root_volume:
+        size_gib: TypeInt
+    ssh_config:
+        authorized_key: TypeString
+    subnet_id: TypeString
+    tags: TypeMap(TypeString)
+    version: TypeString
+    vm_size: TypeString
+create_time: TypeString
+description: TypeString
+effective_annotations: unknown
+endpoint: TypeString
+etag: TypeString
+fleet:
+    membership: TypeString
+    project: TypeString
+location: TypeString
+logging_config:
+    component_config:
+        enable_components: TypeList(TypeString)
+name: TypeString
+networking:
+    pod_address_cidr_blocks: TypeList(TypeString)
+    service_address_cidr_blocks: TypeList(TypeString)
+    virtual_network_id: TypeString
+project: TypeString
+reconciling: TypeBool
+resource_group_id: TypeString
+state: TypeString
+uid: TypeString
+update_time: TypeString
+workload_identity_config:
+    identity_provider: TypeString
+    issuer_uri: TypeString
+    workload_pool: TypeString
+

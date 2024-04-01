@@ -1,0 +1,14 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "hl7_v2_store_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

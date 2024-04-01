@@ -1,0 +1,54 @@
+{
+    "description": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "instances": {
+        "Computed": true,
+        "Type": "TypeSet"
+    },
+    "name": {
+        "ConflictsWith": "self_link",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "named_port": {
+        "Computed": true,
+        "Properties": {
+            "name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Computed": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "network": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "ConflictsWith": "name, zone",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "size": {
+        "Computed": true,
+        "Type": "TypeInt"
+    },
+    "zone": {
+        "Computed": true,
+        "ConflictsWith": "self_link",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

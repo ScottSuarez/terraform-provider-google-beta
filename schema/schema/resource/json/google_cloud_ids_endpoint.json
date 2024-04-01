@@ -1,0 +1,57 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC 3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of the endpoint.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "endpoint_forwarding_rule": {
+        "Computed": true,
+        "Description": "URL of the endpoint's network address to which traffic is to be sent by Packet Mirroring.",
+        "Type": "TypeString"
+    },
+    "endpoint_ip": {
+        "Computed": true,
+        "Description": "Internal IP address of the endpoint's network entry point.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the endpoint.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the endpoint in the format projects/{project_id}/locations/{locationId}/endpoints/{endpointId}.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "Name of the VPC network that is connected to the IDS endpoint. This can either contain the VPC network name itself (like \"src-net\") or the full URL to the network (like \"projects/{project_id}/global/networks/src-net\").",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "severity": {
+        "Description": "The minimum alert severity level that is reported by the endpoint. Possible values: [\"INFORMATIONAL\", \"LOW\", \"MEDIUM\", \"HIGH\", \"CRITICAL\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "threat_exceptions": {
+        "Description": "Configuration for threat IDs excluded from generating alerts. Limit: 99 IDs.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last update timestamp in RFC 3339 text format.",
+        "Type": "TypeString"
+    }
+}

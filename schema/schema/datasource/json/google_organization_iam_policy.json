@@ -1,0 +1,15 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The numeric ID of the organization in which you want to manage the audit logging config.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,1 @@
+["description","env_id","host","is_enabled","name","port","protocol","s_sl_info","s_sl_info.ciphers","s_sl_info.client_auth_enabled","s_sl_info.common_name","s_sl_info.common_name.value","s_sl_info.common_name.wildcard_match","s_sl_info.enabled","s_sl_info.ignore_validation_errors","s_sl_info.key_alias","s_sl_info.key_store","s_sl_info.protocols","s_sl_info.trust_store"]

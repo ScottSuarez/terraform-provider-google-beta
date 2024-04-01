@@ -1,0 +1,12 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+entitytype: TypeString
+etag: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+value_type: TypeString
+

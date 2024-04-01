@@ -1,0 +1,9 @@
+bucket: TypeString
+create_time: TypeString
+description: TypeString
+filter: TypeString
+location: TypeString
+name: TypeString
+parent: TypeString
+update_time: TypeString
+

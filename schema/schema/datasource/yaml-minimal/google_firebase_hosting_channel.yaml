@@ -1,0 +1,10 @@
+channel_id: TypeString
+effective_labels: TypeMap(TypeString)
+expire_time: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+retained_release_count: TypeInt
+site_id: TypeString
+terraform_labels: TypeMap(TypeString)
+ttl: TypeString
+

@@ -1,0 +1,8 @@
+address: TypeString
+endpoint_id: TypeString
+metadata: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+port: TypeInt
+service: TypeString
+

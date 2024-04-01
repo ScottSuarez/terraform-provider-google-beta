@@ -1,0 +1,44 @@
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. Provided by the client when the resource is
+        created. The name must be 1-63 characters long, and comply with
+        RFC1035. Specifically, the name must be 1-63 characters long and match
+        the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+        first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the last
+        character, which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+proxy_id:
+    Type: TypeInt
+    Description: The unique identifier for the resource.
+    Computed: "true"
+region:
+    Type: TypeString
+    Description: |-
+        The Region in which the created target https proxy should reside.
+        If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+url_map:
+    Type: TypeString
+    Description: |-
+        A reference to the RegionUrlMap resource that defines the mapping from URL
+        to the BackendService.
+    Required: "true"
+

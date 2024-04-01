@@ -1,0 +1,15 @@
+location: TypeString
+project: TypeString
+supported_database_flags:
+    accepts_multiple_values: TypeBool
+    flag_name: TypeString
+    integer_restrictions:
+        max_value: TypeString
+        min_value: TypeString
+    name: TypeString
+    requires_db_restart: TypeBool
+    string_restrictions:
+        allowed_values: TypeList(TypeString)
+    supported_db_versions: TypeList(TypeString)
+    value_type: TypeString
+

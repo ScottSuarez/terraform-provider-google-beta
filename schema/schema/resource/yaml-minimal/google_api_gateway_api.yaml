@@ -1,0 +1,10 @@
+api_id: TypeString
+create_time: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+managed_service: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

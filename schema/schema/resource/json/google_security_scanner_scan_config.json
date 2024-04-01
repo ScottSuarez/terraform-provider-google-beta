@@ -1,0 +1,116 @@
+{
+    "authentication": {
+        "Description": "The authentication configuration.\nIf specified, service will use the authentication configuration during scanning.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "custom_account": {
+                "AtLeastOneOf": "authentication.0.google_account, authentication.0.custom_account",
+                "Description": "Describes authentication configuration that uses a custom account.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "login_url": {
+                        "Description": "The login form URL of the website.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "password": {
+                        "Description": "The password of the custom account. The credential is stored encrypted\nin GCP.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Description": "The user name of the custom account.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "google_account": {
+                "AtLeastOneOf": "authentication.0.google_account, authentication.0.custom_account",
+                "Description": "Describes authentication configuration that uses a Google account.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "password": {
+                        "Description": "The password of the Google account. The credential is stored encrypted\nin GCP.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Description": "The user name of the Google account.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "blacklist_patterns": {
+        "Description": "The blacklist URL patterns as described in\nhttps://cloud.google.com/security-scanner/docs/excluded-urls",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "The user provider display name of the ScanConfig.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "export_to_security_command_center": {
+        "Description": "Controls export of scan configurations and results to Cloud Security Command Center. Default value: \"ENABLED\" Possible values: [\"ENABLED\", \"DISABLED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "max_qps": {
+        "Description": "The maximum QPS during scanning. A valid value ranges from 5 to 20 inclusively.\nDefaults to 15.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "A server defined name for this index. Format:\n'projects/{{project}}/scanConfigs/{{server_generated_id}}'",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "schedule": {
+        "Description": "The schedule of the ScanConfig",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "interval_duration_days": {
+                "Description": "The duration of time between executions in days",
+                "Required": true,
+                "Type": "TypeInt"
+            },
+            "schedule_time": {
+                "Description": "A timestamp indicates when the next run will be scheduled. The value is refreshed\nby the server after each run. If unspecified, it will default to current server time,\nwhich means the scan will be scheduled to start immediately.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "starting_urls": {
+        "Description": "The starting URLs from which the scanner finds site pages.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "target_platforms": {
+        "Description": "Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: [\"APP_ENGINE\", \"COMPUTE\"]",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "user_agent": {
+        "Description": "Type of the user agents used for scanning Default value: \"CHROME_LINUX\" Possible values: [\"USER_AGENT_UNSPECIFIED\", \"CHROME_LINUX\", \"CHROME_ANDROID\", \"SAFARI_IPHONE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,6 @@
+cluster: TypeString
+etag: TypeString
+policy_data: TypeString
+project: TypeString
+region: TypeString
+

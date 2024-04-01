@@ -1,0 +1,18 @@
+create_time: TypeString
+delete_time: TypeString
+effective_labels: TypeMap(TypeString)
+group: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+role:
+    predefined_role: TypeString
+scope_id: TypeString
+scope_rbac_role_binding_id: TypeString
+state:
+    code: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+user: TypeString
+

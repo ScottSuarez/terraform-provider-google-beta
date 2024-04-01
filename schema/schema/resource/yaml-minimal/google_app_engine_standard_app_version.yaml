@@ -1,0 +1,63 @@
+app_engine_apis: TypeBool
+automatic_scaling:
+    max_concurrent_requests: TypeInt
+    max_idle_instances: TypeInt
+    max_pending_latency: TypeString
+    min_idle_instances: TypeInt
+    min_pending_latency: TypeString
+    standard_scheduler_settings:
+        max_instances: TypeInt
+        min_instances: TypeInt
+        target_cpu_utilization: TypeFloat
+        target_throughput_utilization: TypeFloat
+basic_scaling:
+    idle_timeout: TypeString
+    max_instances: TypeInt
+delete_service_on_destroy: TypeBool
+deployment:
+    files:
+        name: TypeString
+        sha1_sum: TypeString
+        source_url: TypeString
+    zip:
+        files_count: TypeInt
+        source_url: TypeString
+entrypoint:
+    shell: TypeString
+env_variables: TypeMap(TypeString)
+handlers:
+    auth_fail_action: TypeString
+    login: TypeString
+    redirect_http_response_code: TypeString
+    script:
+        script_path: TypeString
+    security_level: TypeString
+    static_files:
+        application_readable: TypeBool
+        expiration: TypeString
+        http_headers: TypeMap(TypeString)
+        mime_type: TypeString
+        path: TypeString
+        require_matching_file: TypeBool
+        upload_path_regex: TypeString
+    url_regex: TypeString
+inbound_services: TypeSet(TypeString)
+instance_class: TypeString
+libraries:
+    name: TypeString
+    version: TypeString
+manual_scaling:
+    instances: TypeInt
+name: TypeString
+noop_on_destroy: TypeBool
+project: TypeString
+runtime: TypeString
+runtime_api_version: TypeString
+service: TypeString
+service_account: TypeString
+threadsafe: TypeBool
+version_id: TypeString
+vpc_access_connector:
+    egress_setting: TypeString
+    name: TypeString
+

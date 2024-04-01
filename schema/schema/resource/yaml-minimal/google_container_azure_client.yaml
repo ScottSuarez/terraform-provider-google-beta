@@ -1,0 +1,9 @@
+application_id: TypeString
+certificate: TypeString
+create_time: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+tenant_id: TypeString
+uid: TypeString
+

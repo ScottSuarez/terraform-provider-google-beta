@@ -1,0 +1,26 @@
+android_settings:
+    allow_all_package_names: TypeBool
+    allowed_package_names: TypeList(TypeString)
+create_time: TypeString
+display_name: TypeString
+effective_labels: unknown
+ios_settings:
+    allow_all_bundle_ids: TypeBool
+    allowed_bundle_ids: TypeList(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+terraform_labels: unknown
+testing_options:
+    testing_challenge: TypeString
+    testing_score: TypeFloat
+waf_settings:
+    waf_feature: TypeString
+    waf_service: TypeString
+web_settings:
+    allow_all_domains: TypeBool
+    allow_amp_traffic: TypeBool
+    allowed_domains: TypeList(TypeString)
+    challenge_security_preference: TypeString
+    integration_type: TypeString
+

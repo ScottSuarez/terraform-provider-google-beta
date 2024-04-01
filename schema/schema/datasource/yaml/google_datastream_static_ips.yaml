@@ -1,0 +1,10 @@
+location:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+static_ips:
+    Type: TypeList
+    Computed: "true"
+

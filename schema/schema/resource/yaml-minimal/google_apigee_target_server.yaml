@@ -1,0 +1,20 @@
+description: TypeString
+env_id: TypeString
+host: TypeString
+is_enabled: TypeBool
+name: TypeString
+port: TypeInt
+protocol: TypeString
+s_sl_info:
+    ciphers: TypeList(TypeString)
+    client_auth_enabled: TypeBool
+    common_name:
+        value: TypeString
+        wildcard_match: TypeBool
+    enabled: TypeBool
+    ignore_validation_errors: TypeBool
+    key_alias: TypeString
+    key_store: TypeString
+    protocols: TypeList(TypeString)
+    trust_store: TypeString
+

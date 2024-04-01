@@ -1,0 +1,687 @@
+{
+    "api_config": {
+        "Description": "Serving configuration for Google Cloud Endpoints.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "auth_fail_action": {
+                "Description": "Action to take when users access resources that require authentication. Default value: \"AUTH_FAIL_ACTION_REDIRECT\" Possible values: [\"AUTH_FAIL_ACTION_REDIRECT\", \"AUTH_FAIL_ACTION_UNAUTHORIZED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "login": {
+                "Description": "Level of login required to access this resource. Default value: \"LOGIN_OPTIONAL\" Possible values: [\"LOGIN_OPTIONAL\", \"LOGIN_ADMIN\", \"LOGIN_REQUIRED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "script": {
+                "Description": "Path to the script from the application root directory.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "security_level": {
+                "Description": "Security (HTTPS) enforcement for this URL. Possible values: [\"SECURE_DEFAULT\", \"SECURE_NEVER\", \"SECURE_OPTIONAL\", \"SECURE_ALWAYS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "url": {
+                "Description": "URL to serve the endpoint at.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "automatic_scaling": {
+        "Description": "Automatic scaling is based on request rate, response latencies, and other application metrics.",
+        "ExactlyOneOf": "automatic_scaling, manual_scaling",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cool_down_period": {
+                "Description": "The time period that the Autoscaler should wait before it starts collecting information from a new instance.\nThis prevents the autoscaler from collecting information when the instance is initializing,\nduring which the collected usage would not be reliable. Default: 120s",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "cpu_utilization": {
+                "Description": "Target scaling by CPU usage.",
+                "MaxItems": 1,
+                "Properties": {
+                    "aggregation_window_length": {
+                        "Description": "Period of time over which CPU utilization is calculated.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "target_utilization": {
+                        "Description": "Target CPU utilization ratio to maintain when scaling. Must be between 0 and 1.",
+                        "Required": true,
+                        "Type": "TypeFloat"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "disk_utilization": {
+                "Description": "Target scaling by disk usage.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "target_read_bytes_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.disk_utilization.0.target_write_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_write_ops_per_second, automatic_scaling.0.disk_utilization.0.target_read_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_read_ops_per_second",
+                        "Description": "Target bytes read per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_read_ops_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.disk_utilization.0.target_write_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_write_ops_per_second, automatic_scaling.0.disk_utilization.0.target_read_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_read_ops_per_second",
+                        "Description": "Target ops read per seconds.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_write_bytes_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.disk_utilization.0.target_write_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_write_ops_per_second, automatic_scaling.0.disk_utilization.0.target_read_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_read_ops_per_second",
+                        "Description": "Target bytes written per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_write_ops_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.disk_utilization.0.target_write_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_write_ops_per_second, automatic_scaling.0.disk_utilization.0.target_read_bytes_per_second, automatic_scaling.0.disk_utilization.0.target_read_ops_per_second",
+                        "Description": "Target ops written per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "max_concurrent_requests": {
+                "Computed": true,
+                "Description": "Number of concurrent requests an automatic scaling instance can accept before the scheduler spawns a new instance.\n\nDefaults to a runtime-specific value.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_idle_instances": {
+                "Description": "Maximum number of idle instances that should be maintained for this version.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_pending_latency": {
+                "Description": "Maximum amount of time that a request should wait in the pending queue before starting a new instance to handle it.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "max_total_instances": {
+                "Description": "Maximum number of instances that should be started to handle requests for this version. Default: 20",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "min_idle_instances": {
+                "Description": "Minimum number of idle instances that should be maintained for this version. Only applicable for the default version of a service.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "min_pending_latency": {
+                "Description": "Minimum amount of time a request should wait in the pending queue before starting a new instance to handle it.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "min_total_instances": {
+                "Description": "Minimum number of running instances that should be maintained for this version. Default: 2",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "network_utilization": {
+                "Description": "Target scaling by network usage.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "target_received_bytes_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.network_utilization.0.target_sent_bytes_per_second, automatic_scaling.0.network_utilization.0.target_sent_packets_per_second, automatic_scaling.0.network_utilization.0.target_received_bytes_per_second, automatic_scaling.0.network_utilization.0.target_received_packets_per_second",
+                        "Description": "Target bytes received per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_received_packets_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.network_utilization.0.target_sent_bytes_per_second, automatic_scaling.0.network_utilization.0.target_sent_packets_per_second, automatic_scaling.0.network_utilization.0.target_received_bytes_per_second, automatic_scaling.0.network_utilization.0.target_received_packets_per_second",
+                        "Description": "Target packets received per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_sent_bytes_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.network_utilization.0.target_sent_bytes_per_second, automatic_scaling.0.network_utilization.0.target_sent_packets_per_second, automatic_scaling.0.network_utilization.0.target_received_bytes_per_second, automatic_scaling.0.network_utilization.0.target_received_packets_per_second",
+                        "Description": "Target bytes sent per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_sent_packets_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.network_utilization.0.target_sent_bytes_per_second, automatic_scaling.0.network_utilization.0.target_sent_packets_per_second, automatic_scaling.0.network_utilization.0.target_received_bytes_per_second, automatic_scaling.0.network_utilization.0.target_received_packets_per_second",
+                        "Description": "Target packets sent per second.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "request_utilization": {
+                "Description": "Target scaling by request utilization.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "target_concurrent_requests": {
+                        "AtLeastOneOf": "automatic_scaling.0.request_utilization.0.target_request_count_per_second, automatic_scaling.0.request_utilization.0.target_concurrent_requests",
+                        "Description": "Target number of concurrent requests.",
+                        "Optional": true,
+                        "Type": "TypeFloat"
+                    },
+                    "target_request_count_per_second": {
+                        "AtLeastOneOf": "automatic_scaling.0.request_utilization.0.target_request_count_per_second, automatic_scaling.0.request_utilization.0.target_concurrent_requests",
+                        "Description": "Target requests per second.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "beta_settings": {
+        "Description": "Metadata settings that are supplied to this version to enable beta runtime features.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "default_expiration": {
+        "Description": "Duration that static files should be cached by web proxies and browsers.\nOnly applicable if the corresponding StaticFilesHandler does not specify its own expiration time.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "delete_service_on_destroy": {
+        "Description": "If set to 'true', the service will be deleted if it is the last version.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "deployment": {
+        "Description": "Code and application artifacts that make up this version.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cloud_build_options": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files, deployment.0.container",
+                "Description": "Options for the build operations performed as a part of the version deployment. Only applicable when creating a version using source code directly.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "app_yaml_path": {
+                        "Description": "Path to the yaml file used in deployment, used to determine runtime configuration details.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "cloud_build_timeout": {
+                        "Description": "The Cloud Build timeout used as part of any dependent builds performed by version creation. Defaults to 10 minutes.\n\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "container": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files, deployment.0.container",
+                "Computed": true,
+                "Description": "The Docker image for the container that runs the version.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "image": {
+                        "Description": "URI to the hosted container image in Google Container Registry. The URI must be fully qualified and include a tag or digest.\nExamples: \"gcr.io/my-project/image:tag\" or \"gcr.io/my-project/image@digest\"",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "files": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files, deployment.0.container",
+                "Description": "Manifest of the files stored in Google Cloud Storage that are included as part of this version.\nAll files must be readable using the credentials supplied with this call.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "sha1_sum": {
+                        "Description": "SHA1 checksum of the file",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "source_url": {
+                        "Description": "Source URL",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "zip": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files, deployment.0.container",
+                "Description": "Zip File",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "files_count": {
+                        "Description": "files count",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "source_url": {
+                        "Description": "Source URL",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "endpoints_api_service": {
+        "Description": "Code and application artifacts that make up this version.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "config_id": {
+                "Description": "Endpoints service configuration ID as specified by the Service Management API. For example \"2016-09-19r1\".\n\nBy default, the rollout strategy for Endpoints is \"FIXED\". This means that Endpoints starts up with a particular configuration ID.\nWhen a new configuration is rolled out, Endpoints must be given the new configuration ID. The configId field is used to give the configuration ID\nand is required in this case.\n\nEndpoints also has a rollout strategy called \"MANAGED\". When using this, Endpoints fetches the latest configuration and does not need\nthe configuration ID. In this case, configId must be omitted.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "disable_trace_sampling": {
+                "Description": "Enable or disable trace sampling. By default, this is set to false for enabled.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "name": {
+                "Description": "Endpoints service name which is the name of the \"service\" resource in the Service Management API.\nFor example \"myapi.endpoints.myproject.cloud.goog\"",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "rollout_strategy": {
+                "Description": "Endpoints rollout strategy. If FIXED, configId must be specified. If MANAGED, configId must be omitted. Default value: \"FIXED\" Possible values: [\"FIXED\", \"MANAGED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "entrypoint": {
+        "Description": "The entrypoint for the application.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "shell": {
+                "Description": "The format should be a shell command that can be fed to bash -c.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "env_variables": {
+        "Description": "Environment variables available to the application.  As these are not returned in the API request, Terraform will not detect any changes made outside of the Terraform config.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "handlers": {
+        "Computed": true,
+        "Description": "An ordered list of URL-matching patterns that should be applied to incoming requests.\nThe first matching URL handles the request and other request handlers are not attempted.",
+        "Optional": true,
+        "Properties": {
+            "auth_fail_action": {
+                "Description": "Actions to take when the user is not logged in. Possible values: [\"AUTH_FAIL_ACTION_REDIRECT\", \"AUTH_FAIL_ACTION_UNAUTHORIZED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "login": {
+                "Description": "Methods to restrict access to a URL based on login status. Possible values: [\"LOGIN_OPTIONAL\", \"LOGIN_ADMIN\", \"LOGIN_REQUIRED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "redirect_http_response_code": {
+                "Description": "30x code to use when performing redirects for the secure field. Possible values: [\"REDIRECT_HTTP_RESPONSE_CODE_301\", \"REDIRECT_HTTP_RESPONSE_CODE_302\", \"REDIRECT_HTTP_RESPONSE_CODE_303\", \"REDIRECT_HTTP_RESPONSE_CODE_307\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "script": {
+                "Description": "Executes a script to handle the requests that match this URL pattern.\nOnly the auto value is supported for Node.js in the App Engine standard environment, for example \"script:\" \"auto\".",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "script_path": {
+                        "Description": "Path to the script from the application root directory.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "security_level": {
+                "Description": "Security (HTTPS) enforcement for this URL. Possible values: [\"SECURE_DEFAULT\", \"SECURE_NEVER\", \"SECURE_OPTIONAL\", \"SECURE_ALWAYS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "static_files": {
+                "Description": "Files served directly to the user for a given URL, such as images, CSS stylesheets, or JavaScript source files.\nStatic file handlers describe which files in the application directory are static files, and which URLs serve them.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "application_readable": {
+                        "Description": "Whether files should also be uploaded as code data. By default, files declared in static file handlers are\nuploaded as static data and are only served to end users; they cannot be read by the application. If enabled,\nuploads are charged against both your code and static data storage resource quotas.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "expiration": {
+                        "Description": "Time a static file served by this handler should be cached by web proxies and browsers.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example \"3.5s\".\nDefault is '0s'",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "http_headers": {
+                        "Description": "HTTP headers to use for all responses from these URLs.\nAn object containing a list of \"key:value\" value pairs.\".",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    },
+                    "mime_type": {
+                        "Description": "MIME type used to serve all files served by this handler.\nDefaults to file-specific MIME types, which are derived from each file's filename extension.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "path": {
+                        "Description": "Path to the static files matched by the URL pattern, from the application root directory.\nThe path can refer to text matched in groupings in the URL pattern.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "require_matching_file": {
+                        "Description": "Whether this handler should match the request if the file referenced by the handler does not exist.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "upload_path_regex": {
+                        "Description": "Regular expression that matches the file paths for all files that should be referenced by this handler.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "url_regex": {
+                "Description": "URL prefix. Uses regular expression syntax, which means regexp special characters must be escaped, but should not contain groupings.\nAll URLs that begin with this prefix are handled by this handler, using the portion of the URL after the prefix as part of the file path.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "inbound_services": {
+        "Description": "A list of the types of messages that this application is able to receive. Possible values: [\"INBOUND_SERVICE_MAIL\", \"INBOUND_SERVICE_MAIL_BOUNCE\", \"INBOUND_SERVICE_XMPP_ERROR\", \"INBOUND_SERVICE_XMPP_MESSAGE\", \"INBOUND_SERVICE_XMPP_SUBSCRIBE\", \"INBOUND_SERVICE_XMPP_PRESENCE\", \"INBOUND_SERVICE_CHANNEL_PRESENCE\", \"INBOUND_SERVICE_WARMUP\"]",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "instance_class": {
+        "Description": "Instance class that is used to run this version. Valid values are\nAutomaticScaling: F1, F2, F4, F4_1G\nManualScaling: B1, B2, B4, B8, B4_1G\nDefaults to F1 for AutomaticScaling and B1 for ManualScaling.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "liveness_check": {
+        "Description": "Health checking configuration for VM instances. Unhealthy instances are killed and replaced with new instances.",
+        "MaxItems": 1,
+        "Properties": {
+            "check_interval": {
+                "Description": "Interval between health checks.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "failure_threshold": {
+                "Description": "Number of consecutive failed checks required before considering the VM unhealthy. Default: 4.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            },
+            "host": {
+                "Description": "Host header to send when performing a HTTP Readiness check. Example: \"myapp.appspot.com\"",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "initial_delay": {
+                "Description": "The initial delay before starting to execute the checks. Default: \"300s\"",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "path": {
+                "Description": "The request path.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "success_threshold": {
+                "Description": "Number of consecutive successful checks required before considering the VM healthy. Default: 2.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            },
+            "timeout": {
+                "Description": "Time before the check is considered failed. Default: \"4s\"",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "manual_scaling": {
+        "Description": "A service with manual scaling runs continuously, allowing you to perform complex initialization and rely on the state of its memory over time.",
+        "ExactlyOneOf": "automatic_scaling, manual_scaling",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "instances": {
+                "Description": "Number of instances to assign to the service at the start.\n\n**Note:** When managing the number of instances at runtime through the App Engine Admin API or the (now deprecated) Python 2\nModules API set_num_instances() you must use 'lifecycle.ignore_changes = [\"manual_scaling\"[0].instances]' to prevent drift detection.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Full path to the Version resource in the API. Example, \"v1\".",
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "Extra network settings",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "forwarded_ports": {
+                "Description": "List of ports, or port pairs, to forward from the virtual machine to the application container.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "instance_tag": {
+                "Description": "Tag to apply to the instance during creation.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "Google Compute Engine network where the virtual machines are created. Specify the short name, not the resource path.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "session_affinity": {
+                "Description": "Enable session affinity.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "subnetwork": {
+                "Description": "Google Cloud Platform sub-network where the virtual machines are created. Specify the short name, not the resource path.\n\nIf the network that the instance is being created in is a Legacy network, then the IP address is allocated from the IPv4Range.\nIf the network that the instance is being created in is an auto Subnet Mode Network, then only network name should be specified (not the subnetworkName) and the IP address is created from the IPCidrRange of the subnetwork that exists in that zone for that network.\nIf the network that the instance is being created in is a custom Subnet Mode Network, then the subnetworkName must be specified and the IP address is created from the IPCidrRange of the subnetwork.\nIf specified, the subnetwork must exist in the same region as the App Engine flexible environment application.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "nobuild_files_regex": {
+        "Description": "Files that match this pattern will not be built into this version. Only applicable for Go runtimes.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "noop_on_destroy": {
+        "Description": "If set to 'true', the application version will not be deleted.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "readiness_check": {
+        "Description": "Configures readiness health checking for instances. Unhealthy instances are not put into the backend traffic rotation.",
+        "MaxItems": 1,
+        "Properties": {
+            "app_start_timeout": {
+                "Description": "A maximum time limit on application initialization, measured from moment the application successfully\nreplies to a healthcheck until it is ready to serve traffic. Default: \"300s\"",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "check_interval": {
+                "Description": "Interval between health checks.  Default: \"5s\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "failure_threshold": {
+                "Description": "Number of consecutive failed checks required before removing traffic. Default: 2.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            },
+            "host": {
+                "Description": "Host header to send when performing a HTTP Readiness check. Example: \"myapp.appspot.com\"",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "path": {
+                "Description": "The request path.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "success_threshold": {
+                "Description": "Number of consecutive successful checks required before receiving traffic. Default: 2.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            },
+            "timeout": {
+                "Description": "Time before the check is considered failed. Default: \"4s\"",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "resources": {
+        "Description": "Machine resources for a version.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cpu": {
+                "AtLeastOneOf": "resources.0.cpu, resources.0.disk_gb, resources.0.memory_gb, resources.0.volumes",
+                "Description": "Number of CPU cores needed.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "disk_gb": {
+                "AtLeastOneOf": "resources.0.cpu, resources.0.disk_gb, resources.0.memory_gb, resources.0.volumes",
+                "Description": "Disk size (GB) needed.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "memory_gb": {
+                "AtLeastOneOf": "resources.0.cpu, resources.0.disk_gb, resources.0.memory_gb, resources.0.volumes",
+                "Description": "Memory (GB) needed.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            },
+            "volumes": {
+                "AtLeastOneOf": "resources.0.cpu, resources.0.disk_gb, resources.0.memory_gb, resources.0.volumes",
+                "Description": "List of ports, or port pairs, to forward from the virtual machine to the application container.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Description": "Unique name for the volume.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "size_gb": {
+                        "Description": "Volume size in gigabytes.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "volume_type": {
+                        "Description": "Underlying volume type, e.g. 'tmpfs'.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "runtime": {
+        "Description": "Desired runtime. Example python27.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "runtime_api_version": {
+        "Computed": true,
+        "Description": "The version of the API in the given runtime environment.\nPlease see the app.yaml reference for valid values at 'https://cloud.google.com/appengine/docs/standard/\u003clanguage\u003e/config/appref'\\\nSubstitute '\u003clanguage\u003e' with 'python', 'java', 'php', 'ruby', 'go' or 'nodejs'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime_channel": {
+        "Description": "The channel of the runtime to use. Only available for some runtimes.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime_main_executable_path": {
+        "Description": "The path or name of the app's main executable.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Description": "AppEngine service resource. Can contain numbers, letters, and hyphens.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The identity that the deployed version will run as. Admin API will use the App Engine Appspot service account as\ndefault if this field is neither provided in app.yaml file nor through CLI flag.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "serving_status": {
+        "Description": "Current serving status of this version. Only the versions with a SERVING status create instances and can be billed. Default value: \"SERVING\" Possible values: [\"SERVING\", \"STOPPED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "version_id": {
+        "Description": "Relative name of the version within the service. For example, 'v1'. Version names can contain only lowercase letters, numbers, or hyphens.\nReserved names,\"default\", \"latest\", and any name with the prefix \"ah-\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpc_access_connector": {
+        "Description": "Enables VPC connectivity for standard apps.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "name": {
+                "Description": "Full Serverless VPC Access Connector name e.g. /projects/my-project/locations/us-central1/connectors/c1.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

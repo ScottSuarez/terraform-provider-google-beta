@@ -1,0 +1,11 @@
+backend_service: TypeString
+creation_timestamp: TypeString
+description: TypeString
+name: TypeString
+project: TypeString
+proxy_bind: TypeBool
+proxy_header: TypeString
+proxy_id: TypeInt
+region: TypeString
+self_link: TypeString
+

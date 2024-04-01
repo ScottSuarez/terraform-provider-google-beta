@@ -1,0 +1,72 @@
+{
+    "application_matcher": {
+        "Description": "CEL expression for matching on L7/application level criteria.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "basic_profile": {
+        "Description": "Profile which tells what the primitive action should be. Possible values are: * ALLOW * DENY. Possible values: [\"BASIC_PROFILE_UNSPECIFIED\", \"ALLOW\", \"DENY\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Free-text description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enabled": {
+        "Description": "Whether the rule is enforced.",
+        "Required": true,
+        "Type": "TypeBool"
+    },
+    "gateway_security_policy": {
+        "Description": "The name of the gatewat security policy this rule belongs to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the gateway security policy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. ame is the full resource name so projects/{project}/locations/{location}/gatewaySecurityPolicies/{gateway_security_policy}/rules/{rule}\nrule should match the pattern: (^a-z?$).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Description": "Priority of the rule. Lower number corresponds to higher precedence.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "session_matcher": {
+        "Description": "CEL expression for matching on session criteria.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "tls_inspection_enabled": {
+        "Description": "Flag to enable TLS inspection of traffic matching on. Can only be true if the\nparent GatewaySecurityPolicy references a TLSInspectionConfig.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

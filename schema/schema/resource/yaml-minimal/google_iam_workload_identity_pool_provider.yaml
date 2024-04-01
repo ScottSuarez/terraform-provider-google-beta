@@ -1,0 +1,19 @@
+attribute_condition: TypeString
+attribute_mapping: TypeMap(TypeString)
+aws:
+    account_id: TypeString
+description: TypeString
+disabled: TypeBool
+display_name: TypeString
+name: TypeString
+oidc:
+    allowed_audiences: TypeList(TypeString)
+    issuer_uri: TypeString
+    jwks_json: TypeString
+project: TypeString
+saml:
+    idp_metadata_xml: TypeString
+state: TypeString
+workload_identity_pool_id: TypeString
+workload_identity_pool_provider_id: TypeString
+

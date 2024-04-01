@@ -1,0 +1,1 @@
+["attribute_condition","attribute_mapping","aws","aws.account_id","description","disabled","display_name","name","oidc","oidc.allowed_audiences","oidc.issuer_uri","oidc.jwks_json","project","saml","saml.idp_metadata_xml","state","workload_identity_pool_id","workload_identity_pool_provider_id"]

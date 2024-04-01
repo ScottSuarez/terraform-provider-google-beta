@@ -1,0 +1,57 @@
+annotations: TypeMap(TypeString)
+autoscaling:
+    max_node_count: TypeInt
+    min_node_count: TypeInt
+cluster: TypeString
+config:
+    autoscaling_metrics_collection:
+        granularity: TypeString
+        metrics: TypeList(TypeString)
+    config_encryption:
+        kms_key_arn: TypeString
+    iam_instance_profile: TypeString
+    image_type: TypeString
+    instance_placement:
+        tenancy: TypeString
+    instance_type: TypeString
+    labels: TypeMap(TypeString)
+    proxy_config:
+        secret_arn: TypeString
+        secret_version: TypeString
+    root_volume:
+        iops: TypeInt
+        kms_key_arn: TypeString
+        size_gib: TypeInt
+        throughput: TypeInt
+        volume_type: TypeString
+    security_group_ids: TypeList(TypeString)
+    spot_config:
+        instance_types: TypeList(TypeString)
+    ssh_config:
+        ec2_key_pair: TypeString
+    tags: TypeMap(TypeString)
+    taints:
+        effect: TypeString
+        key: TypeString
+        value: TypeString
+create_time: TypeString
+effective_annotations: unknown
+etag: TypeString
+location: TypeString
+management:
+    auto_repair: TypeBool
+max_pods_constraint:
+    max_pods_per_node: TypeInt
+name: TypeString
+project: TypeString
+reconciling: TypeBool
+state: TypeString
+subnet_id: TypeString
+uid: TypeString
+update_settings:
+    surge_settings:
+        max_surge: TypeInt
+        max_unavailable: TypeInt
+update_time: TypeString
+version: TypeString
+

@@ -1,0 +1,50 @@
+accelerator_config:
+    core_count: TypeInt
+    type: TypeString
+boot_disk_size_gb: TypeInt
+boot_disk_type: TypeString
+container_image:
+    repository: TypeString
+    tag: TypeString
+create_time: TypeString
+custom_gpu_driver_path: TypeString
+data_disk_size_gb: TypeInt
+data_disk_type: TypeString
+disk_encryption: TypeString
+effective_labels: TypeMap(TypeString)
+install_gpu_driver: TypeBool
+instance_owners: TypeList(TypeString)
+kms_key: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+machine_type: TypeString
+metadata: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+nic_type: TypeString
+no_proxy_access: TypeBool
+no_public_ip: TypeBool
+no_remove_data_disk: TypeBool
+post_startup_script: TypeString
+project: TypeString
+proxy_uri: TypeString
+reservation_affinity:
+    consume_reservation_type: TypeString
+    key: TypeString
+    values: TypeList(TypeString)
+service_account: TypeString
+service_account_scopes: TypeList(TypeString)
+shielded_instance_config:
+    enable_integrity_monitoring: TypeBool
+    enable_secure_boot: TypeBool
+    enable_vtpm: TypeBool
+state: TypeString
+subnet: TypeString
+tags: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+vm_image:
+    image_family: TypeString
+    image_name: TypeString
+    project: TypeString
+

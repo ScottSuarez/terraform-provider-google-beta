@@ -1,0 +1,4 @@
+etag: TypeString
+identities: TypeList(TypeString)
+name: TypeString
+

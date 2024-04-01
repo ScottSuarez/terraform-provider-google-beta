@@ -1,0 +1,111 @@
+copy:
+    create_disposition: TypeString
+    destination_encryption_configuration:
+        kms_key_name: TypeString
+        kms_key_version: TypeString
+    destination_table:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+    source_tables:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+    write_disposition: TypeString
+effective_labels: TypeMap(TypeString)
+extract:
+    compression: TypeString
+    destination_format: TypeString
+    destination_uris: TypeList(TypeString)
+    field_delimiter: TypeString
+    print_header: TypeBool
+    source_model:
+        dataset_id: TypeString
+        model_id: TypeString
+        project_id: TypeString
+    source_table:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+    use_avro_logical_types: TypeBool
+job_id: TypeString
+job_timeout_ms: TypeString
+job_type: TypeString
+labels: TypeMap(TypeString)
+load:
+    allow_jagged_rows: TypeBool
+    allow_quoted_newlines: TypeBool
+    autodetect: TypeBool
+    create_disposition: TypeString
+    destination_encryption_configuration:
+        kms_key_name: TypeString
+        kms_key_version: TypeString
+    destination_table:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+    encoding: TypeString
+    field_delimiter: TypeString
+    ignore_unknown_values: TypeBool
+    json_extension: TypeString
+    max_bad_records: TypeInt
+    null_marker: TypeString
+    parquet_options:
+        enable_list_inference: TypeBool
+        enum_as_string: TypeBool
+    projection_fields: TypeList(TypeString)
+    quote: TypeString
+    schema_update_options: TypeList(TypeString)
+    skip_leading_rows: TypeInt
+    source_format: TypeString
+    source_uris: TypeList(TypeString)
+    time_partitioning:
+        expiration_ms: TypeString
+        field: TypeString
+        type: TypeString
+    write_disposition: TypeString
+location: TypeString
+project: TypeString
+query:
+    allow_large_results: TypeBool
+    create_disposition: TypeString
+    default_dataset:
+        dataset_id: TypeString
+        project_id: TypeString
+    destination_encryption_configuration:
+        kms_key_name: TypeString
+        kms_key_version: TypeString
+    destination_table:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+    flatten_results: TypeBool
+    maximum_billing_tier: TypeInt
+    maximum_bytes_billed: TypeString
+    parameter_mode: TypeString
+    priority: TypeString
+    query: TypeString
+    schema_update_options: TypeList(TypeString)
+    script_options:
+        key_result_statement: TypeString
+        statement_byte_budget: TypeString
+        statement_timeout_ms: TypeString
+    use_legacy_sql: TypeBool
+    use_query_cache: TypeBool
+    user_defined_function_resources:
+        inline_code: TypeString
+        resource_uri: TypeString
+    write_disposition: TypeString
+status:
+    error_result:
+        location: TypeString
+        message: TypeString
+        reason: TypeString
+    errors:
+        location: TypeString
+        message: TypeString
+        reason: TypeString
+    state: TypeString
+terraform_labels: TypeMap(TypeString)
+user_email: TypeString
+

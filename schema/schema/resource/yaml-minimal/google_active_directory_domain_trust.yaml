@@ -1,0 +1,9 @@
+domain: TypeString
+project: TypeString
+selective_authentication: TypeBool
+target_dns_ip_addresses: TypeSet(TypeString)
+target_domain_name: TypeString
+trust_direction: TypeString
+trust_handshake_secret: TypeString
+trust_type: TypeString
+

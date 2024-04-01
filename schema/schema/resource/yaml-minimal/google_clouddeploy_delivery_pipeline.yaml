@@ -1,0 +1,71 @@
+annotations: TypeMap(TypeString)
+condition:
+    pipeline_ready_condition:
+        status: TypeBool
+        update_time: TypeString
+    targets_present_condition:
+        missing_targets: TypeList(TypeString)
+        status: TypeBool
+        update_time: TypeString
+    targets_type_condition:
+        error_details: TypeString
+        status: TypeBool
+create_time: TypeString
+description: TypeString
+effective_annotations: unknown
+effective_labels: unknown
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+serial_pipeline:
+    stages:
+        deploy_parameters:
+            match_target_labels: TypeMap(TypeString)
+            values: TypeMap(TypeString)
+        profiles: TypeList(TypeString)
+        strategy:
+            canary:
+                canary_deployment:
+                    percentages: TypeList(TypeInt)
+                    postdeploy:
+                        actions: TypeList(TypeString)
+                    predeploy:
+                        actions: TypeList(TypeString)
+                    verify: TypeBool
+                custom_canary_deployment:
+                    phase_configs:
+                        percentage: TypeInt
+                        phase_id: TypeString
+                        postdeploy:
+                            actions: TypeList(TypeString)
+                        predeploy:
+                            actions: TypeList(TypeString)
+                        profiles: TypeList(TypeString)
+                        verify: TypeBool
+                runtime_config:
+                    cloud_run:
+                        automatic_traffic_control: TypeBool
+                    kubernetes:
+                        gateway_service_mesh:
+                            deployment: TypeString
+                            http_route: TypeString
+                            route_update_wait_time: TypeString
+                            service: TypeString
+                        service_networking:
+                            deployment: TypeString
+                            disable_pod_overprovisioning: TypeBool
+                            service: TypeString
+            standard:
+                postdeploy:
+                    actions: TypeList(TypeString)
+                predeploy:
+                    actions: TypeList(TypeString)
+                verify: TypeBool
+        target_id: TypeString
+suspended: TypeBool
+terraform_labels: unknown
+uid: TypeString
+update_time: TypeString
+

@@ -1,0 +1,4 @@
+etag: TypeString
+fhir_store_id: TypeString
+policy_data: TypeString
+

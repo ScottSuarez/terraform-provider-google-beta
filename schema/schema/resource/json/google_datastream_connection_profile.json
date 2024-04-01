@@ -1,0 +1,259 @@
+{
+    "bigquery_profile": {
+        "Description": "BigQuery warehouse profile.",
+        "ExactlyOneOf": "oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {},
+        "Type": "TypeList"
+    },
+    "connection_profile_id": {
+        "Description": "The connection profile identifier.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Display name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "forward_ssh_connectivity": {
+        "ConflictsWith": "private_connectivity",
+        "Description": "Forward SSH tunnel connectivity.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "hostname": {
+                "Description": "Hostname for the SSH tunnel.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "password": {
+                "ConflictsWith": "forward_ssh_connectivity.0.private_key",
+                "Description": "SSH password.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Description": "Port for the SSH tunnel.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "private_key": {
+                "ConflictsWith": "forward_ssh_connectivity.0.password",
+                "Description": "SSH private key.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "username": {
+                "Description": "Username for the SSH tunnel.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "gcs_profile": {
+        "Description": "Cloud Storage bucket profile.",
+        "ExactlyOneOf": "oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "bucket": {
+                "Description": "The Cloud Storage bucket name.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "root_path": {
+                "Description": "The root path inside the Cloud Storage bucket.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Labels.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The name of the location this connection profile is located in.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "mysql_profile": {
+        "Description": "MySQL database profile.",
+        "ExactlyOneOf": "oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "hostname": {
+                "Description": "Hostname for the MySQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "password": {
+                "Description": "Password for the MySQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Description": "Port for the MySQL connection.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "ssl_config": {
+                "Description": "SSL configuration for the MySQL connection.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "ca_certificate": {
+                        "Description": "PEM-encoded certificate of the CA that signed the source database\nserver's certificate.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "ca_certificate_set": {
+                        "Computed": true,
+                        "Description": "Indicates whether the clientKey field is set.",
+                        "Type": "TypeBool"
+                    },
+                    "client_certificate": {
+                        "Description": "PEM-encoded certificate that will be used by the replica to\nauthenticate against the source database server. If this field\nis used then the 'clientKey' and the 'caCertificate' fields are\nmandatory.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "client_certificate_set": {
+                        "Computed": true,
+                        "Description": "Indicates whether the clientCertificate field is set.",
+                        "Type": "TypeBool"
+                    },
+                    "client_key": {
+                        "Description": "PEM-encoded private key associated with the Client Certificate.\nIf this field is used then the 'client_certificate' and the\n'ca_certificate' fields are mandatory.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "client_key_set": {
+                        "Computed": true,
+                        "Description": "Indicates whether the clientKey field is set.",
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "username": {
+                "Description": "Username for the MySQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource's name.",
+        "Type": "TypeString"
+    },
+    "oracle_profile": {
+        "Description": "Oracle database profile.",
+        "ExactlyOneOf": "oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "connection_attributes": {
+                "Description": "Connection string attributes",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "database_service": {
+                "Description": "Database for the Oracle connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "hostname": {
+                "Description": "Hostname for the Oracle connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "password": {
+                "Description": "Password for the Oracle connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Description": "Port for the Oracle connection.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "username": {
+                "Description": "Username for the Oracle connection.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "postgresql_profile": {
+        "Description": "PostgreSQL database profile.",
+        "ExactlyOneOf": "oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "database": {
+                "Description": "Database for the PostgreSQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "hostname": {
+                "Description": "Hostname for the PostgreSQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "password": {
+                "Description": "Password for the PostgreSQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Description": "Port for the PostgreSQL connection.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "username": {
+                "Description": "Username for the PostgreSQL connection.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "private_connectivity": {
+        "ConflictsWith": "forward_ssh_connectivity",
+        "Description": "Private connectivity.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "private_connection": {
+                "Description": "A reference to a private connection resource. Format: 'projects/{project}/locations/{location}/privateConnections/{name}'",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

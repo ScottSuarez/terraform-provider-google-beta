@@ -1,0 +1,106 @@
+{
+    "cluster": {
+        "Description": "The name of the target Distributed Cloud Edge Cluster.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time when the node pool was created.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Labels associated with this resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "local_disk_encryption": {
+        "Description": "Local disk encryption options. This field is only used when enabling CMEK support.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "kms_key": {
+                "Description": "The Cloud KMS CryptoKey e.g. projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{cryptoKey} to use for protecting node local disks.\nIf not specified, a Google-managed key will be used instead.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "kms_key_active_version": {
+                "Computed": true,
+                "Description": "The Cloud KMS CryptoKeyVersion currently in use for protecting node local disks. Only applicable if kmsKey is set.",
+                "Type": "TypeString"
+            },
+            "kms_key_state": {
+                "Computed": true,
+                "Description": "Availability of the Cloud KMS CryptoKey. If not KEY_AVAILABLE, then nodes may go offline as they cannot access their local data.\nThis can be caused by a lack of permissions to use the key, or if the key is disabled or deleted.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "machine_filter": {
+        "Computed": true,
+        "Description": "Only machines matching this filter will be allowed to join the node pool.\nThe filtering language accepts strings like \"name=\u003cname\u003e\", and is\ndocumented in more detail in [AIP-160](https://google.aip.dev/160).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name of the node pool.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_config": {
+        "Computed": true,
+        "Description": "Configuration for each node in the NodePool",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "labels": {
+                "Computed": true,
+                "Description": "\"The Kubernetes node labels\"",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "node_count": {
+        "Description": "The number of nodes in the pool.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "node_location": {
+        "Description": "Name of the Google Distributed Cloud Edge zone where this node pool will be created. For example: 'us-central1-edge-customer-a'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_version": {
+        "Computed": true,
+        "Description": "The lowest release version among all worker nodes.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time when the node pool was last updated.",
+        "Type": "TypeString"
+    }
+}

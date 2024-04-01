@@ -1,0 +1,4 @@
+etag: TypeString
+policy_data: TypeString
+policy_tag: TypeString
+

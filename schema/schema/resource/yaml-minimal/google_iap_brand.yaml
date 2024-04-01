@@ -1,0 +1,6 @@
+application_title: TypeString
+name: TypeString
+org_internal_only: TypeBool
+project: TypeString
+support_email: TypeString
+

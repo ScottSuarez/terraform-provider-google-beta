@@ -1,0 +1,7 @@
+bandwidth_limit:
+    limit_mbps: TypeString
+display_name: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+

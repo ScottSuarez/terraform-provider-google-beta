@@ -1,0 +1,33 @@
+annotations: TypeMap(TypeString)
+bare_metal_cluster: TypeString
+create_time: TypeString
+delete_time: TypeString
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+etag: TypeString
+location: TypeString
+name: TypeString
+node_pool_config:
+    labels: TypeMap(TypeString)
+    node_configs:
+        labels: TypeMap(TypeString)
+        node_ip: TypeString
+    operating_system: TypeString
+    taints:
+        effect: TypeString
+        key: TypeString
+        value: TypeString
+project: TypeString
+reconciling: TypeBool
+state: TypeString
+status:
+    conditions:
+        last_transition_time: TypeString
+        message: TypeString
+        reason: TypeString
+        state: TypeString
+        type: TypeString
+    error_message: TypeString
+uid: TypeString
+update_time: TypeString
+

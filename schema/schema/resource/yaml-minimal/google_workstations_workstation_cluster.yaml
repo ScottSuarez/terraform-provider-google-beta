@@ -1,0 +1,28 @@
+annotations: TypeMap(TypeString)
+conditions:
+    code: TypeInt
+    details: TypeList(TypeMap)
+    message: TypeString
+create_time: TypeString
+degraded: TypeBool
+display_name: TypeString
+domain_config:
+    domain: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+network: TypeString
+private_cluster_config:
+    allowed_projects: TypeList(TypeString)
+    cluster_hostname: TypeString
+    enable_private_endpoint: TypeBool
+    service_attachment_uri: TypeString
+project: TypeString
+subnetwork: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+workstation_cluster_id: TypeString
+

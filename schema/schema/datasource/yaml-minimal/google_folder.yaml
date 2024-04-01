@@ -1,0 +1,10 @@
+create_time: TypeString
+display_name: TypeString
+folder: TypeString
+folder_id: TypeString
+lifecycle_state: TypeString
+lookup_organization: TypeBool
+name: TypeString
+organization: TypeString
+parent: TypeString
+

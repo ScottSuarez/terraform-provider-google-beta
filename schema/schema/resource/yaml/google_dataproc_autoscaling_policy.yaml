@@ -1,0 +1,163 @@
+basic_algorithm:
+    Type: TypeList
+    Description: Basic algorithm for autoscaling.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cooldown_period:
+            Type: TypeString
+            Description: |-
+                Duration between scaling events. A scaling period starts after the
+                update operation from the previous event has completed.
+
+                Bounds: [2m, 1d]. Default: 2m.
+            Optional: "true"
+        yarn_config:
+            Type: TypeList
+            Description: YARN autoscaling configuration.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                graceful_decommission_timeout:
+                    Type: TypeString
+                    Description: |-
+                        Timeout for YARN graceful decommissioning of Node Managers. Specifies the
+                        duration to wait for jobs to complete before forcefully removing workers
+                        (and potentially interrupting jobs). Only applicable to downscaling operations.
+
+                        Bounds: [0s, 1d].
+                    Required: "true"
+                scale_down_factor:
+                    Type: TypeFloat
+                    Description: |-
+                        Fraction of average pending memory in the last cooldown period for which to
+                        remove workers. A scale-down factor of 1 will result in scaling down so that there
+                        is no available memory remaining after the update (more aggressive scaling).
+                        A scale-down factor of 0 disables removing workers, which can be beneficial for
+                        autoscaling a single job.
+
+                        Bounds: [0.0, 1.0].
+                    Required: "true"
+                scale_down_min_worker_fraction:
+                    Type: TypeFloat
+                    Description: |-
+                        Minimum scale-down threshold as a fraction of total cluster size before scaling occurs.
+                        For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must
+                        recommend at least a 2 worker scale-down for the cluster to scale. A threshold of 0
+                        means the autoscaler will scale down on any recommended change.
+
+                        Bounds: [0.0, 1.0]. Default: 0.0.
+                    Optional: "true"
+                scale_up_factor:
+                    Type: TypeFloat
+                    Description: |-
+                        Fraction of average pending memory in the last cooldown period for which to
+                        add workers. A scale-up factor of 1.0 will result in scaling up so that there
+                        is no pending memory remaining after the update (more aggressive scaling).
+                        A scale-up factor closer to 0 will result in a smaller magnitude of scaling up
+                        (less aggressive scaling).
+
+                        Bounds: [0.0, 1.0].
+                    Required: "true"
+                scale_up_min_worker_fraction:
+                    Type: TypeFloat
+                    Description: |-
+                        Minimum scale-up threshold as a fraction of total cluster size before scaling
+                        occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler
+                        must recommend at least a 2-worker scale-up for the cluster to scale. A threshold of
+                        0 means the autoscaler will scale up on any recommended change.
+
+                        Bounds: [0.0, 1.0]. Default: 0.0.
+                    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The  location where the autoscaling policy should reside.
+        The default value is 'global'.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The "resource name" of the autoscaling policy.
+    Computed: "true"
+policy_id:
+    Type: TypeString
+    Description: |-
+        The policy id. The id must contain only letters (a-z, A-Z), numbers (0-9), underscores (_),
+        and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of between
+        3 and 50 characters.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+secondary_worker_config:
+    Type: TypeList
+    Description: Describes how the autoscaler will operate for secondary workers.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        max_instances:
+            Type: TypeInt
+            Description: |-
+                Maximum number of instances for this group. Note that by default, clusters will not use
+                secondary workers. Required for secondary workers if the minimum secondary instances is set.
+                Bounds: [minInstances, ). Defaults to 0.
+            Optional: "true"
+            AtLeastOneOf: secondary_worker_config.0.min_instances, secondary_worker_config.0.max_instances, secondary_worker_config.0.weight
+        min_instances:
+            Type: TypeInt
+            Description: 'Minimum number of instances for this group. Bounds: [0, maxInstances]. Defaults to 0.'
+            Optional: "true"
+            AtLeastOneOf: secondary_worker_config.0.min_instances, secondary_worker_config.0.max_instances, secondary_worker_config.0.weight
+        weight:
+            Type: TypeInt
+            Description: |-
+                Weight for the instance group, which is used to determine the fraction of total workers
+                in the cluster from this instance group. For example, if primary workers have weight 2,
+                and secondary workers have weight 1, the cluster will have approximately 2 primary workers
+                for each secondary worker.
+
+                The cluster may not reach the specified balance if constrained by min/max bounds or other
+                autoscaling settings. For example, if maxInstances for secondary workers is 0, then only
+                primary workers will be added. The cluster can also be out of balance when created.
+
+                If weight is not set on any instance group, the cluster will default to equal weight for
+                all groups: the cluster will attempt to maintain an equal number of workers in each group
+                within the configured size bounds for each group. If weight is set for one group only,
+                the cluster will default to zero weight on the unset group. For example if weight is set
+                only on primary workers, the cluster will use primary workers only and no secondary workers.
+            Optional: "true"
+            AtLeastOneOf: secondary_worker_config.0.min_instances, secondary_worker_config.0.max_instances, secondary_worker_config.0.weight
+worker_config:
+    Type: TypeList
+    Description: Describes how the autoscaler will operate for primary workers.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        max_instances:
+            Type: TypeInt
+            Description: Maximum number of instances for this group.
+            Required: "true"
+        min_instances:
+            Type: TypeInt
+            Description: 'Minimum number of instances for this group. Bounds: [2, maxInstances]. Defaults to 2.'
+            Optional: "true"
+        weight:
+            Type: TypeInt
+            Description: |-
+                Weight for the instance group, which is used to determine the fraction of total workers
+                in the cluster from this instance group. For example, if primary workers have weight 2,
+                and secondary workers have weight 1, the cluster will have approximately 2 primary workers
+                for each secondary worker.
+
+                The cluster may not reach the specified balance if constrained by min/max bounds or other
+                autoscaling settings. For example, if maxInstances for secondary workers is 0, then only
+                primary workers will be added. The cluster can also be out of balance when created.
+
+                If weight is not set on any instance group, the cluster will default to equal weight for
+                all groups: the cluster will attempt to maintain an equal number of workers in each group
+                within the configured size bounds for each group. If weight is set for one group only,
+                the cluster will default to zero weight on the unset group. For example if weight is set
+                only on primary workers, the cluster will use primary workers only and no secondary workers.
+            Optional: "true"
+

@@ -1,0 +1,5 @@
+consent_store_id: TypeString
+dataset: TypeString
+etag: TypeString
+policy_data: TypeString
+

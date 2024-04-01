@@ -1,0 +1,62 @@
+all_instances_config:
+    labels: TypeMap(TypeString)
+    metadata: TypeMap(TypeString)
+auto_healing_policies:
+    health_check: TypeString
+    initial_delay_sec: TypeInt
+base_instance_name: TypeString
+creation_timestamp: TypeString
+description: TypeString
+fingerprint: TypeString
+instance_group: TypeString
+instance_lifecycle_policy:
+    force_update_on_repair: TypeString
+list_managed_instances_results: TypeString
+name: TypeString
+named_port:
+    name: TypeString
+    port: TypeInt
+operation: TypeString
+project: TypeString
+self_link: TypeString
+stateful_disk:
+    delete_rule: TypeString
+    device_name: TypeString
+stateful_external_ip:
+    delete_rule: TypeString
+    interface_name: TypeString
+stateful_internal_ip:
+    delete_rule: TypeString
+    interface_name: TypeString
+status:
+    all_instances_config:
+        effective: TypeBool
+    is_stable: TypeBool
+    stateful:
+        has_stateful_config: TypeBool
+        per_instance_configs:
+            all_effective: TypeBool
+    version_target:
+        is_reached: TypeBool
+target_pools: TypeSet(TypeString)
+target_size: TypeInt
+update_policy:
+    max_surge_fixed: TypeInt
+    max_surge_percent: TypeInt
+    max_unavailable_fixed: TypeInt
+    max_unavailable_percent: TypeInt
+    min_ready_sec: TypeInt
+    minimal_action: TypeString
+    most_disruptive_allowed_action: TypeString
+    replacement_method: TypeString
+    type: TypeString
+version:
+    instance_template: TypeString
+    name: TypeString
+    target_size:
+        fixed: TypeInt
+        percent: TypeInt
+wait_for_instances: TypeBool
+wait_for_instances_status: TypeString
+zone: TypeString
+

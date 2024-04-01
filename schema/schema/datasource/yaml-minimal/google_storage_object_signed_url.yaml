@@ -1,0 +1,10 @@
+bucket: TypeString
+content_md5: TypeString
+content_type: TypeString
+credentials: TypeString
+duration: TypeString
+extension_headers: TypeMap(TypeString)
+http_method: TypeString
+path: TypeString
+signed_url: TypeString
+

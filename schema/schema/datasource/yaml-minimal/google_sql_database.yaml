@@ -1,0 +1,8 @@
+charset: TypeString
+collation: TypeString
+deletion_policy: TypeString
+instance: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+

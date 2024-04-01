@@ -1,0 +1,13 @@
+disable_dependent_services:
+    Type: TypeBool
+    Computed: "true"
+disable_on_destroy:
+    Type: TypeBool
+    Computed: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+service:
+    Type: TypeString
+    Required: "true"
+

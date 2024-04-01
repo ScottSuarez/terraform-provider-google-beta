@@ -1,0 +1,18 @@
+description: TypeString
+display_name: TypeString
+labels:
+    description: TypeString
+    key: TypeString
+    value_type: TypeString
+launch_stage: TypeString
+metadata:
+    ingest_delay: TypeString
+    sample_period: TypeString
+metric_kind: TypeString
+monitored_resource_types: TypeSet(TypeString)
+name: TypeString
+project: TypeString
+type: TypeString
+unit: TypeString
+value_type: TypeString
+

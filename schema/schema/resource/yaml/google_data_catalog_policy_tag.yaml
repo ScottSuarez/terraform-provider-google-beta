@@ -1,0 +1,37 @@
+child_policy_tags:
+    Type: TypeList
+    Description: Resource names of child policy tags of this policy tag.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: |-
+        Description of this policy tag. It must: contain only unicode characters, tabs,
+        newlines, carriage returns and page breaks; and be at most 2000 bytes long when
+        encoded in UTF-8. If not set, defaults to an empty description.
+        If not set, defaults to an empty description.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: |-
+        User defined name of this policy tag. It must: be unique within the parent
+        taxonomy; contain only unicode letters, numbers, underscores, dashes and spaces;
+        not start or end with spaces; and be at most 200 bytes long when encoded in UTF-8.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Resource name of this policy tag, whose format is:
+        "projects/{project}/locations/{region}/taxonomies/{taxonomy}/policyTags/{policytag}"
+    Computed: "true"
+parent_policy_tag:
+    Type: TypeString
+    Description: |-
+        Resource name of this policy tag's parent policy tag.
+        If empty, it means this policy tag is a top level policy tag.
+        If not set, defaults to an empty string.
+    Optional: "true"
+taxonomy:
+    Type: TypeString
+    Description: Taxonomy the policy tag is associated with
+    Required: "true"
+

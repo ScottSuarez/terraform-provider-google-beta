@@ -1,0 +1,27 @@
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+managed:
+    authorization_attempt_info:
+        details: TypeString
+        domain: TypeString
+        failure_reason: TypeString
+        state: TypeString
+    dns_authorizations: TypeList(TypeString)
+    domains: TypeList(TypeString)
+    issuance_config: TypeString
+    provisioning_issue:
+        details: TypeString
+        reason: TypeString
+    state: TypeString
+name: TypeString
+project: TypeString
+scope: TypeString
+self_managed:
+    certificate_pem: TypeString
+    pem_certificate: TypeString
+    pem_private_key: TypeString
+    private_key_pem: TypeString
+terraform_labels: TypeMap(TypeString)
+

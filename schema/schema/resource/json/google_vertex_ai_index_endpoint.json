@@ -1,0 +1,93 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the Index was created in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "The description of the Index.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The display name of the Index. The name can be up to 128 characters long and can consist of any UTF-8 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "Used to perform consistent read-modify-write updates.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "The labels with user-defined metadata to organize your Indexes.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the Index.",
+        "Type": "TypeString"
+    },
+    "network": {
+        "ConflictsWith": "private_service_connect_config",
+        "Description": "The full name of the Google Compute Engine [network](https://cloud.google.com//compute/docs/networks-and-firewalls#networks) to which the index endpoint should be peered.\nPrivate services access must already be configured for the network. If left unspecified, the index endpoint is not peered with any network.\n[Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): 'projects/{project}/global/networks/{network}'.\nWhere '{project}' is a project number, as in '12345', and '{network}' is network name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "private_service_connect_config": {
+        "Computed": true,
+        "ConflictsWith": "network",
+        "Description": "Optional. Configuration for private service connect. 'network' and 'privateServiceConnectConfig' are mutually exclusive.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enable_private_service_connect": {
+                "Description": "If set to true, the IndexEndpoint is created without private service access.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "project_allowlist": {
+                "Description": "A list of Projects from which the forwarding rule will target the service attachment.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "public_endpoint_domain_name": {
+        "Computed": true,
+        "Description": "If publicEndpointEnabled is true, this field will be populated with the domain name to use for this index endpoint.",
+        "Type": "TypeString"
+    },
+    "public_endpoint_enabled": {
+        "Description": "If true, the deployed index will be accessible through public endpoint.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "region": {
+        "Description": "The region of the index endpoint. eg us-central1",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the Index was last updated in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    }
+}

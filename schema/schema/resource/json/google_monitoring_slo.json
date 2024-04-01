@@ -1,0 +1,396 @@
+{
+    "basic_sli": {
+        "Description": "Basic Service-Level Indicator (SLI) on a well-known service type.\nPerformance will be computed on the basis of pre-defined metrics.\n\nSLIs are used to measure and calculate the quality of the Service's\nperformance with respect to a single aspect of service quality.\n\nExactly one of the following must be set:\n'basic_sli', 'request_based_sli', 'windows_based_sli'",
+        "ExactlyOneOf": "basic_sli, request_based_sli, windows_based_sli",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "availability": {
+                "Description": "Availability based SLI, dervied from count of requests made to this service that return successfully.",
+                "ExactlyOneOf": "basic_sli.0.latency, basic_sli.0.availability",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Whether an availability SLI is enabled or not. Must be set to true. Defaults to 'true'.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "latency": {
+                "Description": "Parameters for a latency threshold SLI.",
+                "ExactlyOneOf": "basic_sli.0.latency, basic_sli.0.availability",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "threshold": {
+                        "Description": "A duration string, e.g. 10s.\nGood service is defined to be the count of requests made to\nthis service that return in no more than threshold.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "location": {
+                "Description": "An optional set of locations to which this SLI is relevant.\nTelemetry from other locations will not be used to calculate\nperformance for this SLI. If omitted, this SLI applies to all\nlocations in which the Service has activity. For service types\nthat don't support breaking down by location, setting this\nfield will result in an error.",
+                "Optional": true,
+                "Type": "TypeSet"
+            },
+            "method": {
+                "Description": "An optional set of RPCs to which this SLI is relevant.\nTelemetry from other methods will not be used to calculate\nperformance for this SLI. If omitted, this SLI applies to all\nthe Service's methods. For service types that don't support\nbreaking down by method, setting this field will result in an\nerror.",
+                "Optional": true,
+                "Type": "TypeSet"
+            },
+            "version": {
+                "Description": "The set of API versions to which this SLI is relevant.\nTelemetry from other API versions will not be used to\ncalculate performance for this SLI. If omitted,\nthis SLI applies to all API versions. For service types\nthat don't support breaking down by version, setting this\nfield will result in an error.",
+                "Optional": true,
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "calendar_period": {
+        "Description": "A calendar period, semantically \"since the start of the current\n\u003ccalendarPeriod\u003e\". Possible values: [\"DAY\", \"WEEK\", \"FORTNIGHT\", \"MONTH\"]",
+        "ExactlyOneOf": "rolling_period_days, calendar_period",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Name used for UI elements listing this SLO.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "goal": {
+        "Description": "The fraction of service that must be good in order for this objective\nto be met. 0 \u003c goal \u003c= 0.999",
+        "Required": true,
+        "Type": "TypeFloat"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The full resource name for this service. The syntax is:\nprojects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]/serviceLevelObjectives/[SLO_NAME]",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "request_based_sli": {
+        "Description": "A request-based SLI defines a SLI for which atomic units of\nservice are counted directly.\n\nA SLI describes a good service.\nIt is used to measure and calculate the quality of the Service's\nperformance with respect to a single aspect of service quality.\nExactly one of the following must be set:\n'basic_sli', 'request_based_sli', 'windows_based_sli'",
+        "ExactlyOneOf": "basic_sli, request_based_sli, windows_based_sli",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "distribution_cut": {
+                "Description": "Used when good_service is defined by a count of values aggregated in a\nDistribution that fall into a good range. The total_service is the\ntotal count of all values aggregated in the Distribution.\nDefines a distribution TimeSeries filter and thresholds used for\nmeasuring good service and total service.\n\nExactly one of 'distribution_cut' or 'good_total_ratio' can be set.",
+                "ExactlyOneOf": "request_based_sli.0.good_total_ratio, request_based_sli.0.distribution_cut",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "distribution_filter": {
+                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\naggregating values to quantify the good service provided.\n\nMust have ValueType = DISTRIBUTION and\nMetricKind = DELTA or MetricKind = CUMULATIVE.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "range": {
+                        "Description": "Range of numerical values. The computed good_service\nwill be the count of values x in the Distribution such\nthat range.min \u003c= x \u003c= range.max. inclusive of min and\nmax. Open ranges can be defined by setting\njust one of min or max.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "max": {
+                                "AtLeastOneOf": "request_based_sli.0.distribution_cut.0.range.0.min, request_based_sli.0.distribution_cut.0.range.0.max",
+                                "Description": "max value for the range (inclusive). If not given,\nwill be set to 0",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            },
+                            "min": {
+                                "AtLeastOneOf": "request_based_sli.0.distribution_cut.0.range.0.min, request_based_sli.0.distribution_cut.0.range.0.max",
+                                "Description": "Min value for the range (inclusive). If not given,\nwill be set to 0",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "good_total_ratio": {
+                "Description": "A means to compute a ratio of 'good_service' to 'total_service'.\nDefines computing this ratio with two TimeSeries [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)\nMust specify exactly two of good, bad, and total service filters.\nThe relationship good_service + bad_service = total_service\nwill be assumed.\n\nExactly one of 'distribution_cut' or 'good_total_ratio' can be set.",
+                "ExactlyOneOf": "request_based_sli.0.good_total_ratio, request_based_sli.0.distribution_cut",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "bad_service_filter": {
+                        "AtLeastOneOf": "request_based_sli.0.good_total_ratio.0.good_service_filter, request_based_sli.0.good_total_ratio.0.bad_service_filter, request_based_sli.0.good_total_ratio.0.total_service_filter",
+                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying bad service provided, either demanded service that\nwas not provided or demanded service that was of inadequate\nquality.\n\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.\n\nExactly two of 'good_service_filter','bad_service_filter','total_service_filter'\nmust be set (good + bad = total is assumed).",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "good_service_filter": {
+                        "AtLeastOneOf": "request_based_sli.0.good_total_ratio.0.good_service_filter, request_based_sli.0.good_total_ratio.0.bad_service_filter, request_based_sli.0.good_total_ratio.0.total_service_filter",
+                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying good service provided.\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.\n\nExactly two of 'good_service_filter','bad_service_filter','total_service_filter'\nmust be set (good + bad = total is assumed).",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "total_service_filter": {
+                        "AtLeastOneOf": "request_based_sli.0.good_total_ratio.0.good_service_filter, request_based_sli.0.good_total_ratio.0.bad_service_filter, request_based_sli.0.good_total_ratio.0.total_service_filter",
+                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying total demanded service.\n\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.\n\nExactly two of 'good_service_filter','bad_service_filter','total_service_filter'\nmust be set (good + bad = total is assumed).",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "rolling_period_days": {
+        "Description": "A rolling time period, semantically \"in the past X days\".\nMust be between 1 to 30 days, inclusive.",
+        "ExactlyOneOf": "rolling_period_days, calendar_period",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "service": {
+        "Description": "ID of the service to which this SLO belongs.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "slo_id": {
+        "Computed": true,
+        "Description": "The id to use for this ServiceLevelObjective. If omitted, an id will be generated instead.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "user_labels": {
+        "Description": "This field is intended to be used for organizing and identifying the AlertPolicy\nobjects.The field can contain up to 64 entries. Each key and value is limited\nto 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values\ncan contain only lowercase letters, numerals, underscores, and dashes. Keys\nmust begin with a letter.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "windows_based_sli": {
+        "Description": "A windows-based SLI defines the criteria for time windows.\ngood_service is defined based off the count of these time windows\nfor which the provided service was of good quality.\n\nA SLI describes a good service. It is used to measure and calculate\nthe quality of the Service's performance with respect to a single\naspect of service quality.\n\nExactly one of the following must be set:\n'basic_sli', 'request_based_sli', 'windows_based_sli'",
+        "ExactlyOneOf": "basic_sli, request_based_sli, windows_based_sli",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "good_bad_metric_filter": {
+                "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nwith ValueType = BOOL. The window is good if any true values\nappear in the window. One of 'good_bad_metric_filter',\n'good_total_ratio_threshold', 'metric_mean_in_range',\n'metric_sum_in_range' must be set for 'windows_based_sli'.",
+                "ExactlyOneOf": "windows_based_sli.0.good_bad_metric_filter, windows_based_sli.0.good_total_ratio_threshold, windows_based_sli.0.metric_mean_in_range, windows_based_sli.0.metric_sum_in_range",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "good_total_ratio_threshold": {
+                "Description": "Criterion that describes a window as good if its performance is\nhigh enough. One of 'good_bad_metric_filter',\n'good_total_ratio_threshold', 'metric_mean_in_range',\n'metric_sum_in_range' must be set for 'windows_based_sli'.",
+                "ExactlyOneOf": "windows_based_sli.0.good_bad_metric_filter, windows_based_sli.0.good_total_ratio_threshold, windows_based_sli.0.metric_mean_in_range, windows_based_sli.0.metric_sum_in_range",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "basic_sli_performance": {
+                        "Description": "Basic SLI to evaluate to judge window quality.",
+                        "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance, windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "availability": {
+                                "Description": "Availability based SLI, dervied from count of requests made to this service that return successfully.",
+                                "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance.0.latency, windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance.0.availability",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "enabled": {
+                                        "Description": "Whether an availability SLI is enabled or not. Must be set to 'true. Defaults to 'true'.",
+                                        "Optional": true,
+                                        "Type": "TypeBool"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "latency": {
+                                "Description": "Parameters for a latency threshold SLI.",
+                                "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance.0.latency, windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance.0.availability",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "threshold": {
+                                        "Description": "A duration string, e.g. 10s.\nGood service is defined to be the count of requests made to\nthis service that return in no more than threshold.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "location": {
+                                "Description": "An optional set of locations to which this SLI is relevant.\nTelemetry from other locations will not be used to calculate\nperformance for this SLI. If omitted, this SLI applies to all\nlocations in which the Service has activity. For service types\nthat don't support breaking down by location, setting this\nfield will result in an error.",
+                                "Optional": true,
+                                "Type": "TypeSet"
+                            },
+                            "method": {
+                                "Description": "An optional set of RPCs to which this SLI is relevant.\nTelemetry from other methods will not be used to calculate\nperformance for this SLI. If omitted, this SLI applies to all\nthe Service's methods. For service types that don't support\nbreaking down by method, setting this field will result in an\nerror.",
+                                "Optional": true,
+                                "Type": "TypeSet"
+                            },
+                            "version": {
+                                "Description": "The set of API versions to which this SLI is relevant.\nTelemetry from other API versions will not be used to\ncalculate performance for this SLI. If omitted,\nthis SLI applies to all API versions. For service types\nthat don't support breaking down by version, setting this\nfield will result in an error.",
+                                "Optional": true,
+                                "Type": "TypeSet"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "performance": {
+                        "Description": "Request-based SLI to evaluate to judge window quality.",
+                        "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance, windows_based_sli.0.good_total_ratio_threshold.0.basic_sli_performance",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "distribution_cut": {
+                                "Description": "Used when good_service is defined by a count of values aggregated in a\nDistribution that fall into a good range. The total_service is the\ntotal count of all values aggregated in the Distribution.\nDefines a distribution TimeSeries filter and thresholds used for\nmeasuring good service and total service.",
+                                "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "distribution_filter": {
+                                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\naggregating values to quantify the good service provided.\n\nMust have ValueType = DISTRIBUTION and\nMetricKind = DELTA or MetricKind = CUMULATIVE.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "range": {
+                                        "Description": "Range of numerical values. The computed good_service\nwill be the count of values x in the Distribution such\nthat range.min \u003c= x \u003c= range.max. inclusive of min and\nmax. Open ranges can be defined by setting\njust one of min or max.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "max": {
+                                                "AtLeastOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut.0.range.0.min, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut.0.range.0.max",
+                                                "Description": "max value for the range (inclusive). If not given,\nwill be set to 0",
+                                                "Optional": true,
+                                                "Type": "TypeFloat"
+                                            },
+                                            "min": {
+                                                "AtLeastOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut.0.range.0.min, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut.0.range.0.max",
+                                                "Description": "Min value for the range (inclusive). If not given,\nwill be set to 0",
+                                                "Optional": true,
+                                                "Type": "TypeFloat"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "good_total_ratio": {
+                                "Description": "A means to compute a ratio of 'good_service' to 'total_service'.\nDefines computing this ratio with two TimeSeries [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)\nMust specify exactly two of good, bad, and total service filters.\nThe relationship good_service + bad_service = total_service\nwill be assumed.",
+                                "ExactlyOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.distribution_cut",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "bad_service_filter": {
+                                        "AtLeastOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.good_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.bad_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.total_service_filter",
+                                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying bad service provided, either demanded service that\nwas not provided or demanded service that was of inadequate\nquality. Exactly two of\ngood, bad, or total service filter must be defined (where\ngood + bad = total is assumed)\n\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "good_service_filter": {
+                                        "AtLeastOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.good_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.bad_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.total_service_filter",
+                                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying good service provided. Exactly two of\ngood, bad, or total service filter must be defined (where\ngood + bad = total is assumed)\n\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "total_service_filter": {
+                                        "AtLeastOneOf": "windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.good_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.bad_service_filter, windows_based_sli.0.good_total_ratio_threshold.0.performance.0.good_total_ratio.0.total_service_filter",
+                                        "Description": "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nquantifying total demanded service. Exactly two of\ngood, bad, or total service filter must be defined (where\ngood + bad = total is assumed)\n\nMust have ValueType = DOUBLE or ValueType = INT64 and\nmust have MetricKind = DELTA or MetricKind = CUMULATIVE.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "threshold": {
+                        "Description": "If window performance \u003e= threshold, the window is counted\nas good.",
+                        "Optional": true,
+                        "Type": "TypeFloat"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "metric_mean_in_range": {
+                "Description": "Criterion that describes a window as good if the metric's value\nis in a good range, *averaged* across returned streams.\nOne of 'good_bad_metric_filter',\n\n'good_total_ratio_threshold', 'metric_mean_in_range',\n'metric_sum_in_range' must be set for 'windows_based_sli'.\nAverage value X of 'time_series' should satisfy\n'range.min \u003c= X \u003c= range.max' for a good window.",
+                "ExactlyOneOf": "windows_based_sli.0.good_bad_metric_filter, windows_based_sli.0.good_total_ratio_threshold, windows_based_sli.0.metric_mean_in_range, windows_based_sli.0.metric_sum_in_range",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "range": {
+                        "Description": "Range of numerical values. The computed good_service\nwill be the count of values x in the Distribution such\nthat range.min \u003c= x \u003c= range.max. inclusive of min and\nmax. Open ranges can be defined by setting\njust one of min or max. Mean value 'X' of 'time_series'\nvalues should satisfy 'range.min \u003c= X \u003c= range.max' for a\ngood service.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "max": {
+                                "AtLeastOneOf": "windows_based_sli.0.metric_mean_in_range.0.range.0.min, windows_based_sli.0.metric_mean_in_range.0.range.0.max",
+                                "Description": "max value for the range (inclusive). If not given,\nwill be set to \"infinity\", defining an open range\n\"\u003e= range.min\"",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            },
+                            "min": {
+                                "AtLeastOneOf": "windows_based_sli.0.metric_mean_in_range.0.range.0.min, windows_based_sli.0.metric_mean_in_range.0.range.0.max",
+                                "Description": "Min value for the range (inclusive). If not given,\nwill be set to \"-infinity\", defining an open range\n\"\u003c range.max\"",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "time_series": {
+                        "Description": "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nspecifying the TimeSeries to use for evaluating window\nThe provided TimeSeries must have ValueType = INT64 or\nValueType = DOUBLE and MetricKind = GAUGE. Mean value 'X'\nshould satisfy 'range.min \u003c= X \u003c= range.max'\nunder good service.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "metric_sum_in_range": {
+                "Description": "Criterion that describes a window as good if the metric's value\nis in a good range, *summed* across returned streams.\nSummed value 'X' of 'time_series' should satisfy\n'range.min \u003c= X \u003c= range.max' for a good window.\n\nOne of 'good_bad_metric_filter',\n'good_total_ratio_threshold', 'metric_mean_in_range',\n'metric_sum_in_range' must be set for 'windows_based_sli'.",
+                "ExactlyOneOf": "windows_based_sli.0.good_bad_metric_filter, windows_based_sli.0.good_total_ratio_threshold, windows_based_sli.0.metric_mean_in_range, windows_based_sli.0.metric_sum_in_range",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "range": {
+                        "Description": "Range of numerical values. The computed good_service\nwill be the count of values x in the Distribution such\nthat range.min \u003c= x \u003c= range.max. inclusive of min and\nmax. Open ranges can be defined by setting\njust one of min or max. Summed value 'X' should satisfy\n'range.min \u003c= X \u003c= range.max' for a good window.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "max": {
+                                "AtLeastOneOf": "windows_based_sli.0.metric_sum_in_range.0.range.0.min, windows_based_sli.0.metric_sum_in_range.0.range.0.max",
+                                "Description": "max value for the range (inclusive). If not given,\nwill be set to \"infinity\", defining an open range\n\"\u003e= range.min\"",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            },
+                            "min": {
+                                "AtLeastOneOf": "windows_based_sli.0.metric_sum_in_range.0.range.0.min, windows_based_sli.0.metric_sum_in_range.0.range.0.max",
+                                "Description": "Min value for the range (inclusive). If not given,\nwill be set to \"-infinity\", defining an open range\n\"\u003c range.max\"",
+                                "Optional": true,
+                                "Type": "TypeFloat"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "time_series": {
+                        "Description": "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)\nspecifying the TimeSeries to use for evaluating window\nquality. The provided TimeSeries must have\nValueType = INT64 or ValueType = DOUBLE and\nMetricKind = GAUGE.\n\nSummed value 'X' should satisfy\n'range.min \u003c= X \u003c= range.max' for a good window.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "window_period": {
+                "Description": "Duration over which window quality is evaluated, given as a\nduration string \"{X}s\" representing X seconds. Must be an\ninteger fraction of a day and at least 60s.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

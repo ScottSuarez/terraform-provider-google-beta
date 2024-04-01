@@ -1,0 +1,148 @@
+{
+    "bigquery_date_sharded_spec": {
+        "Computed": true,
+        "Description": "Specification for a group of BigQuery tables with name pattern [prefix]YYYYMMDD.\nContext: https://cloud.google.com/bigquery/docs/partitioned-tables#partitioning_versus_sharding.",
+        "Properties": {
+            "dataset": {
+                "Computed": true,
+                "Description": "The Data Catalog resource name of the dataset entry the current table belongs to, for example,\nprojects/{project_id}/locations/{location}/entrygroups/{entryGroupId}/entries/{entryId}",
+                "Type": "TypeString"
+            },
+            "shard_count": {
+                "Computed": true,
+                "Description": "Total number of shards.",
+                "Type": "TypeInt"
+            },
+            "table_prefix": {
+                "Computed": true,
+                "Description": "The table name prefix of the shards. The name of any given shard is [tablePrefix]YYYYMMDD,\nfor example, for shard MyTable20180101, the tablePrefix is MyTable.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "bigquery_table_spec": {
+        "Computed": true,
+        "Description": "Specification that applies to a BigQuery table. This is only valid on entries of type TABLE.",
+        "Properties": {
+            "table_source_type": {
+                "Computed": true,
+                "Description": "The table source type.",
+                "Type": "TypeString"
+            },
+            "table_spec": {
+                "Computed": true,
+                "Description": "Spec of a BigQuery table. This field should only be populated if tableSourceType is BIGQUERY_TABLE.",
+                "Properties": {
+                    "grouped_entry": {
+                        "Computed": true,
+                        "Description": "If the table is a dated shard, i.e., with name pattern [prefix]YYYYMMDD, groupedEntry is the\nData Catalog resource name of the date sharded grouped entry, for example,\nprojects/{project_id}/locations/{location}/entrygroups/{entryGroupId}/entries/{entryId}.\nOtherwise, groupedEntry is empty.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "view_spec": {
+                "Computed": true,
+                "Description": "Table view specification. This field should only be populated if tableSourceType is BIGQUERY_VIEW.",
+                "Properties": {
+                    "view_query": {
+                        "Computed": true,
+                        "Description": "The query that defines the table view.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "Entry description, which can consist of several sentences or paragraphs that describe entry contents.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Display information such as title and description. A short name to identify the entry,\nfor example, \"Analytics Data - Jan 2011\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "entry_group": {
+        "Description": "The name of the entry group this entry is in.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "entry_id": {
+        "Description": "The id of the entry to create.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "gcs_fileset_spec": {
+        "Description": "Specification that applies to a Cloud Storage fileset. This is only valid on entries of type FILESET.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "file_patterns": {
+                "Description": "Patterns to identify a set of files in Google Cloud Storage.\nSee [Cloud Storage documentation](https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames)\nfor more information. Note that bucket wildcards are currently not supported. Examples of valid filePatterns:\n\n* gs://bucket_name/dir/*: matches all files within bucket_name/dir directory.\n* gs://bucket_name/dir/**: matches all files in bucket_name/dir spanning all subdirectories.\n* gs://bucket_name/file*: matches files prefixed by file in bucket_name\n* gs://bucket_name/??.txt: matches files with two characters followed by .txt in bucket_name\n* gs://bucket_name/[aeiou].txt: matches files that contain a single vowel character followed by .txt in bucket_name\n* gs://bucket_name/[a-m].txt: matches files that contain a, b, ... or m followed by .txt in bucket_name\n* gs://bucket_name/a/*/b: matches all files in bucket_name that match a/*/b pattern, such as a/c/b, a/d/b\n* gs://another_bucket/a.txt: matches gs://another_bucket/a.txt",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "sample_gcs_file_specs": {
+                "Computed": true,
+                "Description": "Sample files contained in this fileset, not all files contained in this fileset are represented here.",
+                "Properties": {
+                    "file_path": {
+                        "Computed": true,
+                        "Description": "The full file path",
+                        "Type": "TypeString"
+                    },
+                    "size_bytes": {
+                        "Computed": true,
+                        "Description": "The size of the file, in bytes.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "integrated_system": {
+        "Computed": true,
+        "Description": "This field indicates the entry's source system that Data Catalog integrates with, such as BigQuery or Pub/Sub.",
+        "Type": "TypeString"
+    },
+    "linked_resource": {
+        "Computed": true,
+        "Description": "The resource this metadata entry refers to.\nFor Google Cloud Platform resources, linkedResource is the full name of the resource.\nFor example, the linkedResource for a table resource from BigQuery is:\n//bigquery.googleapis.com/projects/projectId/datasets/datasetId/tables/tableId\nOutput only when Entry is of type in the EntryType enum. For entries with userSpecifiedType,\nthis field is optional and defaults to an empty string.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The Data Catalog resource name of the entry in URL format.\nExample: projects/{project_id}/locations/{location}/entryGroups/{entryGroupId}/entries/{entryId}.\nNote that this Entry and its child resources may not actually be stored in the location in this name.",
+        "Type": "TypeString"
+    },
+    "schema": {
+        "Description": "Schema of the entry (e.g. BigQuery, GoogleSQL, Avro schema), as a json string. An entry might not have any schema\nattached to it. See\nhttps://cloud.google.com/data-catalog/docs/reference/rest/v1/projects.locations.entryGroups.entries#schema\nfor what fields this schema can contain.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type of the entry. Only used for Entries with types in the EntryType enum.\nCurrently, only FILESET enum value is allowed. All other entries created through Data Catalog must use userSpecifiedType. Possible values: [\"FILESET\"]",
+        "ExactlyOneOf": "type, user_specified_type",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "user_specified_system": {
+        "Description": "This field indicates the entry's source system that Data Catalog does not integrate with.\nuserSpecifiedSystem strings must begin with a letter or underscore and can only contain letters, numbers,\nand underscores; are case insensitive; must be at least 1 character and at most 64 characters long.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "user_specified_type": {
+        "Description": "Entry type if it does not fit any of the input-allowed values listed in EntryType enum above.\nWhen creating an entry, users should check the enum values first, if nothing matches the entry\nto be created, then provide a custom value, for example \"my_special_type\".\nuserSpecifiedType strings must begin with a letter or underscore and can only contain letters,\nnumbers, and underscores; are case insensitive; must be at least 1 character and at most 64 characters long.",
+        "ExactlyOneOf": "type, user_specified_type",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,7 @@
+create_time: TypeString
+display_name: TypeString
+folder_id: TypeString
+lifecycle_state: TypeString
+name: TypeString
+parent: TypeString
+

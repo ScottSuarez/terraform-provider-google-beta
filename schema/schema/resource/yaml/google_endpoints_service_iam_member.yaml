@@ -1,0 +1,27 @@
+condition:
+    Type: TypeList
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        description:
+            Type: TypeString
+            Optional: "true"
+        expression:
+            Type: TypeString
+            Required: "true"
+        title:
+            Type: TypeString
+            Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+member:
+    Type: TypeString
+    Required: "true"
+role:
+    Type: TypeString
+    Required: "true"
+service_name:
+    Type: TypeString
+    Required: "true"
+

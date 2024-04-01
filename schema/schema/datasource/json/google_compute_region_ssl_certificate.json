@@ -1,0 +1,55 @@
+{
+    "certificate": {
+        "Computed": true,
+        "Description": "The certificate in PEM format.\nThe certificate chain must be no greater than 5 certs long.\nThe chain must include at least one intermediate cert.",
+        "Type": "TypeString"
+    },
+    "certificate_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource.",
+        "Type": "TypeInt"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "An optional description of this resource.",
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Expire time of the certificate in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.\n\n\nThese are in the same namespace as the managed SSL certificates.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name_prefix": {
+        "Computed": true,
+        "Description": "Creates a unique name beginning with the specified prefix. Conflicts with name.",
+        "Type": "TypeString"
+    },
+    "private_key": {
+        "Computed": true,
+        "Description": "The write-only private key in PEM format.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The Region in which the created regional ssl certificate should reside.\nIf it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,296 @@
+cleanup_policies:
+    Type: TypeSet
+    Description: |-
+        Cleanup policies for this repository. Cleanup policies indicate when
+        certain package versions can be automatically deleted.
+        Map keys are policy IDs supplied by users during policy creation. They must
+        unique within a repository and be under 128 characters in length.
+    Computed: "true"
+    Properties:
+        action:
+            Type: TypeString
+            Description: 'Policy action. Possible values: ["DELETE", "KEEP"]'
+            Computed: "true"
+        condition:
+            Type: TypeList
+            Description: Policy condition for matching versions.
+            Computed: "true"
+            Properties:
+                newer_than:
+                    Type: TypeString
+                    Description: Match versions newer than a duration.
+                    Computed: "true"
+                older_than:
+                    Type: TypeString
+                    Description: Match versions older than a duration.
+                    Computed: "true"
+                package_name_prefixes:
+                    Type: TypeList
+                    Description: Match versions by package prefix. Applied on any prefix match.
+                    Computed: "true"
+                tag_prefixes:
+                    Type: TypeList
+                    Description: Match versions by tag prefix. Applied on any prefix match.
+                    Computed: "true"
+                tag_state:
+                    Type: TypeString
+                    Description: 'Match versions by tag status. Default value: "ANY" Possible values: ["TAGGED", "UNTAGGED", "ANY"]'
+                    Computed: "true"
+                version_name_prefixes:
+                    Type: TypeList
+                    Description: Match versions by version name prefix. Applied on any prefix match.
+                    Computed: "true"
+        id:
+            Type: TypeString
+            Computed: "true"
+        most_recent_versions:
+            Type: TypeList
+            Description: |-
+                Policy condition for retaining a minimum number of versions. May only be
+                specified with a Keep action.
+            Computed: "true"
+            Properties:
+                keep_count:
+                    Type: TypeInt
+                    Description: Minimum number of versions to keep.
+                    Computed: "true"
+                package_name_prefixes:
+                    Type: TypeList
+                    Description: Match versions by package prefix. Applied on any prefix match.
+                    Computed: "true"
+cleanup_policy_dry_run:
+    Type: TypeBool
+    Description: |-
+        If true, the cleanup pipeline is prevented from deleting versions in this
+        repository.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: The time when the repository was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: The user-provided description of the repository.
+    Computed: "true"
+docker_config:
+    Type: TypeList
+    Description: Docker repository config contains repository level configuration for the repositories of docker type.
+    Computed: "true"
+    Properties:
+        immutable_tags:
+            Type: TypeBool
+            Description: The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
+            Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+format:
+    Type: TypeString
+    Description: |-
+        The format of packages that are stored in the repository. Supported formats
+        can be found [here](https://cloud.google.com/artifact-registry/docs/supported-formats).
+        You can only create alpha formats if you are a member of the
+        [alpha user group](https://cloud.google.com/artifact-registry/docs/supported-formats#alpha-access).
+    Computed: "true"
+kms_key_name:
+    Type: TypeString
+    Description: |-
+        The Cloud KMS resource name of the customer managed encryption key that’s
+        used to encrypt the contents of the Repository. Has the form:
+        'projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key'.
+        This value may not be changed after the Repository has been created.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels with user-defined metadata.
+        This field may contain up to 64 entries. Label keys and values may be no
+        longer than 63 characters. Label keys must begin with a lowercase letter
+        and may only contain lowercase letters, numeric characters, underscores,
+        and dashes.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The name of the location this repository is located in.
+    Required: "true"
+maven_config:
+    Type: TypeList
+    Description: |-
+        MavenRepositoryConfig is maven related repository details.
+        Provides additional configuration details for repositories of the maven
+        format type.
+    Computed: "true"
+    Properties:
+        allow_snapshot_overwrites:
+            Type: TypeBool
+            Description: |-
+                The repository with this flag will allow publishing the same
+                snapshot versions.
+            Computed: "true"
+        version_policy:
+            Type: TypeString
+            Description: 'Version policy defines the versions that the registry will accept. Default value: "VERSION_POLICY_UNSPECIFIED" Possible values: ["VERSION_POLICY_UNSPECIFIED", "RELEASE", "SNAPSHOT"]'
+            Computed: "true"
+mode:
+    Type: TypeString
+    Description: 'The mode configures the repository to serve artifacts from different sources. Default value: "STANDARD_REPOSITORY" Possible values: ["STANDARD_REPOSITORY", "VIRTUAL_REPOSITORY", "REMOTE_REPOSITORY"]'
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name of the repository, for example:
+        "repo1"
+    Computed: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+remote_repository_config:
+    Type: TypeList
+    Description: Configuration specific for a Remote Repository.
+    Computed: "true"
+    Properties:
+        apt_repository:
+            Type: TypeList
+            Description: Specific settings for an Apt remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeList
+                    Description: One of the publicly available Apt repositories supported by Artifact Registry.
+                    Computed: "true"
+                    Properties:
+                        repository_base:
+                            Type: TypeString
+                            Description: 'A common public repository base for Apt, e.g. ''"debian/dists/buster"'' Possible values: ["DEBIAN", "UBUNTU"]'
+                            Computed: "true"
+                        repository_path:
+                            Type: TypeString
+                            Description: Specific repository from the base.
+                            Computed: "true"
+        description:
+            Type: TypeString
+            Description: The description of the remote source.
+            Computed: "true"
+        docker_repository:
+            Type: TypeList
+            Description: Specific settings for a Docker remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeString
+                    Description: 'Address of the remote repository. Default value: "DOCKER_HUB" Possible values: ["DOCKER_HUB"]'
+                    Computed: "true"
+        maven_repository:
+            Type: TypeList
+            Description: Specific settings for a Maven remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeString
+                    Description: 'Address of the remote repository. Default value: "MAVEN_CENTRAL" Possible values: ["MAVEN_CENTRAL"]'
+                    Computed: "true"
+        npm_repository:
+            Type: TypeList
+            Description: Specific settings for an Npm remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeString
+                    Description: 'Address of the remote repository. Default value: "NPMJS" Possible values: ["NPMJS"]'
+                    Computed: "true"
+        python_repository:
+            Type: TypeList
+            Description: Specific settings for a Python remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeString
+                    Description: 'Address of the remote repository. Default value: "PYPI" Possible values: ["PYPI"]'
+                    Computed: "true"
+        upstream_credentials:
+            Type: TypeList
+            Description: The credentials used to access the remote repository.
+            Computed: "true"
+            Properties:
+                username_password_credentials:
+                    Type: TypeList
+                    Description: Use username and password to access the remote repository.
+                    Computed: "true"
+                    Properties:
+                        password_secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The Secret Manager key version that holds the password to access the
+                                remote repository. Must be in the format of
+                                'projects/{project}/secrets/{secret}/versions/{version}'.
+                            Computed: "true"
+                        username:
+                            Type: TypeString
+                            Description: The username to access the remote repository.
+                            Computed: "true"
+        yum_repository:
+            Type: TypeList
+            Description: Specific settings for an Yum remote repository.
+            Computed: "true"
+            Properties:
+                public_repository:
+                    Type: TypeList
+                    Description: One of the publicly available Yum repositories supported by Artifact Registry.
+                    Computed: "true"
+                    Properties:
+                        repository_base:
+                            Type: TypeString
+                            Description: 'A common public repository base for Yum. Possible values: ["CENTOS", "CENTOS_DEBUG", "CENTOS_VAULT", "CENTOS_STREAM", "ROCKY", "EPEL"]'
+                            Computed: "true"
+                        repository_path:
+                            Type: TypeString
+                            Description: Specific repository from the base, e.g. '"centos/8-stream/BaseOS/x86_64/os"'
+                            Computed: "true"
+repository_id:
+    Type: TypeString
+    Description: |-
+        The last part of the repository name, for example:
+        "repo1"
+    Required: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time when the repository was last updated.
+    Computed: "true"
+virtual_repository_config:
+    Type: TypeList
+    Description: Configuration specific for a Virtual Repository.
+    Computed: "true"
+    Properties:
+        upstream_policies:
+            Type: TypeList
+            Description: |-
+                Policies that configure the upstream artifacts distributed by the Virtual
+                Repository. Upstream policies cannot be set on a standard repository.
+            Computed: "true"
+            Properties:
+                id:
+                    Type: TypeString
+                    Description: The user-provided ID of the upstream policy.
+                    Computed: "true"
+                priority:
+                    Type: TypeInt
+                    Description: Entries with a greater priority value take precedence in the pull order.
+                    Computed: "true"
+                repository:
+                    Type: TypeString
+                    Description: |-
+                        A reference to the repository resource, for example:
+                        "projects/p1/locations/us-central1/repository/repo1".
+                    Computed: "true"
+

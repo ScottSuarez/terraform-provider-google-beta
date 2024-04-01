@@ -1,0 +1,33 @@
+access_levels:
+    basic:
+        combining_function: TypeString
+        conditions:
+            device_policy:
+                allowed_device_management_levels: TypeList(TypeString)
+                allowed_encryption_statuses: TypeList(TypeString)
+                os_constraints:
+                    minimum_version: TypeString
+                    os_type: TypeString
+                require_admin_approval: TypeBool
+                require_corp_owned: TypeBool
+                require_screen_lock: TypeBool
+            ip_subnetworks: TypeList(TypeString)
+            members: TypeList(TypeString)
+            negate: TypeBool
+            regions: TypeList(TypeString)
+            required_access_levels: TypeList(TypeString)
+            vpc_network_sources:
+                vpc_subnetwork:
+                    network: TypeString
+                    vpc_ip_subnetworks: TypeList(TypeString)
+    custom:
+        expr:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+    description: TypeString
+    name: TypeString
+    title: TypeString
+parent: TypeString
+

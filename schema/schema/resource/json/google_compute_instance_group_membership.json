@@ -1,0 +1,22 @@
+{
+    "instance": {
+        "Description": "An instance being added to the InstanceGroup",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "instance_group": {
+        "Description": "Represents an Instance Group resource name that the instance belongs to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Description": "A reference to the zone where the instance group resides.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,36 @@
+async_primary_disk:
+    disk: TypeString
+creation_timestamp: TypeString
+description: TypeString
+disk_encryption_key:
+    kms_key_name: TypeString
+    raw_key: TypeString
+    sha256: TypeString
+effective_labels: TypeMap(TypeString)
+guest_os_features:
+    type: TypeString
+interface: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+last_attach_timestamp: TypeString
+last_detach_timestamp: TypeString
+licenses: TypeList(TypeString)
+name: TypeString
+physical_block_size_bytes: TypeInt
+project: TypeString
+region: TypeString
+replica_zones: TypeList(TypeString)
+self_link: TypeString
+size: TypeInt
+snapshot: TypeString
+source_disk: TypeString
+source_disk_id: TypeString
+source_snapshot_encryption_key:
+    kms_key_name: TypeString
+    raw_key: TypeString
+    sha256: TypeString
+source_snapshot_id: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+users: TypeList(TypeString)
+

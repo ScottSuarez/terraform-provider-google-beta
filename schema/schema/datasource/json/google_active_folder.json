@@ -1,0 +1,14 @@
+{
+    "display_name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

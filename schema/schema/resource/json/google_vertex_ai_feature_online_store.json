@@ -1,0 +1,151 @@
+{
+    "bigtable": {
+        "Description": "Settings for Cloud Bigtable instance that will be created to serve featureValues for all FeatureViews under this FeatureOnlineStore.",
+        "ExactlyOneOf": "bigtable, optimized",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "auto_scaling": {
+                "Description": "Autoscaling config applied to Bigtable Instance.",
+                "MaxItems": 1,
+                "Properties": {
+                    "cpu_utilization_target": {
+                        "Computed": true,
+                        "Description": "A percentage of the cluster's CPU capacity. Can be from 10% to 80%. When a cluster's CPU utilization exceeds the target that you have set, Bigtable immediately adds nodes to the cluster. When CPU utilization is substantially lower than the target, Bigtable removes nodes. If not set will default to 50%.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "max_node_count": {
+                        "Description": "The maximum number of nodes to scale up to. Must be greater than or equal to minNodeCount, and less than or equal to 10 times of 'minNodeCount'.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "min_node_count": {
+                        "Description": "The minimum number of nodes to scale down to. Must be greater than or equal to 1.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the feature online store was created in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "dedicated_serving_endpoint": {
+        "Computed": true,
+        "Description": "The dedicated serving endpoint for this FeatureOnlineStore, which is different from common vertex service endpoint. Only need to set when you choose Optimized storage type or enable EmbeddingManagement. Will use public endpoint by default.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "private_service_connect_config": {
+                "Description": "Private service connect config.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enable_private_service_connect": {
+                        "Description": "If set to true, customers will use private service connection to send request. Otherwise, the connection will set to public endpoint.",
+                        "Required": true,
+                        "Type": "TypeBool"
+                    },
+                    "project_allowlist": {
+                        "Description": "A list of Projects from which the forwarding rule will target the service attachment.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "public_endpoint_domain_name": {
+                "Computed": true,
+                "Description": "Domain name to use for this FeatureOnlineStore",
+                "Type": "TypeString"
+            },
+            "service_attachment": {
+                "Computed": true,
+                "Description": "Name of the service attachment resource. Applicable only if private service connect is enabled and after FeatureViewSync is created.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "embedding_management": {
+        "ConflictsWith": "optimized",
+        "Description": "The settings for embedding management in FeatureOnlineStore. Embedding management can only be used with BigTable.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enabled": {
+                "Description": "Enable embedding management.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "Used to perform consistent read-modify-write updates.",
+        "Type": "TypeString"
+    },
+    "force_destroy": {
+        "Description": "If set to true, any FeatureViews and Features for this FeatureOnlineStore will also be deleted.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "labels": {
+        "Description": "The labels with user-defined metadata to organize your feature online stores.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The resource name of the Feature Online Store. This value may be up to 60 characters, and valid characters are [a-z0-9_]. The first character cannot be a number.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "optimized": {
+        "ConflictsWith": "embedding_management",
+        "Description": "Settings for the Optimized store that will be created to serve featureValues for all FeatureViews under this FeatureOnlineStore",
+        "ExactlyOneOf": "bigtable, optimized",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {},
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region of feature online store. eg us-central1",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The state of the Feature Online Store. See the possible states in [this link](https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.featureOnlineStores#state).",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the feature online store was last updated in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    }
+}

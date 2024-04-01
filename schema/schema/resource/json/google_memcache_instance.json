@@ -1,0 +1,239 @@
+{
+    "authorized_network": {
+        "Computed": true,
+        "Description": "The full name of the GCE network to connect the instance to.  If not provided,\n'default' will be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "discovery_endpoint": {
+        "Computed": true,
+        "Description": "Endpoint for Discovery API",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "A user-visible name for the instance.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user-provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "maintenance_policy": {
+        "Description": "Maintenance policy for an instance.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Description": "Output only. The time when the policy was created.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits",
+                "Type": "TypeString"
+            },
+            "description": {
+                "Description": "Optional. Description of what this policy is for.\nCreate/Update methods return INVALID_ARGUMENT if the\nlength is greater than 512.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Output only. The time when the policy was updated.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "weekly_maintenance_window": {
+                "Description": "Required. Maintenance window that is applied to resources covered by this policy.\nMinimum 1. For the current version, the maximum number of weekly_maintenance_windows\nis expected to be one.",
+                "Properties": {
+                    "day": {
+                        "Description": "Required. The day of week that maintenance updates occur.\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\n- MONDAY: Monday\n- TUESDAY: Tuesday\n- WEDNESDAY: Wednesday\n- THURSDAY: Thursday\n- FRIDAY: Friday\n- SATURDAY: Saturday\n- SUNDAY: Sunday Possible values: [\"DAY_OF_WEEK_UNSPECIFIED\", \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "duration": {
+                        "Description": "Required. The length of the maintenance window, ranging from 3 hours to 8 hours.\nA duration in seconds with up to nine fractional digits,\nterminated by 's'. Example: \"3.5s\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "start_time": {
+                        "Description": "Required. Start time of the window in UTC time.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "hours": {
+                                "Description": "Hours of day in 24 hour format. Should be from 0 to 23.\nAn API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "minutes": {
+                                "Description": "Minutes of hour of day. Must be from 0 to 59.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "nanos": {
+                                "Description": "Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "seconds": {
+                                "Description": "Seconds of minutes of the time. Must normally be from 0 to 59.\nAn API may allow the value 60 if it allows leap-seconds.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "maintenance_schedule": {
+        "Computed": true,
+        "Description": "Output only. Published maintenance schedule.",
+        "Properties": {
+            "end_time": {
+                "Computed": true,
+                "Description": "Output only. The end time of any upcoming scheduled maintenance for this instance.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "schedule_deadline_time": {
+                "Computed": true,
+                "Description": "Output only. The deadline that the maintenance schedule start time\ncan not go beyond, including reschedule.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            },
+            "start_time": {
+                "Computed": true,
+                "Description": "Output only. The start time of any upcoming scheduled maintenance for this instance.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "memcache_full_version": {
+        "Computed": true,
+        "Description": "The full version of memcached server running on this instance.",
+        "Type": "TypeString"
+    },
+    "memcache_nodes": {
+        "Computed": true,
+        "Description": "Additional information about the instance state, if available.",
+        "Properties": {
+            "host": {
+                "Computed": true,
+                "Description": "Hostname or IP address of the Memcached node used by the clients to connect to the Memcached server on this node.",
+                "Type": "TypeString"
+            },
+            "node_id": {
+                "Computed": true,
+                "Description": "Identifier of the Memcached node. The node id does not include project or location like the Memcached instance name.",
+                "Type": "TypeString"
+            },
+            "port": {
+                "Computed": true,
+                "Description": "The port number of the Memcached server on this node.",
+                "Type": "TypeInt"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "Current state of the Memcached node.",
+                "Type": "TypeString"
+            },
+            "zone": {
+                "Computed": true,
+                "Description": "Location (GCP Zone) for the Memcached node.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "memcache_parameters": {
+        "Description": "User-specified parameters for this memcache instance.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "id": {
+                "Computed": true,
+                "Description": "This is a unique ID associated with this set of parameters.",
+                "Type": "TypeString"
+            },
+            "params": {
+                "Description": "User-defined set of parameters to use in the memcache process.",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "memcache_version": {
+        "Description": "The major version of Memcached software. If not provided, latest supported version will be used.\nCurrently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically\ndetermined by our system based on the latest supported minor version. Default value: \"MEMCACHE_1_5\" Possible values: [\"MEMCACHE_1_5\", \"MEMCACHE_1_6_15\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name of the instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_config": {
+        "Description": "Configuration for memcache nodes.",
+        "MaxItems": 1,
+        "Properties": {
+            "cpu_count": {
+                "Description": "Number of CPUs per node.",
+                "Required": true,
+                "Type": "TypeInt"
+            },
+            "memory_size_mb": {
+                "Description": "Memory size in Mebibytes for each memcache node.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "node_count": {
+        "Description": "Number of nodes in the memcache instance.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region of the Memcache instance. If it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reserved_ip_range_id": {
+        "Description": "Contains the name of allocated IP address ranges associated with\nthe private service access connection for example, \"test-default\"\nassociated with IP range 10.0.0.0/29.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "zones": {
+        "Computed": true,
+        "Description": "Zones where memcache nodes should be provisioned.  If not\nprovided, all zones will be used.",
+        "Optional": true,
+        "Type": "TypeSet"
+    }
+}

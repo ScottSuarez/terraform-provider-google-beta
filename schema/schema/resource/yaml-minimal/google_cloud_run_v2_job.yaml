@@ -1,0 +1,102 @@
+annotations: TypeMap(TypeString)
+binary_authorization:
+    breakglass_justification: TypeString
+    use_default: TypeBool
+client: TypeString
+client_version: TypeString
+conditions:
+    execution_reason: TypeString
+    last_transition_time: TypeString
+    message: TypeString
+    reason: TypeString
+    revision_reason: TypeString
+    severity: TypeString
+    state: TypeString
+    type: TypeString
+create_time: TypeString
+creator: TypeString
+delete_time: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+execution_count: TypeInt
+expire_time: TypeString
+generation: TypeString
+labels: TypeMap(TypeString)
+last_modifier: TypeString
+latest_created_execution:
+    completion_time: TypeString
+    create_time: TypeString
+    name: TypeString
+launch_stage: TypeString
+location: TypeString
+name: TypeString
+observed_generation: TypeString
+project: TypeString
+reconciling: TypeBool
+template:
+    annotations: TypeMap(TypeString)
+    labels: TypeMap(TypeString)
+    parallelism: TypeInt
+    task_count: TypeInt
+    template:
+        containers:
+            args: TypeList(TypeString)
+            command: TypeList(TypeString)
+            env:
+                name: TypeString
+                value: TypeString
+                value_source:
+                    secret_key_ref:
+                        secret: TypeString
+                        version: TypeString
+            image: TypeString
+            name: TypeString
+            ports:
+                container_port: TypeInt
+                name: TypeString
+            resources:
+                limits: TypeMap(TypeString)
+            volume_mounts:
+                mount_path: TypeString
+                name: TypeString
+            working_dir: TypeString
+        encryption_key: TypeString
+        execution_environment: TypeString
+        max_retries: TypeInt
+        service_account: TypeString
+        timeout: TypeString
+        volumes:
+            cloud_sql_instance:
+                instances: TypeList(TypeString)
+            empty_dir:
+                medium: TypeString
+                size_limit: TypeString
+            name: TypeString
+            secret:
+                default_mode: TypeInt
+                items:
+                    mode: TypeInt
+                    path: TypeString
+                    version: TypeString
+                secret: TypeString
+        vpc_access:
+            connector: TypeString
+            egress: TypeString
+            network_interfaces:
+                network: TypeString
+                subnetwork: TypeString
+                tags: TypeList(TypeString)
+terminal_condition:
+    execution_reason: TypeString
+    last_transition_time: TypeString
+    message: TypeString
+    reason: TypeString
+    revision_reason: TypeString
+    severity: TypeString
+    state: TypeString
+    type: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+

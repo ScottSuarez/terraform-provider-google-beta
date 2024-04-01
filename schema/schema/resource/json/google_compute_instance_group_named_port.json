@@ -1,0 +1,28 @@
+{
+    "group": {
+        "Description": "The name of the instance group.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name for this named port. The name must be 1-63 characters\nlong, and comply with RFC1035.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "port": {
+        "Description": "The port number, which can be a value between 1 and 65535.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Description": "The zone of the instance group.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

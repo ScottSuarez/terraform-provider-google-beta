@@ -1,0 +1,7 @@
+display_name: TypeString
+filter: TypeString
+is_cluster: TypeBool
+name: TypeString
+parent_name: TypeString
+project: TypeString
+

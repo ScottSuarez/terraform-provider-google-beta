@@ -1,0 +1,7 @@
+instance: TypeString
+ip_address: TypeString
+network_endpoint_group: TypeString
+port: TypeInt
+project: TypeString
+zone: TypeString
+

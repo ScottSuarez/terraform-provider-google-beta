@@ -1,0 +1,27 @@
+action:
+    Type: TypeString
+    Description: 'The action to take if this rule matches. Possible values: ["UNSPECIFIED_ACTION", "ALLOW", "DENY"]'
+    Required: "true"
+description:
+    Type: TypeString
+    Description: An optional string description of this rule.
+    Optional: "true"
+priority:
+    Type: TypeInt
+    Description: |-
+        A positive integer that defines the order of rule evaluation.
+        Rules with the lowest priority are evaluated first.
+
+        A default rule at priority Int32.MaxValue matches all IPv4 and
+        IPv6 traffic when no previous rule matches. Only the action of
+        this rule can be modified by the user.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+source_range:
+    Type: TypeString
+    Description: IP address or range, defined using CIDR notation, of requests that this rule applies to.
+    Required: "true"
+

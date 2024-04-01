@@ -1,0 +1,224 @@
+available_memory_mb:
+    Type: TypeInt
+    Description: Memory (in MB), available to the function. Default value is 256. Possible values include 128, 256, 512, 1024, etc.
+    Optional: "true"
+build_environment_variables:
+    Type: TypeMap
+    Description: ' A set of key/value environment variable pairs available during build time.'
+    Optional: "true"
+build_worker_pool:
+    Type: TypeString
+    Description: Name of the Cloud Build Custom Worker Pool that should be used to build the function.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: Description of the function.
+    Optional: "true"
+docker_registry:
+    Type: TypeString
+    Description: Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER_REGISTRY (default) and ARTIFACT_REGISTRY.
+    Computed: "true"
+    Optional: "true"
+docker_repository:
+    Type: TypeString
+    Description: User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry for storing images built with Cloud Build.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+entry_point:
+    Type: TypeString
+    Description: Name of the function that will be executed when the Google Cloud Function is triggered.
+    Optional: "true"
+environment_variables:
+    Type: TypeMap
+    Description: A set of key/value environment variable pairs to assign to the function.
+    Optional: "true"
+event_trigger:
+    Type: TypeList
+    Description: A source that fires events in response to a condition in another service. Cannot be used with trigger_http.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: trigger_http
+    MaxItems: "1"
+    Properties:
+        event_type:
+            Type: TypeString
+            Description: 'The type of event to observe. For example: "google.storage.object.finalize". See the documentation on calling Cloud Functions for a full reference of accepted triggers.'
+            Required: "true"
+        failure_policy:
+            Type: TypeList
+            Description: Specifies policy for failed executions
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                retry:
+                    Type: TypeBool
+                    Description: Whether the function should be retried on failure. Defaults to false.
+                    Required: "true"
+        resource:
+            Type: TypeString
+            Description: The name or partial URI of the resource from which to observe events. For example, "myBucket" or "projects/my-project/topics/my-topic"
+            Required: "true"
+https_trigger_security_level:
+    Type: TypeString
+    Description: The security level for the function. Defaults to SECURE_OPTIONAL. Valid only if trigger_http is used.
+    Computed: "true"
+    Optional: "true"
+https_trigger_url:
+    Type: TypeString
+    Description: URL which triggers function execution. Returned only if trigger_http is used.
+    Computed: "true"
+    Optional: "true"
+ingress_settings:
+    Type: TypeString
+    Description: String value that controls what traffic can reach the function. Allowed values are ALLOW_ALL and ALLOW_INTERNAL_ONLY. Changes to this field will recreate the cloud function.
+    Optional: "true"
+kms_key_name:
+    Type: TypeString
+    Description: Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        A set of key/value label pairs to assign to the function. Label keys must follow the requirements at https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements.
+
+        				**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        				Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+max_instances:
+    Type: TypeInt
+    Description: The limit on the maximum number of function instances that may coexist at a given time.
+    Computed: "true"
+    Optional: "true"
+min_instances:
+    Type: TypeInt
+    Description: The limit on the minimum number of function instances that may coexist at a given time.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: A user-defined name of the function. Function names must be unique globally.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: Project of the function. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: Region of function. If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+runtime:
+    Type: TypeString
+    Description: The runtime in which the function is going to run. Eg. "nodejs12", "nodejs14", "python37", "go111".
+    Required: "true"
+secret_environment_variables:
+    Type: TypeList
+    Description: Secret environment variables configuration
+    Optional: "true"
+    Properties:
+        key:
+            Type: TypeString
+            Description: Name of the environment variable.
+            Required: "true"
+        project_id:
+            Type: TypeString
+            Description: Project identifier (due to a known limitation, only project number is supported by this field) of the project that contains the secret. If not set, it will be populated with the function's project, assuming that the secret exists in the same project as of the function.
+            Computed: "true"
+            Optional: "true"
+        secret:
+            Type: TypeString
+            Description: ID of the secret in secret manager (not the full resource name).
+            Required: "true"
+        version:
+            Type: TypeString
+            Description: Version of the secret (version number or the string "latest"). It is recommended to use a numeric version for secret environment variables as any updates to the secret value is not reflected until new clones start.
+            Required: "true"
+secret_volumes:
+    Type: TypeList
+    Description: Secret volumes configuration.
+    Optional: "true"
+    Properties:
+        mount_path:
+            Type: TypeString
+            Description: 'The path within the container to mount the secret volume. For example, setting the mount_path as "/etc/secrets" would mount the secret value files under the "/etc/secrets" directory. This directory will also be completely shadowed and unavailable to mount any other secrets. Recommended mount paths: "/etc/secrets" Restricted mount paths: "/cloudsql", "/dev/log", "/pod", "/proc", "/var/log".'
+            Required: "true"
+        project_id:
+            Type: TypeString
+            Description: Project identifier (due to a known limitation, only project number is supported by this field) of the project that contains the secret. If not set, it will be populated with the function's project, assuming that the secret exists in the same project as of the function.
+            Computed: "true"
+            Optional: "true"
+        secret:
+            Type: TypeString
+            Description: ID of the secret in secret manager (not the full resource name).
+            Required: "true"
+        versions:
+            Type: TypeList
+            Description: List of secret versions to mount for this secret. If empty, the "latest" version of the secret will be made available in a file named after the secret under the mount point.
+            Optional: "true"
+            Properties:
+                path:
+                    Type: TypeString
+                    Description: Relative path of the file under the mount path where the secret value for this version will be fetched and made available. For example, setting the mount_path as "/etc/secrets" and path as "/secret_foo" would mount the secret value file at "/etc/secrets/secret_foo".
+                    Required: "true"
+                version:
+                    Type: TypeString
+                    Description: Version of the secret (version number or the string "latest"). It is preferable to use "latest" version with secret volumes as secret value changes are reflected immediately.
+                    Required: "true"
+service_account_email:
+    Type: TypeString
+    Description: ' If provided, the self-provided service account to run the function with.'
+    Computed: "true"
+    Optional: "true"
+source_archive_bucket:
+    Type: TypeString
+    Description: The GCS bucket containing the zip archive which contains the function.
+    Optional: "true"
+source_archive_object:
+    Type: TypeString
+    Description: The source archive object (file) in archive bucket.
+    Optional: "true"
+source_repository:
+    Type: TypeList
+    Description: Represents parameters related to source repository where a function is hosted. Cannot be set alongside source_archive_bucket or source_archive_object.
+    Optional: "true"
+    ConflictsWith: source_archive_bucket, source_archive_object
+    MaxItems: "1"
+    Properties:
+        deployed_url:
+            Type: TypeString
+            Description: The URL pointing to the hosted repository where the function was defined at the time of deployment.
+            Computed: "true"
+        url:
+            Type: TypeString
+            Description: The URL pointing to the hosted repository where the function is defined.
+            Required: "true"
+status:
+    Type: TypeString
+    Description: Describes the current stage of a deployment.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+timeout:
+    Type: TypeInt
+    Description: Timeout (in seconds) for the function. Default value is 60 seconds. Cannot be more than 540 seconds.
+    Optional: "true"
+trigger_http:
+    Type: TypeBool
+    Description: 'Boolean variable. Any HTTP request (of a supported type) to the endpoint will trigger function execution. Supported HTTP request types are: POST, PUT, GET, DELETE, and OPTIONS. Endpoint is returned as https_trigger_url. Cannot be used with trigger_bucket and trigger_topic.'
+    Optional: "true"
+vpc_connector:
+    Type: TypeString
+    Description: The VPC Network Connector that this cloud function can connect to. It can be either the fully-qualified URI, or the short name of the network connector resource. The format of this field is projects/*/locations/*/connectors/*.
+    Optional: "true"
+vpc_connector_egress_settings:
+    Type: TypeString
+    Description: The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL_TRAFFIC and PRIVATE_RANGES_ONLY. Defaults to PRIVATE_RANGES_ONLY. If unset, this field preserves the previously set value.
+    Computed: "true"
+    Optional: "true"
+

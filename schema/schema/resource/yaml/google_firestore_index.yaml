@@ -1,0 +1,55 @@
+api_scope:
+    Type: TypeString
+    Description: 'The API scope at which a query is run. Default value: "ANY_API" Possible values: ["ANY_API", "DATASTORE_MODE_API"]'
+    Optional: "true"
+collection:
+    Type: TypeString
+    Description: The collection being indexed.
+    Required: "true"
+database:
+    Type: TypeString
+    Description: The Firestore database id. Defaults to '"(default)"'.
+    Optional: "true"
+fields:
+    Type: TypeList
+    Description: |-
+        The fields supported by this index. The last field entry is always for
+        the field path '__name__'. If, on creation, '__name__' was not
+        specified as the last field, it will be added automatically with the
+        same direction as that of the last field defined. If the final field
+        in a composite index is not directional, the '__name__' will be
+        ordered '"ASCENDING"' (unless explicitly specified otherwise).
+    Required: "true"
+    MinItems: "2"
+    Properties:
+        array_config:
+            Type: TypeString
+            Description: |-
+                Indicates that this field supports operations on arrayValues. Only one of 'order' and 'arrayConfig' can
+                be specified. Possible values: ["CONTAINS"]
+            Optional: "true"
+        field_path:
+            Type: TypeString
+            Description: Name of the field.
+            Optional: "true"
+        order:
+            Type: TypeString
+            Description: |-
+                Indicates that this field supports ordering by the specified order or comparing using =, <, <=, >, >=.
+                Only one of 'order' and 'arrayConfig' can be specified. Possible values: ["ASCENDING", "DESCENDING"]
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        A server defined name for this index. Format:
+        'projects/{{project}}/databases/{{database}}/collectionGroups/{{collection}}/indexes/{{server_generated_id}}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+query_scope:
+    Type: TypeString
+    Description: 'The scope at which a query is run. Default value: "COLLECTION" Possible values: ["COLLECTION", "COLLECTION_GROUP", "COLLECTION_RECURSIVE"]'
+    Optional: "true"
+

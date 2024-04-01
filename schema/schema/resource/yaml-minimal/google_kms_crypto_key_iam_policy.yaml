@@ -1,0 +1,4 @@
+crypto_key_id: TypeString
+etag: TypeString
+policy_data: TypeString
+

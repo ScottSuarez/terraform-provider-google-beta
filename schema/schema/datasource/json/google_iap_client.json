@@ -1,0 +1,22 @@
+{
+    "brand": {
+        "Description": "Identifier of the brand to which this client\nis attached to. The format is\n'projects/{project_number}/brands/{brand_id}/identityAwareProxyClients/{client_id}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "client_id": {
+        "Description": "Output only. Unique identifier of the OAuth client.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "Human-friendly name given to the OAuth client.",
+        "Type": "TypeString"
+    },
+    "secret": {
+        "Computed": true,
+        "Description": "Output only. Client secret of the OAuth client.",
+        "Type": "TypeString"
+    }
+}

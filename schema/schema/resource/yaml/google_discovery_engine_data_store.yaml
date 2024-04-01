@@ -1,0 +1,56 @@
+content_config:
+    Type: TypeString
+    Description: 'The content config of the data store. Possible values: ["NO_CONTENT", "CONTENT_REQUIRED", "PUBLIC_WEBSITE"]'
+    Required: "true"
+create_advanced_site_search:
+    Type: TypeBool
+    Description: |-
+        If true, an advanced data store for site search will be created. If the
+        data store is not configured as site search (GENERIC vertical and
+        PUBLIC_WEBSITE contentConfig), this flag will be ignored.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Timestamp when the DataStore was created.
+    Computed: "true"
+data_store_id:
+    Type: TypeString
+    Description: The unique id of the data store.
+    Required: "true"
+default_schema_id:
+    Type: TypeString
+    Description: The id of the default Schema associated with this data store.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: |-
+        The display name of the data store. This field must be a UTF-8 encoded
+        string with a length limit of 128 characters.
+    Required: "true"
+industry_vertical:
+    Type: TypeString
+    Description: 'The industry vertical that the data store registers. Possible values: ["GENERIC", "MEDIA"]'
+    Required: "true"
+location:
+    Type: TypeString
+    Description: |-
+        The geographic location where the data store should reside. The value can
+        only be one of "global", "us" and "eu".
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique full resource name of the data store. Values are of the format
+        'projects/{project}/locations/{location}/collections/{collection_id}/dataStores/{data_store_id}'.
+        This field must be a UTF-8 encoded string with a length limit of 1024
+        characters.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+solution_types:
+    Type: TypeList
+    Description: 'The solutions that the data store enrolls. Possible values: ["SOLUTION_TYPE_RECOMMENDATION", "SOLUTION_TYPE_SEARCH", "SOLUTION_TYPE_CHAT"]'
+    Optional: "true"
+

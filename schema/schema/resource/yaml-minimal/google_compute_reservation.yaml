@@ -1,0 +1,27 @@
+commitment: TypeString
+creation_timestamp: TypeString
+description: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+share_settings:
+    project_map:
+        id: TypeString
+        project_id: TypeString
+    share_type: TypeString
+specific_reservation:
+    count: TypeInt
+    in_use_count: TypeInt
+    instance_properties:
+        guest_accelerators:
+            accelerator_count: TypeInt
+            accelerator_type: TypeString
+        local_ssds:
+            disk_size_gb: TypeInt
+            interface: TypeString
+        machine_type: TypeString
+        min_cpu_platform: TypeString
+specific_reservation_required: TypeBool
+status: TypeString
+zone: TypeString
+

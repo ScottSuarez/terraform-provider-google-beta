@@ -1,0 +1,13 @@
+address: TypeString
+address_type: TypeString
+name: TypeString
+network: TypeString
+network_tier: TypeString
+prefix_length: TypeInt
+project: TypeString
+purpose: TypeString
+self_link: TypeString
+status: TypeString
+subnetwork: TypeString
+users: TypeString
+

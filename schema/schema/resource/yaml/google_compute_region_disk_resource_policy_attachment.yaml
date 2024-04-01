@@ -1,0 +1,20 @@
+disk:
+    Type: TypeString
+    Description: The name of the regional disk in which the resource policies are attached to.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource policy to be attached to the disk for scheduling snapshot
+        creation. Do not specify the self link.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: A reference to the region where the disk resides.
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,27 @@
+{
+    "application_title": {
+        "Description": "Application name displayed on OAuth consent screen.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. Identifier of the brand, in the format 'projects/{project_number}/brands/{brand_id}'\nNOTE: The name can also be expressed as 'projects/{project_id}/brands/{brand_id}', e.g. when importing.\nNOTE: The brand identification corresponds to the project number as only one\nbrand can be created per project.",
+        "Type": "TypeString"
+    },
+    "org_internal_only": {
+        "Computed": true,
+        "Description": "Whether the brand is only intended for usage inside the GSuite organization only.",
+        "Type": "TypeBool"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "support_email": {
+        "Description": "Support email displayed on the OAuth consent screen. Can be either a\nuser or group email. When a user email is specified, the caller must\nbe the user with the associated email address. When a group email is\nspecified, the caller can be either a user or a service account which\nis an owner of the specified group in Cloud Identity.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,173 @@
+{
+    "config": {
+        "Description": "The current Config of the Extension Instance.",
+        "MaxItems": 1,
+        "Properties": {
+            "allowed_event_types": {
+                "Description": "List of extension events selected by consumer that extension is allowed to\nemit, identified by their types.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "create_time": {
+                "Computed": true,
+                "Description": "The time at which the Extension Instance Config was created.",
+                "Type": "TypeString"
+            },
+            "eventarc_channel": {
+                "Computed": true,
+                "Description": "Fully qualified Eventarc resource name that consumers should use for event triggers.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "extension_ref": {
+                "Description": "The ref of the Extension from the Registry (e.g. publisher-id/awesome-extension)",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "extension_version": {
+                "Computed": true,
+                "Description": "The version of the Extension from the Registry (e.g. 1.0.3). If left blank, latest is assumed.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The unique identifier for this configuration.",
+                "Type": "TypeString"
+            },
+            "params": {
+                "Description": "Environment variables that may be configured for the Extension",
+                "Required": true,
+                "Type": "TypeMap"
+            },
+            "populated_postinstall_content": {
+                "Computed": true,
+                "Description": "Postinstall instructions to be shown for this Extension, with\ntemplate strings representing function and parameter values substituted\nwith actual values. These strings include: ${param:FOO},\n${function:myFunc.url},\n${function:myFunc.name}, and ${function:myFunc.location}",
+                "Type": "TypeString"
+            },
+            "system_params": {
+                "Computed": true,
+                "Description": "Params whose values are only available at deployment time.\nUnlike other params, these will not be set as environment variables on\nfunctions. See a full list of system parameters at\nhttps://firebase.google.com/docs/extensions/publishers/parameters#system_parameters",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time at which the Extension Instance was created.",
+        "Type": "TypeString"
+    },
+    "error_status": {
+        "Computed": true,
+        "Description": "If this Instance has 'state: ERRORED', the error messages\nwill be found here.",
+        "Properties": {
+            "code": {
+                "Description": "The status code, which should be an enum value of google.rpc.Code.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "details": {
+                "Description": "A list of messages that carry the error details.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "message": {
+                "Description": "A developer-facing error message, which should be in English.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "A weak etag that is computed by the server based on other configuration\nvalues and may be sent on update and delete requests to ensure the\nclient has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "instance_id": {
+        "Description": "The ID to use for the Extension Instance, which will become the final\ncomponent of the instance's name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "last_operation_name": {
+        "Computed": true,
+        "Description": "The name of the last operation that acted on this Extension\nInstance",
+        "Type": "TypeString"
+    },
+    "last_operation_type": {
+        "Computed": true,
+        "Description": "The type of the last operation that acted on the Extension Instance.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully-qualified resource name of the Extension Instance.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime_data": {
+        "Computed": true,
+        "Description": "Data set by the extension instance at runtime.",
+        "Properties": {
+            "fatal_error": {
+                "Description": "The fatal error state for the extension instance",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "error_message": {
+                        "Description": "The error message. This is set by the extension developer to give\nmore detail on why the extension is unusable and must be re-installed\nor reconfigured.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "processing_state": {
+                "Description": "The processing state for the extension instance",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "detail_message": {
+                        "Description": "Details about the processing. e.g. This could include the type of\nprocessing in progress or it could list errors or failures.\nThis information will be shown in the console on the detail page\nfor the extension instance.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Description": "The processing state of the extension instance.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "state_update_time": {
+                "Description": "The time of the last state update.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "service_account_email": {
+        "Computed": true,
+        "Description": "The email of the service account to be used at runtime by compute resources\ncreated for the operation of the Extension instance.",
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the Extension Instance.\n  DEPLOYING:\n    The Extension Instance is waiting on an Operation to complete. Could\n    resolve to 'ACTIVE', 'PAUSED', 'ERRORED'.\n  UNINSTALLING:\n    The Extension Instance is being removed from the project. Could resolve\n    to 'ERRORED', but more likely the instance will soon cease to exist.\n  ACTIVE:\n    The Extension Instance is installed and ready.\n  ERRORED:\n    The Extension Instance encountered an error while 'DEPLOYING' or\n    'UNINSTALLING'.\n  PAUSED:\n    The Extension's resources have been removed from the project, but the\n    Config remains so the Instance can be restored.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time at which the Extension Instance was updated.",
+        "Type": "TypeString"
+    }
+}

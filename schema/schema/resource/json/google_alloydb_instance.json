@@ -1,0 +1,185 @@
+{
+    "annotations": {
+        "Description": "Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "availability_type": {
+        "Computed": true,
+        "Description": "'Availability type of an Instance. Defaults to REGIONAL for both primary and read instances.\nNote that primary and read instances can have different availability types.\nOnly READ_POOL instance supports ZONAL type. Users can't specify the zone for READ_POOL instance.\nZone is automatically chosen from the list of zones in the region specified.\nRead pool of size 1 can only have zonal availability. Read pools with node count of 2 or more\ncan have regional availability (nodes are present in 2 or more zones in a region).' Possible values: [\"AVAILABILITY_TYPE_UNSPECIFIED\", \"ZONAL\", \"REGIONAL\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "client_connection_config": {
+        "Computed": true,
+        "Description": "Client connection specific configurations.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "require_connectors": {
+                "Description": "Configuration to enforce connectors only (ex: AuthProxy) connections to the database.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "ssl_config": {
+                "Computed": true,
+                "Description": "SSL config option for this instance.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "ssl_mode": {
+                        "Computed": true,
+                        "Description": "SSL mode. Specifies client-server SSL/TLS connection behavior. Possible values: [\"ENCRYPTED_ONLY\", \"ALLOW_UNENCRYPTED_AND_ENCRYPTED\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cluster": {
+        "Description": "Identifies the alloydb cluster. Must be in the format\n'projects/{project}/locations/{location}/clusters/{cluster_id}'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Instance was created in UTC.",
+        "Type": "TypeString"
+    },
+    "database_flags": {
+        "Computed": true,
+        "Description": "Database flags. Set at instance level. * They are copied from primary instance on read instance creation. * Read instances can set new or override existing flags that are relevant for reads, e.g. for enabling columnar cache on a read instance. Flags set on read instance may or may not be present on primary.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "display_name": {
+        "Description": "User-settable and human-readable display name for the Instance.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gce_zone": {
+        "Description": "The Compute Engine zone that the instance should serve from, per https://cloud.google.com/compute/docs/regions-zones This can ONLY be specified for ZONAL instances. If present for a REGIONAL instance, an error will be thrown. If this is absent for a ZONAL instance, instance is created in a random zone with available capacity.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "instance_id": {
+        "Description": "The ID of the alloydb instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "instance_type": {
+        "Description": "The type of the instance.\nIf the instance type is READ_POOL, provide the associated PRIMARY/SECONDARY instance in the 'depends_on' meta-data attribute.\nIf the instance type is SECONDARY, point to the cluster_type of the associated secondary cluster instead of mentioning SECONDARY.\nExample: {instance_type = google_alloydb_cluster.\u003csecondary_cluster_name\u003e.cluster_type} instead of {instance_type = SECONDARY}\nIf the instance type is SECONDARY, the terraform delete instance operation does not delete the secondary instance but abandons it instead.\nUse deletion_policy = \"FORCE\" in the associated secondary cluster and delete the cluster forcefully to delete the secondary cluster as well its associated secondary instance.\nUsers can undo the delete secondary instance action by importing the deleted secondary instance by calling terraform import. Possible values: [\"PRIMARY\", \"READ_POOL\", \"SECONDARY\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "ip_address": {
+        "Computed": true,
+        "Description": "The IP address for the Instance. This is the connection endpoint for an end-user application.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "User-defined labels for the alloydb instance.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "machine_config": {
+        "Computed": true,
+        "Description": "Configurations for the machines that host the underlying database engine.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "cpu_count": {
+                "Computed": true,
+                "Description": "The number of CPU's in the VM instance.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of the instance resource.",
+        "Type": "TypeString"
+    },
+    "query_insights_config": {
+        "Computed": true,
+        "Description": "Configuration for query insights.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "query_plans_per_minute": {
+                "Description": "Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 20 is considered valid.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "query_string_length": {
+                "Description": "Query string length. The default value is 1024. Any integer between 256 and 4500 is considered valid.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "record_application_tags": {
+                "Description": "Record application tags for an instance. This flag is turned \"on\" by default.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "record_client_address": {
+                "Description": "Record client address for an instance. Client address is PII information. This flag is turned \"on\" by default.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "read_pool_config": {
+        "Description": "Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "node_count": {
+                "Description": "Read capacity, i.e. number of nodes in a read pool instance.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "Set to true if the current state of Instance does not match the user's intended state, and the service is actively updating the resource to reconcile them. This can happen due to user-triggered updates or system actions like failover or maintenance.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the alloydb instance.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "The system-generated UID of the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Instance was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

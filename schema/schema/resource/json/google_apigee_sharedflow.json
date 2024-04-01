@@ -1,0 +1,59 @@
+{
+    "config_bundle": {
+        "Description": "Path to the config zip bundle",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "detect_md5hash": {
+        "Description": "A hash of local config bundle in string, user needs to use a Terraform Hash function of their choice. A change in hash will trigger an update.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "latest_revision_id": {
+        "Computed": true,
+        "Description": "The id of the most recently created revision for this shared flow.",
+        "Type": "TypeString"
+    },
+    "md5hash": {
+        "Computed": true,
+        "Description": "Base 64 MD5 hash of the uploaded config bundle.",
+        "Type": "TypeString"
+    },
+    "meta_data": {
+        "Computed": true,
+        "Description": "Metadata describing the shared flow.",
+        "Properties": {
+            "created_at": {
+                "Computed": true,
+                "Description": "Time at which the API proxy was created, in milliseconds since epoch.",
+                "Type": "TypeString"
+            },
+            "last_modified_at": {
+                "Computed": true,
+                "Description": "Time at which the API proxy was most recently modified, in milliseconds since epoch.",
+                "Type": "TypeString"
+            },
+            "sub_type": {
+                "Computed": true,
+                "Description": "The type of entity described",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The ID of the shared flow.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The Apigee Organization name associated with the Apigee instance.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "revision": {
+        "Computed": true,
+        "Description": "A list of revisions of this shared flow.",
+        "Type": "TypeList"
+    }
+}

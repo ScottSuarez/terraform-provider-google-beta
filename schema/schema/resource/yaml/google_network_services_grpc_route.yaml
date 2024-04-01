@@ -1,0 +1,171 @@
+create_time:
+    Type: TypeString
+    Description: Time the GrpcRoute was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gateways:
+    Type: TypeList
+    Description: List of gateways this GrpcRoute is attached to, as one of the routing rules to route the requests served by the gateway.
+    Optional: "true"
+hostnames:
+    Type: TypeList
+    Description: Required. Service hostnames with an optional port for which this route describes traffic.
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of label tags associated with the GrpcRoute resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+meshes:
+    Type: TypeList
+    Description: List of meshes this GrpcRoute is attached to, as one of the routing rules to route the requests served by the mesh.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the GrpcRoute resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+rules:
+    Type: TypeList
+    Description: Rules that define how traffic is routed and handled.
+    Required: "true"
+    Properties:
+        action:
+            Type: TypeList
+            Description: Required. A detailed rule defining how to route traffic.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                destinations:
+                    Type: TypeList
+                    Description: The destination to which traffic should be forwarded.
+                    Optional: "true"
+                    Properties:
+                        service_name:
+                            Type: TypeString
+                            Description: The URL of a BackendService to route traffic to.
+                            Optional: "true"
+                        weight:
+                            Type: TypeInt
+                            Description: Specifies the proportion of requests forwarded to the backend referenced by the serviceName field.
+                            Optional: "true"
+                fault_injection_policy:
+                    Type: TypeList
+                    Description: The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        abort:
+                            Type: TypeList
+                            Description: Specification of how client requests are aborted as part of fault injection before being sent to a destination.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                http_status:
+                                    Type: TypeInt
+                                    Description: The HTTP status code used to abort the request.
+                                    Optional: "true"
+                                percentage:
+                                    Type: TypeInt
+                                    Description: The percentage of traffic which will be aborted.
+                                    Optional: "true"
+                        delay:
+                            Type: TypeList
+                            Description: Specification of how client requests are delayed as part of fault injection before being sent to a destination.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                fixed_delay:
+                                    Type: TypeString
+                                    Description: Specify a fixed delay before forwarding the request.
+                                    Optional: "true"
+                                percentage:
+                                    Type: TypeInt
+                                    Description: The percentage of traffic on which delay will be injected.
+                                    Optional: "true"
+                retry_policy:
+                    Type: TypeList
+                    Description: Specifies the retry policy associated with this route.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        num_retries:
+                            Type: TypeInt
+                            Description: Specifies the allowed number of retries.
+                            Optional: "true"
+                        retry_conditions:
+                            Type: TypeList
+                            Description: 'Specifies one or more conditions when this retry policy applies. Possible values: ["connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"]'
+                            Optional: "true"
+                timeout:
+                    Type: TypeString
+                    Description: Specifies the timeout for selected route.
+                    Optional: "true"
+        matches:
+            Type: TypeList
+            Description: Matches define conditions used for matching the rule against incoming gRPC requests.
+            Optional: "true"
+            Properties:
+                headers:
+                    Type: TypeList
+                    Description: Specifies a list of HTTP request headers to match against.
+                    Optional: "true"
+                    Properties:
+                        key:
+                            Type: TypeString
+                            Description: Required. The key of the header.
+                            Required: "true"
+                        type:
+                            Type: TypeString
+                            Description: 'The type of match. Default value: "EXACT" Possible values: ["TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION"]'
+                            Optional: "true"
+                        value:
+                            Type: TypeString
+                            Description: Required. The value of the header.
+                            Required: "true"
+                method:
+                    Type: TypeList
+                    Description: A gRPC method to match against. If this field is empty or omitted, will match all methods.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        case_sensitive:
+                            Type: TypeBool
+                            Description: Specifies that matches are case sensitive. The default value is true.
+                            Optional: "true"
+                        grpc_method:
+                            Type: TypeString
+                            Description: Required. Name of the method to match against.
+                            Required: "true"
+                        grpc_service:
+                            Type: TypeString
+                            Description: Required. Name of the service to match against.
+                            Required: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the GrpcRoute was updated in UTC.
+    Computed: "true"
+

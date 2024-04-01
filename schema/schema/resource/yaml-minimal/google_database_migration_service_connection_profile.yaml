@@ -1,0 +1,108 @@
+alloydb:
+    cluster_id: TypeString
+    settings:
+        initial_user:
+            password: TypeString
+            password_set: TypeBool
+            user: TypeString
+        labels: TypeMap(TypeString)
+        primary_instance_settings:
+            database_flags: TypeMap(TypeString)
+            id: TypeString
+            labels: TypeMap(TypeString)
+            machine_config:
+                cpu_count: TypeInt
+            private_ip: TypeString
+        vpc_network: TypeString
+cloudsql:
+    cloud_sql_id: TypeString
+    private_ip: TypeString
+    public_ip: TypeString
+    settings:
+        activation_policy: TypeString
+        auto_storage_increase: TypeBool
+        cmek_key_name: TypeString
+        collation: TypeString
+        data_disk_size_gb: TypeString
+        data_disk_type: TypeString
+        database_flags: TypeMap(TypeString)
+        database_version: TypeString
+        edition: TypeString
+        ip_config:
+            authorized_networks:
+                expire_time: TypeString
+                label: TypeString
+                ttl: TypeString
+                value: TypeString
+            enable_ipv4: TypeBool
+            private_network: TypeString
+            require_ssl: TypeBool
+        root_password: TypeString
+        root_password_set: TypeBool
+        source_id: TypeString
+        storage_auto_resize_limit: TypeString
+        tier: TypeString
+        user_labels: TypeMap(TypeString)
+        zone: TypeString
+connection_profile_id: TypeString
+create_time: TypeString
+dbprovider: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+error:
+    code: TypeInt
+    details: TypeList(TypeMap)
+    message: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+mysql:
+    cloud_sql_id: TypeString
+    host: TypeString
+    password: TypeString
+    password_set: TypeBool
+    port: TypeInt
+    ssl:
+        ca_certificate: TypeString
+        client_certificate: TypeString
+        client_key: TypeString
+        type: TypeString
+    username: TypeString
+name: TypeString
+oracle:
+    database_service: TypeString
+    forward_ssh_connectivity:
+        hostname: TypeString
+        password: TypeString
+        port: TypeInt
+        private_key: TypeString
+        username: TypeString
+    host: TypeString
+    password: TypeString
+    password_set: TypeBool
+    port: TypeInt
+    private_connectivity:
+        private_connection: TypeString
+    ssl:
+        ca_certificate: TypeString
+        client_certificate: TypeString
+        client_key: TypeString
+        type: TypeString
+    static_service_ip_connectivity: {}
+    username: TypeString
+postgresql:
+    cloud_sql_id: TypeString
+    host: TypeString
+    network_architecture: TypeString
+    password: TypeString
+    password_set: TypeBool
+    port: TypeInt
+    ssl:
+        ca_certificate: TypeString
+        client_certificate: TypeString
+        client_key: TypeString
+        type: TypeString
+    username: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+

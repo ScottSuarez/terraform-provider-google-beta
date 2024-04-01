@@ -1,0 +1,4 @@
+etag: TypeString
+hl7_v2_store_id: TypeString
+policy_data: TypeString
+

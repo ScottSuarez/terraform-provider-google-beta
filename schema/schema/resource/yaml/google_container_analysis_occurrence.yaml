@@ -1,0 +1,98 @@
+attestation:
+    Type: TypeList
+    Description: |-
+        Occurrence that represents a single "attestation". The authenticity
+        of an attestation can be verified using the attached signature.
+        If the verifier trusts the public key of the signer, then verifying
+        the signature is sufficient to establish trust. In this circumstance,
+        the authority to which this attestation is attached is primarily
+        useful for lookup (how to find this attestation if you already
+        know the authority and artifact to be verified) and intent (for
+        which authority this attestation was intended to sign.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        serialized_payload:
+            Type: TypeString
+            Description: |-
+                The serialized payload that is verified by one or
+                more signatures. A base64-encoded string.
+            Required: "true"
+        signatures:
+            Type: TypeSet
+            Description: |-
+                One or more signatures over serializedPayload.
+                Verifier implementations should consider this attestation
+                message verified if at least one signature verifies
+                serializedPayload. See Signature in common.proto for more
+                details on signature structure and verification.
+            Required: "true"
+            Properties:
+                public_key_id:
+                    Type: TypeString
+                    Description: |-
+                        The identifier for the public key that verifies this
+                        signature. MUST be an RFC3986 conformant
+                        URI. * When possible, the key id should be an
+                        immutable reference, such as a cryptographic digest.
+                        Examples of valid values:
+
+                        * OpenPGP V4 public key fingerprint. See https://www.iana.org/assignments/uri-schemes/prov/openpgp4fpr
+                          for more details on this scheme.
+                            * 'openpgp4fpr:74FAF3B861BDA0870C7B6DEF607E48D2A663AEEA'
+                        * RFC6920 digest-named SubjectPublicKeyInfo (digest of the DER serialization):
+                            * "ni:///sha-256;cD9o9Cq6LG3jD0iKXqEi_vdjJGecm_iXkbqVoScViaU"
+                    Required: "true"
+                signature:
+                    Type: TypeString
+                    Description: |-
+                        The content of the signature, an opaque bytestring.
+                        The payload that this signature verifies MUST be
+                        unambiguously provided with the Signature during
+                        verification. A wrapper message might provide the
+                        payload explicitly. Alternatively, a message might
+                        have a canonical serialization that can always be
+                        unambiguously computed to derive the payload.
+                    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: The time when the repository was created.
+    Computed: "true"
+kind:
+    Type: TypeString
+    Description: |-
+        The note kind which explicitly denotes which of the occurrence
+        details are specified. This field can be used as a filter in list
+        requests.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the occurrence.
+    Computed: "true"
+note_name:
+    Type: TypeString
+    Description: |-
+        The analysis note associated with this occurrence, in the form of
+        projects/[PROJECT]/notes/[NOTE_ID]. This field can be used as a
+        filter in list requests.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+remediation:
+    Type: TypeString
+    Description: A description of actions that can be taken to remedy the note.
+    Optional: "true"
+resource_uri:
+    Type: TypeString
+    Description: |-
+        Required. Immutable. A URI that represents the resource for which
+        the occurrence applies. For example,
+        https://gcr.io/project/image@sha256:123abc for a Docker image.
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: The time when the repository was last updated.
+    Computed: "true"
+

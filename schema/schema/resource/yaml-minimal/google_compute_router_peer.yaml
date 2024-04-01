@@ -1,0 +1,29 @@
+advertise_mode: TypeString
+advertised_groups: TypeList(TypeString)
+advertised_ip_ranges:
+    description: TypeString
+    range: TypeString
+advertised_route_priority: TypeInt
+bfd:
+    min_receive_interval: TypeInt
+    min_transmit_interval: TypeInt
+    multiplier: TypeInt
+    session_initialization_mode: TypeString
+enable: TypeBool
+enable_ipv6: TypeBool
+interface: TypeString
+ip_address: TypeString
+ipv6_nexthop_address: TypeString
+management_type: TypeString
+md5_authentication_key:
+    key: TypeString
+    name: TypeString
+name: TypeString
+peer_asn: TypeInt
+peer_ip_address: TypeString
+peer_ipv6_nexthop_address: TypeString
+project: TypeString
+region: TypeString
+router: TypeString
+router_appliance_instance: TypeString
+

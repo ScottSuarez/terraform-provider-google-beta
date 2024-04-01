@@ -1,0 +1,87 @@
+description: TypeString
+display_name: TypeString
+inspect_config:
+    content_options: TypeList(TypeString)
+    custom_info_types:
+        dictionary:
+            cloud_storage_path:
+                path: TypeString
+            word_list:
+                words: TypeList(TypeString)
+        exclusion_type: TypeString
+        info_type:
+            name: TypeString
+            sensitivity_score:
+                score: TypeString
+            version: TypeString
+        likelihood: TypeString
+        regex:
+            group_indexes: TypeList(TypeInt)
+            pattern: TypeString
+        sensitivity_score:
+            score: TypeString
+        stored_type:
+            name: TypeString
+        surrogate_type: {}
+    exclude_info_types: TypeBool
+    include_quote: TypeBool
+    info_types:
+        name: TypeString
+        sensitivity_score:
+            score: TypeString
+        version: TypeString
+    limits:
+        max_findings_per_info_type:
+            info_type:
+                name: TypeString
+                sensitivity_score:
+                    score: TypeString
+                version: TypeString
+            max_findings: TypeInt
+        max_findings_per_item: TypeInt
+        max_findings_per_request: TypeInt
+    min_likelihood: TypeString
+    rule_set:
+        info_types:
+            name: TypeString
+            sensitivity_score:
+                score: TypeString
+            version: TypeString
+        rules:
+            exclusion_rule:
+                dictionary:
+                    cloud_storage_path:
+                        path: TypeString
+                    word_list:
+                        words: TypeList(TypeString)
+                exclude_by_hotword:
+                    hotword_regex:
+                        group_indexes: TypeList(TypeInt)
+                        pattern: TypeString
+                    proximity:
+                        window_after: TypeInt
+                        window_before: TypeInt
+                exclude_info_types:
+                    info_types:
+                        name: TypeString
+                        sensitivity_score:
+                            score: TypeString
+                        version: TypeString
+                matching_type: TypeString
+                regex:
+                    group_indexes: TypeList(TypeInt)
+                    pattern: TypeString
+            hotword_rule:
+                hotword_regex:
+                    group_indexes: TypeList(TypeInt)
+                    pattern: TypeString
+                likelihood_adjustment:
+                    fixed_likelihood: TypeString
+                    relative_likelihood: TypeInt
+                proximity:
+                    window_after: TypeInt
+                    window_before: TypeInt
+name: TypeString
+parent: TypeString
+template_id: TypeString
+

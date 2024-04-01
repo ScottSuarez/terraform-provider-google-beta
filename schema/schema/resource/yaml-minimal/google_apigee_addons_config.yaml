@@ -1,0 +1,15 @@
+addons_config:
+    advanced_api_ops_config:
+        enabled: TypeBool
+    api_security_config:
+        enabled: TypeBool
+        expires_at: TypeString
+    connectors_platform_config:
+        enabled: TypeBool
+        expires_at: TypeString
+    integration_config:
+        enabled: TypeBool
+    monetization_config:
+        enabled: TypeBool
+org: TypeString
+

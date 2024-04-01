@@ -1,0 +1,17 @@
+instance:
+    Type: TypeString
+    Description: An instance being added to the InstanceGroup
+    Required: "true"
+instance_group:
+    Type: TypeString
+    Description: Represents an Instance Group resource name that the instance belongs to.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: A reference to the zone where the instance group resides.
+    Optional: "true"
+

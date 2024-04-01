@@ -1,0 +1,122 @@
+{
+    "cluster": {
+        "Description": "The canonical Cluster name to connect to. It is in the form of projects/{project}/locations/{location}/clusters/{cluster}.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time when the VPN connection was created.",
+        "Type": "TypeString"
+    },
+    "details": {
+        "Computed": true,
+        "Description": "A nested object resource",
+        "Properties": {
+            "cloud_router": {
+                "Computed": true,
+                "Description": "The Cloud Router info.",
+                "Properties": {
+                    "name": {
+                        "Computed": true,
+                        "Description": "The associated Cloud Router name.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "cloud_vpns": {
+                "Computed": true,
+                "Description": "Each connection has multiple Cloud VPN gateways.",
+                "Properties": {
+                    "gateway": {
+                        "Computed": true,
+                        "Description": "The created Cloud VPN gateway name.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "error": {
+                "Computed": true,
+                "Description": "The error message. This is only populated when state=ERROR.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "The current connection state.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_high_availability": {
+        "Computed": true,
+        "Description": "Whether this VPN connection has HA enabled on cluster side. If enabled, when creating VPN connection we will attempt to use 2 ANG floating IPs.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "labels": {
+        "Description": "Labels associated with this resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Google Cloud Platform location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name of VPN connection",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "nat_gateway_ip": {
+        "Description": "NAT gateway IP, or WAN IP address. If a customer has multiple NAT IPs, the customer needs to configure NAT such that only one external IP maps to the GMEC Anthos cluster.\nThis is empty if NAT is not used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "router": {
+        "Description": "The VPN connection Cloud Router name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time when the VPN connection was last updated.",
+        "Type": "TypeString"
+    },
+    "vpc": {
+        "Description": "The network ID of VPC to connect to.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpc_project": {
+        "Description": "Project detail of the VPC network. Required if VPC is in a different project than the cluster project.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "project_id": {
+                "Description": "The project of the VPC to connect to. If not specified, it is the same as the cluster project.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

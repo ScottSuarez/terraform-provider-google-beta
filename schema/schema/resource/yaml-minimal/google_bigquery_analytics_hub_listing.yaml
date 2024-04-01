@@ -1,0 +1,24 @@
+bigquery_dataset:
+    dataset: TypeString
+categories: TypeList(TypeString)
+data_exchange_id: TypeString
+data_provider:
+    name: TypeString
+    primary_contact: TypeString
+description: TypeString
+display_name: TypeString
+documentation: TypeString
+icon: TypeString
+listing_id: TypeString
+location: TypeString
+name: TypeString
+primary_contact: TypeString
+project: TypeString
+publisher:
+    name: TypeString
+    primary_contact: TypeString
+request_access: TypeString
+restricted_export_config:
+    enabled: TypeBool
+    restrict_query_result: TypeBool
+

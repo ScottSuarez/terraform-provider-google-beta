@@ -1,0 +1,76 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation timestamp of a Certificate Map. Timestamp is in RFC3339 UTC \"Zulu\" format,\naccurate to nanoseconds with up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A human-readable description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gclb_targets": {
+        "Computed": true,
+        "Description": "A list of target proxies that use this Certificate Map",
+        "Properties": {
+            "ip_configs": {
+                "Description": "An IP configuration where this Certificate Map is serving",
+                "Optional": true,
+                "Properties": {
+                    "ip_address": {
+                        "Description": "An external IP address",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "ports": {
+                        "Description": "A list of ports",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "target_https_proxy": {
+                "Description": "Proxy name must be in the format projects/*/locations/*/targetHttpsProxies/*.\nThis field is part of a union field 'target_proxy': Only one of 'targetHttpsProxy' or\n'targetSslProxy' may be set.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "target_ssl_proxy": {
+                "Description": "Proxy name must be in the format projects/*/locations/*/targetSslProxies/*.\nThis field is part of a union field 'target_proxy': Only one of 'targetHttpsProxy' or\n'targetSslProxy' may be set.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of labels associated with a Certificate Map resource.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "A user-defined name of the Certificate Map. Certificate Map names must be unique\nglobally and match the pattern 'projects/*/locations/*/certificateMaps/*'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Update timestamp of a Certificate Map. Timestamp is in RFC3339 UTC \"Zulu\" format,\naccurate to nanoseconds with up to nine fractional digits.\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

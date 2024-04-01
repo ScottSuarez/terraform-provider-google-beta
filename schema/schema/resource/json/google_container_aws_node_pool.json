@@ -1,0 +1,339 @@
+{
+    "annotations": {
+        "Description": "Optional. Annotations on the node pool. This field has the same restrictions as Kubernetes annotations. The total size of all keys and values combined is limited to 256k. Key can have 2 segments: prefix (optional) and name (required), separated by a slash (/). Prefix must be a DNS subdomain. Name must be 63 characters or less, begin and end with alphanumerics, with dashes (-), underscores (_), dots (.), and alphanumerics between.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field `effective_annotations` for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "autoscaling": {
+        "Description": "Autoscaler configuration for this node pool.",
+        "MaxItems": 1,
+        "Properties": {
+            "max_node_count": {
+                "Description": "Maximum number of nodes in the NodePool. Must be \u003e= min_node_count.",
+                "Required": true,
+                "Type": "TypeInt"
+            },
+            "min_node_count": {
+                "Description": "Minimum number of nodes in the NodePool. Must be \u003e= 1 and \u003c= max_node_count.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "cluster": {
+        "Description": "The awsCluster for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "config": {
+        "Description": "The configuration of the node pool.",
+        "MaxItems": 1,
+        "Properties": {
+            "autoscaling_metrics_collection": {
+                "Description": "Optional. Configuration related to CloudWatch metrics collection on the Auto Scaling group of the node pool. When unspecified, metrics collection is disabled.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "granularity": {
+                        "Description": "The frequency at which EC2 Auto Scaling sends aggregated data to AWS CloudWatch. The only valid value is \"1Minute\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "metrics": {
+                        "Description": "The metrics to enable. For a list of valid metrics, see https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_EnableMetricsCollection.html. If you specify granularity and don't specify any metrics, all metrics are enabled.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "config_encryption": {
+                "Description": "The ARN of the AWS KMS key used to encrypt node pool configuration.",
+                "MaxItems": 1,
+                "Properties": {
+                    "kms_key_arn": {
+                        "Description": "The ARN of the AWS KMS key used to encrypt node pool configuration.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "iam_instance_profile": {
+                "Description": "The name of the AWS IAM role assigned to nodes in the pool.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "image_type": {
+                "Computed": true,
+                "Description": "The OS image type to use on node pool instances.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "instance_placement": {
+                "Computed": true,
+                "Description": "Details of placement information for an instance.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "tenancy": {
+                        "Computed": true,
+                        "Description": "The tenancy for the instance. Possible values: TENANCY_UNSPECIFIED, DEFAULT, DEDICATED, HOST",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "instance_type": {
+                "Computed": true,
+                "Description": "Optional. The AWS instance type. When unspecified, it defaults to `m5.large`.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Description": "Optional. The initial labels assigned to nodes of this node pool. An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "proxy_config": {
+                "Description": "Proxy configuration for outbound HTTP(S) traffic.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_arn": {
+                        "Description": "The ARN of the AWS Secret Manager secret that contains the HTTP(S) proxy configuration.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "secret_version": {
+                        "Description": "The version string of the AWS Secret Manager secret that contains the HTTP(S) proxy configuration.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "root_volume": {
+                "Computed": true,
+                "Description": "Optional. Template for the root volume provisioned for node pool nodes. Volumes will be provisioned in the availability zone assigned to the node pool subnet. When unspecified, it defaults to 32 GiB with the GP2 volume type.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "iops": {
+                        "Computed": true,
+                        "Description": "Optional. The number of I/O operations per second (IOPS) to provision for GP3 volume.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "kms_key_arn": {
+                        "Description": "Optional. The Amazon Resource Name (ARN) of the Customer Managed Key (CMK) used to encrypt AWS EBS volumes. If not specified, the default Amazon managed key associated to the AWS region where this cluster runs will be used.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "size_gib": {
+                        "Computed": true,
+                        "Description": "Optional. The size of the volume, in GiBs. When unspecified, a default value is provided. See the specific reference in the parent resource.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "throughput": {
+                        "Computed": true,
+                        "Description": "Optional. The throughput to provision for the volume, in MiB/s. Only valid if the volume type is GP3. If volume type is gp3 and throughput is not specified, the throughput will defaults to 125.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "volume_type": {
+                        "Computed": true,
+                        "Description": "Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "security_group_ids": {
+                "Description": "Optional. The IDs of additional security groups to add to nodes in this pool. The manager will automatically create security groups with minimum rules needed for a functioning cluster.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "spot_config": {
+                "Description": "Optional. When specified, the node pool will provision Spot instances from the set of spot_config.instance_types. This field is mutually exclusive with `instance_type`",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "instance_types": {
+                        "Description": "List of AWS EC2 instance types for creating a spot node pool's nodes. The specified instance types must have the same number of CPUs and memory. You can use the Amazon EC2 Instance Selector tool (https://github.com/aws/amazon-ec2-instance-selector) to choose instance types with matching CPU and memory",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ssh_config": {
+                "Description": "Optional. The SSH configuration.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "ec2_key_pair": {
+                        "Description": "The name of the EC2 key pair used to login into cluster machines.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "tags": {
+                "Description": "Optional. Key/value metadata to assign to each underlying AWS resource. Specify at most 50 pairs containing alphanumerics, spaces, and symbols (.+-=_:@/). Keys can be up to 127 Unicode characters. Values can be up to 255 Unicode characters.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "taints": {
+                "Description": "Optional. The initial taints assigned to nodes of this node pool.",
+                "Optional": true,
+                "Properties": {
+                    "effect": {
+                        "Description": "The taint effect. Possible values: EFFECT_UNSPECIFIED, NO_SCHEDULE, PREFER_NO_SCHEDULE, NO_EXECUTE",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "key": {
+                        "Description": "Key for the taint.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "value": {
+                        "Description": "Value for the taint.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time at which this node pool was created.",
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "Allows clients to perform consistent read-modify-writes through optimistic concurrency control. May be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "management": {
+        "Computed": true,
+        "Description": "The Management configuration for this node pool.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "auto_repair": {
+                "Computed": true,
+                "Description": "Optional. Whether or not the nodes will be automatically repaired.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "max_pods_constraint": {
+        "Description": "The constraint on the maximum number of pods that can be run simultaneously on a node in the node pool.",
+        "MaxItems": 1,
+        "Properties": {
+            "max_pods_per_node": {
+                "Description": "The maximum number of pods to schedule on a single node.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of this resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "Output only. If set, there are currently changes in flight to the node pool.",
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. The lifecycle state of the node pool. Possible values: STATE_UNSPECIFIED, PROVISIONING, RUNNING, RECONCILING, STOPPING, ERROR, DEGRADED",
+        "Type": "TypeString"
+    },
+    "subnet_id": {
+        "Description": "The subnet where the node pool node run.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. A globally unique identifier for the node pool.",
+        "Type": "TypeString"
+    },
+    "update_settings": {
+        "Computed": true,
+        "Description": "Optional. Update settings control the speed and disruption of the node pool update.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "surge_settings": {
+                "Computed": true,
+                "Description": "Optional. Settings for surge update.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "max_surge": {
+                        "Computed": true,
+                        "Description": "Optional. The maximum number of nodes that can be created beyond the current size of the node pool during the update process.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "max_unavailable": {
+                        "Computed": true,
+                        "Description": "Optional. The maximum number of nodes that can be simultaneously unavailable during the update process. A node is considered unavailable if its status is not Ready.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The time at which this node pool was last updated.",
+        "Type": "TypeString"
+    },
+    "version": {
+        "Description": "The Kubernetes version to run on this node pool (e.g. `1.19.10-gke.1000`). You can list all supported versions on a given Google Cloud region by calling GetAwsServerConfig.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

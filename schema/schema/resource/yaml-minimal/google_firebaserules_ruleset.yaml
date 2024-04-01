@@ -1,0 +1,12 @@
+create_time: TypeString
+metadata:
+    services: TypeList(TypeString)
+name: TypeString
+project: TypeString
+source:
+    files:
+        content: TypeString
+        fingerprint: TypeString
+        name: TypeString
+    language: TypeString
+

@@ -1,0 +1,107 @@
+{
+    "display_name": {
+        "Description": "The display name for this template.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "fields": {
+        "Description": "Set of tag template field IDs and the settings for the field. This set is an exhaustive list of the allowed fields. This set must contain at least one field and at most 500 fields. The change of field_id will be resulting in re-creating of field. The change of primitive_type will be resulting in re-creating of field, however if the field is a required, you cannot update it.",
+        "Properties": {
+            "description": {
+                "Computed": true,
+                "Description": "A description for this field.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "display_name": {
+                "Computed": true,
+                "Description": "The display name for this field.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "field_id": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "is_required": {
+                "Computed": true,
+                "Description": "Whether this is a required field. Defaults to false.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The resource name of the tag template field in URL format. Example: projects/{project_id}/locations/{location}/tagTemplates/{tagTemplateId}/fields/{field}",
+                "Type": "TypeString"
+            },
+            "order": {
+                "Computed": true,
+                "Description": "The order of this field with respect to other fields in this tag template.\nA higher value indicates a more important field. The value can be negative.\nMultiple fields can have the same order, and field orders within a tag do not have to be sequential.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "type": {
+                "Description": "The type of value this tag field can contain.",
+                "MaxItems": 1,
+                "Properties": {
+                    "enum_type": {
+                        "Description": "Represents an enum type.\n Exactly one of 'primitive_type' or 'enum_type' must be set",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allowed_values": {
+                                "Description": "The set of allowed values for this enum. The display names of the\nvalues must be case-insensitively unique within this set. Currently,\nenum values can only be added to the list of allowed values. Deletion\nand renaming of enum values are not supported.\nCan have up to 500 allowed values.",
+                                "Properties": {
+                                    "display_name": {
+                                        "Description": "The display name of the enum value.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeSet"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "primitive_type": {
+                        "Computed": true,
+                        "Description": "Represents primitive types - string, bool etc.\n Exactly one of 'primitive_type' or 'enum_type' must be set Possible values: [\"DOUBLE\", \"STRING\", \"BOOL\", \"TIMESTAMP\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "force_delete": {
+        "Description": "This confirms the deletion of any possible tags using this template. Must be set to true in order to delete the tag template.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the tag template in URL format. Example: projects/{project_id}/locations/{location}/tagTemplates/{tagTemplateId}",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "Template location region.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "tag_template_id": {
+        "Description": "The id of the tag template to create.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

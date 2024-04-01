@@ -1,0 +1,158 @@
+{
+    "authorization_mode": {
+        "Description": "Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster. Default value: \"AUTH_MODE_DISABLED\" Possible values: [\"AUTH_MODE_UNSPECIFIED\", \"AUTH_MODE_IAM_AUTH\", \"AUTH_MODE_DISABLED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp associated with the cluster creation request. A timestamp in\nRFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional\ndigits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "discovery_endpoints": {
+        "Computed": true,
+        "Description": "Output only. Endpoints created on each given network,\nfor Redis clients to connect to the cluster.\nCurrently only one endpoint is supported.",
+        "Properties": {
+            "address": {
+                "Description": "Output only. Network address of the exposed Redis endpoint used by clients to connect to the service.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "port": {
+                "Description": "Output only. The port number of the exposed Redis endpoint.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "psc_config": {
+                "Description": "Output only. Customer configuration for where the endpoint\nis created and accessed from.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "network": {
+                        "Description": "The consumer network where the network address of the discovery\nendpoint will be reserved, in the form of\nprojects/{network_project_id}/global/networks/{network_id}.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Unique name of the resource in this scope including project and location using the form:\nprojects/{projectId}/locations/{locationId}/clusters/{clusterId}",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "psc_configs": {
+        "Description": "Required. Each PscConfig configures the consumer network where two\nnetwork addresses will be designated to the cluster for client access.\nCurrently, only one PscConfig is supported.",
+        "Properties": {
+            "network": {
+                "Description": "Required. The consumer network where the network address of\nthe discovery endpoint will be reserved, in the form of\nprojects/{network_project_id_or_number}/global/networks/{network_id}.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "psc_connections": {
+        "Computed": true,
+        "Description": "Output only. PSC connections for discovery of the cluster topology and accessing the cluster.",
+        "Properties": {
+            "address": {
+                "Description": "Output only. The IP allocated on the consumer network for the PSC forwarding rule.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "forwarding_rule": {
+                "Description": "Output only. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "network": {
+                "Description": "The consumer network where the IP address resides, in the form of projects/{projectId}/global/networks/{network_id}.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "project_id": {
+                "Description": "Output only. The consumer projectId where the forwarding rule is created from.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "psc_connection_id": {
+                "Description": "Output only. The PSC connection id of the forwarding rule connected to the service attachment.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The name of the region of the Redis cluster.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "replica_count": {
+        "Description": "Optional. The number of replica nodes per shard.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "shard_count": {
+        "Description": "Required. Number of shards for the Redis cluster.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "size_gb": {
+        "Computed": true,
+        "Description": "Output only. Redis memory size in GB for the entire cluster.",
+        "Type": "TypeInt"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED",
+        "Type": "TypeString"
+    },
+    "state_info": {
+        "Computed": true,
+        "Description": "Output only. Additional information about the current state of the cluster.",
+        "Properties": {
+            "update_info": {
+                "Description": "A nested object resource",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "target_replica_count": {
+                        "Description": "Target number of replica nodes per shard.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_shard_count": {
+                        "Description": "Target number of shards for redis cluster.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "transit_encryption_mode": {
+        "Description": "Optional. The in-transit encryption for the Redis cluster.\nIf not provided, encryption is disabled for the cluster. Default value: \"TRANSIT_ENCRYPTION_MODE_DISABLED\" Possible values: [\"TRANSIT_ENCRYPTION_MODE_UNSPECIFIED\", \"TRANSIT_ENCRYPTION_MODE_DISABLED\", \"TRANSIT_ENCRYPTION_MODE_SERVER_AUTHENTICATION\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System assigned, unique identifier for the cluster.",
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,380 @@
+create_time:
+    Type: TypeString
+    Description: The time when the scan was created.
+    Computed: "true"
+data:
+    Type: TypeList
+    Description: The data source for DataScan.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        entity:
+            Type: TypeString
+            Description: The Dataplex entity that represents the data source(e.g. BigQuery table) for Datascan.
+            Optional: "true"
+            ExactlyOneOf: data.0.entity, data.0.resource
+        resource:
+            Type: TypeString
+            Description: |-
+                The service-qualified full resource name of the cloud resource for a DataScan job to scan against. The field could be:
+                (Cloud Storage bucket for DataDiscoveryScan)BigQuery table of type "TABLE" for DataProfileScan/DataQualityScan.
+            Optional: "true"
+            ExactlyOneOf: data.0.entity, data.0.resource
+data_profile_spec:
+    Type: TypeList
+    Description: DataProfileScan related setting.
+    Optional: "true"
+    ExactlyOneOf: data_quality_spec, data_profile_spec
+    MaxItems: "1"
+    Properties:
+        exclude_fields:
+            Type: TypeList
+            Description: |-
+                The fields to exclude from data profile.
+                If specified, the fields will be excluded from data profile, regardless of 'include_fields' value.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                field_names:
+                    Type: TypeList
+                    Description: |-
+                        Expected input is a list of fully qualified names of fields as in the schema.
+                        Only top-level field names for nested fields are supported.
+                        For instance, if 'x' is of nested field type, listing 'x' is supported but 'x.y.z' is not supported. Here 'y' and 'y.z' are nested fields of 'x'.
+                    Optional: "true"
+        include_fields:
+            Type: TypeList
+            Description: |-
+                The fields to include in data profile.
+                If not specified, all fields at the time of profile scan job execution are included, except for ones listed in 'exclude_fields'.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                field_names:
+                    Type: TypeList
+                    Description: |-
+                        Expected input is a list of fully qualified names of fields as in the schema.
+                        Only top-level field names for nested fields are supported.
+                        For instance, if 'x' is of nested field type, listing 'x' is supported but 'x.y.z' is not supported. Here 'y' and 'y.z' are nested fields of 'x'.
+                    Optional: "true"
+        post_scan_actions:
+            Type: TypeList
+            Description: Actions to take upon job completion.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                bigquery_export:
+                    Type: TypeList
+                    Description: If set, results will be exported to the provided BigQuery table.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        results_table:
+                            Type: TypeString
+                            Description: |-
+                                The BigQuery table to export DataProfileScan results to.
+                                Format://bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
+                            Optional: "true"
+        row_filter:
+            Type: TypeString
+            Description: 'A filter applied to all rows in a single DataScan job. The filter needs to be a valid SQL expression for a WHERE clause in BigQuery standard SQL syntax. Example: col1 >= 0 AND col2 < 10'
+            Optional: "true"
+        sampling_percent:
+            Type: TypeFloat
+            Description: |-
+                The percentage of the records to be selected from the dataset for DataScan.
+                Value can range between 0.0 and 100.0 with up to 3 significant decimal digits.
+                Sampling is not applied if 'sampling_percent' is not specified, 0 or 100.
+            Optional: "true"
+data_quality_spec:
+    Type: TypeList
+    Description: DataQualityScan related setting.
+    Optional: "true"
+    ExactlyOneOf: data_quality_spec, data_profile_spec
+    MaxItems: "1"
+    Properties:
+        post_scan_actions:
+            Type: TypeList
+            Description: Actions to take upon job completion.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                bigquery_export:
+                    Type: TypeList
+                    Description: If set, results will be exported to the provided BigQuery table.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        results_table:
+                            Type: TypeString
+                            Description: |-
+                                The BigQuery table to export DataQualityScan results to.
+                                Format://bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
+                            Optional: "true"
+        row_filter:
+            Type: TypeString
+            Description: 'A filter applied to all rows in a single DataScan job. The filter needs to be a valid SQL expression for a WHERE clause in BigQuery standard SQL syntax. Example: col1 >= 0 AND col2 < 10'
+            Optional: "true"
+        rules:
+            Type: TypeList
+            Description: The list of rules to evaluate against a data source. At least one rule is required.
+            Optional: "true"
+            MinItems: "1"
+            Properties:
+                column:
+                    Type: TypeString
+                    Description: The unnested column which this rule is evaluated against.
+                    Optional: "true"
+                description:
+                    Type: TypeString
+                    Description: |-
+                        Description of the rule.
+                        The maximum length is 1,024 characters.
+                    Optional: "true"
+                dimension:
+                    Type: TypeString
+                    Description: The dimension a rule belongs to. Results are also aggregated at the dimension level. Supported dimensions are ["COMPLETENESS", "ACCURACY", "CONSISTENCY", "VALIDITY", "UNIQUENESS", "INTEGRITY"]
+                    Required: "true"
+                ignore_null:
+                    Type: TypeBool
+                    Description: Rows with null values will automatically fail a rule, unless ignoreNull is true. In that case, such null rows are trivially considered passing. Only applicable to ColumnMap rules.
+                    Optional: "true"
+                name:
+                    Type: TypeString
+                    Description: |-
+                        A mutable name for the rule.
+                        The name must contain only letters (a-z, A-Z), numbers (0-9), or hyphens (-).
+                        The maximum length is 63 characters.
+                        Must start with a letter.
+                        Must end with a number or a letter.
+                    Optional: "true"
+                non_null_expectation:
+                    Type: TypeList
+                    Description: ColumnMap rule which evaluates whether each column value is null.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties: {}
+                range_expectation:
+                    Type: TypeList
+                    Description: ColumnMap rule which evaluates whether each column value lies between a specified range.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        max_value:
+                            Type: TypeString
+                            Description: The maximum column value allowed for a row to pass this validation. At least one of minValue and maxValue need to be provided.
+                            Optional: "true"
+                        min_value:
+                            Type: TypeString
+                            Description: The minimum column value allowed for a row to pass this validation. At least one of minValue and maxValue need to be provided.
+                            Optional: "true"
+                        strict_max_enabled:
+                            Type: TypeBool
+                            Description: |-
+                                Whether each value needs to be strictly lesser than ('<') the maximum, or if equality is allowed.
+                                Only relevant if a maxValue has been defined. Default = false.
+                            Optional: "true"
+                        strict_min_enabled:
+                            Type: TypeBool
+                            Description: |-
+                                Whether each value needs to be strictly greater than ('>') the minimum, or if equality is allowed.
+                                Only relevant if a minValue has been defined. Default = false.
+                            Optional: "true"
+                regex_expectation:
+                    Type: TypeList
+                    Description: ColumnMap rule which evaluates whether each column value matches a specified regex.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        regex:
+                            Type: TypeString
+                            Description: A regular expression the column value is expected to match.
+                            Required: "true"
+                row_condition_expectation:
+                    Type: TypeList
+                    Description: Table rule which evaluates whether each row passes the specified condition.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        sql_expression:
+                            Type: TypeString
+                            Description: The SQL expression.
+                            Required: "true"
+                set_expectation:
+                    Type: TypeList
+                    Description: ColumnMap rule which evaluates whether each column value is contained by a specified set.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        values:
+                            Type: TypeList
+                            Description: Expected values for the column value.
+                            Required: "true"
+                statistic_range_expectation:
+                    Type: TypeList
+                    Description: ColumnAggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        max_value:
+                            Type: TypeString
+                            Description: |-
+                                The maximum column statistic value allowed for a row to pass this validation.
+                                At least one of minValue and maxValue need to be provided.
+                            Optional: "true"
+                        min_value:
+                            Type: TypeString
+                            Description: |-
+                                The minimum column statistic value allowed for a row to pass this validation.
+                                At least one of minValue and maxValue need to be provided.
+                            Optional: "true"
+                        statistic:
+                            Type: TypeString
+                            Description: 'column statistics. Possible values: ["STATISTIC_UNDEFINED", "MEAN", "MIN", "MAX"]'
+                            Required: "true"
+                        strict_max_enabled:
+                            Type: TypeBool
+                            Description: |-
+                                Whether column statistic needs to be strictly lesser than ('<') the maximum, or if equality is allowed.
+                                Only relevant if a maxValue has been defined. Default = false.
+                            Optional: "true"
+                        strict_min_enabled:
+                            Type: TypeBool
+                            Description: |-
+                                Whether column statistic needs to be strictly greater than ('>') the minimum, or if equality is allowed.
+                                Only relevant if a minValue has been defined. Default = false.
+                            Optional: "true"
+                table_condition_expectation:
+                    Type: TypeList
+                    Description: Table rule which evaluates whether the provided expression is true.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        sql_expression:
+                            Type: TypeString
+                            Description: The SQL expression.
+                            Required: "true"
+                threshold:
+                    Type: TypeFloat
+                    Description: The minimum ratio of passing_rows / total_rows required to pass this rule, with a range of [0.0, 1.0]. 0 indicates default value (i.e. 1.0).
+                    Optional: "true"
+                uniqueness_expectation:
+                    Type: TypeList
+                    Description: Row-level rule which evaluates whether each column value is unique.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties: {}
+        sampling_percent:
+            Type: TypeFloat
+            Description: |-
+                The percentage of the records to be selected from the dataset for DataScan.
+                Value can range between 0.0 and 100.0 with up to 3 significant decimal digits.
+                Sampling is not applied if 'sampling_percent' is not specified, 0 or 100.
+            Optional: "true"
+data_scan_id:
+    Type: TypeString
+    Description: DataScan identifier. Must contain only lowercase letters, numbers and hyphens. Must start with a letter. Must end with a number or a letter.
+    Required: "true"
+description:
+    Type: TypeString
+    Description: Description of the scan.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: User friendly display name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+execution_spec:
+    Type: TypeList
+    Description: DataScan execution settings.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        field:
+            Type: TypeString
+            Description: The unnested field (of type Date or Timestamp) that contains values which monotonically increase over time. If not specified, a data scan will run for all data in the table.
+            Optional: "true"
+        trigger:
+            Type: TypeList
+            Description: Spec related to how often and when a scan should be triggered.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                on_demand:
+                    Type: TypeList
+                    Description: The scan runs once via dataScans.run API.
+                    Optional: "true"
+                    ExactlyOneOf: execution_spec.0.trigger.0.on_demand, execution_spec.0.trigger.0.schedule
+                    MaxItems: "1"
+                    Properties: {}
+                schedule:
+                    Type: TypeList
+                    Description: The scan is scheduled to run periodically.
+                    Optional: "true"
+                    ExactlyOneOf: execution_spec.0.trigger.0.on_demand, execution_spec.0.trigger.0.schedule
+                    MaxItems: "1"
+                    Properties:
+                        cron:
+                            Type: TypeString
+                            Description: Cron schedule for running scans periodically. This field is required for Schedule scans.
+                            Required: "true"
+execution_status:
+    Type: TypeList
+    Description: Status of the data scan execution.
+    Computed: "true"
+    Properties:
+        latest_job_end_time:
+            Type: TypeString
+            Description: The time when the latest DataScanJob started.
+            Computed: "true"
+        latest_job_start_time:
+            Type: TypeString
+            Description: The time when the latest DataScanJob ended.
+            Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        User-defined labels for the scan. A list of key->value pairs.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location where the data scan should reside.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: 'The relative resource name of the scan, of the form: projects/{project}/locations/{locationId}/dataScans/{datascan_id}, where project refers to a project_id or project_number and locationId refers to a GCP region.'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: Current state of the DataScan.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: The type of DataScan.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: System generated globally unique ID for the scan. This ID will be different if the scan is deleted and re-created with the same name.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time when the scan was last updated.
+    Computed: "true"
+

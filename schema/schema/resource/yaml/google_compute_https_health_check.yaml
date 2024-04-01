@@ -1,0 +1,73 @@
+check_interval_sec:
+    Type: TypeInt
+    Description: |-
+        How often (in seconds) to send a health check. The default value is 5
+        seconds.
+    Optional: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: |-
+        An optional description of this resource. Provide this property when
+        you create the resource.
+    Optional: "true"
+healthy_threshold:
+    Type: TypeInt
+    Description: |-
+        A so-far unhealthy instance will be marked healthy after this many
+        consecutive successes. The default value is 2.
+    Optional: "true"
+host:
+    Type: TypeString
+    Description: |-
+        The value of the host header in the HTTPS health check request. If
+        left empty (default value), the public IP on behalf of which this
+        health check is performed will be used.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. Provided by the client when the resource is
+        created. The name must be 1-63 characters long, and comply with
+        RFC1035.  Specifically, the name must be 1-63 characters long and
+        match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means
+        the first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the
+        last character, which cannot be a dash.
+    Required: "true"
+port:
+    Type: TypeInt
+    Description: |-
+        The TCP port number for the HTTPS health check request.
+        The default value is 443.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+request_path:
+    Type: TypeString
+    Description: |-
+        The request path of the HTTPS health check request.
+        The default value is /.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+timeout_sec:
+    Type: TypeInt
+    Description: |-
+        How long (in seconds) to wait before claiming failure.
+        The default value is 5 seconds.  It is invalid for timeoutSec to have
+        greater value than checkIntervalSec.
+    Optional: "true"
+unhealthy_threshold:
+    Type: TypeInt
+    Description: |-
+        A so-far healthy instance will be marked unhealthy after this many
+        consecutive failures. The default value is 2.
+    Optional: "true"
+

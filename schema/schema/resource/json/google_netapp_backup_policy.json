@@ -1,0 +1,72 @@
+{
+    "assigned_volume_count": {
+        "Computed": true,
+        "Description": "The total number of volumes assigned by this backup policy.",
+        "Type": "TypeInt"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Create time of the backup policy. A timestamp in RFC3339 UTC \"Zulu\" format. Examples: \"2023-06-22T09:13:01.617Z\".",
+        "Type": "TypeString"
+    },
+    "daily_backup_limit": {
+        "Description": "Number of daily backups to keep. Note that the minimum daily backup limit is 2.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enabled": {
+        "Description": "If enabled, make backups automatically according to the schedules.\nThis will be applied to all volumes that have this policy attached and enforced on volume level.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "labels": {
+        "Description": "Labels as key value pairs. Example: '{ \"owner\": \"Bob\", \"department\": \"finance\", \"purpose\": \"testing\" }'.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Name of the region for the policy to apply to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "monthly_backup_limit": {
+        "Description": "Number of monthly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "The name of the backup policy. Needs to be unique per location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The state of the backup policy.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "weekly_backup_limit": {
+        "Description": "Number of weekly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.",
+        "Required": true,
+        "Type": "TypeInt"
+    }
+}

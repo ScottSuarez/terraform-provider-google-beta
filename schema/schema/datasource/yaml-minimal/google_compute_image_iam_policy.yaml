@@ -1,0 +1,5 @@
+etag: TypeString
+image: TypeString
+policy_data: TypeString
+project: TypeString
+

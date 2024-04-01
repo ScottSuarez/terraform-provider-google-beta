@@ -1,0 +1,82 @@
+api_key:
+    Type: TypeString
+    Description: |-
+        Immutable. API Key that will be attached to webhook. Once this field has been set, it cannot be changed.
+        Changing this field will result in deleting/ recreating the resource.
+    Required: "true"
+config_id:
+    Type: TypeString
+    Description: The ID to use for the BitbucketServerConfig, which will become the final component of the BitbucketServerConfig's resource name.
+    Required: "true"
+connected_repositories:
+    Type: TypeSet
+    Description: Connected Bitbucket Server repositories for this config.
+    Optional: "true"
+    Properties:
+        project_key:
+            Type: TypeString
+            Description: Identifier for the project storing the repository.
+            Required: "true"
+        repo_slug:
+            Type: TypeString
+            Description: Identifier for the repository.
+            Required: "true"
+host_uri:
+    Type: TypeString
+    Description: |-
+        Immutable. The URI of the Bitbucket Server host. Once this field has been set, it cannot be changed.
+        If you need to change it, please create another BitbucketServerConfig.
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location of this bitbucket server config.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name for the config.
+    Computed: "true"
+peered_network:
+    Type: TypeString
+    Description: |-
+        The network to be used when reaching out to the Bitbucket Server instance. The VPC network must be enabled for private service connection.
+        This should be set if the Bitbucket Server instance is hosted on-premises and not reachable by public internet. If this field is left empty,
+        no network peering will occur and calls to the Bitbucket Server instance will be made over the public internet. Must be in the format
+        projects/{project}/global/networks/{network}, where {project} is a project number or id and {network} is the name of a VPC network in the project.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+secrets:
+    Type: TypeList
+    Description: Secret Manager secrets needed by the config.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        admin_access_token_version_name:
+            Type: TypeString
+            Description: The resource name for the admin access token's secret version.
+            Required: "true"
+        read_access_token_version_name:
+            Type: TypeString
+            Description: The resource name for the read access token's secret version.
+            Required: "true"
+        webhook_secret_version_name:
+            Type: TypeString
+            Description: |-
+                Immutable. The resource name for the webhook secret's secret version. Once this field has been set, it cannot be changed.
+                Changing this field will result in deleting/ recreating the resource.
+            Required: "true"
+ssl_ca:
+    Type: TypeString
+    Description: SSL certificate to use for requests to Bitbucket Server. The format should be PEM format but the extension can be one of .pem, .cer, or .crt.
+    Optional: "true"
+username:
+    Type: TypeString
+    Description: Username of the account Cloud Build will use on Bitbucket Server.
+    Required: "true"
+webhook_key:
+    Type: TypeString
+    Description: Output only. UUID included in webhook requests. The UUID is used to look up the corresponding config.
+    Computed: "true"
+

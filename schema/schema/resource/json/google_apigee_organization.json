@@ -1,0 +1,99 @@
+{
+    "analytics_region": {
+        "Description": "Primary GCP region for analytics data storage. For valid values, see [Create an Apigee organization](https://cloud.google.com/apigee/docs/api-platform/get-started/create-org).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "apigee_project_id": {
+        "Computed": true,
+        "Description": "Output only. Project ID of the Apigee Tenant Project.",
+        "Type": "TypeString"
+    },
+    "authorized_network": {
+        "Description": "Compute Engine network used for Service Networking to be peered with Apigee runtime instances.\nSee [Getting started with the Service Networking API](https://cloud.google.com/service-infrastructure/docs/service-networking/getting-started).\nValid only when 'RuntimeType' is set to CLOUD. The value can be updated only when there are no runtime instances. For example: \"default\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "billing_type": {
+        "Computed": true,
+        "Description": "Billing type of the Apigee organization. See [Apigee pricing](https://cloud.google.com/apigee/pricing).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ca_certificate": {
+        "Computed": true,
+        "Description": "Output only. Base64-encoded public certificate for the root CA of the Apigee organization.\nValid only when 'RuntimeType' is CLOUD. A base64-encoded string.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description of the Apigee organization.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "disable_vpc_peering": {
+        "Description": "Flag that specifies whether the VPC Peering through Private Google Access should be\ndisabled between the consumer network and Apigee. Required if an 'authorizedNetwork'\non the consumer project is not provided, in which case the flag should be set to 'true'.\nValid only when 'RuntimeType' is set to CLOUD. The value must be set before the creation\nof any Apigee runtime instance and can be updated only when there are no runtime instances.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "display_name": {
+        "Description": "The display name of the Apigee organization.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. Name of the Apigee organization.",
+        "Type": "TypeString"
+    },
+    "project_id": {
+        "Description": "The project ID associated with the Apigee organization.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "properties": {
+        "Computed": true,
+        "Description": "Properties defined in the Apigee organization profile.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "property": {
+                "Description": "List of all properties in the object.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Description": "Name of the property.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "value": {
+                        "Description": "Value of the property.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "retention": {
+        "Description": "Optional. This setting is applicable only for organizations that are soft-deleted (i.e., BillingType\nis not EVALUATION). It controls how long Organization data will be retained after the initial delete\noperation completes. During this period, the Organization may be restored to its last known state.\nAfter this period, the Organization will no longer be able to be restored. Default value: \"DELETION_RETENTION_UNSPECIFIED\" Possible values: [\"DELETION_RETENTION_UNSPECIFIED\", \"MINIMUM\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime_database_encryption_key_name": {
+        "Description": "Cloud KMS key name used for encrypting the data that is stored and replicated across runtime instances.\nUpdate is not allowed after the organization is created.\nIf not specified, a Google-Managed encryption key will be used.\nValid only when 'RuntimeType' is CLOUD. For example: 'projects/foo/locations/us/keyRings/bar/cryptoKeys/baz'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime_type": {
+        "Description": "Runtime type of the Apigee organization based on the Apigee subscription purchased. Default value: \"CLOUD\" Possible values: [\"CLOUD\", \"HYBRID\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "subscription_type": {
+        "Computed": true,
+        "Description": "Output only. Subscription type of the Apigee organization.\nValid values include trial (free, limited, and for evaluation purposes only) or paid (full subscription has been purchased).",
+        "Type": "TypeString"
+    }
+}

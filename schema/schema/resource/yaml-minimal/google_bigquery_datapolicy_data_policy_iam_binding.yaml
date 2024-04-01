@@ -1,0 +1,11 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+data_policy_id: TypeString
+etag: TypeString
+location: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+

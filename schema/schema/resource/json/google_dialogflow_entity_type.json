@@ -1,0 +1,44 @@
+{
+    "display_name": {
+        "Description": "The name of this entity type to be displayed on the console.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enable_fuzzy_extraction": {
+        "Description": "Enables fuzzy entity extraction during classification.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "entities": {
+        "Description": "The collection of entity entries associated with the entity type.",
+        "Optional": true,
+        "Properties": {
+            "synonyms": {
+                "Description": "A collection of value synonyms. For example, if the entity type is vegetable, and value is scallions, a synonym\ncould be green onions.\nFor KIND_LIST entity types:\n* This collection must contain exactly one synonym equal to value.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "value": {
+                "Description": "The primary value associated with this entity entry. For example, if the entity type is vegetable, the value\ncould be scallions.\nFor KIND_MAP entity types:\n* A reference value to be used in place of synonyms.\nFor KIND_LIST entity types:\n* A string that can contain references to other entity types (with or without aliases).",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "kind": {
+        "Description": "Indicates the kind of entity type.\n* KIND_MAP: Map entity types allow mapping of a group of synonyms to a reference value.\n* KIND_LIST: List entity types contain a set of entries that do not map to reference values. However, list entity\ntypes can contain references to other entity types (with or without aliases).\n* KIND_REGEXP: Regexp entity types allow to specify regular expressions in entries values. Possible values: [\"KIND_MAP\", \"KIND_LIST\", \"KIND_REGEXP\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the entity type.\nFormat: projects/\u003cProject ID\u003e/agent/entityTypes/\u003cEntity type ID\u003e.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

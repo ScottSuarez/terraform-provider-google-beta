@@ -1,0 +1,54 @@
+behavior:
+    Type: TypeString
+    Description: Answer this query with a behavior rather than DNS data. Acceptable values are 'behaviorUnspecified', and 'bypassResponsePolicy'
+    Optional: "true"
+    ConflictsWith: local_data
+dns_name:
+    Type: TypeString
+    Description: The DNS name (wildcard or exact) to apply this rule to. Must be unique within the Response Policy Rule.
+    Required: "true"
+local_data:
+    Type: TypeList
+    Description: |-
+        Answer this query directly with DNS data. These ResourceRecordSets override any other DNS behavior for the matched name;
+        in particular they override private zones, the public internet, and GCP internal DNS. No SOA nor NS types are allowed.
+    Optional: "true"
+    ConflictsWith: behavior
+    MaxItems: "1"
+    Properties:
+        local_datas:
+            Type: TypeList
+            Description: All resource record sets for this selector, one per resource record type. The name must match the dns_name.
+            Required: "true"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: For example, www.example.com.
+                    Required: "true"
+                rrdatas:
+                    Type: TypeList
+                    Description: As defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1)
+                    Optional: "true"
+                ttl:
+                    Type: TypeInt
+                    Description: |-
+                        Number of seconds that this ResourceRecordSet can be cached by
+                        resolvers.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: 'One of valid DNS resource types. Possible values: ["A", "AAAA", "CAA", "CNAME", "DNSKEY", "DS", "HTTPS", "IPSECVPNKEY", "MX", "NAPTR", "NS", "PTR", "SOA", "SPF", "SRV", "SSHFP", "SVCB", "TLSA", "TXT"]'
+                    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+response_policy:
+    Type: TypeString
+    Description: Identifies the response policy addressed by this request.
+    Required: "true"
+rule_name:
+    Type: TypeString
+    Description: An identifier for this rule. Must be unique with the ResponsePolicy.
+    Required: "true"
+

@@ -1,0 +1,57 @@
+create_time: TypeString
+creator: TypeString
+disable_proxy_access: TypeBool
+effective_labels: TypeMap(TypeString)
+gce_setup:
+    accelerator_configs:
+        core_count: TypeString
+        type: TypeString
+    boot_disk:
+        disk_encryption: TypeString
+        disk_size_gb: TypeString
+        disk_type: TypeString
+        kms_key: TypeString
+    data_disks:
+        disk_encryption: TypeString
+        disk_size_gb: TypeString
+        disk_type: TypeString
+        kms_key: TypeString
+    disable_public_ip: TypeBool
+    enable_ip_forwarding: TypeBool
+    machine_type: TypeString
+    metadata: TypeMap(TypeString)
+    network_interfaces:
+        network: TypeString
+        nic_type: TypeString
+        subnet: TypeString
+    service_accounts:
+        email: TypeString
+        scopes: TypeList(TypeString)
+    tags: TypeList(TypeString)
+    vm_image:
+        family: TypeString
+        name: TypeString
+        project: TypeString
+health_info: {}
+health_state: TypeString
+instance_id: TypeString
+instance_owners: TypeList(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+proxy_uri: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+upgrade_history:
+    action: TypeString
+    container_image: TypeString
+    create_time: TypeString
+    framework: TypeString
+    snapshot: TypeString
+    state: TypeString
+    target_version: TypeString
+    version: TypeString
+    vm_image: TypeString
+

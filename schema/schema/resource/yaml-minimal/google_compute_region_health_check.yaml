@@ -1,0 +1,57 @@
+check_interval_sec: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+grpc_health_check:
+    grpc_service_name: TypeString
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+healthy_threshold: TypeInt
+http2_health_check:
+    host: TypeString
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+    proxy_header: TypeString
+    request_path: TypeString
+    response: TypeString
+http_health_check:
+    host: TypeString
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+    proxy_header: TypeString
+    request_path: TypeString
+    response: TypeString
+https_health_check:
+    host: TypeString
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+    proxy_header: TypeString
+    request_path: TypeString
+    response: TypeString
+log_config:
+    enable: TypeBool
+name: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+ssl_health_check:
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+    proxy_header: TypeString
+    request: TypeString
+    response: TypeString
+tcp_health_check:
+    port: TypeInt
+    port_name: TypeString
+    port_specification: TypeString
+    proxy_header: TypeString
+    request: TypeString
+    response: TypeString
+timeout_sec: TypeInt
+type: TypeString
+unhealthy_threshold: TypeInt
+

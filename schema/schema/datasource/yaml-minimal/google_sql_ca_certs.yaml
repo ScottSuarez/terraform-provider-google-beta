@@ -1,0 +1,10 @@
+active_version: TypeString
+certs:
+    cert: TypeString
+    common_name: TypeString
+    create_time: TypeString
+    expiration_time: TypeString
+    sha1_fingerprint: TypeString
+instance: TypeString
+project: TypeString
+

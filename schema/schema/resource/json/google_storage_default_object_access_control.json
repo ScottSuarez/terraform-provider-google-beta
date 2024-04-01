@@ -1,0 +1,59 @@
+{
+    "bucket": {
+        "Description": "The name of the bucket.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "domain": {
+        "Computed": true,
+        "Description": "The domain associated with the entity.",
+        "Type": "TypeString"
+    },
+    "email": {
+        "Computed": true,
+        "Description": "The email address associated with the entity.",
+        "Type": "TypeString"
+    },
+    "entity": {
+        "Description": "The entity holding the permission, in one of the following forms:\n  * user-{{userId}}\n  * user-{{email}} (such as \"user-liz@example.com\")\n  * group-{{groupId}}\n  * group-{{email}} (such as \"group-example@googlegroups.com\")\n  * domain-{{domain}} (such as \"domain-example.com\")\n  * project-team-{{projectId}}\n  * allUsers\n  * allAuthenticatedUsers",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "entity_id": {
+        "Computed": true,
+        "Description": "The ID for the entity",
+        "Type": "TypeString"
+    },
+    "generation": {
+        "Computed": true,
+        "Description": "The content generation of the object, if applied to an object.",
+        "Type": "TypeInt"
+    },
+    "object": {
+        "Description": "The name of the object, if applied to an object.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project_team": {
+        "Computed": true,
+        "Description": "The project team associated with the entity",
+        "Properties": {
+            "project_number": {
+                "Description": "The project team associated with the entity",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "team": {
+                "Description": "The team. Possible values: [\"editors\", \"owners\", \"viewers\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "role": {
+        "Description": "The access permission for the entity. Possible values: [\"OWNER\", \"READER\"]",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

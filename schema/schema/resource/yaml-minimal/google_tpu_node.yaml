@@ -1,0 +1,19 @@
+accelerator_type: TypeString
+cidr_block: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+network_endpoints:
+    ip_address: TypeString
+    port: TypeInt
+project: TypeString
+scheduling_config:
+    preemptible: TypeBool
+service_account: TypeString
+tensorflow_version: TypeString
+terraform_labels: TypeMap(TypeString)
+use_service_networking: TypeBool
+zone: TypeString
+

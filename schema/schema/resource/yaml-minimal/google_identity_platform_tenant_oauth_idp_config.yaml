@@ -1,0 +1,9 @@
+client_id: TypeString
+client_secret: TypeString
+display_name: TypeString
+enabled: TypeBool
+issuer: TypeString
+name: TypeString
+project: TypeString
+tenant: TypeString
+

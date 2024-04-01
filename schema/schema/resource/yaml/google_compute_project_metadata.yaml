@@ -1,0 +1,10 @@
+metadata:
+    Type: TypeMap
+    Description: A series of key value pairs.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+

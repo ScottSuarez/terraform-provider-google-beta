@@ -1,0 +1,8 @@
+daily_recurrence: {}
+database: TypeString
+name: TypeString
+project: TypeString
+retention: TypeString
+weekly_recurrence:
+    day: TypeString
+

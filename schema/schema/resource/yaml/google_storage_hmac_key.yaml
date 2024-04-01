@@ -1,0 +1,29 @@
+access_id:
+    Type: TypeString
+    Description: The access ID of the HMAC Key.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+secret:
+    Type: TypeString
+    Description: HMAC secret key material.
+    Computed: "true"
+service_account_email:
+    Type: TypeString
+    Description: The email address of the key's associated service account.
+    Required: "true"
+state:
+    Type: TypeString
+    Description: 'The state of the key. Can be set to one of ACTIVE, INACTIVE. Default value: "ACTIVE" Possible values: ["ACTIVE", "INACTIVE"]'
+    Optional: "true"
+time_created:
+    Type: TypeString
+    Description: '''The creation time of the HMAC key in RFC 3339 format. '''
+    Computed: "true"
+updated:
+    Type: TypeString
+    Description: '''The last modification time of the HMAC key metadata in RFC 3339 format.'''
+    Computed: "true"
+

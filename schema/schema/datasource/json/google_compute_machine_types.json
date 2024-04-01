@@ -1,0 +1,116 @@
+{
+    "filter": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "machine_types": {
+        "Computed": true,
+        "Description": "The list of machine types",
+        "Properties": {
+            "accelerators": {
+                "Computed": true,
+                "Description": "A list of accelerator configurations assigned to this machine type.",
+                "Properties": {
+                    "guest_accelerator_count": {
+                        "Computed": true,
+                        "Description": "Number of accelerator cards exposed to the guest.",
+                        "Type": "TypeInt"
+                    },
+                    "guest_accelerator_type": {
+                        "Computed": true,
+                        "Description": "The accelerator type resource name, not a full URL, e.g. nvidia-tesla-t4.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "bundled_local_ssds": {
+                "Computed": true,
+                "Description": "The configuration of bundled local SSD for the machine type.",
+                "Properties": {
+                    "default_interface": {
+                        "Computed": true,
+                        "Description": "The default disk interface if the interface is not specified.",
+                        "Type": "TypeString"
+                    },
+                    "partition_count": {
+                        "Computed": true,
+                        "Description": "The number of partitions.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "deprecated": {
+                "Computed": true,
+                "Description": "The deprecation status associated with this machine type. Only applicable if the machine type is unavailable.",
+                "Properties": {
+                    "replacement": {
+                        "Computed": true,
+                        "Description": "The URL of the suggested replacement for a deprecated machine type.",
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Computed": true,
+                        "Description": "The deprecation state of this resource. This can be ACTIVE, DEPRECATED, OBSOLETE, or DELETED.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "description": {
+                "Computed": true,
+                "Description": "A textual description of the machine type.",
+                "Type": "TypeString"
+            },
+            "guest_cpus": {
+                "Computed": true,
+                "Description": "The number of virtual CPUs that are available to the instance.",
+                "Type": "TypeInt"
+            },
+            "is_shared_cpus": {
+                "Computed": true,
+                "Description": "Whether this machine type has a shared CPU.",
+                "Type": "TypeBool"
+            },
+            "maximum_persistent_disks": {
+                "Computed": true,
+                "Description": "The maximum persistent disks allowed.",
+                "Type": "TypeInt"
+            },
+            "maximum_persistent_disks_size_gb": {
+                "Computed": true,
+                "Description": "The maximum total persistent disks size (GB) allowed.",
+                "Type": "TypeInt"
+            },
+            "memory_mb": {
+                "Computed": true,
+                "Description": "The amount of physical memory available to the instance, defined in MB.",
+                "Type": "TypeInt"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The name of the machine type.",
+                "Type": "TypeString"
+            },
+            "self_link": {
+                "Computed": true,
+                "Description": "The server-defined URL for the machine type.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "Project ID for this request.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Description": "The name of the zone for this request.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

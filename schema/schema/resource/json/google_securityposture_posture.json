@@ -1,0 +1,471 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Posture was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description of the posture.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "For Resource freshness validation (https://google.aip.dev/154)",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "Location of the resource, eg: global.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Name of the posture.",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The parent of the resource, an organization. Format should be 'organizations/{organization_id}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_sets": {
+        "Description": "List of policy sets for the posture.",
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Description": "Description of the policy set.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "policies": {
+                "Description": "List of security policy",
+                "Optional": true,
+                "Properties": {
+                    "compliance_standards": {
+                        "Description": "Mapping for policy to security standards and controls.",
+                        "Optional": true,
+                        "Properties": {
+                            "control": {
+                                "Description": "Mapping of security controls for the policy.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "standard": {
+                                "Description": "Mapping of compliance standards for the policy.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "constraint": {
+                        "Description": "Policy constraint definition.It can have the definition of one of following constraints: orgPolicyConstraint orgPolicyConstraintCustom securityHealthAnalyticsModule securityHealthAnalyticsCustomModule",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "org_policy_constraint": {
+                                "Description": "Organization policy canned constraint definition.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "canned_constraint_id": {
+                                        "Description": "Organization policy canned constraint Id",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "policy_rules": {
+                                        "Description": "Definition of policy rules",
+                                        "Properties": {
+                                            "allow_all": {
+                                                "Description": "Setting this to true means that all values are allowed. This field can be set only in policies for list constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "deny_all": {
+                                                "Description": "Setting this to true means that all values are denied. This field can be set only in policies for list constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "enforce": {
+                                                "Description": "If 'true', then the policy is enforced. If 'false', then any configuration is acceptable.\nThis field can be set only in policies for boolean constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "expr": {
+                                                "Description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.\nThis page details the objects and attributes that are used to the build the CEL expressions for\ncustom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "description": {
+                                                        "Description": "Description of the expression",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "expression": {
+                                                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "location": {
+                                                        "Description": "String indicating the location of the expression for error reporting, e.g. a file name and a position in the file",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "title": {
+                                                        "Description": "Title for the expression, i.e. a short string describing its purpose.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "values": {
+                                                "Description": "List of values to be used for this policy rule. This field can be set only in policies for list constraints.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "allowed_values": {
+                                                        "Description": "List of values allowed at this resource.",
+                                                        "Optional": true,
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "denied_values": {
+                                                        "Description": "List of values denied at this resource.",
+                                                        "Optional": true,
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "org_policy_constraint_custom": {
+                                "Description": "Organization policy custom constraint policy definition.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "custom_constraint": {
+                                        "Description": "Organization policy custom constraint definition.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "action_type": {
+                                                "Description": "The action to take if the condition is met. Possible values: [\"ALLOW\", \"DENY\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "condition": {
+                                                "Description": "A CEL condition that refers to a supported service resource, for example 'resource.management.autoUpgrade == false'. For details about CEL usage, see [Common Expression Language](https://cloud.google.com/resource-manager/docs/organization-policy/creating-managing-custom-constraints#common_expression_language).",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "description": {
+                                                "Description": "A human-friendly description of the constraint to display as an error message when the policy is violated.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "display_name": {
+                                                "Description": "A human-friendly name for the constraint.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "method_types": {
+                                                "Description": "A list of RESTful methods for which to enforce the constraint. Can be 'CREATE', 'UPDATE', or both. Not all Google Cloud services support both methods. To see supported methods for each service, find the service in [Supported services](https://cloud.google.com/resource-manager/docs/organization-policy/custom-constraint-supported-services).",
+                                                "MinItems": 1,
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "name": {
+                                                "Description": "Immutable. The name of the custom constraint. This is unique within the organization.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "resource_types": {
+                                                "Description": "Immutable. The fully qualified name of the Google Cloud REST resource containing the object and field you want to restrict. For example, 'container.googleapis.com/NodePool'.",
+                                                "MinItems": 1,
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "policy_rules": {
+                                        "Description": "Definition of policy rules",
+                                        "Properties": {
+                                            "allow_all": {
+                                                "Description": "Setting this to true means that all values are allowed. This field can be set only in policies for list constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "deny_all": {
+                                                "Description": "Setting this to true means that all values are denied. This field can be set only in policies for list constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "enforce": {
+                                                "Description": "If 'true', then the policy is enforced. If 'false', then any configuration is acceptable.\nThis field can be set only in policies for boolean constraints.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "expr": {
+                                                "Description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.\nThis page details the objects and attributes that are used to the build the CEL expressions for\ncustom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "description": {
+                                                        "Description": "Description of the expression",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "expression": {
+                                                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "location": {
+                                                        "Description": "String indicating the location of the expression for error reporting, e.g. a file name and a position in the file",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "title": {
+                                                        "Description": "Title for the expression, i.e. a short string describing its purpose.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "values": {
+                                                "Description": "List of values to be used for this policy rule. This field can be set only in policies for list constraints.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "allowed_values": {
+                                                        "Description": "List of values allowed at this resource.",
+                                                        "Optional": true,
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "denied_values": {
+                                                        "Description": "List of values denied at this resource.",
+                                                        "Optional": true,
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "security_health_analytics_custom_module": {
+                                "Description": "Definition of Security Health Analytics Custom Module.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "config": {
+                                        "Description": "Custom module details.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "custom_output": {
+                                                "Description": "Custom output properties. A set of optional name-value pairs that define custom source properties to\nreturn with each finding that is generated by the custom module. The custom\nsource properties that are defined here are included in the finding JSON\nunder 'sourceProperties'.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "properties": {
+                                                        "Description": "A list of custom output properties to add to the finding.",
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "name": {
+                                                                "Description": "Name of the property for the custom output.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "value_expression": {
+                                                                "Description": "The CEL expression for the custom output. A resource property can be\nspecified to return the value of the property or a text string enclosed\nin quotation marks.",
+                                                                "MaxItems": 1,
+                                                                "Optional": true,
+                                                                "Properties": {
+                                                                    "description": {
+                                                                        "Description": "Description of the expression",
+                                                                        "Optional": true,
+                                                                        "Type": "TypeString"
+                                                                    },
+                                                                    "expression": {
+                                                                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                                                        "Required": true,
+                                                                        "Type": "TypeString"
+                                                                    },
+                                                                    "location": {
+                                                                        "Description": "String indicating the location of the expression for error reporting, e.g. a file name and a position in the file",
+                                                                        "Optional": true,
+                                                                        "Type": "TypeString"
+                                                                    },
+                                                                    "title": {
+                                                                        "Description": "Title for the expression, i.e. a short string describing its purpose.",
+                                                                        "Optional": true,
+                                                                        "Type": "TypeString"
+                                                                    }
+                                                                },
+                                                                "Type": "TypeList"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "description": {
+                                                "Description": "Text that describes the vulnerability or misconfiguration that the custom\nmodule detects.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "predicate": {
+                                                "Description": "The CEL expression to evaluate to produce findings.When the expression\nevaluates to true against a resource, a finding is generated.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "description": {
+                                                        "Description": "Description of the expression",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "expression": {
+                                                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "location": {
+                                                        "Description": "String indicating the location of the expression for error reporting, e.g. a file name and a position in the file",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "title": {
+                                                        "Description": "Title for the expression, i.e. a short string describing its purpose.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "recommendation": {
+                                                "Description": "An explanation of the recommended steps that security teams can take to\nresolve the detected issue",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "resource_selector": {
+                                                "Description": "The resource types that the custom module operates on. Each custom module\ncan specify up to 5 resource types.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "resource_types": {
+                                                        "Description": "The resource types to run the detector on.",
+                                                        "Required": true,
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "severity": {
+                                                "Description": "The severity to assign to findings generated by the module. Possible values: [\"SEVERITY_UNSPECIFIED\", \"CRITICAL\", \"HIGH\", \"MEDIUM\", \"LOW\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "display_name": {
+                                        "Description": "The display name of the Security Health Analytics custom module. This\ndisplay name becomes the finding category for all findings that are\nreturned by this custom module.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "id": {
+                                        "Computed": true,
+                                        "Description": "A server generated id of custom module.",
+                                        "Type": "TypeString"
+                                    },
+                                    "module_enablement_state": {
+                                        "Description": "The state of enablement for the module at its level of the resource hierarchy. Possible values: [\"ENABLEMENT_STATE_UNSPECIFIED\", \"ENABLED\", \"DISABLED\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "security_health_analytics_module": {
+                                "Description": "Security Health Analytics built-in detector definition.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "module_enablement_state": {
+                                        "Description": "The state of enablement for the module at its level of the resource hierarchy. Possible values: [\"ENABLEMENT_STATE_UNSPECIFIED\", \"ENABLED\", \"DISABLED\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "module_name": {
+                                        "Description": "The name of the module eg: BIGQUERY_TABLE_CMEK_DISABLED.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "description": {
+                        "Description": "Description of the policy.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "policy_id": {
+                        "Description": "ID of the policy.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "policy_set_id": {
+                "Description": "ID of the policy set.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "posture_id": {
+        "Description": "Id of the posture. It is an immutable field.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "If set, there are currently changes in flight to the posture.",
+        "Type": "TypeBool"
+    },
+    "revision_id": {
+        "Computed": true,
+        "Description": "Revision_id of the posture.",
+        "Type": "TypeString"
+    },
+    "state": {
+        "Description": "State of the posture. Update to state field should not be triggered along with\nwith other field updates. Possible values: [\"DEPRECATED\", \"DRAFT\", \"ACTIVE\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Posture was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

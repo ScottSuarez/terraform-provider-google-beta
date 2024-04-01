@@ -1,0 +1,11 @@
+{
+    "bucket": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "role_entity": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeSet"
+    }
+}

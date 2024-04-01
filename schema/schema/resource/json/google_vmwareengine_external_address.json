@@ -1,0 +1,47 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "User-provided description for this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "external_ip": {
+        "Computed": true,
+        "Description": "The external IP address of a workload VM.",
+        "Type": "TypeString"
+    },
+    "internal_ip": {
+        "Description": "The internal IP address of a workload VM.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the external IP Address.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The resource name of the private cloud to create a new external address in.\nResource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.\nFor example: projects/my-project/locations/us-west1-a/privateClouds/my-cloud",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the resource.",
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last updated time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

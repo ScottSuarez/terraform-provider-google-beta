@@ -1,0 +1,45 @@
+{
+    "filter": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "projects": {
+        "Computed": true,
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "A set of key/value label pairs assigned on a project.",
+                "Type": "TypeMap"
+            },
+            "lifecycle_state": {
+                "Computed": true,
+                "Description": "The numeric identifier of the project.",
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The optional user-assigned display name of the Project.",
+                "Type": "TypeString"
+            },
+            "number": {
+                "Computed": true,
+                "Description": "The numeric identifier of the project.",
+                "Type": "TypeString"
+            },
+            "parent": {
+                "Computed": true,
+                "Description": "An optional reference to a parent Resource.",
+                "Type": "TypeMap"
+            },
+            "project_id": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

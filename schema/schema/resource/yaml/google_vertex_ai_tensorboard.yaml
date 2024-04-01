@@ -1,0 +1,69 @@
+blob_storage_path_prefix:
+    Type: TypeString
+    Description: Consumer project Cloud Storage path prefix used to store blob data, which can either be a bucket or directory. Does not end with a '/'.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the Tensorboard was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Description of this Tensorboard.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: User provided name of this Tensorboard.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+encryption_spec:
+    Type: TypeList
+    Description: Customer-managed encryption key spec for a Tensorboard. If set, this Tensorboard and all sub-resources of this Tensorboard will be secured by this key.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key_name:
+            Type: TypeString
+            Description: |-
+                The Cloud KMS resource identifier of the customer managed encryption key used to protect a resource.
+                Has the form: projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key. The key needs to be in the same region as where the resource is created.
+            Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        The labels with user-defined metadata to organize your Tensorboards.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the Tensorboard.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the tensorboard. eg us-central1
+    Computed: "true"
+    Optional: "true"
+run_count:
+    Type: TypeString
+    Description: The number of Runs stored in this Tensorboard.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the Tensorboard was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+

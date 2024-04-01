@@ -1,0 +1,1 @@
+["collector_ilb","collector_ilb.url","description","filter","filter.cidr_ranges","filter.direction","filter.ip_protocols","mirrored_resources","mirrored_resources.instances","mirrored_resources.instances.url","mirrored_resources.subnetworks","mirrored_resources.subnetworks.url","mirrored_resources.tags","name","network","network.url","priority","project","region"]

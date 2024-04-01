@@ -1,0 +1,108 @@
+config:
+    airflow_uri: TypeString
+    dag_gcs_prefix: TypeString
+    data_retention_config:
+        task_logs_retention_config:
+            storage_mode: TypeString
+    database_config:
+        machine_type: TypeString
+        zone: TypeString
+    enable_private_builds_only: TypeBool
+    enable_private_environment: TypeBool
+    encryption_config:
+        kms_key_name: TypeString
+    environment_size: TypeString
+    gke_cluster: TypeString
+    maintenance_window:
+        end_time: TypeString
+        recurrence: TypeString
+        start_time: TypeString
+    master_authorized_networks_config:
+        cidr_blocks:
+            cidr_block: TypeString
+            display_name: TypeString
+        enabled: TypeBool
+    node_config:
+        composer_internal_ipv4_cidr_block: TypeString
+        disk_size_gb: TypeInt
+        enable_ip_masq_agent: TypeBool
+        ip_allocation_policy:
+            cluster_ipv4_cidr_block: TypeString
+            cluster_secondary_range_name: TypeString
+            services_ipv4_cidr_block: TypeString
+            services_secondary_range_name: TypeString
+            use_ip_aliases: TypeBool
+        machine_type: TypeString
+        max_pods_per_node: TypeInt
+        network: TypeString
+        oauth_scopes: TypeSet(TypeString)
+        service_account: TypeString
+        subnetwork: TypeString
+        tags: TypeSet(TypeString)
+        zone: TypeString
+    node_count: TypeInt
+    private_environment_config:
+        cloud_composer_connection_subnetwork: TypeString
+        cloud_composer_network_ipv4_cidr_block: TypeString
+        cloud_sql_ipv4_cidr_block: TypeString
+        connection_type: TypeString
+        enable_private_endpoint: TypeBool
+        enable_privately_used_public_ips: TypeBool
+        master_ipv4_cidr_block: TypeString
+        web_server_ipv4_cidr_block: TypeString
+    recovery_config:
+        scheduled_snapshots_config:
+            enabled: TypeBool
+            snapshot_creation_schedule: TypeString
+            snapshot_location: TypeString
+            time_zone: TypeString
+    resilience_mode: TypeString
+    software_config:
+        airflow_config_overrides: TypeMap(TypeString)
+        cloud_data_lineage_integration:
+            enabled: TypeBool
+        env_variables: TypeMap(TypeString)
+        image_version: TypeString
+        pypi_packages: TypeMap(TypeString)
+        python_version: TypeString
+        scheduler_count: TypeInt
+        web_server_plugins_mode: TypeString
+    web_server_config:
+        machine_type: TypeString
+    web_server_network_access_control:
+        allowed_ip_range:
+            description: TypeString
+            value: TypeString
+    workloads_config:
+        dag_processor:
+            cpu: TypeFloat
+            memory_gb: TypeFloat
+            storage_gb: TypeFloat
+        scheduler:
+            count: TypeInt
+            cpu: TypeFloat
+            memory_gb: TypeFloat
+            storage_gb: TypeFloat
+        triggerer:
+            count: TypeInt
+            cpu: TypeFloat
+            memory_gb: TypeFloat
+        web_server:
+            cpu: TypeFloat
+            memory_gb: TypeFloat
+            storage_gb: TypeFloat
+        worker:
+            cpu: TypeFloat
+            max_count: TypeInt
+            memory_gb: TypeFloat
+            min_count: TypeInt
+            storage_gb: TypeFloat
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+storage_config:
+    bucket: TypeString
+terraform_labels: TypeMap(TypeString)
+

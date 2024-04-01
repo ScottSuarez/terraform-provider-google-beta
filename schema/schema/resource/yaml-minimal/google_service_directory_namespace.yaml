@@ -1,0 +1,8 @@
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+namespace_id: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

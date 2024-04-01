@@ -1,0 +1,16 @@
+create_time: TypeString
+group: TypeString
+member_key:
+    id: TypeString
+    namespace: TypeString
+name: TypeString
+preferred_member_key:
+    id: TypeString
+    namespace: TypeString
+roles:
+    expiry_detail:
+        expire_time: TypeString
+    name: TypeString
+type: TypeString
+update_time: TypeString
+

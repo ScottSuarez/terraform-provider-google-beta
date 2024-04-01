@@ -1,0 +1,21 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+parent: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+threat_prevention_profile:
+    severity_overrides:
+        action: TypeString
+        severity: TypeString
+    threat_overrides:
+        action: TypeString
+        threat_id: TypeString
+        type: TypeString
+type: TypeString
+update_time: TypeString
+

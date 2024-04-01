@@ -1,0 +1,133 @@
+autoscaling:
+    location_policy: TypeString
+    max_node_count: TypeInt
+    min_node_count: TypeInt
+    total_max_node_count: TypeInt
+    total_min_node_count: TypeInt
+cluster: TypeString
+initial_node_count: TypeInt
+instance_group_urls: TypeList(TypeString)
+location: TypeString
+managed_instance_group_urls: TypeList(TypeString)
+management:
+    auto_repair: TypeBool
+    auto_upgrade: TypeBool
+max_pods_per_node: TypeInt
+name: TypeString
+name_prefix: TypeString
+network_config:
+    additional_node_network_configs:
+        network: TypeString
+        subnetwork: TypeString
+    additional_pod_network_configs:
+        max_pods_per_node: TypeInt
+        secondary_pod_range: TypeString
+        subnetwork: TypeString
+    create_pod_range: TypeBool
+    enable_private_nodes: TypeBool
+    network_performance_config:
+        total_egress_bandwidth_tier: TypeString
+    pod_cidr_overprovision_config:
+        disabled: TypeBool
+    pod_ipv4_cidr_block: TypeString
+    pod_range: TypeString
+node_config:
+    advanced_machine_features:
+        threads_per_core: TypeInt
+    boot_disk_kms_key: TypeString
+    confidential_nodes:
+        enabled: TypeBool
+    disk_size_gb: TypeInt
+    disk_type: TypeString
+    effective_taints:
+        effect: TypeString
+        key: TypeString
+        value: TypeString
+    enable_confidential_storage: TypeBool
+    ephemeral_storage_config:
+        local_ssd_count: TypeInt
+    ephemeral_storage_local_ssd_config:
+        local_ssd_count: TypeInt
+    fast_socket:
+        enabled: TypeBool
+    gcfs_config:
+        enabled: TypeBool
+    guest_accelerator:
+        count: TypeInt
+        gpu_driver_installation_config:
+            gpu_driver_version: TypeString
+        gpu_partition_size: TypeString
+        gpu_sharing_config:
+            gpu_sharing_strategy: TypeString
+            max_shared_clients_per_gpu: TypeInt
+        type: TypeString
+    gvnic:
+        enabled: TypeBool
+    host_maintenance_policy:
+        maintenance_interval: TypeString
+    image_type: TypeString
+    kubelet_config:
+        cpu_cfs_quota: TypeBool
+        cpu_cfs_quota_period: TypeString
+        cpu_manager_policy: TypeString
+        pod_pids_limit: TypeInt
+    labels: TypeMap(TypeString)
+    linux_node_config:
+        cgroup_mode: TypeString
+        sysctls: TypeMap(TypeString)
+    local_nvme_ssd_block_config:
+        local_ssd_count: TypeInt
+    local_ssd_count: TypeInt
+    logging_variant: TypeString
+    machine_type: TypeString
+    metadata: TypeMap(TypeString)
+    min_cpu_platform: TypeString
+    node_group: TypeString
+    oauth_scopes: TypeSet(TypeString)
+    preemptible: TypeBool
+    reservation_affinity:
+        consume_reservation_type: TypeString
+        key: TypeString
+        values: TypeSet(TypeString)
+    resource_labels: TypeMap(TypeString)
+    sandbox_config:
+        sandbox_type: TypeString
+    service_account: TypeString
+    shielded_instance_config:
+        enable_integrity_monitoring: TypeBool
+        enable_secure_boot: TypeBool
+    sole_tenant_config:
+        node_affinity:
+            key: TypeString
+            operator: TypeString
+            values: TypeList(TypeString)
+    spot: TypeBool
+    tags: TypeList(TypeString)
+    taint:
+        effect: TypeString
+        key: TypeString
+        value: TypeString
+    workload_metadata_config:
+        mode: TypeString
+node_count: TypeInt
+node_locations: TypeSet(TypeString)
+operation: TypeString
+placement_policy:
+    policy_name: TypeString
+    tpu_topology: TypeString
+    type: TypeString
+project: TypeString
+queued_provisioning:
+    enabled: TypeBool
+upgrade_settings:
+    blue_green_settings:
+        node_pool_soak_duration: TypeString
+        standard_rollout_policy:
+            batch_node_count: TypeInt
+            batch_percentage: TypeFloat
+            batch_soak_duration: TypeString
+    max_surge: TypeInt
+    max_unavailable: TypeInt
+    strategy: TypeString
+version: TypeString
+

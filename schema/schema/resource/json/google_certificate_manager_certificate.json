@@ -1,0 +1,148 @@
+{
+    "description": {
+        "Description": "A human-readable description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the Certificate resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The Certificate Manager location. If not specified, \"global\" is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "managed": {
+        "Description": "Configuration and state of a Managed Certificate.\nCertificate Manager provisions and renews Managed Certificates\nautomatically, for as long as it's authorized to do so.",
+        "ExactlyOneOf": "self_managed, managed",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "authorization_attempt_info": {
+                "Computed": true,
+                "Description": "Detailed state of the latest authorization attempt for each domain\nspecified for this Managed Certificate.",
+                "Properties": {
+                    "details": {
+                        "Computed": true,
+                        "Description": "Human readable explanation for reaching the state. Provided to help\naddress the configuration issues.\nNot guaranteed to be stable. For programmatic access use 'failure_reason' field.",
+                        "Type": "TypeString"
+                    },
+                    "domain": {
+                        "Computed": true,
+                        "Description": "Domain name of the authorization attempt.",
+                        "Type": "TypeString"
+                    },
+                    "failure_reason": {
+                        "Computed": true,
+                        "Description": "Reason for failure of the authorization attempt for the domain.",
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Computed": true,
+                        "Description": "State of the domain for managed certificate issuance.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "dns_authorizations": {
+                "Description": "Authorizations that will be used for performing domain authorization. Either issuanceConfig or dnsAuthorizations should be specificed, but not both.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "domains": {
+                "Description": "The domains for which a managed SSL certificate will be generated.\nWildcard domains are only supported with DNS challenge resolution",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "issuance_config": {
+                "Description": "The resource name for a CertificateIssuanceConfig used to configure private PKI certificates in the format projects/*/locations/*/certificateIssuanceConfigs/*.\nIf this field is not set, the certificates will instead be publicly signed as documented at https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs#caa.\nEither issuanceConfig or dnsAuthorizations should be specificed, but not both.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "provisioning_issue": {
+                "Computed": true,
+                "Description": "Information about issues with provisioning this Managed Certificate.",
+                "Properties": {
+                    "details": {
+                        "Computed": true,
+                        "Description": "Human readable explanation about the issue. Provided to help address\nthe configuration issues.\nNot guaranteed to be stable. For programmatic access use 'reason' field.",
+                        "Type": "TypeString"
+                    },
+                    "reason": {
+                        "Computed": true,
+                        "Description": "Reason for provisioning failures.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "A state of this Managed Certificate.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "A user-defined name of the certificate. Certificate names must be unique\nThe name must be 1-64 characters long, and match the regular expression [a-zA-Z][a-zA-Z0-9_-]* which means the first character must be a letter,\nand all following characters must be a dash, underscore, letter or digit.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "scope": {
+        "Description": "The scope of the certificate.\n\nDEFAULT: Certificates with default scope are served from core Google data centers.\nIf unsure, choose this option.\n\nEDGE_CACHE: Certificates with scope EDGE_CACHE are special-purposed certificates, served from Edge Points of Presence.\nSee https://cloud.google.com/vpc/docs/edge-locations.\n\nALL_REGIONS: Certificates with ALL_REGIONS scope are served from all GCP regions (You can only use ALL_REGIONS with global certs).\nSee https://cloud.google.com/compute/docs/regions-zones",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_managed": {
+        "Description": "Certificate data for a SelfManaged Certificate.\nSelfManaged Certificates are uploaded by the user. Updating such\ncertificates before they expire remains the user's responsibility.",
+        "ExactlyOneOf": "self_managed, managed",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "certificate_pem": {
+                "Description": "The certificate chain in PEM-encoded form.\n\nLeaf certificate comes first, followed by intermediate ones if any.",
+                "ExactlyOneOf": "self_managed.0.certificate_pem, self_managed.0.pem_certificate",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "pem_certificate": {
+                "Description": "The certificate chain in PEM-encoded form.\n\nLeaf certificate comes first, followed by intermediate ones if any.",
+                "ExactlyOneOf": "self_managed.0.certificate_pem, self_managed.0.pem_certificate",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "pem_private_key": {
+                "Description": "The private key of the leaf certificate in PEM-encoded form.",
+                "ExactlyOneOf": "self_managed.0.private_key_pem, self_managed.0.pem_private_key",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "private_key_pem": {
+                "Description": "The private key of the leaf certificate in PEM-encoded form.",
+                "ExactlyOneOf": "self_managed.0.private_key_pem, self_managed.0.pem_private_key",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

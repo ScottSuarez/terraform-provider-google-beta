@@ -1,0 +1,12 @@
+create_time: TypeString
+description: TypeString
+endpoint_forwarding_rule: TypeString
+endpoint_ip: TypeString
+location: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+severity: TypeString
+threat_exceptions: TypeList(TypeString)
+update_time: TypeString
+

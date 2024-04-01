@@ -1,0 +1,32 @@
+{
+    "description": {
+        "Description": "A textual description for the organization security policy.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "A textual name of the security policy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "fingerprint": {
+        "Computed": true,
+        "Description": "Fingerprint of this resource. This field is used internally during\nupdates of this resource.",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The parent of this OrganizationSecurityPolicy in the Cloud Resource Hierarchy.\nFormat: organizations/{organization_id} or folders/{folder_id}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "policy_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource. This identifier is defined by the server.",
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type indicates the intended use of the security policy.\nFor organization security policies, the only supported type\nis \"FIREWALL\". Default value: \"FIREWALL\" Possible values: [\"FIREWALL\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

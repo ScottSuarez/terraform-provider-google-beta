@@ -1,0 +1,51 @@
+create_time: TypeString
+dataplex_zone: TypeString
+description: TypeString
+discovery_spec:
+    csv_options:
+        delimiter: TypeString
+        disable_type_inference: TypeBool
+        encoding: TypeString
+        header_rows: TypeInt
+    enabled: TypeBool
+    exclude_patterns: TypeList(TypeString)
+    include_patterns: TypeList(TypeString)
+    json_options:
+        disable_type_inference: TypeBool
+        encoding: TypeString
+    schedule: TypeString
+discovery_status:
+    last_run_duration: TypeString
+    last_run_time: TypeString
+    message: TypeString
+    state: TypeString
+    stats:
+        data_items: TypeInt
+        data_size: TypeInt
+        filesets: TypeInt
+        tables: TypeInt
+    update_time: TypeString
+display_name: TypeString
+effective_labels: unknown
+labels: TypeMap(TypeString)
+lake: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+resource_spec:
+    name: TypeString
+    read_access_mode: TypeString
+    type: TypeString
+resource_status:
+    message: TypeString
+    state: TypeString
+    update_time: TypeString
+security_status:
+    message: TypeString
+    state: TypeString
+    update_time: TypeString
+state: TypeString
+terraform_labels: unknown
+uid: TypeString
+update_time: TypeString
+

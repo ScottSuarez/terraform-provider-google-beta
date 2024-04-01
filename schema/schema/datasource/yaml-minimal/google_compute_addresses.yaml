@@ -1,0 +1,13 @@
+addresses:
+    address: TypeString
+    address_type: TypeString
+    description: TypeString
+    labels: TypeMap(TypeString)
+    name: TypeString
+    region: TypeString
+    self_link: TypeString
+    status: TypeString
+filter: TypeString
+project: TypeString
+region: TypeString
+

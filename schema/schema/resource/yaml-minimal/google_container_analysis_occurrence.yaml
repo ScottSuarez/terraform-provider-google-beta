@@ -1,0 +1,14 @@
+attestation:
+    serialized_payload: TypeString
+    signatures:
+        public_key_id: TypeString
+        signature: TypeString
+create_time: TypeString
+kind: TypeString
+name: TypeString
+note_name: TypeString
+project: TypeString
+remediation: TypeString
+resource_uri: TypeString
+update_time: TypeString
+

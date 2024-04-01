@@ -1,0 +1,19 @@
+deletion_policy: TypeString
+host: TypeString
+instance: TypeString
+name: TypeString
+password: TypeString
+password_policy:
+    allowed_failed_attempts: TypeInt
+    enable_failed_attempts_check: TypeBool
+    enable_password_verification: TypeBool
+    password_expiration_duration: TypeString
+    status:
+        locked: TypeBool
+        password_expiration_time: TypeString
+project: TypeString
+sql_server_user_details:
+    disabled: TypeBool
+    server_roles: TypeList(TypeString)
+type: TypeString
+

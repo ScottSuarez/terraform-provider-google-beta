@@ -1,0 +1,533 @@
+{
+    "description": {
+        "Description": "A description of the inspect template.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "User set display name of the inspect template.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "inspect_config": {
+        "Description": "The core content of the template.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "content_options": {
+                "Description": "List of options defining data content to scan. If empty, text, images, and other content will be included. Possible values: [\"CONTENT_TEXT\", \"CONTENT_IMAGE\"]",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "custom_info_types": {
+                "Description": "Custom info types to be used. See https://cloud.google.com/dlp/docs/creating-custom-infotypes to learn more.",
+                "Optional": true,
+                "Properties": {
+                    "dictionary": {
+                        "Description": "Dictionary which defines the rule.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "cloud_storage_path": {
+                                "Description": "Newline-delimited file of words in Cloud Storage. Only a single file is accepted.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "path": {
+                                        "Description": "A url representing a file or path (no wildcards) in Cloud Storage. Example: 'gs://[BUCKET_NAME]/dictionary.txt'",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "word_list": {
+                                "Description": "List of words or phrases to search for.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "words": {
+                                        "Description": "Words or phrases defining the dictionary. The dictionary must contain at least one\nphrase and every phrase must contain at least 2 characters that are letters or digits.",
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "exclusion_type": {
+                        "Description": "If set to EXCLUSION_TYPE_EXCLUDE this infoType will not cause a finding to be returned. It still can be used for rules matching. Possible values: [\"EXCLUSION_TYPE_EXCLUDE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "info_type": {
+                        "Description": "CustomInfoType can either be a new infoType, or an extension of built-in infoType, when the name matches one of existing\ninfoTypes and that infoType is specified in 'info_types' field. Specifying the latter adds findings to the\none detected by the system. If built-in info type is not specified in 'info_types' list then the name is\ntreated as a custom info type.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "name": {
+                                "Description": "Name of the information type. Either a name of your choosing when creating a CustomInfoType, or one of the names\nlisted at https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built-in type.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "sensitivity_score": {
+                                "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "score": {
+                                        "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "version": {
+                                "Description": "Version name for this InfoType.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "likelihood": {
+                        "Description": "Likelihood to return for this CustomInfoType. This base value can be altered by a detection rule if the finding meets the criteria\nspecified by the rule. Default value: \"VERY_LIKELY\" Possible values: [\"VERY_UNLIKELY\", \"UNLIKELY\", \"POSSIBLE\", \"LIKELY\", \"VERY_LIKELY\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "regex": {
+                        "Description": "Regular expression which defines the rule.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "group_indexes": {
+                                "Description": "The index of the submatch to extract as findings. When not specified, the entire match is returned. No more than 3 may be included.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "pattern": {
+                                "Description": "Pattern defining the regular expression.\nIts syntax (https://github.com/google/re2/wiki/Syntax) can be found under the google/re2 repository on GitHub.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "sensitivity_score": {
+                        "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "score": {
+                                "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "stored_type": {
+                        "Description": "A reference to a StoredInfoType to use with scanning.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "name": {
+                                "Description": "Resource name of the requested StoredInfoType, for example 'organizations/433245324/storedInfoTypes/432452342'\nor 'projects/project-id/storedInfoTypes/432452342'.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "surrogate_type": {
+                        "Description": "Message for detecting output from deidentification transformations that support reversing.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {},
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "exclude_info_types": {
+                "Description": "When true, excludes type information of the findings.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "include_quote": {
+                "Description": "When true, a contextual quote from the data that triggered a finding is included in the response.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "info_types": {
+                "Description": "Restricts what infoTypes to look for. The values must correspond to InfoType values returned by infoTypes.list\nor listed at https://cloud.google.com/dlp/docs/infotypes-reference.\n\nWhen no InfoTypes or CustomInfoTypes are specified in a request, the system may automatically choose what detectors to run.\nBy default this may be all types, but may change over time as detectors are updated.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Description": "Name of the information type. Either a name of your choosing when creating a CustomInfoType, or one of the names listed\nat https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built-in type.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "sensitivity_score": {
+                        "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "score": {
+                                "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "version": {
+                        "Description": "Version of the information type to use. By default, the version is set to stable",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "limits": {
+                "Description": "Configuration to control the number of findings returned.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "max_findings_per_info_type": {
+                        "Description": "Configuration of findings limit given for specified infoTypes.",
+                        "Optional": true,
+                        "Properties": {
+                            "info_type": {
+                                "Description": "Type of information the findings limit applies to. Only one limit per infoType should be provided. If InfoTypeLimit does\nnot have an infoType, the DLP API applies the limit against all infoTypes that are found but not\nspecified in another InfoTypeLimit.",
+                                "MaxItems": 1,
+                                "Properties": {
+                                    "name": {
+                                        "Description": "Name of the information type. Either a name of your choosing when creating a CustomInfoType, or one of the names listed\nat https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built-in type.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "sensitivity_score": {
+                                        "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "score": {
+                                                "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "version": {
+                                        "Description": "Version name for this InfoType.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Required": true,
+                                "Type": "TypeList"
+                            },
+                            "max_findings": {
+                                "Description": "Max findings limit for the given infoType.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "max_findings_per_item": {
+                        "Description": "Max number of findings that will be returned for each item scanned. The maximum returned is 2000.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "max_findings_per_request": {
+                        "Description": "Max number of findings that will be returned per request/job. The maximum returned is 2000.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "min_likelihood": {
+                "Description": "Only returns findings equal or above this threshold. See https://cloud.google.com/dlp/docs/likelihood for more info Default value: \"POSSIBLE\" Possible values: [\"VERY_UNLIKELY\", \"UNLIKELY\", \"POSSIBLE\", \"LIKELY\", \"VERY_LIKELY\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "rule_set": {
+                "Description": "Set of rules to apply to the findings for this InspectConfig. Exclusion rules, contained in the set are executed in the end,\nother rules are executed in the order they are specified for each info type.",
+                "Optional": true,
+                "Properties": {
+                    "info_types": {
+                        "Description": "List of infoTypes this rule set is applied to.",
+                        "Properties": {
+                            "name": {
+                                "Description": "Name of the information type. Either a name of your choosing when creating a CustomInfoType, or one of the names listed\nat https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built-in type.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "sensitivity_score": {
+                                "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "score": {
+                                        "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "version": {
+                                "Description": "Version name for this InfoType.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "rules": {
+                        "Description": "Set of rules to be applied to infoTypes. The rules are applied in order.",
+                        "Properties": {
+                            "exclusion_rule": {
+                                "Description": "The rule that specifies conditions when findings of infoTypes specified in InspectionRuleSet are removed from results.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "dictionary": {
+                                        "Description": "Dictionary which defines the rule.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "cloud_storage_path": {
+                                                "Description": "Newline-delimited file of words in Cloud Storage. Only a single file is accepted.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "path": {
+                                                        "Description": "A url representing a file or path (no wildcards) in Cloud Storage. Example: 'gs://[BUCKET_NAME]/dictionary.txt'",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "word_list": {
+                                                "Description": "List of words or phrases to search for.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "words": {
+                                                        "Description": "Words or phrases defining the dictionary. The dictionary must contain at least one\nphrase and every phrase must contain at least 2 characters that are letters or digits.",
+                                                        "Required": true,
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "exclude_by_hotword": {
+                                        "Description": "Drop if the hotword rule is contained in the proximate context.\nFor tabular data, the context includes the column name.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "hotword_regex": {
+                                                "Description": "Regular expression pattern defining what qualifies as a hotword.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "group_indexes": {
+                                                        "Description": "The index of the submatch to extract as findings. When not specified,\nthe entire match is returned. No more than 3 may be included.",
+                                                        "Optional": true,
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "pattern": {
+                                                        "Description": "Pattern defining the regular expression. Its syntax\n(https://github.com/google/re2/wiki/Syntax) can be found under the google/re2 repository on GitHub.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "proximity": {
+                                                "Description": "Proximity of the finding within which the entire hotword must reside. The total length of the window cannot\nexceed 1000 characters. Note that the finding itself will be included in the window, so that hotwords may be\nused to match substrings of the finding itself. For example, the certainty of a phone number regex\n'(\\d{3}) \\d{3}-\\d{4}' could be adjusted upwards if the area code is known to be the local area code of a company\noffice using the hotword regex '(xxx)', where 'xxx' is the area code in question.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "window_after": {
+                                                        "Description": "Number of characters after the finding to consider.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "window_before": {
+                                                        "Description": "Number of characters before the finding to consider.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "exclude_info_types": {
+                                        "Description": "Set of infoTypes for which findings would affect this rule.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "info_types": {
+                                                "Description": "If a finding is matched by any of the infoType detectors listed here, the finding will be excluded from the scan results.",
+                                                "Properties": {
+                                                    "name": {
+                                                        "Description": "Name of the information type. Either a name of your choosing when creating a CustomInfoType, or one of the names listed\nat https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built-in type.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "sensitivity_score": {
+                                                        "Description": "Optional custom sensitivity for this InfoType. This only applies to data profiling.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "score": {
+                                                                "Description": "The sensitivity score applied to the resource. Possible values: [\"SENSITIVITY_LOW\", \"SENSITIVITY_MODERATE\", \"SENSITIVITY_HIGH\"]",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "version": {
+                                                        "Description": "Version name for this InfoType.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "matching_type": {
+                                        "Description": "How the rule is applied. See the documentation for more information: https://cloud.google.com/dlp/docs/reference/rest/v2/InspectConfig#MatchingType Possible values: [\"MATCHING_TYPE_FULL_MATCH\", \"MATCHING_TYPE_PARTIAL_MATCH\", \"MATCHING_TYPE_INVERSE_MATCH\"]",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "regex": {
+                                        "Description": "Regular expression which defines the rule.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "group_indexes": {
+                                                "Description": "The index of the submatch to extract as findings. When not specified, the entire match is returned. No more than 3 may be included.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "pattern": {
+                                                "Description": "Pattern defining the regular expression.\nIts syntax (https://github.com/google/re2/wiki/Syntax) can be found under the google/re2 repository on GitHub.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "hotword_rule": {
+                                "Description": "Hotword-based detection rule.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "hotword_regex": {
+                                        "Description": "Regular expression pattern defining what qualifies as a hotword.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "group_indexes": {
+                                                "Description": "The index of the submatch to extract as findings. When not specified,\nthe entire match is returned. No more than 3 may be included.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "pattern": {
+                                                "Description": "Pattern defining the regular expression. Its syntax\n(https://github.com/google/re2/wiki/Syntax) can be found under the google/re2 repository on GitHub.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "likelihood_adjustment": {
+                                        "Description": "Likelihood adjustment to apply to all matching findings.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "fixed_likelihood": {
+                                                "Description": "Set the likelihood of a finding to a fixed value. Either this or relative_likelihood can be set. Possible values: [\"VERY_UNLIKELY\", \"UNLIKELY\", \"POSSIBLE\", \"LIKELY\", \"VERY_LIKELY\"]",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "relative_likelihood": {
+                                                "Description": "Increase or decrease the likelihood by the specified number of levels. For example,\nif a finding would be POSSIBLE without the detection rule and relativeLikelihood is 1,\nthen it is upgraded to LIKELY, while a value of -1 would downgrade it to UNLIKELY.\nLikelihood may never drop below VERY_UNLIKELY or exceed VERY_LIKELY, so applying an\nadjustment of 1 followed by an adjustment of -1 when base likelihood is VERY_LIKELY\nwill result in a final likelihood of LIKELY. Either this or fixed_likelihood can be set.",
+                                                "Optional": true,
+                                                "Type": "TypeInt"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "proximity": {
+                                        "Description": "Proximity of the finding within which the entire hotword must reside. The total length of the window cannot\nexceed 1000 characters. Note that the finding itself will be included in the window, so that hotwords may be\nused to match substrings of the finding itself. For example, the certainty of a phone number regex\n'(\\d{3}) \\d{3}-\\d{4}' could be adjusted upwards if the area code is known to be the local area code of a company\noffice using the hotword regex '(xxx)', where 'xxx' is the area code in question.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "window_after": {
+                                                "Description": "Number of characters after the finding to consider. Either this or window_before must be specified",
+                                                "Optional": true,
+                                                "Type": "TypeInt"
+                                            },
+                                            "window_before": {
+                                                "Description": "Number of characters before the finding to consider. Either this or window_after must be specified",
+                                                "Optional": true,
+                                                "Type": "TypeInt"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the inspect template. Set by the server.",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The parent of the inspect template in any of the following formats:\n\n* 'projects/{{project}}'\n* 'projects/{{project}}/locations/{{location}}'\n* 'organizations/{{organization_id}}'\n* 'organizations/{{organization_id}}/locations/{{location}}'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "template_id": {
+        "Computed": true,
+        "Description": "The template id can contain uppercase and lowercase letters, numbers, and hyphens;\nthat is, it must match the regular expression: [a-zA-Z\\d-_]+. The maximum length is\n100 characters. Can be empty to allow the system to generate one.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

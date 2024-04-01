@@ -1,0 +1,6 @@
+kms_key_name: TypeString
+kms_key_version_name: TypeString
+name: TypeString
+project: TypeString
+service_account_id: TypeString
+

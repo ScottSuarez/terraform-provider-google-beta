@@ -1,0 +1,97 @@
+{
+    "group": {
+        "Description": "The name of the Group to get memberships from.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "memberships": {
+        "Computed": true,
+        "Description": "List of Cloud Identity group memberships.",
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Description": "The time when the Membership was created.",
+                "Type": "TypeString"
+            },
+            "group": {
+                "Computed": true,
+                "Description": "The name of the Group to create this membership in.",
+                "Type": "TypeString"
+            },
+            "member_key": {
+                "Computed": true,
+                "Description": "EntityKey of the member.",
+                "Properties": {
+                    "id": {
+                        "Computed": true,
+                        "Description": "The ID of the entity.\n\nFor Google-managed entities, the id must be the email address of an existing\ngroup or user.\n\nFor external-identity-mapped entities, the id must be a string conforming\nto the Identity Source's requirements.\n\nMust be unique within a namespace.",
+                        "Type": "TypeString"
+                    },
+                    "namespace": {
+                        "Computed": true,
+                        "Description": "The namespace in which the entity exists.\n\nIf not specified, the EntityKey represents a Google-managed entity\nsuch as a Google user or a Google Group.\n\nIf specified, the EntityKey represents an external-identity-mapped group.\nThe namespace must correspond to an identity source created in Admin Console\nand must be in the form of 'identitysources/{identity_source_id}'.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The resource name of the Membership, of the form groups/{group_id}/memberships/{membership_id}.",
+                "Type": "TypeString"
+            },
+            "preferred_member_key": {
+                "Computed": true,
+                "Description": "EntityKey of the member.",
+                "Properties": {
+                    "id": {
+                        "Computed": true,
+                        "Description": "The ID of the entity.\n\nFor Google-managed entities, the id must be the email address of an existing\ngroup or user.\n\nFor external-identity-mapped entities, the id must be a string conforming\nto the Identity Source's requirements.\n\nMust be unique within a namespace.",
+                        "Type": "TypeString"
+                    },
+                    "namespace": {
+                        "Computed": true,
+                        "Description": "The namespace in which the entity exists.\n\nIf not specified, the EntityKey represents a Google-managed entity\nsuch as a Google user or a Google Group.\n\nIf specified, the EntityKey represents an external-identity-mapped group.\nThe namespace must correspond to an identity source created in Admin Console\nand must be in the form of 'identitysources/{identity_source_id}'.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "roles": {
+                "Computed": true,
+                "Description": "The MembershipRoles that apply to the Membership.\nMust not contain duplicate MembershipRoles with the same name.",
+                "Properties": {
+                    "expiry_detail": {
+                        "Computed": true,
+                        "Description": "The MembershipRole expiry details, only supported for MEMBER role.\nOther roles cannot be accompanied with MEMBER role having expiry.",
+                        "Properties": {
+                            "expire_time": {
+                                "Computed": true,
+                                "Description": "The time at which the MembershipRole will expire.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond\nresolution and up to nine fractional digits.\n\nExamples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "name": {
+                        "Computed": true,
+                        "Description": "The name of the MembershipRole. Must be one of OWNER, MANAGER, MEMBER. Possible values: [\"OWNER\", \"MANAGER\", \"MEMBER\"]",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The type of the membership.",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "The time when the Membership was last updated.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

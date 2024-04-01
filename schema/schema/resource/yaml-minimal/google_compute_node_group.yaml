@@ -1,0 +1,23 @@
+autoscaling_policy:
+    max_nodes: TypeInt
+    min_nodes: TypeInt
+    mode: TypeString
+creation_timestamp: TypeString
+description: TypeString
+initial_size: TypeInt
+maintenance_interval: TypeString
+maintenance_policy: TypeString
+maintenance_window:
+    start_time: TypeString
+name: TypeString
+node_template: TypeString
+project: TypeString
+self_link: TypeString
+share_settings:
+    project_map:
+        id: TypeString
+        project_id: TypeString
+    share_type: TypeString
+size: TypeInt
+zone: TypeString
+

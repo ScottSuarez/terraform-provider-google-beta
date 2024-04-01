@@ -1,0 +1,94 @@
+create_time: TypeString
+delete_time: TypeString
+effective_labels: TypeMap(TypeString)
+fleet_default_member_config:
+    configmanagement:
+        config_sync:
+            git:
+                gcp_service_account_email: TypeString
+                https_proxy: TypeString
+                policy_dir: TypeString
+                secret_type: TypeString
+                sync_branch: TypeString
+                sync_repo: TypeString
+                sync_rev: TypeString
+                sync_wait_secs: TypeString
+            oci:
+                gcp_service_account_email: TypeString
+                policy_dir: TypeString
+                secret_type: TypeString
+                sync_repo: TypeString
+                sync_wait_secs: TypeString
+                version: TypeString
+            source_format: TypeString
+        version: TypeString
+    mesh:
+        management: TypeString
+    policycontroller:
+        policy_controller_hub_config:
+            audit_interval_seconds: TypeInt
+            constraint_violation_limit: TypeInt
+            deployment_configs:
+                component: TypeString
+                container_resources:
+                    limits:
+                        cpu: TypeString
+                        memory: TypeString
+                    requests:
+                        cpu: TypeString
+                        memory: TypeString
+                pod_affinity: TypeString
+                pod_toleration:
+                    effect: TypeString
+                    key: TypeString
+                    operator: TypeString
+                    value: TypeString
+                replica_count: TypeInt
+            exemptable_namespaces: TypeList(TypeString)
+            install_spec: TypeString
+            log_denies_enabled: TypeBool
+            monitoring:
+                backends: TypeList(TypeString)
+            mutation_enabled: TypeBool
+            policy_content:
+                bundles:
+                    bundle: TypeString
+                    exempted_namespaces: TypeList(TypeString)
+                template_library:
+                    installation: TypeString
+            referential_rules_enabled: TypeBool
+        version: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+resource_state:
+    has_resources: TypeBool
+    state: TypeString
+spec:
+    clusterupgrade:
+        gke_upgrade_overrides:
+            post_conditions:
+                soaking: TypeString
+            upgrade:
+                name: TypeString
+                version: TypeString
+        post_conditions:
+            soaking: TypeString
+        upstream_fleets: TypeList(TypeString)
+    fleetobservability:
+        logging_config:
+            default_config:
+                mode: TypeString
+            fleet_scope_logs_config:
+                mode: TypeString
+    multiclusteringress:
+        config_membership: TypeString
+state:
+    state:
+        code: TypeString
+        description: TypeString
+        update_time: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

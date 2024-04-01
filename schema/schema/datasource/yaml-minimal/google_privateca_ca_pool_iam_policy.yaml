@@ -1,0 +1,6 @@
+ca_pool: TypeString
+etag: TypeString
+location: TypeString
+policy_data: TypeString
+project: TypeString
+

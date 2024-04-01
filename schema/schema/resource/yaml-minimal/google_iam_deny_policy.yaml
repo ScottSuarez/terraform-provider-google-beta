@@ -1,0 +1,17 @@
+display_name: TypeString
+etag: TypeString
+name: TypeString
+parent: TypeString
+rules:
+    deny_rule:
+        denial_condition:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+        denied_permissions: TypeList(TypeString)
+        denied_principals: TypeList(TypeString)
+        exception_permissions: TypeList(TypeString)
+        exception_principals: TypeList(TypeString)
+    description: TypeString
+

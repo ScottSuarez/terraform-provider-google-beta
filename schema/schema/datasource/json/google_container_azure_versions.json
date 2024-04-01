@@ -1,0 +1,18 @@
+{
+    "location": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "supported_regions": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "valid_versions": {
+        "Computed": true,
+        "Type": "TypeList"
+    }
+}

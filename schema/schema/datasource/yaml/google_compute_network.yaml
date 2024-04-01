@@ -1,0 +1,22 @@
+description:
+    Type: TypeString
+    Computed: "true"
+gateway_ipv4:
+    Type: TypeString
+    Computed: "true"
+internal_ipv6_range:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+subnetworks_self_links:
+    Type: TypeList
+    Computed: "true"
+

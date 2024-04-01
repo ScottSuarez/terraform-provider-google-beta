@@ -1,0 +1,15 @@
+column: TypeString
+fields:
+    bool_value: TypeBool
+    display_name: TypeString
+    double_value: TypeFloat
+    enum_value: TypeString
+    field_name: TypeString
+    order: TypeInt
+    string_value: TypeString
+    timestamp_value: TypeString
+name: TypeString
+parent: TypeString
+template: TypeString
+template_displayname: TypeString
+

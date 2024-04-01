@@ -1,0 +1,17 @@
+{
+    "bucket_id": {
+        "Description": "Required. Immutable. The ID of the underlying Google Cloud Storage bucket",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Resource name of the bucket in the format projects/PROJECT_IDENTIFIER/buckets/BUCKET_ID",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

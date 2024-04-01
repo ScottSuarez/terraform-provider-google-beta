@@ -1,0 +1,147 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time when the policy-based route was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "filter": {
+        "Description": "The filter to match L4 traffic.",
+        "MaxItems": 1,
+        "Properties": {
+            "dest_range": {
+                "Description": "The destination IP range of outgoing packets that this policy-based route applies to. Default is \"0.0.0.0/0\" if protocol version is IPv4.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "ip_protocol": {
+                "Description": "The IP protocol that this policy-based route applies to. Valid values are 'TCP', 'UDP', and 'ALL'. Default is 'ALL'.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "protocol_version": {
+                "Description": "Internet protocol versions this policy-based route applies to. Possible values: [\"IPV4\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "src_range": {
+                "Description": "The source IP range of outgoing packets that this policy-based route applies to. Default is \"0.0.0.0/0\" if protocol version is IPv4.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "interconnect_attachment": {
+        "ConflictsWith": "virtual_machine",
+        "Description": "The interconnect attachments that this policy-based route applies to.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "region": {
+                "Description": "Cloud region to install this policy-based route on for Interconnect attachments. Use 'all' to install it on all Interconnect attachments.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "kind": {
+        "Computed": true,
+        "Description": "Type of this resource.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "User-defined labels.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The name of the policy based route.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "Fully-qualified URL of the network that this route applies to, for example: projects/my-project/global/networks/my-network.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "next_hop_ilb_ip": {
+        "Description": "The IP address of a global-access-enabled L4 ILB that is the next hop for matching packets.",
+        "ExactlyOneOf": "next_hop_ilb_ip, next_hop_other_routes",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "next_hop_other_routes": {
+        "Description": "Other routes that will be referenced to determine the next hop of the packet. Possible values: [\"DEFAULT_ROUTING\"]",
+        "ExactlyOneOf": "next_hop_ilb_ip, next_hop_other_routes",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Description": "The priority of this policy-based route. Priority is used to break ties in cases where there are more than one matching policy-based routes found. In cases where multiple policy-based routes are matched, the one with the lowest-numbered priority value wins. The default value is 1000. The priority value must be from 1 to 65535, inclusive.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time when the policy-based route was created.",
+        "Type": "TypeString"
+    },
+    "virtual_machine": {
+        "ConflictsWith": "interconnect_attachment",
+        "Description": "VM instances to which this policy-based route applies to.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "tags": {
+                "Description": "A list of VM instance tags that this policy-based route applies to. VM instances that have ANY of tags specified here will install this PBR.",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "warnings": {
+        "Computed": true,
+        "Description": "If potential misconfigurations are detected for this route, this field will be populated with warning messages.",
+        "Properties": {
+            "code": {
+                "Computed": true,
+                "Description": "A warning code, if applicable.",
+                "Type": "TypeString"
+            },
+            "data": {
+                "Computed": true,
+                "Description": "Metadata about this warning in key: value format. The key should provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement.",
+                "Type": "TypeMap"
+            },
+            "warning_message": {
+                "Computed": true,
+                "Description": "A human-readable description of the warning code.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

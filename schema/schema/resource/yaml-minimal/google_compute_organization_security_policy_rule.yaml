@@ -1,0 +1,19 @@
+action: TypeString
+description: TypeString
+direction: TypeString
+enable_logging: TypeBool
+match:
+    config:
+        dest_ip_ranges: TypeList(TypeString)
+        layer4_config:
+            ip_protocol: TypeString
+            ports: TypeList(TypeString)
+        src_ip_ranges: TypeList(TypeString)
+    description: TypeString
+    versioned_expr: TypeString
+policy_id: TypeString
+preview: TypeBool
+priority: TypeInt
+target_resources: TypeList(TypeString)
+target_service_accounts: TypeList(TypeString)
+

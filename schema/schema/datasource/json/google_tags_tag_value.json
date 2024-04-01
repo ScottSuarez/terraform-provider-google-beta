@@ -1,0 +1,34 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "namespaced_name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "short_name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

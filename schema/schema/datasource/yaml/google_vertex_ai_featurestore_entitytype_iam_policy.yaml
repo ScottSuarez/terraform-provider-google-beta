@@ -1,0 +1,13 @@
+entitytype:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+featurestore:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+

@@ -1,0 +1,24 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "federation_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

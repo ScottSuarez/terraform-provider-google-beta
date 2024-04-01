@@ -1,0 +1,7 @@
+description: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+

@@ -1,0 +1,15 @@
+location:
+    Type: TypeString
+    Description: |-
+        The location for the KeyRing.
+        A full list of valid locations can be found by running 'gcloud kms locations list'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name for the KeyRing.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

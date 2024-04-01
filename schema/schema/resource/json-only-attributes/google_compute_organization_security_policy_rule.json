@@ -1,0 +1,1 @@
+["action","description","direction","enable_logging","match","match.config","match.config.dest_ip_ranges","match.config.layer4_config","match.config.layer4_config.ip_protocol","match.config.layer4_config.ports","match.config.src_ip_ranges","match.description","match.versioned_expr","policy_id","preview","priority","target_resources","target_service_accounts"]

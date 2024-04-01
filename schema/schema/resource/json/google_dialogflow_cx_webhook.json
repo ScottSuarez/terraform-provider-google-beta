@@ -1,0 +1,106 @@
+{
+    "disabled": {
+        "Description": "Indicates whether the webhook is disabled.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "display_name": {
+        "Description": "The human-readable name of the webhook, unique within the agent.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enable_spell_correction": {
+        "Description": "Indicates if automatic spell correction is enabled in detect intent requests.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "enable_stackdriver_logging": {
+        "Description": "Determines whether this agent should log conversation queries.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "generic_web_service": {
+        "Description": "Configuration for a generic web service.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allowed_ca_certs": {
+                "Description": "Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "request_headers": {
+                "Description": "The HTTP request headers to send together with webhook requests.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "uri": {
+                "Description": "Whether to use speech adaptation for speech recognition.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the webhook.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/webhooks/\u003cWebhook ID\u003e.",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The agent to create a webhook for.\nFormat: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "security_settings": {
+        "Description": "Name of the SecuritySettings reference for the agent. Format: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/securitySettings/\u003cSecurity Settings ID\u003e.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_directory": {
+        "Description": "Configuration for a Service Directory service.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "generic_web_service": {
+                "Description": "The name of Service Directory service.",
+                "MaxItems": 1,
+                "Properties": {
+                    "allowed_ca_certs": {
+                        "Description": "Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "request_headers": {
+                        "Description": "The HTTP request headers to send together with webhook requests.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    },
+                    "uri": {
+                        "Description": "Whether to use speech adaptation for speech recognition.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "service": {
+                "Description": "The name of Service Directory service.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "start_flow": {
+        "Computed": true,
+        "Description": "Name of the start flow in this agent. A start flow will be automatically created when the agent is created, and can only be deleted by deleting the agent. Format: projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agents/\u003cAgent ID\u003e/flows/\u003cFlow ID\u003e.",
+        "Type": "TypeString"
+    },
+    "timeout": {
+        "Description": "Webhook execution timeout.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

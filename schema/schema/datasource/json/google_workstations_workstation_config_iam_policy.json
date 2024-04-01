@@ -1,0 +1,28 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "workstation_cluster_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "workstation_config_id": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

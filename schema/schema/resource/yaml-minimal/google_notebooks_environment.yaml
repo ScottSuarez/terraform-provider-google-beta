@@ -1,0 +1,15 @@
+container_image:
+    repository: TypeString
+    tag: TypeString
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+location: TypeString
+name: TypeString
+post_startup_script: TypeString
+project: TypeString
+vm_image:
+    image_family: TypeString
+    image_name: TypeString
+    project: TypeString
+

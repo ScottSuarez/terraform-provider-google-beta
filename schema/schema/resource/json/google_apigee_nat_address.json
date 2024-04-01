@@ -1,0 +1,22 @@
+{
+    "instance_id": {
+        "Description": "The Apigee instance associated with the Apigee environment,\nin the format 'organizations/{{org_name}}/instances/{{instance_name}}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "ip_address": {
+        "Computed": true,
+        "Description": "The allocated NAT IP address.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Resource ID of the NAT address.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the NAT IP address.",
+        "Type": "TypeString"
+    }
+}

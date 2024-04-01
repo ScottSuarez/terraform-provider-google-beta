@@ -1,0 +1,48 @@
+management:
+    Type: TypeBool
+    Description: |-
+        True if the cluster is a management cluster; false otherwise.
+        There can only be one management cluster in a private cloud and it has to be the first one.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The ID of the Cluster.
+    Required: "true"
+node_type_configs:
+    Type: TypeSet
+    Description: |-
+        The map of cluster node types in this cluster,
+        where the key is canonical identifier of the node type (corresponds to the NodeType).
+    Optional: "true"
+    Properties:
+        custom_core_count:
+            Type: TypeInt
+            Description: |-
+                Customized number of cores available to each node of the type.
+                This number must always be one of 'nodeType.availableCustomCoreCounts'.
+                If zero is provided max value from 'nodeType.availableCustomCoreCounts' will be used.
+                Once the customer is created then corecount cannot be changed.
+            Optional: "true"
+        node_count:
+            Type: TypeInt
+            Description: The number of nodes of this type in the cluster.
+            Required: "true"
+        node_type_id:
+            Type: TypeString
+            Required: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The resource name of the private cloud to create a new cluster in.
+        Resource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.
+        For example: projects/my-project/locations/us-west1-a/privateClouds/my-cloud
+    Required: "true"
+state:
+    Type: TypeString
+    Description: State of the Cluster.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: System-generated unique identifier for the resource.
+    Computed: "true"
+

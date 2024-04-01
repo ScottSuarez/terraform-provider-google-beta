@@ -1,0 +1,82 @@
+{
+    "active_directory": {
+        "Description": "Specifies the Active Directory policy to be used. Format: 'projects/{{project}}/locations/{{location}}/activeDirectories/{{name}}'.\nThe policy needs to be in the same location as the storage pool.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "capacity_gib": {
+        "Description": "Capacity of the storage pool (in GiB).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "encryption_type": {
+        "Computed": true,
+        "Description": "Reports if volumes in the pool are encrypted using a Google-managed encryption key or CMEK.",
+        "Type": "TypeString"
+    },
+    "kms_config": {
+        "Description": "Specifies the CMEK policy to be used for volume encryption. Format: 'projects/{{project}}/locations/{{location}}/kmsConfigs/{{name}}'.\nThe policy needs to be in the same location as the storage pool.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels as key value pairs. Example: '{ \"owner\": \"Bob\", \"department\": \"finance\", \"purpose\": \"testing\" }'.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "ldap_enabled": {
+        "Description": "When enabled, the volumes uses Active Directory as LDAP name service for UID/GID lookups. Required to enable extended group support for NFSv3,\nusing security identifiers for NFSv4.1 or principal names for kerberized NFSv4.1.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "location": {
+        "Description": "Name of the location. Usually a region name, expect for some STANDARD service level pools which require a zone name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name of the storage pool. Needs to be unique per location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "VPC network name with format: 'projects/{{project}}/global/networks/{{network}}'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_level": {
+        "Description": "Service level of the storage pool. Possible values: [\"PREMIUM\", \"EXTREME\", \"STANDARD\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "volume_capacity_gib": {
+        "Computed": true,
+        "Description": "Size allocated to volumes in the storage pool (in GiB).",
+        "Type": "TypeString"
+    },
+    "volume_count": {
+        "Computed": true,
+        "Description": "Number of volume in the storage pool.",
+        "Type": "TypeInt"
+    }
+}

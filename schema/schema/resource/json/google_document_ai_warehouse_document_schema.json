@@ -1,0 +1,283 @@
+{
+    "display_name": {
+        "Description": "Name of the schema given by the user.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "document_is_folder": {
+        "Description": "Tells whether the document is a folder or a typical document.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the document schema.",
+        "Type": "TypeString"
+    },
+    "project_number": {
+        "Description": "The unique identifier of the project.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "property_definitions": {
+        "Description": "Defines the metadata for a schema property.",
+        "Properties": {
+            "date_time_type_options": {
+                "Description": "Date time property. Not supported by CMEK compliant deployment.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "display_name": {
+                "Description": "The display-name for the property, used for front-end.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "enum_type_options": {
+                "Description": "Enum/categorical property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "possible_values": {
+                        "Description": "List of possible enum values.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "validation_check_disabled": {
+                        "Description": "Make sure the enum property value provided in the document is in the possile value list during document creation. The validation check runs by default.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "float_type_options": {
+                "Description": "Float property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "integer_type_options": {
+                "Description": "Integer property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "is_filterable": {
+                "Description": "Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "is_metadata": {
+                "Description": "Whether the property is user supplied metadata.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "is_repeatable": {
+                "Description": "Whether the property can have multiple values.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "is_required": {
+                "Description": "Whether the property is mandatory.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "is_searchable": {
+                "Description": "Indicates that the property should be included in a global search.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "map_type_options": {
+                "Description": "Map property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "name": {
+                "Description": "The name of the metadata property.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "property_type_options": {
+                "Description": "Nested structured data property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "property_definitions": {
+                        "Description": "Defines the metadata for a schema property.",
+                        "Properties": {
+                            "date_time_type_options": {
+                                "Description": "Date time property. Not supported by CMEK compliant deployment.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            },
+                            "display_name": {
+                                "Description": "The display-name for the property, used for front-end.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "enum_type_options": {
+                                "Description": "Enum/categorical property.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "possible_values": {
+                                        "Description": "List of possible enum values.",
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "validation_check_disabled": {
+                                        "Description": "Make sure the enum property value provided in the document is in the possile value list during document creation. The validation check runs by default.",
+                                        "Optional": true,
+                                        "Type": "TypeBool"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "float_type_options": {
+                                "Description": "Float property.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            },
+                            "integer_type_options": {
+                                "Description": "Integer property.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            },
+                            "is_filterable": {
+                                "Description": "Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "is_metadata": {
+                                "Description": "Whether the property is user supplied metadata.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "is_repeatable": {
+                                "Description": "Whether the property can have multiple values.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "is_required": {
+                                "Description": "Whether the property is mandatory.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "is_searchable": {
+                                "Description": "Indicates that the property should be included in a global search.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "map_type_options": {
+                                "Description": "Map property.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            },
+                            "name": {
+                                "Description": "The name of the metadata property.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "retrieval_importance": {
+                                "Description": "Stores the retrieval importance. Possible values: [\"HIGHEST\", \"HIGHER\", \"HIGH\", \"MEDIUM\", \"LOW\", \"LOWEST\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "schema_sources": {
+                                "Description": "The schema source information.",
+                                "Optional": true,
+                                "Properties": {
+                                    "name": {
+                                        "Description": "The schema name in the source.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "processor_type": {
+                                        "Description": "The Doc AI processor type name.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "text_type_options": {
+                                "Description": "Text property.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            },
+                            "timestamp_type_options": {
+                                "Description": "Timestamp property. Not supported by CMEK compliant deployment.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {},
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "retrieval_importance": {
+                "Description": "Stores the retrieval importance. Possible values: [\"HIGHEST\", \"HIGHER\", \"HIGH\", \"MEDIUM\", \"LOW\", \"LOWEST\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "schema_sources": {
+                "Description": "The schema source information.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Description": "The schema name in the source.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "processor_type": {
+                        "Description": "The Doc AI processor type name.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "text_type_options": {
+                "Description": "Text/string property.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            },
+            "timestamp_type_options": {
+                "Description": "Timestamp property. Not supported by CMEK compliant deployment.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {},
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

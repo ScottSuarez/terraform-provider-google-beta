@@ -1,0 +1,148 @@
+{
+    "csv_options": {
+        "Description": "Options for configuring the format of the inventory report CSV file.",
+        "MaxItems": 1,
+        "Properties": {
+            "delimiter": {
+                "Description": "The delimiter used to separate the fields in the inventory report CSV file.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "header_required": {
+                "Description": "The boolean that indicates whether or not headers are included in the inventory report CSV file.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "record_separator": {
+                "Description": "The character used to separate the records in the inventory report CSV file.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "The editable display name of the inventory report configuration. Has a limit of 256 characters. Can be empty.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "frequency_options": {
+        "Description": "Options for configuring how inventory reports are generated.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "end_date": {
+                "Description": "The date to stop generating inventory reports. For example, {\"day\": 15, \"month\": 9, \"year\": 2022}.",
+                "MaxItems": 1,
+                "Properties": {
+                    "day": {
+                        "Description": "The day of the month to stop generating inventory reports.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "month": {
+                        "Description": "The month to stop generating inventory reports.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "year": {
+                        "Description": "The year to stop generating inventory reports",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "frequency": {
+                "Description": "The frequency in which inventory reports are generated. Values are DAILY or WEEKLY. Possible values: [\"DAILY\", \"WEEKLY\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "start_date": {
+                "Description": "The date to start generating inventory reports. For example, {\"day\": 15, \"month\": 8, \"year\": 2022}.",
+                "MaxItems": 1,
+                "Properties": {
+                    "day": {
+                        "Description": "The day of the month to start generating inventory reports.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "month": {
+                        "Description": "The month to start generating inventory reports.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "year": {
+                        "Description": "The year to start generating inventory reports",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location of the ReportConfig. The source and destination buckets specified in the ReportConfig\nmust be in the same location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The UUID of the inventory report configuration.",
+        "Type": "TypeString"
+    },
+    "object_metadata_report_options": {
+        "Description": "Options for including metadata in an inventory report.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "metadata_fields": {
+                "Description": "The metadata fields included in an inventory report.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "storage_destination_options": {
+                "Description": "Options for where the inventory reports are stored.",
+                "MaxItems": 1,
+                "Properties": {
+                    "bucket": {
+                        "Description": "The destination bucket that stores the generated inventory reports.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "destination_path": {
+                        "Description": "The path within the destination bucket to store generated inventory reports.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "storage_filters": {
+                "Description": "A nested object resource",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "bucket": {
+                        "Description": "The filter to use when specifying which bucket to generate inventory reports for.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

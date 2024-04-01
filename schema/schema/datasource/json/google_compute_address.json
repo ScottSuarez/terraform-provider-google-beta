@@ -1,0 +1,56 @@
+{
+    "address": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "address_type": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "network_tier": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "prefix_length": {
+        "Computed": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "purpose": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "status": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "subnetwork": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "users": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

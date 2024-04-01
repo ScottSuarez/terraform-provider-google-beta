@@ -1,0 +1,12 @@
+app_id: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+service: TypeString
+version_id: TypeString
+

@@ -1,0 +1,65 @@
+annotations: TypeMap(TypeString)
+conditions:
+    code: TypeInt
+    details: TypeList(TypeMap)
+    message: TypeString
+container:
+    args: TypeList(TypeString)
+    command: TypeList(TypeString)
+    env: TypeMap(TypeString)
+    image: TypeString
+    run_as_user: TypeInt
+    working_dir: TypeString
+create_time: TypeString
+degraded: TypeBool
+disable_tcp_connections: TypeBool
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+enable_audit_agent: TypeBool
+encryption_key:
+    kms_key: TypeString
+    kms_key_service_account: TypeString
+etag: TypeString
+host:
+    gce_instance:
+        accelerators:
+            count: TypeInt
+            type: TypeString
+        boot_disk_size_gb: TypeInt
+        confidential_instance_config:
+            enable_confidential_compute: TypeBool
+        disable_public_ip_addresses: TypeBool
+        enable_nested_virtualization: TypeBool
+        machine_type: TypeString
+        pool_size: TypeInt
+        service_account: TypeString
+        service_account_scopes: TypeList(TypeString)
+        shielded_instance_config:
+            enable_integrity_monitoring: TypeBool
+            enable_secure_boot: TypeBool
+            enable_vtpm: TypeBool
+        tags: TypeList(TypeString)
+idle_timeout: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+persistent_directories:
+    gce_pd:
+        disk_type: TypeString
+        fs_type: TypeString
+        reclaim_policy: TypeString
+        size_gb: TypeInt
+        source_snapshot: TypeString
+    mount_path: TypeString
+project: TypeString
+readiness_checks:
+    path: TypeString
+    port: TypeInt
+replica_zones: TypeList(TypeString)
+running_timeout: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+workstation_cluster_id: TypeString
+workstation_config_id: TypeString
+

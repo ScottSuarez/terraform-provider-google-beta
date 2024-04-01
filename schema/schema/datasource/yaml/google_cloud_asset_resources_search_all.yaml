@@ -1,0 +1,41 @@
+asset_types:
+    Type: TypeList
+    Optional: "true"
+query:
+    Type: TypeString
+    Optional: "true"
+results:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        additional_attributes:
+            Type: TypeList
+            Computed: "true"
+        asset_type:
+            Type: TypeString
+            Computed: "true"
+        description:
+            Type: TypeString
+            Computed: "true"
+        display_name:
+            Type: TypeString
+            Computed: "true"
+        labels:
+            Type: TypeMap
+            Computed: "true"
+        location:
+            Type: TypeString
+            Computed: "true"
+        name:
+            Type: TypeString
+            Computed: "true"
+        network_tags:
+            Type: TypeList
+            Computed: "true"
+        project:
+            Type: TypeString
+            Computed: "true"
+scope:
+    Type: TypeString
+    Required: "true"
+

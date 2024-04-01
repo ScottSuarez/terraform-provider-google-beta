@@ -1,0 +1,37 @@
+{
+    "connection_state": {
+        "Computed": true,
+        "Description": "State of the endpoint attachment connection to the service attachment.",
+        "Type": "TypeString"
+    },
+    "endpoint_attachment_id": {
+        "Description": "ID of the endpoint attachment.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "host": {
+        "Computed": true,
+        "Description": "Host that can be used in either HTTP Target Endpoint directly, or as the host in Target Server.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "Location of the endpoint attachment.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Name of the Endpoint Attachment in the following format:\norganizations/{organization}/endpointAttachments/{endpointAttachment}.",
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Description": "The Apigee Organization associated with the Apigee instance,\nin the format 'organizations/{{org_name}}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service_attachment": {
+        "Description": "Format: projects/*/regions/*/serviceAttachments/*",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

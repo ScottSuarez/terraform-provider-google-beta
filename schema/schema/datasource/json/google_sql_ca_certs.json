@@ -1,0 +1,41 @@
+{
+    "active_version": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "certs": {
+        "Computed": true,
+        "Properties": {
+            "cert": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "common_name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "create_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "expiration_time": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "sha1_fingerprint": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "instance": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

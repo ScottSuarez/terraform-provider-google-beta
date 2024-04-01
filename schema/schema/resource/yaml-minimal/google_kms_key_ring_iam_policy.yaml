@@ -1,0 +1,4 @@
+etag: TypeString
+key_ring_id: TypeString
+policy_data: TypeString
+

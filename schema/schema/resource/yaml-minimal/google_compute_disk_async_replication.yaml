@@ -1,0 +1,5 @@
+primary_disk: TypeString
+secondary_disk:
+    disk: TypeString
+    state: TypeString
+

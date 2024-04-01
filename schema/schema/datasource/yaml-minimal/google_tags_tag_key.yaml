@@ -1,0 +1,9 @@
+create_time: TypeString
+description: TypeString
+id: TypeString
+name: TypeString
+namespaced_name: TypeString
+parent: TypeString
+short_name: TypeString
+update_time: TypeString
+

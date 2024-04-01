@@ -1,0 +1,34 @@
+create_time: TypeString
+deployed_indexes:
+    deployed_index_id: TypeString
+    index_endpoint: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+index_stats:
+    shards_count: TypeInt
+    vectors_count: TypeString
+index_update_method: TypeString
+labels: TypeMap(TypeString)
+metadata:
+    config:
+        algorithm_config:
+            brute_force_config: {}
+            tree_ah_config:
+                leaf_node_embedding_count: TypeInt
+                leaf_nodes_to_search_percent: TypeInt
+        approximate_neighbors_count: TypeInt
+        dimensions: TypeInt
+        distance_measure_type: TypeString
+        feature_norm_type: TypeString
+        shard_size: TypeString
+    contents_delta_uri: TypeString
+    is_complete_overwrite: TypeBool
+metadata_schema_uri: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

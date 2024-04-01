@@ -1,0 +1,10 @@
+algorithm: TypeString
+crypto_key: TypeString
+name: TypeString
+protection_level: TypeString
+public_key:
+    algorithm: TypeString
+    pem: TypeString
+state: TypeString
+version: TypeInt
+

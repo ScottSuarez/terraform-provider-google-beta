@@ -1,0 +1,12 @@
+description: TypeString
+instances: TypeSet(TypeString)
+name: TypeString
+named_port:
+    name: TypeString
+    port: TypeInt
+network: TypeString
+project: TypeString
+self_link: TypeString
+size: TypeInt
+zone: TypeString
+

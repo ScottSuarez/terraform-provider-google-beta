@@ -1,0 +1,12 @@
+{
+    "perimeter_name": {
+        "Description": "The name of the Service Perimeter to add this resource to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "resource": {
+        "Description": "A GCP resource that is inside of the service perimeter.\nCurrently only projects are allowed.\nFormat: projects/{project_number}",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

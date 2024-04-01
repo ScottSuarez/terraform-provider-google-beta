@@ -1,0 +1,9 @@
+dimensions: TypeMap(TypeString)
+force: TypeBool
+limit: TypeString
+metric: TypeString
+name: TypeString
+override_value: TypeString
+project: TypeString
+service: TypeString
+

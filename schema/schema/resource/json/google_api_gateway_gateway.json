@@ -1,0 +1,54 @@
+{
+    "api_config": {
+        "Description": "Resource name of the API Config for this Gateway. Format: projects/{project}/locations/global/apis/{api}/configs/{apiConfig}.\nWhen changing api configs please ensure the new config is a new resource and the\n[lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) rule 'create_before_destroy' is set.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "default_hostname": {
+        "Computed": true,
+        "Description": "The default API Gateway host name of the form {gatewayId}-{hash}.{region_code}.gateway.dev.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Computed": true,
+        "Description": "A user-visible name for the API.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gateway_id": {
+        "Description": "Identifier to assign to the Gateway. Must be unique within scope of the parent resource(project).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user-provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Resource name of the Gateway. Format: projects/{project}/locations/{region}/gateways/{gateway}",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region of the gateway for the API.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

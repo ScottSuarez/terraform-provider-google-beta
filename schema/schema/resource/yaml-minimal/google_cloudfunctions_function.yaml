@@ -1,0 +1,50 @@
+available_memory_mb: TypeInt
+build_environment_variables: unknown
+build_worker_pool: TypeString
+description: TypeString
+docker_registry: TypeString
+docker_repository: TypeString
+effective_labels: TypeMap(TypeString)
+entry_point: TypeString
+environment_variables: unknown
+event_trigger:
+    event_type: TypeString
+    failure_policy:
+        retry: TypeBool
+    resource: TypeString
+https_trigger_security_level: TypeString
+https_trigger_url: TypeString
+ingress_settings: TypeString
+kms_key_name: TypeString
+labels: unknown
+max_instances: TypeInt
+min_instances: TypeInt
+name: TypeString
+project: TypeString
+region: TypeString
+runtime: TypeString
+secret_environment_variables:
+    key: TypeString
+    project_id: TypeString
+    secret: TypeString
+    version: TypeString
+secret_volumes:
+    mount_path: TypeString
+    project_id: TypeString
+    secret: TypeString
+    versions:
+        path: TypeString
+        version: TypeString
+service_account_email: TypeString
+source_archive_bucket: TypeString
+source_archive_object: TypeString
+source_repository:
+    deployed_url: TypeString
+    url: TypeString
+status: TypeString
+terraform_labels: TypeMap(TypeString)
+timeout: TypeInt
+trigger_http: TypeBool
+vpc_connector: TypeString
+vpc_connector_egress_settings: TypeString
+

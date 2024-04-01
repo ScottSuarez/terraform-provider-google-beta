@@ -1,0 +1,4 @@
+environment: TypeString
+instance_id: TypeString
+name: TypeString
+

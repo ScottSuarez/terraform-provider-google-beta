@@ -1,0 +1,72 @@
+build_config:
+    build: TypeString
+    docker_repository: TypeString
+    entry_point: TypeString
+    environment_variables: TypeMap(TypeString)
+    runtime: TypeString
+    source:
+        repo_source:
+            branch_name: TypeString
+            commit_sha: TypeString
+            dir: TypeString
+            invert_regex: TypeBool
+            project_id: TypeString
+            repo_name: TypeString
+            tag_name: TypeString
+        storage_source:
+            bucket: TypeString
+            generation: TypeInt
+            object: TypeString
+    worker_pool: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+environment: TypeString
+event_trigger:
+    event_filters:
+        attribute: TypeString
+        operator: TypeString
+        value: TypeString
+    event_type: TypeString
+    pubsub_topic: TypeString
+    retry_policy: TypeString
+    service_account_email: TypeString
+    trigger: TypeString
+    trigger_region: TypeString
+kms_key_name: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+service_config:
+    all_traffic_on_latest_revision: TypeBool
+    available_cpu: TypeString
+    available_memory: TypeString
+    environment_variables: TypeMap(TypeString)
+    gcf_uri: TypeString
+    ingress_settings: TypeString
+    max_instance_count: TypeInt
+    max_instance_request_concurrency: TypeInt
+    min_instance_count: TypeInt
+    secret_environment_variables:
+        key: TypeString
+        project_id: TypeString
+        secret: TypeString
+        version: TypeString
+    secret_volumes:
+        mount_path: TypeString
+        project_id: TypeString
+        secret: TypeString
+        versions:
+            path: TypeString
+            version: TypeString
+    service: TypeString
+    service_account_email: TypeString
+    timeout_seconds: TypeInt
+    uri: TypeString
+    vpc_connector: TypeString
+    vpc_connector_egress_settings: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+url: TypeString
+

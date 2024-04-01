@@ -1,0 +1,33 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "directory_customer_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "domain": {
+        "Computed": true,
+        "ConflictsWith": "organization",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "lifecycle_state": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "organization": {
+        "ConflictsWith": "domain",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

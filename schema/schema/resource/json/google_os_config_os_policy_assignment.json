@@ -1,0 +1,881 @@
+{
+    "baseline": {
+        "Computed": true,
+        "Description": "Output only. Indicates that this revision has been successfully rolled out in this zone and new VMs will be assigned OS policies from this revision.\nFor a given OS policy assignment, there is only one revision with a value of 'true' for this field.",
+        "Type": "TypeBool"
+    },
+    "deleted": {
+        "Computed": true,
+        "Description": "Output only. Indicates that this revision deletes the OS policy assignment.",
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "OS policy assignment description. Length of the description is limited to 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "The etag for this OS policy assignment. If this is provided on update, it must match the server's etag.",
+        "Type": "TypeString"
+    },
+    "instance_filter": {
+        "Description": "Filter to select VMs.",
+        "MaxItems": 1,
+        "Properties": {
+            "all": {
+                "Description": "Target all VMs in the project. If true, no other criteria is permitted.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "exclusion_labels": {
+                "Description": "List of label sets used for VM exclusion.\nIf the list has more than one label set, the VM is excluded if any of the label sets are applicable for the VM.",
+                "Optional": true,
+                "Properties": {
+                    "labels": {
+                        "Description": "Labels are identified by key/value pairs in this map. A VM should contain all the key/value pairs specified in this map to be selected.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "inclusion_labels": {
+                "Description": "List of label sets used for VM inclusion.\nIf the list has more than one 'LabelSet', the VM is included if any of the label sets are applicable for the VM.",
+                "Optional": true,
+                "Properties": {
+                    "labels": {
+                        "Description": "Labels are identified by key/value pairs in this map. A VM should contain all the key/value pairs specified in this map to be selected.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "inventories": {
+                "Description": "List of inventories to select VMs.\nA VM is selected if its inventory data matches at least one of the following inventories.",
+                "Optional": true,
+                "Properties": {
+                    "os_short_name": {
+                        "Description": "The OS short name",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "os_version": {
+                        "Description": "The OS version Prefix matches are supported if asterisk(*) is provided as the last character. For example, to match all versions with a major version of '7', specify the following value for this field '7.*' An empty string matches all OS versions.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Resource name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "os_policies": {
+        "Description": "List of OS policies to be applied to the VMs.",
+        "Properties": {
+            "allow_no_resource_group_match": {
+                "Description": "This flag determines the OS policy compliance status when none of the resource groups within the policy are applicable for a VM. Set this value to 'true' if the policy needs to be reported as compliant even if the policy has nothing to validate or enforce.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "description": {
+                "Description": "Policy description. Length of the description is limited to 1024 characters.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "id": {
+                "Description": "The id of the OS policy with the following restrictions:\n* Must contain only lowercase letters, numbers, and hyphens.\n* Must start with a letter.\n* Must be between 1-63 characters.\n* Must end with a number or a letter.\n* Must be unique within the assignment.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "mode": {
+                "Description": "Policy mode Possible values: [\"MODE_UNSPECIFIED\", \"VALIDATION\", \"ENFORCEMENT\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "resource_groups": {
+                "Description": "List of resource groups for the policy. For a particular VM, resource groups are evaluated in the order specified and the first resource group that is applicable is selected and the rest are ignored.\nIf none of the resource groups are applicable for a VM, the VM is considered to be non-compliant w.r.t this policy. This behavior can be toggled by the flag 'allow_no_resource_group_match'",
+                "Properties": {
+                    "inventory_filters": {
+                        "Description": "List of inventory filters for the resource group.\nThe resources in this resource group are applied to the target VM if it satisfies at least one of the following inventory filters.\nFor example, to apply this resource group to VMs running either 'RHEL' or 'CentOS' operating systems, specify 2 items for the list with following values: inventory_filters[0].os_short_name='rhel' and inventory_filters[1].os_short_name='centos'\nIf the list is empty, this resource group will be applied to the target VM unconditionally.",
+                        "Optional": true,
+                        "Properties": {
+                            "os_short_name": {
+                                "Description": "The OS short name",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "os_version": {
+                                "Description": "The OS version\nPrefix matches are supported if asterisk(*) is provided as the last character. For example, to match all versions with a major version of '7', specify the following value for this field '7.*'\nAn empty string matches all OS versions.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "resources": {
+                        "Description": "List of resources configured for this resource group. The resources are executed in the exact order specified here.",
+                        "Properties": {
+                            "exec": {
+                                "Description": "Exec resource",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "enforce": {
+                                        "Description": "What to run to bring this resource into the desired state. An exit code of 100 indicates \"success\", any other exit code indicates a failure running enforce.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "args": {
+                                                "Description": "Optional arguments to pass to the source during execution.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "file": {
+                                                "Description": "A remote or local file.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "allow_insecure": {
+                                                        "Description": "Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "gcs": {
+                                                        "Description": "A Cloud Storage object.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "bucket": {
+                                                                "Description": "Bucket of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "generation": {
+                                                                "Description": "Generation number of the Cloud Storage object.",
+                                                                "Optional": true,
+                                                                "Type": "TypeInt"
+                                                            },
+                                                            "object": {
+                                                                "Description": "Name of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "local_path": {
+                                                        "Description": "A local path within the VM to use.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "remote": {
+                                                        "Description": "A generic remote file.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "sha256_checksum": {
+                                                                "Description": "SHA256 checksum of the remote file.",
+                                                                "Optional": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "uri": {
+                                                                "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "interpreter": {
+                                                "Description": "The script interpreter to use. Possible values: [\"INTERPRETER_UNSPECIFIED\", \"NONE\", \"SHELL\", \"POWERSHELL\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "output_file_path": {
+                                                "Description": "Only recorded for enforce Exec. Path to an output file (that is created by this Exec) whose content will be recorded in OSPolicyResourceCompliance after a successful run. Absence or failure to read this file will result in this ExecResource being non-compliant. Output file size is limited to 100K bytes.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "script": {
+                                                "Description": "An inline script. The size of the script is limited to 1024 characters.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "validate": {
+                                        "Description": "What to run to validate this resource is in the desired state. An exit code of 100 indicates \"in desired state\", and exit code of 101 indicates \"not in desired state\". Any other exit code indicates a failure running validate.",
+                                        "MaxItems": 1,
+                                        "Properties": {
+                                            "args": {
+                                                "Description": "Optional arguments to pass to the source during execution.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "file": {
+                                                "Description": "A remote or local file.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "allow_insecure": {
+                                                        "Description": "Defaults to false. When false, files are subject to validations based on the file type:\nRemote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "gcs": {
+                                                        "Description": "A Cloud Storage object.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "bucket": {
+                                                                "Description": "Bucket of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "generation": {
+                                                                "Description": "Generation number of the Cloud Storage object.",
+                                                                "Optional": true,
+                                                                "Type": "TypeInt"
+                                                            },
+                                                            "object": {
+                                                                "Description": "Name of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "local_path": {
+                                                        "Description": "A local path within the VM to use.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "remote": {
+                                                        "Description": "A generic remote file.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "sha256_checksum": {
+                                                                "Description": "SHA256 checksum of the remote file.",
+                                                                "Optional": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "uri": {
+                                                                "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "interpreter": {
+                                                "Description": "The script interpreter to use. Possible values: [\"INTERPRETER_UNSPECIFIED\", \"NONE\", \"SHELL\", \"POWERSHELL\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "output_file_path": {
+                                                "Description": "Only recorded for enforce Exec. Path to an output file (that is created by this Exec) whose content will be recorded in OSPolicyResourceCompliance after a successful run. Absence or failure to read this file will result in this ExecResource being non-compliant. Output file size is limited to 100K bytes.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "script": {
+                                                "Description": "An inline script. The size of the script is limited to 1024 characters.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Required": true,
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "file": {
+                                "Description": "File resource",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "content": {
+                                        "Description": "A a file with this content. The size of the content is limited to 1024 characters.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "file": {
+                                        "Description": "A remote or local source.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "allow_insecure": {
+                                                "Description": "Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "gcs": {
+                                                "Description": "A Cloud Storage object.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "bucket": {
+                                                        "Description": "Bucket of the Cloud Storage object.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "generation": {
+                                                        "Description": "Generation number of the Cloud Storage object.",
+                                                        "Optional": true,
+                                                        "Type": "TypeInt"
+                                                    },
+                                                    "object": {
+                                                        "Description": "Name of the Cloud Storage object.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            },
+                                            "local_path": {
+                                                "Description": "A local path within the VM to use.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "remote": {
+                                                "Description": "A generic remote file.",
+                                                "MaxItems": 1,
+                                                "Optional": true,
+                                                "Properties": {
+                                                    "sha256_checksum": {
+                                                        "Description": "SHA256 checksum of the remote file.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "uri": {
+                                                        "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                        "Required": true,
+                                                        "Type": "TypeString"
+                                                    }
+                                                },
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "path": {
+                                        "Description": "The absolute path of the file within the VM.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "permissions": {
+                                        "Computed": true,
+                                        "Description": "Consists of three octal digits which represent, in order, the permissions of the owner, group, and other users for the file (similarly to the numeric mode used in the linux chmod utility). Each digit represents a three bit number with the 4 bit corresponding to the read permissions, the 2 bit corresponds to the write bit, and the one bit corresponds to the execute permission. Default behavior is 755.\nBelow are some examples of permissions and their associated values: read, write, and execute: 7 read and execute: 5 read and write: 6 read only: 4",
+                                        "Type": "TypeString"
+                                    },
+                                    "state": {
+                                        "Description": "Desired state of the file. Possible values: [\"DESIRED_STATE_UNSPECIFIED\", \"PRESENT\", \"ABSENT\", \"CONTENTS_MATCH\"]",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "id": {
+                                "Description": "The id of the resource with the following restrictions:\n* Must contain only lowercase letters, numbers, and hyphens.\n* Must start with a letter.\n* Must be between 1-63 characters.\n* Must end with a number or a letter.\n* Must be unique within the OS policy.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "pkg": {
+                                "Description": "Package resource",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "apt": {
+                                        "Description": "A package managed by Apt.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "name": {
+                                                "Description": "Package name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "deb": {
+                                        "Description": "A deb package file.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "pull_deps": {
+                                                "Description": "Whether dependencies should also be installed. - install when false: 'dpkg -i package' - install when true: 'apt-get update \u0026\u0026 apt-get -y install package.deb'",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "source": {
+                                                "Description": "A deb package.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "allow_insecure": {
+                                                        "Description": "Defaults to false. When false, files are subject to validations based on the file type:\nRemote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "gcs": {
+                                                        "Description": "A Cloud Storage object.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "bucket": {
+                                                                "Description": "Bucket of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "generation": {
+                                                                "Description": "Generation number of the Cloud Storage object.",
+                                                                "Optional": true,
+                                                                "Type": "TypeInt"
+                                                            },
+                                                            "object": {
+                                                                "Description": "Name of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "local_path": {
+                                                        "Description": "A local path within the VM to use.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "remote": {
+                                                        "Description": "A generic remote file.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "sha256_checksum": {
+                                                                "Description": "SHA256 checksum of the remote file.",
+                                                                "Optional": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "uri": {
+                                                                "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "desired_state": {
+                                        "Description": "The desired state the agent should maintain for this package. Possible values: [\"DESIRED_STATE_UNSPECIFIED\", \"INSTALLED\", \"REMOVED\"]",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "googet": {
+                                        "Description": "A package managed by GooGet.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "name": {
+                                                "Description": "Package name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "msi": {
+                                        "Description": "An MSI package.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "properties": {
+                                                "Description": "Additional properties to use during installation. This should be in the format of Property=Setting. Appended to the defaults of 'ACTION=INSTALL REBOOT=ReallySuppress'.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "source": {
+                                                "Description": "The MSI package.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "allow_insecure": {
+                                                        "Description": "Defaults to false. When false, files are subject to validations based on the file type:\nRemote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "gcs": {
+                                                        "Description": "A Cloud Storage object.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "bucket": {
+                                                                "Description": "Bucket of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "generation": {
+                                                                "Description": "Generation number of the Cloud Storage object.",
+                                                                "Optional": true,
+                                                                "Type": "TypeInt"
+                                                            },
+                                                            "object": {
+                                                                "Description": "Name of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "local_path": {
+                                                        "Description": "A local path within the VM to use.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "remote": {
+                                                        "Description": "A generic remote file.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "sha256_checksum": {
+                                                                "Description": "SHA256 checksum of the remote file.",
+                                                                "Optional": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "uri": {
+                                                                "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "rpm": {
+                                        "Description": "An rpm package file.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "pull_deps": {
+                                                "Description": "Whether dependencies should also be installed. - install when false: 'rpm --upgrade --replacepkgs package.rpm' - install when true: 'yum -y install package.rpm' or 'zypper -y install package.rpm'",
+                                                "Optional": true,
+                                                "Type": "TypeBool"
+                                            },
+                                            "source": {
+                                                "Description": "An rpm package.",
+                                                "MaxItems": 1,
+                                                "Properties": {
+                                                    "allow_insecure": {
+                                                        "Description": "Defaults to false. When false, files are subject to validations based on the file type:\nRemote: A checksum must be specified. Cloud Storage: An object generation number must be specified.",
+                                                        "Optional": true,
+                                                        "Type": "TypeBool"
+                                                    },
+                                                    "gcs": {
+                                                        "Description": "A Cloud Storage object.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "bucket": {
+                                                                "Description": "Bucket of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "generation": {
+                                                                "Description": "Generation number of the Cloud Storage object.",
+                                                                "Optional": true,
+                                                                "Type": "TypeInt"
+                                                            },
+                                                            "object": {
+                                                                "Description": "Name of the Cloud Storage object.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    },
+                                                    "local_path": {
+                                                        "Description": "A local path within the VM to use.",
+                                                        "Optional": true,
+                                                        "Type": "TypeString"
+                                                    },
+                                                    "remote": {
+                                                        "Description": "A generic remote file.",
+                                                        "MaxItems": 1,
+                                                        "Optional": true,
+                                                        "Properties": {
+                                                            "sha256_checksum": {
+                                                                "Description": "SHA256 checksum of the remote file.",
+                                                                "Optional": true,
+                                                                "Type": "TypeString"
+                                                            },
+                                                            "uri": {
+                                                                "Description": "URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.",
+                                                                "Required": true,
+                                                                "Type": "TypeString"
+                                                            }
+                                                        },
+                                                        "Type": "TypeList"
+                                                    }
+                                                },
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "yum": {
+                                        "Description": "A package managed by YUM.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "name": {
+                                                "Description": "Package name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "zypper": {
+                                        "Description": "A package managed by Zypper.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "name": {
+                                                "Description": "Package name.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "repository": {
+                                "Description": "Package repository resource",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "apt": {
+                                        "Description": "An Apt Repository.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "archive_type": {
+                                                "Description": "Type of archive files in this repository. Possible values: [\"ARCHIVE_TYPE_UNSPECIFIED\", \"DEB\", \"DEB_SRC\"]",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "components": {
+                                                "Description": "List of components for this repository. Must contain at least one item.",
+                                                "Required": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "distribution": {
+                                                "Description": "Distribution of this repository.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "gpg_key": {
+                                                "Description": "URI of the key file for this repository. The agent maintains a keyring at '/etc/apt/trusted.gpg.d/osconfig_agent_managed.gpg'.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "uri": {
+                                                "Description": "URI for this repository.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "goo": {
+                                        "Description": "A Goo Repository.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "name": {
+                                                "Description": "The name of the repository.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "url": {
+                                                "Description": "The url of the repository.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "yum": {
+                                        "Description": "A Yum Repository.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "base_url": {
+                                                "Description": "The location of the repository directory.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "display_name": {
+                                                "Description": "The display name of the repository.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "gpg_keys": {
+                                                "Description": "URIs of GPG keys.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "id": {
+                                                "Description": "A one word, unique name for this repository. This is the 'repo id' in the yum config file and also the 'display_name' if 'display_name' is omitted. This id is also used as the unique identifier when checking for resource conflicts.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "zypper": {
+                                        "Description": "A Zypper Repository.",
+                                        "MaxItems": 1,
+                                        "Optional": true,
+                                        "Properties": {
+                                            "base_url": {
+                                                "Description": "The location of the repository directory.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "display_name": {
+                                                "Description": "The display name of the repository.",
+                                                "Optional": true,
+                                                "Type": "TypeString"
+                                            },
+                                            "gpg_keys": {
+                                                "Description": "URIs of GPG keys.",
+                                                "Optional": true,
+                                                "Type": "TypeList"
+                                            },
+                                            "id": {
+                                                "Description": "A one word, unique name for this repository. This is the 'repo id' in the zypper config file and also the 'display_name' if 'display_name' is omitted. This id is also used as the unique identifier when checking for GuestPolicy conflicts.",
+                                                "Required": true,
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "Output only. Indicates that reconciliation is in progress for the revision. This value is 'true' when the 'rollout_state' is one of:\n* IN_PROGRESS\n* CANCELLING",
+        "Type": "TypeBool"
+    },
+    "revision_create_time": {
+        "Computed": true,
+        "Description": "Output only. The timestamp that the revision was created.",
+        "Type": "TypeString"
+    },
+    "revision_id": {
+        "Computed": true,
+        "Description": "Output only. The assignment revision ID A new revision is committed whenever a rollout is triggered for a OS policy assignment",
+        "Type": "TypeString"
+    },
+    "rollout": {
+        "Description": "Rollout to deploy the OS policy assignment. A rollout is triggered in the following situations: 1) OSPolicyAssignment is created. 2) OSPolicyAssignment is updated and the update contains changes to one of the following fields: - instance_filter - os_policies 3) OSPolicyAssignment is deleted.",
+        "MaxItems": 1,
+        "Properties": {
+            "disruption_budget": {
+                "Description": "The maximum number (or percentage) of VMs per zone to disrupt at any given moment.",
+                "MaxItems": 1,
+                "Properties": {
+                    "fixed": {
+                        "Description": "Specifies a fixed value.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "percent": {
+                        "Description": "Specifies the relative value defined as a percentage, which will be multiplied by a reference value.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "min_wait_duration": {
+                "Description": "This determines the minimum duration of time to wait after the configuration changes are applied through the current rollout. A VM continues to count towards the 'disruption_budget' at least until this duration of time has passed after configuration changes are applied.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "rollout_state": {
+        "Computed": true,
+        "Description": "Output only. OS policy assignment rollout state",
+        "Type": "TypeString"
+    },
+    "skip_await_rollout": {
+        "Description": "Set to true to skip awaiting rollout during resource creation and update.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. Server generated unique id for the OS policy assignment resource.",
+        "Type": "TypeString"
+    }
+}

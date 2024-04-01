@@ -1,0 +1,44 @@
+authorized_network: TypeString
+create_time: TypeString
+discovery_endpoint: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+maintenance_policy:
+    create_time: TypeString
+    description: TypeString
+    update_time: TypeString
+    weekly_maintenance_window:
+        day: TypeString
+        duration: TypeString
+        start_time:
+            hours: TypeInt
+            minutes: TypeInt
+            nanos: TypeInt
+            seconds: TypeInt
+maintenance_schedule:
+    end_time: TypeString
+    schedule_deadline_time: TypeString
+    start_time: TypeString
+memcache_full_version: TypeString
+memcache_nodes:
+    host: TypeString
+    node_id: TypeString
+    port: TypeInt
+    state: TypeString
+    zone: TypeString
+memcache_parameters:
+    id: TypeString
+    params: TypeMap(TypeString)
+memcache_version: TypeString
+name: TypeString
+node_config:
+    cpu_count: TypeInt
+    memory_size_mb: TypeInt
+node_count: TypeInt
+project: TypeString
+region: TypeString
+reserved_ip_range_id: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+zones: TypeSet(TypeString)
+

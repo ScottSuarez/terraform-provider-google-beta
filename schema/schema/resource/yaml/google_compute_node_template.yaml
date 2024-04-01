@@ -1,0 +1,94 @@
+cpu_overcommit_type:
+    Type: TypeString
+    Description: 'CPU overcommit. Default value: "NONE" Possible values: ["ENABLED", "NONE"]'
+    Optional: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional textual description of the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the resource.
+    Optional: "true"
+node_affinity_labels:
+    Type: TypeMap
+    Description: |-
+        Labels to use for node affinity, which will be used in
+        instance scheduling.
+    Optional: "true"
+node_type:
+    Type: TypeString
+    Description: |-
+        Node type to use for nodes group that are created from this template.
+        Only one of nodeTypeFlexibility and nodeType can be specified.
+    Optional: "true"
+    ConflictsWith: node_type_flexibility
+node_type_flexibility:
+    Type: TypeList
+    Description: |-
+        Flexible properties for the desired node type. Node groups that
+        use this node template will create nodes of a type that matches
+        these properties. Only one of nodeTypeFlexibility and nodeType can
+        be specified.
+    Optional: "true"
+    ConflictsWith: node_type
+    MaxItems: "1"
+    Properties:
+        cpus:
+            Type: TypeString
+            Description: Number of virtual CPUs to use.
+            Optional: "true"
+            AtLeastOneOf: node_type_flexibility.0.cpus, node_type_flexibility.0.memory
+        local_ssd:
+            Type: TypeString
+            Description: Use local SSD
+            Computed: "true"
+        memory:
+            Type: TypeString
+            Description: Physical memory available to the node, defined in MB.
+            Optional: "true"
+            AtLeastOneOf: node_type_flexibility.0.cpus, node_type_flexibility.0.memory
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: |-
+        Region where nodes using the node template will be created.
+        If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+server_binding:
+    Type: TypeList
+    Description: |-
+        The server binding policy for nodes using this template. Determines
+        where the nodes should restart following a maintenance event.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        type:
+            Type: TypeString
+            Description: |-
+                Type of server binding policy. If 'RESTART_NODE_ON_ANY_SERVER',
+                nodes using this template will restart on any physical server
+                following a maintenance event.
+
+                If 'RESTART_NODE_ON_MINIMAL_SERVER', nodes using this template
+                will restart on the same physical server following a maintenance
+                event, instead of being live migrated to or restarted on a new
+                physical server. This option may be useful if you are using
+                software licenses tied to the underlying server characteristics
+                such as physical sockets or cores, to avoid the need for
+                additional licenses when maintenance occurs. However, VMs on such
+                nodes will experience outages while maintenance is applied. Possible values: ["RESTART_NODE_ON_ANY_SERVER", "RESTART_NODE_ON_MINIMAL_SERVERS"]
+            Required: "true"
+

@@ -1,0 +1,472 @@
+advanced_settings:
+    Type: TypeList
+    Description: |-
+        Hierarchical advanced settings for this flow. The settings exposed at the lower level overrides the settings exposed at the higher level.
+        Hierarchy: Agent->Flow->Page->Fulfillment/Parameter.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        audio_export_gcs_destination:
+            Type: TypeList
+            Description: |-
+                If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels:
+                * Agent level
+                * Flow level
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                uri:
+                    Type: TypeString
+                    Description: |-
+                        The Google Cloud Storage URI for the exported objects. Whether a full object name, or just a prefix, its usage depends on the Dialogflow operation.
+                        Format: gs://bucket/object-name-or-prefix
+                    Optional: "true"
+        dtmf_settings:
+            Type: TypeList
+            Description: |-
+                Define behaviors for DTMF (dual tone multi frequency). DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Exposed at the following levels:
+                * Agent level
+                * Flow level
+                * Page level
+                * Parameter level
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a "3" was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+                    Optional: "true"
+                finish_digit:
+                    Type: TypeString
+                    Description: The digit that terminates a DTMF digit sequence.
+                    Optional: "true"
+                max_digits:
+                    Type: TypeInt
+                    Description: Max length of DTMF digits.
+                    Optional: "true"
+description:
+    Type: TypeString
+    Description: The description of the flow. The maximum length is 500 characters. If exceeded, the request is rejected.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: The human-readable name of the flow.
+    Required: "true"
+event_handlers:
+    Type: TypeList
+    Description: |-
+        A flow's event handlers serve two purposes:
+        They are responsible for handling events (e.g. no match, webhook errors) in the flow.
+        They are inherited by every page's [event handlers][Page.event_handlers], which can be used to handle common events regardless of the current page. Event handlers defined in the page have higher priority than those defined in the flow.
+        Unlike transitionRoutes, these handlers are evaluated on a first-match basis. The first one that matches the event get executed, with the rest being ignored.
+    Computed: "true"
+    Optional: "true"
+    Properties:
+        event:
+            Type: TypeString
+            Description: The name of the event to handle.
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: The unique identifier of this event handler.
+            Computed: "true"
+        target_flow:
+            Type: TypeString
+            Description: |-
+                The target flow to transition to.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>.
+            Optional: "true"
+        target_page:
+            Type: TypeString
+            Description: |-
+                The target page to transition to.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/pages/<Page ID>.
+            Optional: "true"
+        trigger_fulfillment:
+            Type: TypeList
+            Description: The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                conditional_cases:
+                    Type: TypeList
+                    Description: Conditional cases for this fulfillment.
+                    Optional: "true"
+                    Properties:
+                        cases:
+                            Type: TypeString
+                            Description: |-
+                                A JSON encoded list of cascading if-else conditions. Cases are mutually exclusive. The first one with a matching condition is selected, all the rest ignored.
+                                See [Case](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/Fulfillment#case) for the schema.
+                            Optional: "true"
+                messages:
+                    Type: TypeList
+                    Description: The list of rich message responses to present to the user.
+                    Optional: "true"
+                    Properties:
+                        channel:
+                            Type: TypeString
+                            Description: The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
+                            Optional: "true"
+                        conversation_success:
+                            Type: TypeList
+                            Description: |-
+                                Indicates that the conversation succeeded, i.e., the bot handled the issue that the customer talked to it about.
+                                Dialogflow only uses this to determine which conversations should be counted as successful and doesn't process the metadata in this message in any way. Note that Dialogflow also considers conversations that get to the conversation end page as successful even if they don't return ConversationSuccess.
+                                You may set this, for example:
+                                * In the entryFulfillment of a Page if entering the page indicates that the conversation succeeded.
+                                * In a webhook response when you determine that you handled the customer issue.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                metadata:
+                                    Type: TypeString
+                                    Description: Custom metadata. Dialogflow doesn't impose any structure on this.
+                                    Optional: "true"
+                        live_agent_handoff:
+                            Type: TypeList
+                            Description: |-
+                                Indicates that the conversation should be handed off to a live agent.
+                                Dialogflow only uses this to determine which conversations were handed off to a human agent for measurement purposes. What else to do with this signal is up to you and your handoff procedures.
+                                You may set this, for example:
+                                * In the entryFulfillment of a Page if entering the page indicates something went extremely wrong in the conversation.
+                                * In a webhook response when you determine that the customer issue can only be handled by a human.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                metadata:
+                                    Type: TypeString
+                                    Description: Custom metadata. Dialogflow doesn't impose any structure on this.
+                                    Optional: "true"
+                        output_audio_text:
+                            Type: TypeList
+                            Description: A text or ssml response that is preferentially used for TTS output audio synthesis, as described in the comment on the ResponseMessage message.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                ssml:
+                                    Type: TypeString
+                                    Description: The SSML text to be synthesized. For more information, see SSML.
+                                    Optional: "true"
+                                text:
+                                    Type: TypeString
+                                    Description: The raw text to be synthesized.
+                                    Optional: "true"
+                        payload:
+                            Type: TypeString
+                            Description: A custom, platform-specific payload.
+                            Optional: "true"
+                        play_audio:
+                            Type: TypeList
+                            Description: Specifies an audio clip to be played by the client as part of the response.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                audio_uri:
+                                    Type: TypeString
+                                    Description: URI of the audio clip. Dialogflow does not impose any validation on this value. It is specific to the client that reads it.
+                                    Required: "true"
+                        telephony_transfer_call:
+                            Type: TypeList
+                            Description: Represents the signal that telles the client to transfer the phone call connected to the agent to a third-party endpoint.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                phone_number:
+                                    Type: TypeString
+                                    Description: Transfer the call to a phone number in E.164 format.
+                                    Required: "true"
+                        text:
+                            Type: TypeList
+                            Description: The text response message.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                text:
+                                    Type: TypeList
+                                    Description: A collection of text responses.
+                                    Optional: "true"
+                return_partial_responses:
+                    Type: TypeBool
+                    Description: 'Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.'
+                    Optional: "true"
+                set_parameter_actions:
+                    Type: TypeList
+                    Description: Set parameter values before executing the webhook.
+                    Optional: "true"
+                    Properties:
+                        parameter:
+                            Type: TypeString
+                            Description: Display name of the parameter.
+                            Optional: "true"
+                        value:
+                            Type: TypeString
+                            Description: The new JSON-encoded value of the parameter. A null value clears the parameter.
+                            Optional: "true"
+                tag:
+                    Type: TypeString
+                    Description: The tag used by the webhook to identify which fulfillment is being called. This field is required if webhook is specified.
+                    Optional: "true"
+                webhook:
+                    Type: TypeString
+                    Description: 'The webhook to call. Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/webhooks/<Webhook ID>.'
+                    Optional: "true"
+is_default_start_flow:
+    Type: TypeBool
+    Description: |-
+        Marks this as the [Default Start Flow](https://cloud.google.com/dialogflow/cx/docs/concept/flow#start) for an agent. When you create an agent, the Default Start Flow is created automatically.
+        The Default Start Flow cannot be deleted; deleting the 'google_dialogflow_cx_flow' resource does nothing to the underlying GCP resources.
+
+        ~> Avoid having multiple 'google_dialogflow_cx_flow' resources linked to the same agent with 'is_default_start_flow = true' because they will compete to control a single Default Start Flow resource in GCP.
+    Optional: "true"
+language_code:
+    Type: TypeString
+    Description: |-
+        The language of the following fields in flow:
+        Flow.event_handlers.trigger_fulfillment.messages
+        Flow.event_handlers.trigger_fulfillment.conditional_cases
+        Flow.transition_routes.trigger_fulfillment.messages
+        Flow.transition_routes.trigger_fulfillment.conditional_cases
+        If not specified, the agent's default language is used. Many languages are supported. Note: languages must be enabled in the agent before they can be used.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the flow.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>.
+    Computed: "true"
+nlu_settings:
+    Type: TypeList
+    Description: NLU related settings of the flow.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        classification_threshold:
+            Type: TypeFloat
+            Description: |-
+                To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold.
+                If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
+            Optional: "true"
+        model_training_mode:
+            Type: TypeString
+            Description: |-
+                Indicates NLU model training mode.
+                * MODEL_TRAINING_MODE_AUTOMATIC: NLU model training is automatically triggered when a flow gets modified. User can also manually trigger model training in this mode.
+                * MODEL_TRAINING_MODE_MANUAL: User needs to manually trigger NLU model training. Best for large flows whose models take long time to train. Possible values: ["MODEL_TRAINING_MODE_AUTOMATIC", "MODEL_TRAINING_MODE_MANUAL"]
+            Optional: "true"
+        model_type:
+            Type: TypeString
+            Description: |-
+                Indicates the type of NLU model.
+                * MODEL_TYPE_STANDARD: Use standard NLU model.
+                * MODEL_TYPE_ADVANCED: Use advanced NLU model. Possible values: ["MODEL_TYPE_STANDARD", "MODEL_TYPE_ADVANCED"]
+            Optional: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The agent to create a flow for.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>.
+    Optional: "true"
+transition_route_groups:
+    Type: TypeList
+    Description: |-
+        A flow's transition route group serve two purposes:
+        They are responsible for matching the user's first utterances in the flow.
+        They are inherited by every page's [transition route groups][Page.transition_route_groups]. Transition route groups defined in the page have higher priority than those defined in the flow.
+        Format:projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/transitionRouteGroups/<TransitionRouteGroup ID>.
+    Optional: "true"
+transition_routes:
+    Type: TypeList
+    Description: |-
+        A flow's transition routes serve two purposes:
+        They are responsible for matching the user's first utterances in the flow.
+        They are inherited by every page's [transition routes][Page.transition_routes] and can support use cases such as the user saying "help" or "can I talk to a human?", which can be handled in a common way regardless of the current page. Transition routes defined in the page have higher priority than those defined in the flow.
+
+        TransitionRoutes are evalauted in the following order:
+          TransitionRoutes with intent specified.
+          TransitionRoutes with only condition specified.
+          TransitionRoutes with intent specified are inherited by pages in the flow.
+    Optional: "true"
+    Properties:
+        condition:
+            Type: TypeString
+            Description: |-
+                The condition to evaluate against form parameters or session parameters.
+                At least one of intent or condition must be specified. When both intent and condition are specified, the transition can only happen when both are fulfilled.
+            Optional: "true"
+        intent:
+            Type: TypeString
+            Description: |-
+                The unique identifier of an Intent.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/intents/<Intent ID>. Indicates that the transition can only happen when the given intent is matched. At least one of intent or condition must be specified. When both intent and condition are specified, the transition can only happen when both are fulfilled.
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: The unique identifier of this transition route.
+            Computed: "true"
+        target_flow:
+            Type: TypeString
+            Description: |-
+                The target flow to transition to.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>.
+            Optional: "true"
+        target_page:
+            Type: TypeString
+            Description: |-
+                The target page to transition to.
+                Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>/pages/<Page ID>.
+            Optional: "true"
+        trigger_fulfillment:
+            Type: TypeList
+            Description: The fulfillment to call when the condition is satisfied. At least one of triggerFulfillment and target must be specified. When both are defined, triggerFulfillment is executed first.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                conditional_cases:
+                    Type: TypeList
+                    Description: Conditional cases for this fulfillment.
+                    Optional: "true"
+                    Properties:
+                        cases:
+                            Type: TypeString
+                            Description: |-
+                                A JSON encoded list of cascading if-else conditions. Cases are mutually exclusive. The first one with a matching condition is selected, all the rest ignored.
+                                See [Case](https://cloud.google.com/dialogflow/cx/docs/reference/rest/v3/Fulfillment#case) for the schema.
+                            Optional: "true"
+                messages:
+                    Type: TypeList
+                    Description: The list of rich message responses to present to the user.
+                    Optional: "true"
+                    Properties:
+                        channel:
+                            Type: TypeString
+                            Description: The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
+                            Optional: "true"
+                        conversation_success:
+                            Type: TypeList
+                            Description: |-
+                                Indicates that the conversation succeeded, i.e., the bot handled the issue that the customer talked to it about.
+                                Dialogflow only uses this to determine which conversations should be counted as successful and doesn't process the metadata in this message in any way. Note that Dialogflow also considers conversations that get to the conversation end page as successful even if they don't return ConversationSuccess.
+                                You may set this, for example:
+                                * In the entryFulfillment of a Page if entering the page indicates that the conversation succeeded.
+                                * In a webhook response when you determine that you handled the customer issue.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                metadata:
+                                    Type: TypeString
+                                    Description: Custom metadata. Dialogflow doesn't impose any structure on this.
+                                    Optional: "true"
+                        live_agent_handoff:
+                            Type: TypeList
+                            Description: |-
+                                Indicates that the conversation should be handed off to a live agent.
+                                Dialogflow only uses this to determine which conversations were handed off to a human agent for measurement purposes. What else to do with this signal is up to you and your handoff procedures.
+                                You may set this, for example:
+                                * In the entryFulfillment of a Page if entering the page indicates something went extremely wrong in the conversation.
+                                * In a webhook response when you determine that the customer issue can only be handled by a human.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                metadata:
+                                    Type: TypeString
+                                    Description: Custom metadata. Dialogflow doesn't impose any structure on this.
+                                    Optional: "true"
+                        output_audio_text:
+                            Type: TypeList
+                            Description: A text or ssml response that is preferentially used for TTS output audio synthesis, as described in the comment on the ResponseMessage message.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                ssml:
+                                    Type: TypeString
+                                    Description: The SSML text to be synthesized. For more information, see SSML.
+                                    Optional: "true"
+                                text:
+                                    Type: TypeString
+                                    Description: The raw text to be synthesized.
+                                    Optional: "true"
+                        payload:
+                            Type: TypeString
+                            Description: A custom, platform-specific payload.
+                            Optional: "true"
+                        play_audio:
+                            Type: TypeList
+                            Description: Specifies an audio clip to be played by the client as part of the response.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                audio_uri:
+                                    Type: TypeString
+                                    Description: URI of the audio clip. Dialogflow does not impose any validation on this value. It is specific to the client that reads it.
+                                    Required: "true"
+                        telephony_transfer_call:
+                            Type: TypeList
+                            Description: Represents the signal that telles the client to transfer the phone call connected to the agent to a third-party endpoint.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                phone_number:
+                                    Type: TypeString
+                                    Description: Transfer the call to a phone number in E.164 format.
+                                    Required: "true"
+                        text:
+                            Type: TypeList
+                            Description: The text response message.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                allow_playback_interruption:
+                                    Type: TypeBool
+                                    Description: Whether the playback of this message can be interrupted by the end user's speech and the client can then starts the next Dialogflow request.
+                                    Computed: "true"
+                                text:
+                                    Type: TypeList
+                                    Description: A collection of text responses.
+                                    Optional: "true"
+                return_partial_responses:
+                    Type: TypeBool
+                    Description: 'Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.'
+                    Optional: "true"
+                set_parameter_actions:
+                    Type: TypeList
+                    Description: Set parameter values before executing the webhook.
+                    Optional: "true"
+                    Properties:
+                        parameter:
+                            Type: TypeString
+                            Description: Display name of the parameter.
+                            Optional: "true"
+                        value:
+                            Type: TypeString
+                            Description: The new JSON-encoded value of the parameter. A null value clears the parameter.
+                            Optional: "true"
+                tag:
+                    Type: TypeString
+                    Description: The tag used by the webhook to identify which fulfillment is being called. This field is required if webhook is specified.
+                    Optional: "true"
+                webhook:
+                    Type: TypeString
+                    Description: 'The webhook to call. Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/webhooks/<Webhook ID>.'
+                    Optional: "true"
+

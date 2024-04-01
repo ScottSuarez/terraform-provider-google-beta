@@ -1,0 +1,16 @@
+cpu_overcommit_type: TypeString
+creation_timestamp: TypeString
+description: TypeString
+name: TypeString
+node_affinity_labels: TypeMap(TypeString)
+node_type: TypeString
+node_type_flexibility:
+    cpus: TypeString
+    local_ssd: TypeString
+    memory: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+server_binding:
+    type: TypeString
+

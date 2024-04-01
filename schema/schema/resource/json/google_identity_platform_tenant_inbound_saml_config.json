@@ -1,0 +1,92 @@
+{
+    "display_name": {
+        "Description": "Human friendly display name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enabled": {
+        "Description": "If this config allows users to sign in with the provider.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "idp_config": {
+        "Description": "SAML IdP configuration when the project acts as the relying party",
+        "MaxItems": 1,
+        "Properties": {
+            "idp_certificates": {
+                "Description": "The IDP's certificate data to verify the signature in the SAMLResponse issued by the IDP.",
+                "Properties": {
+                    "x509_certificate": {
+                        "Description": "The x509 certificate",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "idp_entity_id": {
+                "Description": "Unique identifier for all SAML entities",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "sign_request": {
+                "Description": "Indicates if outbounding SAMLRequest should be signed.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "sso_url": {
+                "Description": "URL to send Authentication request to.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of the InboundSamlConfig resource. Must start with 'saml.' and can only have alphanumeric characters,\nhyphens, underscores or periods. The part after 'saml.' must also start with a lowercase letter, end with an\nalphanumeric character, and have at least 2 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "sp_config": {
+        "Description": "SAML SP (Service Provider) configuration when the project acts as the relying party to receive\nand accept an authentication assertion issued by a SAML identity provider.",
+        "MaxItems": 1,
+        "Properties": {
+            "callback_uri": {
+                "Description": "Callback URI where responses from IDP are handled. Must start with 'https://'.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "sp_certificates": {
+                "Computed": true,
+                "Description": "The IDP's certificate data to verify the signature in the SAMLResponse issued by the IDP.",
+                "Properties": {
+                    "x509_certificate": {
+                        "Computed": true,
+                        "Description": "The x509 certificate",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "sp_entity_id": {
+                "Description": "Unique identifier for all SAML entities.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "tenant": {
+        "Description": "The name of the tenant where this inbound SAML config resource exists",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

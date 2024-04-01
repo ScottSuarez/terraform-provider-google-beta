@@ -1,0 +1,5 @@
+backend_bucket: TypeString
+key_value: TypeString
+name: TypeString
+project: TypeString
+

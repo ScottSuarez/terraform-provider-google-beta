@@ -1,0 +1,103 @@
+create_time: TypeString
+description: TypeString
+duration: TypeString
+instance_filter:
+    all: TypeBool
+    group_labels:
+        labels: TypeMap(TypeString)
+    instance_name_prefixes: TypeList(TypeString)
+    instances: TypeList(TypeString)
+    zones: TypeList(TypeString)
+last_execute_time: TypeString
+name: TypeString
+one_time_schedule:
+    execute_time: TypeString
+patch_config:
+    apt:
+        excludes: TypeList(TypeString)
+        exclusive_packages: TypeList(TypeString)
+        type: TypeString
+    goo:
+        enabled: TypeBool
+    mig_instances_allowed: TypeBool
+    post_step:
+        linux_exec_step_config:
+            allowed_success_codes: TypeList(TypeInt)
+            gcs_object:
+                bucket: TypeString
+                generation_number: TypeString
+                object: TypeString
+            interpreter: TypeString
+            local_path: TypeString
+        windows_exec_step_config:
+            allowed_success_codes: TypeList(TypeInt)
+            gcs_object:
+                bucket: TypeString
+                generation_number: TypeString
+                object: TypeString
+            interpreter: TypeString
+            local_path: TypeString
+    pre_step:
+        linux_exec_step_config:
+            allowed_success_codes: TypeList(TypeInt)
+            gcs_object:
+                bucket: TypeString
+                generation_number: TypeString
+                object: TypeString
+            interpreter: TypeString
+            local_path: TypeString
+        windows_exec_step_config:
+            allowed_success_codes: TypeList(TypeInt)
+            gcs_object:
+                bucket: TypeString
+                generation_number: TypeString
+                object: TypeString
+            interpreter: TypeString
+            local_path: TypeString
+    reboot_config: TypeString
+    windows_update:
+        classifications: TypeList(TypeString)
+        excludes: TypeList(TypeString)
+        exclusive_patches: TypeList(TypeString)
+    yum:
+        excludes: TypeList(TypeString)
+        exclusive_packages: TypeList(TypeString)
+        minimal: TypeBool
+        security: TypeBool
+    zypper:
+        categories: TypeList(TypeString)
+        excludes: TypeList(TypeString)
+        exclusive_patches: TypeList(TypeString)
+        severities: TypeList(TypeString)
+        with_optional: TypeBool
+        with_update: TypeBool
+patch_deployment_id: TypeString
+project: TypeString
+recurring_schedule:
+    end_time: TypeString
+    last_execute_time: TypeString
+    monthly:
+        month_day: TypeInt
+        week_day_of_month:
+            day_of_week: TypeString
+            day_offset: TypeInt
+            week_ordinal: TypeInt
+    next_execute_time: TypeString
+    start_time: TypeString
+    time_of_day:
+        hours: TypeInt
+        minutes: TypeInt
+        nanos: TypeInt
+        seconds: TypeInt
+    time_zone:
+        id: TypeString
+        version: TypeString
+    weekly:
+        day_of_week: TypeString
+rollout:
+    disruption_budget:
+        fixed: TypeInt
+        percentage: TypeInt
+    mode: TypeString
+update_time: TypeString
+

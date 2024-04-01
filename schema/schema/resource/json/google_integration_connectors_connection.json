@@ -1,0 +1,908 @@
+{
+    "auth_config": {
+        "Description": "authConfig for the connection.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_variable": {
+                "Description": "List containing additional auth configs.",
+                "Optional": true,
+                "Properties": {
+                    "boolean_value": {
+                        "Description": "Boolean Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encryption_key_value": {
+                        "Description": "Encription key value of configVariable.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "kms_key_name": {
+                                "Description": "The [KMS key name] with which the content of the Operation is encrypted. The expected\nformat: projects/*/locations/*/keyRings/*/cryptoKeys/*.\nWill be empty string if google managed.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "type": {
+                                "Description": "Type of Encription Key Possible values: [\"GOOGLE_MANAGED\", \"CUSTOMER_MANAGED\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "integer_value": {
+                        "Description": "Integer Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "key": {
+                        "Description": "Key for the configVariable",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "secret_value": {
+                        "Description": "Secret value of configVariable.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "Secret version of Secret Value for Config variable.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "string_value": {
+                        "Description": "String Value of configVariabley.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "auth_key": {
+                "Description": "The type of authentication configured.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "auth_type": {
+                "Description": "authType of the Connection Possible values: [\"USER_PASSWORD\", \"OAUTH2_JWT_BEARER\", \"OAUTH2_CLIENT_CREDENTIALS\", \"SSH_PUBLIC_KEY\", \"OAUTH2_AUTH_CODE_FLOW\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "oauth2_auth_code_flow": {
+                "Description": "Parameters to support Oauth 2.0 Auth Code Grant Authentication.",
+                "ExactlyOneOf": "auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "auth_uri": {
+                        "Description": "Auth URL for Authorization Code Flow.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "client_id": {
+                        "Description": "Client ID for user-provided OAuth app.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "client_secret": {
+                        "Description": "Client secret for user-provided OAuth app.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "enable_pkce": {
+                        "Description": "Whether to enable PKCE when the user performs the auth code flow.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "scopes": {
+                        "Description": "Scopes the connection will request when the user performs the auth code flow.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "oauth2_client_credentials": {
+                "Description": "OAuth3 Client Credentials for Authentication.",
+                "ExactlyOneOf": "auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "client_id": {
+                        "Description": "Secret version of Password for Authentication.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "client_secret": {
+                        "Description": "Secret version reference containing the client secret.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "oauth2_jwt_bearer": {
+                "Description": "OAuth2 JWT Bearer for Authentication.",
+                "ExactlyOneOf": "auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "client_key": {
+                        "Description": "Secret version reference containing a PKCS#8 PEM-encoded private key associated with the Client Certificate.\nThis private key will be used to sign JWTs used for the jwt-bearer authorization grant.\nSpecified in the form as: projects/*/secrets/*/versions/*.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "jwt_claims": {
+                        "Description": "JwtClaims providers fields to generate the token.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "audience": {
+                                "Description": "Value for the \"aud\" claim.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "issuer": {
+                                "Description": "Value for the \"iss\" claim.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "subject": {
+                                "Description": "Value for the \"sub\" claim.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ssh_public_key": {
+                "Description": "SSH Public Key for Authentication.",
+                "ExactlyOneOf": "auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "cert_type": {
+                        "Description": "Format of SSH Client cert.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "ssh_client_cert": {
+                        "Description": "SSH Client Cert. It should contain both public and private key.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "ssh_client_cert_pass": {
+                        "Description": "Password (passphrase) for ssh client certificate if it has one.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "username": {
+                        "Description": "The user account used to authenticate.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "user_password": {
+                "Description": "User password for Authentication.",
+                "ExactlyOneOf": "auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "password": {
+                        "Description": "Password for Authentication.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "username": {
+                        "Description": "Username for Authentication.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "config_variable": {
+        "Description": "Config Variables for the connection.",
+        "Optional": true,
+        "Properties": {
+            "boolean_value": {
+                "Description": "Boolean Value of configVariable",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "encryption_key_value": {
+                "Description": "Encription key value of configVariable.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "kms_key_name": {
+                        "Description": "The [KMS key name] with which the content of the Operation is encrypted. The expected\nformat: projects/*/locations/*/keyRings/*/cryptoKeys/*.\nWill be empty string if google managed.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "type": {
+                        "Description": "Type of Encription Key Possible values: [\"GOOGLE_MANAGED\", \"CUSTOMER_MANAGED\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "integer_value": {
+                "Description": "Integer Value of configVariable",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "key": {
+                "Description": "Key for the configVariable",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "secret_value": {
+                "Description": "Secret value of configVariable.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_version": {
+                        "Description": "Secret version of Secret Value for Config variable.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "string_value": {
+                "Description": "String Value of configVariabley",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "connection_revision": {
+        "Computed": true,
+        "Description": "Connection revision. This field is only updated when the connection is created or updated by User.",
+        "Type": "TypeString"
+    },
+    "connector_version": {
+        "Description": "connectorVersion of the Connector.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "connector_version_infra_config": {
+        "Computed": true,
+        "Description": "This cofiguration provides infra configs like rate limit threshold which need to be configurable for every connector version.",
+        "Properties": {
+            "ratelimit_threshold": {
+                "Computed": true,
+                "Description": "Max QPS supported by the connector version before throttling of requests.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "connector_version_launch_stage": {
+        "Computed": true,
+        "Description": "Flag to mark the version indicating the launch stage.",
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An arbitrary description for the Conection.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "destination_config": {
+        "Description": "Define the Connectors target endpoint.",
+        "Optional": true,
+        "Properties": {
+            "destination": {
+                "Description": "The destinations for the key.",
+                "Optional": true,
+                "Properties": {
+                    "host": {
+                        "Description": "For publicly routable host.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "port": {
+                        "Description": "The port is the target port number that is accepted by the destination.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "service_attachment": {
+                        "Description": "PSC service attachments. Format: projects/*/regions/*/serviceAttachments/*",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "key": {
+                "Description": "The key is the destination identifier that is supported by the Connector.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "eventing_config": {
+        "Description": "Eventing Configuration of a connection",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_variable": {
+                "Description": "List containing additional auth configs.",
+                "Optional": true,
+                "Properties": {
+                    "boolean_value": {
+                        "Description": "Boolean Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encryption_key_value": {
+                        "Description": "Encription key value of configVariable.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "kms_key_name": {
+                                "Description": "The [KMS key name] with which the content of the Operation is encrypted. The expected\nformat: projects/*/locations/*/keyRings/*/cryptoKeys/*.\nWill be empty string if google managed.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "type": {
+                                "Description": "Type of Encryption Key Possible values: [\"GOOGLE_MANAGED\", \"CUSTOMER_MANAGED\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "integer_value": {
+                        "Description": "Integer Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "key": {
+                        "Description": "Key for the configVariable",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "secret_value": {
+                        "Description": "Secret value of configVariable",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "Secret version of Secret Value for Config variable.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "string_value": {
+                        "Description": "String Value of configVariabley.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "auth_config": {
+                "Description": "authConfig for Eventing Configuration.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "additional_variable": {
+                        "Description": "List containing additional auth configs.",
+                        "Optional": true,
+                        "Properties": {
+                            "boolean_value": {
+                                "Description": "Boolean Value of configVariable.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "encryption_key_value": {
+                                "Description": "Encription key value of configVariable",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "kms_key_name": {
+                                        "Description": "The [KMS key name] with which the content of the Operation is encrypted. The expected\nformat: projects/*/locations/*/keyRings/*/cryptoKeys/*.\nWill be empty string if google managed.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "type": {
+                                        "Description": "Type of Encription Key Possible values: [\"GOOGLE_MANAGED\", \"CUSTOMER_MANAGED\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "integer_value": {
+                                "Description": "Integer Value of configVariable.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "key": {
+                                "Description": "Key for the configVariable",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "secret_value": {
+                                "Description": "Secret value of configVariable",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "secret_version": {
+                                        "Description": "Secret version of Secret Value for Config variable.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "string_value": {
+                                "Description": "String Value of configVariabley.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "auth_key": {
+                        "Description": "The type of authentication configured.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "auth_type": {
+                        "Description": "authType of the Connection Possible values: [\"USER_PASSWORD\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "user_password": {
+                        "Description": "User password for Authentication.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "password": {
+                                "Description": "Password for Authentication.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "secret_version": {
+                                        "Description": "The resource name of the secret version in the format,\nformat as: projects/*/secrets/*/versions/*.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "username": {
+                                "Description": "Username for Authentication.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "enrichment_enabled": {
+                "Description": "Enrichment Enabled.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "registration_destination_config": {
+                "Description": "registrationDestinationConfig",
+                "MaxItems": 1,
+                "Properties": {
+                    "destination": {
+                        "Description": "destinations for the connection",
+                        "Optional": true,
+                        "Properties": {
+                            "host": {
+                                "Description": "Host",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "port": {
+                                "Description": "port number",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "service_attachment": {
+                                "Description": "Service Attachment",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "key": {
+                        "Description": "Key for the connection",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "eventing_enablement_type": {
+        "Description": "Eventing enablement type. Will be nil if eventing is not enabled. Possible values: [\"EVENTING_AND_CONNECTION\", \"ONLY_EVENTING\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "eventing_runtime_data": {
+        "Computed": true,
+        "Description": "Eventing Runtime Data.",
+        "Properties": {
+            "events_listener_endpoint": {
+                "Description": "Events listener endpoint. The value will populated after provisioning the events listener.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "status": {
+                "Computed": true,
+                "Description": "Current status of eventing.",
+                "Properties": {
+                    "description": {
+                        "Computed": true,
+                        "Description": "Description of error if State is set to \"ERROR\".",
+                        "Type": "TypeString"
+                    },
+                    "state": {
+                        "Computed": true,
+                        "Description": "State of the Eventing",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user provided metadata.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Location in which Connection needs to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "lock_config": {
+        "Description": "Determines whether or no a connection is locked. If locked, a reason must be specified.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "locked": {
+                "Description": "Indicates whether or not the connection is locked.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "reason": {
+                "Description": "Describes why a connection is locked.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "log_config": {
+        "Description": "Log configuration for the connection.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enabled": {
+                "Description": "Enabled represents whether logging is enabled or not for a connection.",
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of Connection needs to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "node_config": {
+        "Computed": true,
+        "Description": "Node configuration for the connection.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "max_node_count": {
+                "Computed": true,
+                "Description": "Minimum number of nodes in the runtime nodes.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "min_node_count": {
+                "Computed": true,
+                "Description": "Minimum number of nodes in the runtime nodes.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "Service account needed for runtime plane to access Google Cloud resources.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_directory": {
+        "Computed": true,
+        "Description": "The name of the Service Directory service name. Used for Private Harpoon to resolve the ILB address.\ne.g. \"projects/cloud-connectors-e2e-testing/locations/us-central1/namespaces/istio-system/services/istio-ingressgateway-connectors\"",
+        "Type": "TypeString"
+    },
+    "ssl_config": {
+        "Description": "SSL Configuration of a connection",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_variable": {
+                "Description": "Additional SSL related field values.",
+                "Optional": true,
+                "Properties": {
+                    "boolean_value": {
+                        "Description": "Boolean Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encryption_key_value": {
+                        "Description": "Encription key value of configVariable",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "kms_key_name": {
+                                "Description": "The [KMS key name] with which the content of the Operation is encrypted. The expected\nformat: projects/*/locations/*/keyRings/*/cryptoKeys/*.\nWill be empty string if google managed.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "type": {
+                                "Description": "Type of Encription Key Possible values: [\"GOOGLE_MANAGED\", \"CUSTOMER_MANAGED\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "integer_value": {
+                        "Description": "Integer Value of configVariable.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "key": {
+                        "Description": "Key for the configVariable",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "secret_value": {
+                        "Description": "Secret value of configVariable",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "secret_version": {
+                                "Description": "Secret version of Secret Value for Config variable.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "string_value": {
+                        "Description": "String Value of configVariabley.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "client_cert_type": {
+                "Description": "Type of Client Cert (PEM/JKS/.. etc.) Possible values: [\"PEM\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "client_certificate": {
+                "Description": "Client Certificate",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_version": {
+                        "Description": "Secret version of Secret Value for Config variable.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "client_private_key": {
+                "Description": "Client Private Key",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_version": {
+                        "Description": "Secret version of Secret Value for Config variable.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "client_private_key_pass": {
+                "Description": "Secret containing the passphrase protecting the Client Private Key",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_version": {
+                        "Description": "Secret version of Secret Value for Config variable.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "private_server_certificate": {
+                "Description": "Private Server Certificate. Needs to be specified if trust model is PRIVATE.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "secret_version": {
+                        "Description": "Secret version of Secret Value for Config variable.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "server_cert_type": {
+                "Description": "Type of Server Cert (PEM/JKS/.. etc.) Possible values: [\"PEM\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "trust_model": {
+                "Description": "Enum for Trust Model Possible values: [\"PUBLIC\", \"PRIVATE\", \"INSECURE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "type": {
+                "Description": "Enum for controlling the SSL Type (TLS/MTLS) Possible values: [\"TLS\", \"MTLS\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "use_ssl": {
+                "Description": "Bool for enabling SSL",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "status": {
+        "Computed": true,
+        "Description": "Status of the Integration Connector.",
+        "Properties": {
+            "description": {
+                "Computed": true,
+                "Description": "Description of Status of Connection.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "State of the Integration Connector",
+                "Type": "TypeString"
+            },
+            "status": {
+                "Computed": true,
+                "Description": "Status of the Connection.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "subscription_type": {
+        "Computed": true,
+        "Description": "This subscription type enum states the subscription type of the project.",
+        "Type": "TypeString"
+    },
+    "suspended": {
+        "Description": "Suspended indicates if a user has suspended a connection or not.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the Namespace was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

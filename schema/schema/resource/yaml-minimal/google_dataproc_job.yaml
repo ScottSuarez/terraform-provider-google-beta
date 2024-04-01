@@ -1,0 +1,85 @@
+driver_controls_files_uri: TypeString
+driver_output_resource_uri: TypeString
+effective_labels: TypeMap(TypeString)
+force_delete: TypeBool
+hadoop_config:
+    archive_uris: TypeList(TypeString)
+    args: TypeList(TypeString)
+    file_uris: TypeList(TypeString)
+    jar_file_uris: TypeList(TypeString)
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    main_class: TypeString
+    main_jar_file_uri: TypeString
+    properties: TypeMap(TypeString)
+hive_config:
+    continue_on_failure: TypeBool
+    jar_file_uris: TypeList(TypeString)
+    properties: TypeMap(TypeString)
+    query_file_uri: TypeString
+    query_list: TypeList(TypeString)
+    script_variables: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+pig_config:
+    continue_on_failure: TypeBool
+    jar_file_uris: TypeList(TypeString)
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    properties: TypeMap(TypeString)
+    query_file_uri: TypeString
+    query_list: TypeList(TypeString)
+    script_variables: TypeMap(TypeString)
+placement:
+    cluster_name: TypeString
+    cluster_uuid: TypeString
+presto_config:
+    client_tags: TypeList(TypeString)
+    continue_on_failure: TypeBool
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    output_format: TypeString
+    properties: TypeMap(TypeString)
+    query_file_uri: TypeString
+    query_list: TypeList(TypeString)
+project: TypeString
+pyspark_config:
+    archive_uris: TypeList(TypeString)
+    args: TypeList(TypeString)
+    file_uris: TypeList(TypeString)
+    jar_file_uris: TypeList(TypeString)
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    main_python_file_uri: TypeString
+    properties: TypeMap(TypeString)
+    python_file_uris: TypeList(TypeString)
+reference:
+    job_id: TypeString
+region: TypeString
+scheduling:
+    max_failures_per_hour: TypeInt
+    max_failures_total: TypeInt
+spark_config:
+    archive_uris: TypeList(TypeString)
+    args: TypeList(TypeString)
+    file_uris: TypeList(TypeString)
+    jar_file_uris: TypeList(TypeString)
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    main_class: TypeString
+    main_jar_file_uri: TypeString
+    properties: TypeMap(TypeString)
+sparksql_config:
+    jar_file_uris: TypeList(TypeString)
+    logging_config:
+        driver_log_levels: TypeMap(TypeString)
+    properties: TypeMap(TypeString)
+    query_file_uri: TypeString
+    query_list: TypeList(TypeString)
+    script_variables: TypeMap(TypeString)
+status:
+    details: TypeString
+    state: TypeString
+    state_start_time: TypeString
+    substate: TypeString
+terraform_labels: TypeMap(TypeString)
+

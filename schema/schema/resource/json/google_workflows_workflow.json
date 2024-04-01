@@ -1,0 +1,91 @@
+{
+    "call_log_level": {
+        "Description": "Describes the level of platform logging to apply to calls and call responses during\nexecutions of this workflow. If both the workflow and the execution specify a logging level,\nthe execution level takes precedence. Possible values: [\"CALL_LOG_LEVEL_UNSPECIFIED\", \"LOG_ALL_CALLS\", \"LOG_ERRORS_ONLY\", \"LOG_NONE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the workflow was created in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "crypto_key_name": {
+        "Description": "The KMS key used to encrypt workflow and execution data.\n\nFormat: projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{cryptoKey}",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "Description of the workflow provided by the user. Must be at most 1000 unicode characters long.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "A set of key/value label pairs to assign to this Workflow.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Name of the Workflow.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name_prefix": {
+        "Computed": true,
+        "ConflictsWith": "name",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region of the workflow.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "revision_id": {
+        "Computed": true,
+        "Description": "The revision of the workflow. A new one is generated if the service account or source contents is changed.",
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "Name of the service account associated with the latest workflow version. This service\naccount represents the identity of the workflow and determines what permissions the workflow has.\nFormat: projects/{project}/serviceAccounts/{account} or {account}.\nUsing - as a wildcard for the {project} or not providing one at all will infer the project from the account.\nThe {account} value can be the email address or the unique_id of the service account.\nIf not provided, workflow will use the project's default service account.\nModifying this field for an existing workflow results in a new workflow revision.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "source_contents": {
+        "Description": "Workflow code to be executed. The size limit is 128KB.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the workflow deployment.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp of when the workflow was last updated in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits.",
+        "Type": "TypeString"
+    },
+    "user_env_vars": {
+        "Description": "User-defined environment variables associated with this workflow revision. This map has a maximum length of 20. Each string can take up to 4KiB. Keys cannot be empty strings and cannot start with “GOOGLE” or “WORKFLOWS\".",
+        "Optional": true,
+        "Type": "TypeMap"
+    }
+}

@@ -1,0 +1,55 @@
+{
+    "catalog": {
+        "Description": "The parent catalog.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The creation time of the database. A timestamp in RFC3339\nUTC \"Zulu\" format, with nanosecond resolution and up to nine fractional\ndigits. Examples: \"2014-10-02T15:01:23Z\" and\n\"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "Output only. The deletion time of the database. Only set after the\ndatabase is deleted. A timestamp in RFC3339 UTC \"Zulu\" format, with\nnanosecond resolution and up to nine fractional digits. Examples:\n\"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Output only. The time when this database is considered expired. Only set\nafter the database is deleted. A timestamp in RFC3339 UTC \"Zulu\" format,\nwith nanosecond resolution and up to nine fractional digits. Examples:\n\"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "hive_options": {
+        "Description": "Options of a Hive database.",
+        "MaxItems": 1,
+        "Properties": {
+            "location_uri": {
+                "Description": "Cloud Storage folder URI where the database data is stored, starting with \"gs://\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "parameters": {
+                "Description": "Stores user supplied Hive database parameters. An object containing a\nlist of\"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of the database.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The database type.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The last modification time of the database. A timestamp in\nRFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and\n\"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

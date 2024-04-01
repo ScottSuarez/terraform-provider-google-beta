@@ -1,0 +1,35 @@
+description: TypeString
+hcx:
+    fqdn: TypeString
+    internal_ip: TypeString
+    state: TypeString
+    version: TypeString
+location: TypeString
+management_cluster:
+    cluster_id: TypeString
+    node_type_configs:
+        custom_core_count: TypeInt
+        node_count: TypeInt
+        node_type_id: TypeString
+name: TypeString
+network_config:
+    dns_server_ip: TypeString
+    management_cidr: TypeString
+    management_ip_address_layout_version: TypeInt
+    vmware_engine_network: TypeString
+    vmware_engine_network_canonical: TypeString
+nsx:
+    fqdn: TypeString
+    internal_ip: TypeString
+    state: TypeString
+    version: TypeString
+project: TypeString
+state: TypeString
+type: TypeString
+uid: TypeString
+vcenter:
+    fqdn: TypeString
+    internal_ip: TypeString
+    state: TypeString
+    version: TypeString
+

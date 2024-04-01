@@ -1,0 +1,7 @@
+dns_suffix: TypeString
+name: TypeString
+network: TypeString
+parent: TypeString
+project: TypeString
+service: TypeString
+

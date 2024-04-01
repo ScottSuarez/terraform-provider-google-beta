@@ -1,0 +1,21 @@
+chat_engine_config:
+    agent_creation_config:
+        business: TypeString
+        default_language_code: TypeString
+        location: TypeString
+        time_zone: TypeString
+chat_engine_metadata:
+    dialogflow_agent: TypeString
+collection_id: TypeString
+common_config:
+    company_name: TypeString
+create_time: TypeString
+data_store_ids: TypeList(TypeString)
+display_name: TypeString
+engine_id: TypeString
+industry_vertical: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+update_time: TypeString
+

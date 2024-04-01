@@ -1,0 +1,25 @@
+{
+    "primary_disk": {
+        "Description": "Primary disk for asynchronous replication.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "secondary_disk": {
+        "Description": "Secondary disk for asynchronous replication.",
+        "MaxItems": 1,
+        "Properties": {
+            "disk": {
+                "Description": "Secondary disk for asynchronous replication.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "Output-only. Status of replication on the secondary disk.",
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

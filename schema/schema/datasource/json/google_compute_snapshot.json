@@ -1,0 +1,139 @@
+{
+    "chain_name": {
+        "Computed": true,
+        "Description": "Creates the new snapshot in the snapshot chain labeled with the\nspecified name. The chain name must be 1-63 characters long and\ncomply with RFC1035. This is an uncommon option only for advanced\nservice owners who needs to create separate snapshot chains, for\nexample, for chargeback tracking.  When you describe your snapshot\nresource, this field is visible only if it has a non-empty value.",
+        "Type": "TypeString"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "An optional description of this resource.",
+        "Type": "TypeString"
+    },
+    "disk_size_gb": {
+        "Computed": true,
+        "Description": "Size of the snapshot, specified in GB.",
+        "Type": "TypeInt"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "filter": {
+        "ExactlyOneOf": "name, filter",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "label_fingerprint": {
+        "Computed": true,
+        "Description": "The fingerprint used for optimistic locking of this resource. Used\ninternally during updates.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Labels to apply to this Snapshot.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "licenses": {
+        "Computed": true,
+        "Description": "A list of public visible licenses that apply to this snapshot. This\ncan be because the original image had licenses attached (such as a\nWindows image).  snapshotEncryptionKey nested object Encrypts the\nsnapshot using a customer-supplied encryption key.",
+        "Type": "TypeList"
+    },
+    "most_recent": {
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "Name of the resource; provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "ExactlyOneOf": "name, filter",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "snapshot_encryption_key": {
+        "Computed": true,
+        "Description": "Encrypts the snapshot using a customer-supplied encryption key.\n\nAfter you encrypt a snapshot using a customer-supplied key, you must\nprovide the same key if you use the snapshot later. For example, you\nmust provide the encryption key when you create a disk from the\nencrypted snapshot in a future request.\n\nCustomer-supplied encryption keys do not protect access to metadata of\nthe snapshot.\n\nIf you do not provide an encryption key when creating the snapshot,\nthen the snapshot will be encrypted using an automatically generated\nkey and you do not need to provide a key to use the snapshot later.",
+        "Properties": {
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The name of the encryption key that is stored in Google Cloud KMS.",
+                "Type": "TypeString"
+            },
+            "kms_key_service_account": {
+                "Computed": true,
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Computed": true,
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Type": "TypeString"
+            },
+            "sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied\nencryption key that protects this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "snapshot_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource.",
+        "Type": "TypeInt"
+    },
+    "source_disk": {
+        "Computed": true,
+        "Description": "A reference to the disk used to create this snapshot.",
+        "Type": "TypeString"
+    },
+    "source_disk_encryption_key": {
+        "Computed": true,
+        "Description": "The customer-supplied encryption key of the source snapshot. Required\nif the source snapshot is protected by a customer-supplied encryption\nkey.",
+        "Properties": {
+            "kms_key_service_account": {
+                "Computed": true,
+                "Description": "The service account used for the encryption request for the given KMS key.\nIf absent, the Compute Engine Service Agent service account is used.",
+                "Type": "TypeString"
+            },
+            "raw_key": {
+                "Computed": true,
+                "Description": "Specifies a 256-bit customer-supplied encryption key, encoded in\nRFC 4648 base64 to either encrypt or decrypt this resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "storage_bytes": {
+        "Computed": true,
+        "Description": "A size of the storage used by the snapshot. As snapshots share\nstorage, this number is expected to change with snapshot\ncreation/deletion.",
+        "Type": "TypeInt"
+    },
+    "storage_locations": {
+        "Computed": true,
+        "Description": "Cloud Storage bucket storage location of the snapshot (regional or multi-regional).",
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "zone": {
+        "Computed": true,
+        "Description": "A reference to the zone where the disk is hosted.",
+        "Type": "TypeString"
+    }
+}

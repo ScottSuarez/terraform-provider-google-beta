@@ -1,0 +1,83 @@
+create_time: TypeString
+description: TypeString
+etag: TypeString
+location: TypeString
+name: TypeString
+parent: TypeString
+policy_sets:
+    description: TypeString
+    policies:
+        compliance_standards:
+            control: TypeString
+            standard: TypeString
+        constraint:
+            org_policy_constraint:
+                canned_constraint_id: TypeString
+                policy_rules:
+                    allow_all: TypeBool
+                    deny_all: TypeBool
+                    enforce: TypeBool
+                    expr:
+                        description: TypeString
+                        expression: TypeString
+                        location: TypeString
+                        title: TypeString
+                    values:
+                        allowed_values: TypeList(TypeString)
+                        denied_values: TypeList(TypeString)
+            org_policy_constraint_custom:
+                custom_constraint:
+                    action_type: TypeString
+                    condition: TypeString
+                    description: TypeString
+                    display_name: TypeString
+                    method_types: TypeList(TypeString)
+                    name: TypeString
+                    resource_types: TypeList(TypeString)
+                policy_rules:
+                    allow_all: TypeBool
+                    deny_all: TypeBool
+                    enforce: TypeBool
+                    expr:
+                        description: TypeString
+                        expression: TypeString
+                        location: TypeString
+                        title: TypeString
+                    values:
+                        allowed_values: TypeList(TypeString)
+                        denied_values: TypeList(TypeString)
+            security_health_analytics_custom_module:
+                config:
+                    custom_output:
+                        properties:
+                            name: TypeString
+                            value_expression:
+                                description: TypeString
+                                expression: TypeString
+                                location: TypeString
+                                title: TypeString
+                    description: TypeString
+                    predicate:
+                        description: TypeString
+                        expression: TypeString
+                        location: TypeString
+                        title: TypeString
+                    recommendation: TypeString
+                    resource_selector:
+                        resource_types: TypeList(TypeString)
+                    severity: TypeString
+                display_name: TypeString
+                id: TypeString
+                module_enablement_state: TypeString
+            security_health_analytics_module:
+                module_enablement_state: TypeString
+                module_name: TypeString
+        description: TypeString
+        policy_id: TypeString
+    policy_set_id: TypeString
+posture_id: TypeString
+reconciling: TypeBool
+revision_id: TypeString
+state: TypeString
+update_time: TypeString
+

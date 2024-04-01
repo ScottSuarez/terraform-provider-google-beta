@@ -1,0 +1,22 @@
+{
+    "cluster_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "manifest": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "platform_version": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

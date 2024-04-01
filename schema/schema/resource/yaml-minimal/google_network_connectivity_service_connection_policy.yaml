@@ -1,0 +1,33 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+infrastructure: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+psc_config:
+    limit: TypeString
+    subnetworks: TypeList(TypeString)
+psc_connections:
+    consumer_address: TypeString
+    consumer_forwarding_rule: TypeString
+    consumer_target_project: TypeString
+    error:
+        code: TypeInt
+        details: TypeList(TypeMap)
+        message: TypeString
+    error_info:
+        domain: TypeString
+        metadata: TypeMap(TypeString)
+        reason: TypeString
+    error_type: TypeString
+    gce_operation: TypeString
+    psc_connection_id: TypeString
+    state: TypeString
+service_class: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

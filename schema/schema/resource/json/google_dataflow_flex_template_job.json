@@ -1,0 +1,155 @@
+{
+    "additional_experiments": {
+        "Computed": true,
+        "Description": "List of experiments that should be used by the job. An example value is [\"enable_stackdriver_agent_metrics\"].",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "autoscaling_algorithm": {
+        "Computed": true,
+        "Description": "The algorithm to use for autoscaling",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "container_spec_gcs_path": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_streaming_engine": {
+        "Description": "Indicates if the job should use the streaming engine feature.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "ip_configuration": {
+        "Description": "The configuration for VM IPs. Options are \"WORKER_IP_PUBLIC\" or \"WORKER_IP_PRIVATE\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "job_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "kms_key_name": {
+        "Computed": true,
+        "Description": "The name for the Cloud KMS key for the job. Key format is: projects/PROJECT_ID/locations/LOCATION/keyRings/KEY_RING/cryptoKeys/KEY",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "User labels to be specified for the job. Keys and values should follow the restrictions specified in the labeling restrictions page. NOTE: This field is non-authoritative, and will only manage the labels present in your configuration.\n\t\t\t\tPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "launcher_machine_type": {
+        "Computed": true,
+        "Description": "The machine type to use for launching the job. The default is n1-standard-1.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "machine_type": {
+        "Computed": true,
+        "Description": "The machine type to use for the job.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "max_workers": {
+        "Computed": true,
+        "Description": "The maximum number of Google Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Computed": true,
+        "Description": "The network to which VMs will be assigned. If it is not provided, \"default\" will be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "num_workers": {
+        "Computed": true,
+        "Description": "The initial number of Google Compute Engine instances for the job.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "on_delete": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "parameters": {
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region in which the created job should run.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "sdk_container_image": {
+        "Computed": true,
+        "Description": "Docker registry location of container image to use for the 'worker harness. Default is the container for the version of the SDK. Note this field is only valid for portable pipelines.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account_email": {
+        "Computed": true,
+        "Description": "The Service Account email used to create the job.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "skip_wait_on_job_termination": {
+        "Description": "If true, treat DRAINING and CANCELLING as terminal job states and do not wait for further changes before removing from terraform state and moving on. WARNING: this will lead to job name conflicts if you do not ensure that the job names are different, e.g. by embedding a release ID or by using a random_id.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "staging_location": {
+        "Computed": true,
+        "Description": "The Cloud Storage path to use for staging files. Must be a valid Cloud Storage URL, beginning with gs://.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "subnetwork": {
+        "Computed": true,
+        "Description": "The subnetwork to which VMs will be assigned. Should be of the form \"regions/REGION/subnetworks/SUBNETWORK\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "temp_location": {
+        "Computed": true,
+        "Description": "The Cloud Storage path to use for temporary files. Must be a valid Cloud Storage URL, beginning with gs://.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "transform_name_mapping": {
+        "Description": "Only applicable when updating a pipeline. Map of transform name prefixes of the job to be replaced with the corresponding name prefixes of the new job.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "The type of this job, selected from the JobType enum.",
+        "Type": "TypeString"
+    }
+}

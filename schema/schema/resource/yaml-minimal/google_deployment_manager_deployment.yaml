@@ -1,0 +1,19 @@
+create_policy: TypeString
+delete_policy: TypeString
+deployment_id: TypeString
+description: TypeString
+labels:
+    key: TypeString
+    value: TypeString
+manifest: TypeString
+name: TypeString
+preview: TypeBool
+project: TypeString
+self_link: TypeString
+target:
+    config:
+        content: TypeString
+    imports:
+        content: TypeString
+        name: TypeString
+

@@ -1,0 +1,76 @@
+adaptive_protection_config:
+    auto_deploy_config:
+        confidence_threshold: TypeFloat
+        expiration_sec: TypeInt
+        impacted_baseline_threshold: TypeFloat
+        load_threshold: TypeFloat
+    layer_7_ddos_defense_config:
+        enable: TypeBool
+        rule_visibility: TypeString
+advanced_options_config:
+    json_custom_config:
+        content_types: TypeSet(TypeString)
+    json_parsing: TypeString
+    log_level: TypeString
+    user_ip_request_headers: TypeSet(TypeString)
+description: TypeString
+fingerprint: TypeString
+name: TypeString
+project: TypeString
+recaptcha_options_config:
+    redirect_site_key: TypeString
+rule:
+    action: TypeString
+    description: TypeString
+    header_action:
+        request_headers_to_adds:
+            header_name: TypeString
+            header_value: TypeString
+    match:
+        config:
+            src_ip_ranges: TypeSet(TypeString)
+        expr:
+            expression: TypeString
+        versioned_expr: TypeString
+    preconfigured_waf_config:
+        exclusion:
+            request_cookie:
+                operator: TypeString
+                value: TypeString
+            request_header:
+                operator: TypeString
+                value: TypeString
+            request_query_param:
+                operator: TypeString
+                value: TypeString
+            request_uri:
+                operator: TypeString
+                value: TypeString
+            target_rule_ids: TypeSet(TypeString)
+            target_rule_set: TypeString
+    preview: TypeBool
+    priority: TypeInt
+    rate_limit_options:
+        ban_duration_sec: TypeInt
+        ban_threshold:
+            count: TypeInt
+            interval_sec: TypeInt
+        conform_action: TypeString
+        enforce_on_key: TypeString
+        enforce_on_key_configs:
+            enforce_on_key_name: TypeString
+            enforce_on_key_type: TypeString
+        enforce_on_key_name: TypeString
+        exceed_action: TypeString
+        exceed_redirect_options:
+            target: TypeString
+            type: TypeString
+        rate_limit_threshold:
+            count: TypeInt
+            interval_sec: TypeInt
+    redirect_options:
+        target: TypeString
+        type: TypeString
+self_link: TypeString
+type: TypeString
+

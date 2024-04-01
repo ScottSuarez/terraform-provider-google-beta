@@ -1,0 +1,12 @@
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+name: TypeString
+principal_info:
+    service_account:
+        email: TypeString
+project: TypeString
+region: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+

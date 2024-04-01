@@ -1,0 +1,14 @@
+certificates: TypeList(TypeString)
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+hostname: TypeString
+labels: TypeMap(TypeString)
+map: TypeString
+matcher: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

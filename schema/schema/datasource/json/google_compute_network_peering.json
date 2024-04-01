@@ -1,0 +1,50 @@
+{
+    "export_custom_routes": {
+        "Computed": true,
+        "Description": "Whether to export the custom routes to the peer network. Defaults to false.",
+        "Type": "TypeBool"
+    },
+    "export_subnet_routes_with_public_ip": {
+        "Computed": true,
+        "Type": "TypeBool"
+    },
+    "import_custom_routes": {
+        "Computed": true,
+        "Description": "Whether to export the custom routes from the peer network. Defaults to false.",
+        "Type": "TypeBool"
+    },
+    "import_subnet_routes_with_public_ip": {
+        "Computed": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "Name of the peering.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "The primary network of the peering.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peer_network": {
+        "Computed": true,
+        "Description": "The peer network in the peering. The peer network may belong to a different project.",
+        "Type": "TypeString"
+    },
+    "stack_type": {
+        "Computed": true,
+        "Description": "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Possible values: [\"IPV4_ONLY\", \"IPV4_IPV6\"]",
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State for the peering, either ACTIVE or INACTIVE. The peering is ACTIVE when there's a matching configuration in the peer network.",
+        "Type": "TypeString"
+    },
+    "state_details": {
+        "Computed": true,
+        "Description": "Details about the current state of the peering.",
+        "Type": "TypeString"
+    }
+}

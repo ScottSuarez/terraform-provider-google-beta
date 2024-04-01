@@ -1,0 +1,41 @@
+description:
+    Type: TypeString
+    Computed: "true"
+instances:
+    Type: TypeSet
+    Computed: "true"
+name:
+    Type: TypeString
+    Optional: "true"
+    ConflictsWith: self_link
+named_port:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        name:
+            Type: TypeString
+            Computed: "true"
+        port:
+            Type: TypeInt
+            Computed: "true"
+network:
+    Type: TypeString
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: name, zone
+size:
+    Type: TypeInt
+    Computed: "true"
+zone:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: self_link
+

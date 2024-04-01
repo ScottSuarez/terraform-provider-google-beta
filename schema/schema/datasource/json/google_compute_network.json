@@ -1,0 +1,30 @@
+{
+    "description": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "gateway_ipv4": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "internal_ipv6_range": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "subnetworks_self_links": {
+        "Computed": true,
+        "Type": "TypeList"
+    }
+}

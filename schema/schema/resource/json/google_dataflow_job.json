@@ -1,0 +1,129 @@
+{
+    "additional_experiments": {
+        "Computed": true,
+        "Description": "List of experiments that should be used by the job. An example value is [\"enable_stackdriver_agent_metrics\"].",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_streaming_engine": {
+        "Description": "Indicates if the job should use the streaming engine feature.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "ip_configuration": {
+        "Description": "The configuration for VM IPs. Options are \"WORKER_IP_PUBLIC\" or \"WORKER_IP_PRIVATE\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "job_id": {
+        "Computed": true,
+        "Description": "The unique ID of this job.",
+        "Type": "TypeString"
+    },
+    "kms_key_name": {
+        "Description": "The name for the Cloud KMS key for the job. Key format is: projects/PROJECT_ID/locations/LOCATION/keyRings/KEY_RING/cryptoKeys/KEY",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "User labels to be specified for the job. Keys and values should follow the restrictions specified in the labeling restrictions page. NOTE: This field is non-authoritative, and will only manage the labels present in your configuration.\n\t\t\t\tPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "machine_type": {
+        "Description": "The machine type to use for the job.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "max_workers": {
+        "Description": "The number of workers permitted to work on the job. More workers may improve processing speed at additional cost.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "A unique name for the resource, required by Dataflow.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "The network to which VMs will be assigned. If it is not provided, \"default\" will be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "on_delete": {
+        "Description": "One of \"drain\" or \"cancel\". Specifies behavior of deletion during terraform destroy.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "parameters": {
+        "Description": "Key/Value pairs to be passed to the Dataflow job (as used in the template).",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project in which the resource belongs.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region in which the created job should run.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account_email": {
+        "Description": "The Service Account email used to create the job.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "skip_wait_on_job_termination": {
+        "Description": "If true, treat DRAINING and CANCELLING as terminal job states and do not wait for further changes before removing from terraform state and moving on. WARNING: this will lead to job name conflicts if you do not ensure that the job names are different, e.g. by embedding a release ID or by using a random_id.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the resource, selected from the JobState enum.",
+        "Type": "TypeString"
+    },
+    "subnetwork": {
+        "Description": "The subnetwork to which VMs will be assigned. Should be of the form \"regions/REGION/subnetworks/SUBNETWORK\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "temp_gcs_location": {
+        "Description": "A writeable location on Google Cloud Storage for the Dataflow job to dump its temporary data.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "template_gcs_path": {
+        "Description": "The Google Cloud Storage path to the Dataflow job template.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "transform_name_mapping": {
+        "Description": "Only applicable when updating a pipeline. Map of transform name prefixes of the job to be replaced with the corresponding name prefixes of the new job.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "The type of this job, selected from the JobType enum.",
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Description": "The zone in which the created job should run. If it is not provided, the provider zone is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,63 @@
+{
+    "audit_config": {
+        "Optional": true,
+        "Properties": {
+            "audit_log_configs": {
+                "Properties": {
+                    "exempted_members": {
+                        "Optional": true,
+                        "Type": "TypeSet"
+                    },
+                    "log_type": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeSet"
+            },
+            "service": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "binding": {
+        "Optional": true,
+        "Properties": {
+            "condition": {
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "description": {
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "expression": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "title": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "members": {
+                "Required": true,
+                "Type": "TypeSet"
+            },
+            "role": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

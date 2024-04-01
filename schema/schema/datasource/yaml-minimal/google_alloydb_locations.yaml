@@ -1,0 +1,8 @@
+locations:
+    display_name: TypeString
+    labels: TypeMap(TypeString)
+    location_id: TypeString
+    metadata: TypeMap(TypeString)
+    name: TypeString
+project: TypeString
+

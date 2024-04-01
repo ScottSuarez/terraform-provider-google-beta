@@ -1,0 +1,235 @@
+description:
+    Type: TypeString
+    Description: An optional description of this resource. Provide this property when you create the resource.
+    Optional: "true"
+disk_consistency_group_policy:
+    Type: TypeList
+    Description: Replication consistency group for asynchronous disk replication.
+    Optional: "true"
+    ConflictsWith: snapshot_schedule_policy, group_placement_policy, instance_schedule_policy
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Enable disk consistency on the resource policy.
+            Required: "true"
+group_placement_policy:
+    Type: TypeList
+    Description: Resource policy for instances used for placement configuration.
+    Optional: "true"
+    ConflictsWith: instance_schedule_policy, snapshot_schedule_policy, disk_consistency_group_policy
+    MaxItems: "1"
+    Properties:
+        availability_domain_count:
+            Type: TypeInt
+            Description: |-
+                The number of availability domains instances will be spread across. If two instances are in different
+                availability domain, they will not be put in the same low latency network
+            Optional: "true"
+        collocation:
+            Type: TypeString
+            Description: |-
+                Collocation specifies whether to place VMs inside the same availability domain on the same low-latency network.
+                Specify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count'. If compute instances are created
+                with a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy
+                attached. Possible values: ["COLLOCATED"]
+            Optional: "true"
+        max_distance:
+            Type: TypeInt
+            Description: Specifies the number of max logical switches.
+            Optional: "true"
+        vm_count:
+            Type: TypeInt
+            Description: |-
+                Number of VMs in this placement group. Google does not recommend that you use this field
+                unless you use a compact policy and you want your policy to work only if it contains this
+                exact number of VMs.
+            Optional: "true"
+instance_schedule_policy:
+    Type: TypeList
+    Description: Resource policy for scheduling instance operations.
+    Optional: "true"
+    ConflictsWith: snapshot_schedule_policy, group_placement_policy, disk_consistency_group_policy
+    MaxItems: "1"
+    Properties:
+        expiration_time:
+            Type: TypeString
+            Description: The expiration time of the schedule. The timestamp is an RFC3339 string.
+            Optional: "true"
+        start_time:
+            Type: TypeString
+            Description: The start time of the schedule. The timestamp is an RFC3339 string.
+            Optional: "true"
+        time_zone:
+            Type: TypeString
+            Description: |-
+                Specifies the time zone to be used in interpreting the schedule. The value of this field must be a time zone name
+                from the tz database: http://en.wikipedia.org/wiki/Tz_database.
+            Required: "true"
+        vm_start_schedule:
+            Type: TypeList
+            Description: Specifies the schedule for starting instances.
+            Optional: "true"
+            AtLeastOneOf: instance_schedule_policy.0.vm_start_schedule, instance_schedule_policy.0.vm_stop_schedule
+            MaxItems: "1"
+            Properties:
+                schedule:
+                    Type: TypeString
+                    Description: Specifies the frequency for the operation, using the unix-cron format.
+                    Required: "true"
+        vm_stop_schedule:
+            Type: TypeList
+            Description: Specifies the schedule for stopping instances.
+            Optional: "true"
+            AtLeastOneOf: instance_schedule_policy.0.vm_start_schedule, instance_schedule_policy.0.vm_stop_schedule
+            MaxItems: "1"
+            Properties:
+                schedule:
+                    Type: TypeString
+                    Description: Specifies the frequency for the operation, using the unix-cron format.
+                    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name of the resource, provided by the client when initially creating
+        the resource. The resource name must be 1-63 characters long, and comply
+        with RFC1035. Specifically, the name must be 1-63 characters long and
+        match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])'? which means the
+        first character must be a lowercase letter, and all following characters
+        must be a dash, lowercase letter, or digit, except the last character,
+        which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: Region where resource policy resides.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+snapshot_schedule_policy:
+    Type: TypeList
+    Description: Policy for creating snapshots of persistent disks.
+    Optional: "true"
+    ConflictsWith: group_placement_policy, instance_schedule_policy, disk_consistency_group_policy
+    MaxItems: "1"
+    Properties:
+        retention_policy:
+            Type: TypeList
+            Description: Retention policy applied to snapshots created by this resource policy.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                max_retention_days:
+                    Type: TypeInt
+                    Description: Maximum age of the snapshot that is allowed to be kept.
+                    Required: "true"
+                on_source_disk_delete:
+                    Type: TypeString
+                    Description: |-
+                        Specifies the behavior to apply to scheduled snapshots when
+                        the source disk is deleted. Default value: "KEEP_AUTO_SNAPSHOTS" Possible values: ["KEEP_AUTO_SNAPSHOTS", "APPLY_RETENTION_POLICY"]
+                    Optional: "true"
+        schedule:
+            Type: TypeList
+            Description: Contains one of an 'hourlySchedule', 'dailySchedule', or 'weeklySchedule'.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                daily_schedule:
+                    Type: TypeList
+                    Description: The policy will execute every nth day at the specified time.
+                    Optional: "true"
+                    ExactlyOneOf: snapshot_schedule_policy.0.schedule.0.hourly_schedule, snapshot_schedule_policy.0.schedule.0.daily_schedule, snapshot_schedule_policy.0.schedule.0.weekly_schedule
+                    MaxItems: "1"
+                    Properties:
+                        days_in_cycle:
+                            Type: TypeInt
+                            Description: Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle. Days in cycle for snapshot schedule policy must be 1.
+                            Required: "true"
+                        start_time:
+                            Type: TypeString
+                            Description: |-
+                                This must be in UTC format that resolves to one of
+                                00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example,
+                                both 13:00-5 and 08:00 are valid.
+                            Required: "true"
+                hourly_schedule:
+                    Type: TypeList
+                    Description: The policy will execute every nth hour starting at the specified time.
+                    Optional: "true"
+                    ExactlyOneOf: snapshot_schedule_policy.0.schedule.0.hourly_schedule, snapshot_schedule_policy.0.schedule.0.daily_schedule, snapshot_schedule_policy.0.schedule.0.weekly_schedule
+                    MaxItems: "1"
+                    Properties:
+                        hours_in_cycle:
+                            Type: TypeInt
+                            Description: The number of hours between snapshots.
+                            Required: "true"
+                        start_time:
+                            Type: TypeString
+                            Description: |-
+                                Time within the window to start the operations.
+                                It must be in an hourly format "HH:MM",
+                                where HH : [00-23] and MM : [00] GMT.
+                                eg: 21:00
+                            Required: "true"
+                weekly_schedule:
+                    Type: TypeList
+                    Description: Allows specifying a snapshot time for each day of the week.
+                    Optional: "true"
+                    ExactlyOneOf: snapshot_schedule_policy.0.schedule.0.hourly_schedule, snapshot_schedule_policy.0.schedule.0.daily_schedule, snapshot_schedule_policy.0.schedule.0.weekly_schedule
+                    MaxItems: "1"
+                    Properties:
+                        day_of_weeks:
+                            Type: TypeSet
+                            Description: May contain up to seven (one for each day of the week) snapshot times.
+                            Required: "true"
+                            MaxItems: "7"
+                            MinItems: "1"
+                            Properties:
+                                day:
+                                    Type: TypeString
+                                    Description: 'The day of the week to create the snapshot. e.g. MONDAY Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]'
+                                    Required: "true"
+                                start_time:
+                                    Type: TypeString
+                                    Description: |-
+                                        Time within the window to start the operations.
+                                        It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.
+                                    Required: "true"
+        snapshot_properties:
+            Type: TypeList
+            Description: Properties with which the snapshots are created, such as labels.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                chain_name:
+                    Type: TypeString
+                    Description: |-
+                        Creates the new snapshot in the snapshot chain labeled with the
+                        specified name. The chain name must be 1-63 characters long and comply
+                        with RFC1035.
+                    Optional: "true"
+                guest_flush:
+                    Type: TypeBool
+                    Description: Whether to perform a 'guest aware' snapshot.
+                    Optional: "true"
+                    AtLeastOneOf: snapshot_schedule_policy.0.snapshot_properties.0.labels, snapshot_schedule_policy.0.snapshot_properties.0.storage_locations, snapshot_schedule_policy.0.snapshot_properties.0.guest_flush
+                labels:
+                    Type: TypeMap
+                    Description: A set of key-value pairs.
+                    Optional: "true"
+                    AtLeastOneOf: snapshot_schedule_policy.0.snapshot_properties.0.labels, snapshot_schedule_policy.0.snapshot_properties.0.storage_locations, snapshot_schedule_policy.0.snapshot_properties.0.guest_flush
+                storage_locations:
+                    Type: TypeSet
+                    Description: |-
+                        Cloud Storage bucket location to store the auto snapshot
+                        (regional or multi-regional)
+                    Optional: "true"
+                    AtLeastOneOf: snapshot_schedule_policy.0.snapshot_properties.0.labels, snapshot_schedule_policy.0.snapshot_properties.0.storage_locations, snapshot_schedule_policy.0.snapshot_properties.0.guest_flush
+                    MaxItems: "1"
+

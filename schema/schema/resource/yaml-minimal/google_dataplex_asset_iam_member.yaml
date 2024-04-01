@@ -1,0 +1,13 @@
+asset: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+dataplex_zone: TypeString
+etag: TypeString
+lake: TypeString
+location: TypeString
+member: TypeString
+project: TypeString
+role: TypeString
+

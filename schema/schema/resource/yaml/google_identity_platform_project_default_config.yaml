@@ -1,0 +1,85 @@
+name:
+    Type: TypeString
+    Description: 'The name of the Config resource. Example: "projects/my-awesome-project/config"'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+sign_in:
+    Type: TypeList
+    Description: Configuration related to local sign in methods.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        allow_duplicate_emails:
+            Type: TypeBool
+            Description: Whether to allow more than one account to have the same email.
+            Optional: "true"
+        anonymous:
+            Type: TypeList
+            Description: Configuration options related to authenticating an anonymous user.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether anonymous user auth is enabled for the project or not.
+                    Required: "true"
+        email:
+            Type: TypeList
+            Description: Configuration options related to authenticating a user by their email address.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether email auth is enabled for the project or not.
+                    Optional: "true"
+                password_required:
+                    Type: TypeBool
+                    Description: |-
+                        Whether a password is required for email auth or not. If true, both an email and
+                        password must be provided to sign in. If false, a user may sign in via either
+                        email/password or email link.
+                    Optional: "true"
+        hash_config:
+            Type: TypeList
+            Description: Output only. Hash config information.
+            Computed: "true"
+            Properties:
+                algorithm:
+                    Type: TypeString
+                    Description: Different password hash algorithms used in Identity Toolkit.
+                    Computed: "true"
+                memory_cost:
+                    Type: TypeInt
+                    Description: Memory cost for hash calculation. Used by scrypt and other similar password derivation algorithms. See https://tools.ietf.org/html/rfc7914 for explanation of field.
+                    Computed: "true"
+                rounds:
+                    Type: TypeInt
+                    Description: How many rounds for hash calculation. Used by scrypt and other similar password derivation algorithms.
+                    Computed: "true"
+                salt_separator:
+                    Type: TypeString
+                    Description: Non-printable character to be inserted between the salt and plain text password in base64.
+                    Computed: "true"
+                signer_key:
+                    Type: TypeString
+                    Description: Signer key in base64.
+                    Computed: "true"
+        phone_number:
+            Type: TypeList
+            Description: Configuration options related to authenticated a user by their phone number.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether phone number auth is enabled for the project or not.
+                    Optional: "true"
+                test_phone_numbers:
+                    Type: TypeMap
+                    Description: A map of <test phone number, fake code> that can be used for phone auth testing.
+                    Optional: "true"
+

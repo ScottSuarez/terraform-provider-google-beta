@@ -1,0 +1,94 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the RBAC Role Binding was created in UTC.",
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "Time the RBAC Role Binding was deleted in UTC.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "group": {
+        "Description": "Principal that is be authorized in the cluster (at least of one the oneof\nis required). Updating one will unset the other automatically.\ngroup is the group, as seen by the kubernetes cluster.",
+        "ExactlyOneOf": "user, group",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels for this ScopeRBACRoleBinding.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for the RBAC Role Binding",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role": {
+        "Description": "Role to bind to the principal.",
+        "MaxItems": 1,
+        "Properties": {
+            "predefined_role": {
+                "Description": "PredefinedRole is an ENUM representation of the default Kubernetes Roles Possible values: [\"UNKNOWN\", \"ADMIN\", \"EDIT\", \"VIEW\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "scope_id": {
+        "Description": "Id of the scope",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "scope_rbac_role_binding_id": {
+        "Description": "The client-provided identifier of the RBAC Role Binding.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the RBAC Role Binding resource.",
+        "Properties": {
+            "code": {
+                "Computed": true,
+                "Description": "Code describes the state of a RBAC Role Binding resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Google-generated UUID for this resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the RBAC Role Binding was updated in UTC.",
+        "Type": "TypeString"
+    },
+    "user": {
+        "Description": "Principal that is be authorized in the cluster (at least of one the oneof\nis required). Updating one will unset the other automatically.\nuser is the name of the user as seen by the kubernetes cluster, example\n\"alice\" or \"alice@domain.tld\"",
+        "ExactlyOneOf": "user, group",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

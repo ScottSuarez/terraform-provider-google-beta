@@ -1,0 +1,79 @@
+{
+    "admission_whitelist_patterns": {
+        "Description": "A whitelist of image patterns to exclude from admission rules. If an\nimage's name matches a whitelist pattern, the image's admission\nrequests will always be permitted regardless of your admission rules.",
+        "Optional": true,
+        "Properties": {
+            "name_pattern": {
+                "Description": "An image name pattern to whitelist, in the form\n'registry/path/to/image'. This supports a trailing * as a\nwildcard, but this is allowed only in text after the registry/\npart.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cluster_admission_rules": {
+        "Description": "Per-cluster admission rules. An admission rule specifies either that\nall container images used in a pod creation request must be attested\nto by one or more attestors, that all pod creations will be allowed,\nor that all pod creations will be denied. There can be at most one\nadmission rule per cluster spec.\n\n\nIdentifier format: '{{location}}.{{clusterId}}'.\nA location is either a compute zone (e.g. 'us-central1-a') or a region\n(e.g. 'us-central1').",
+        "Optional": true,
+        "Properties": {
+            "cluster": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "enforcement_mode": {
+                "Description": "The action when a pod creation is denied by the admission rule. Possible values: [\"ENFORCED_BLOCK_AND_AUDIT_LOG\", \"DRYRUN_AUDIT_LOG_ONLY\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "evaluation_mode": {
+                "Description": "How this admission rule will be evaluated. Possible values: [\"ALWAYS_ALLOW\", \"REQUIRE_ATTESTATION\", \"ALWAYS_DENY\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "require_attestations_by": {
+                "Description": "The resource names of the attestors that must attest to a\ncontainer image. If the attestor is in a different project from the\npolicy, it should be specified in the format 'projects/*/attestors/*'.\nEach attestor must exist before a policy can reference it. To add an\nattestor to a policy the principal issuing the policy change\nrequest must be able to read the attestor resource.\n\nNote: this field must be non-empty when the evaluation_mode field\nspecifies REQUIRE_ATTESTATION, otherwise it must be empty.",
+                "Optional": true,
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeSet"
+    },
+    "default_admission_rule": {
+        "Description": "Default admission rule for a cluster without a per-cluster admission\nrule.",
+        "MaxItems": 1,
+        "Properties": {
+            "enforcement_mode": {
+                "Description": "The action when a pod creation is denied by the admission rule. Possible values: [\"ENFORCED_BLOCK_AND_AUDIT_LOG\", \"DRYRUN_AUDIT_LOG_ONLY\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "evaluation_mode": {
+                "Description": "How this admission rule will be evaluated. Possible values: [\"ALWAYS_ALLOW\", \"REQUIRE_ATTESTATION\", \"ALWAYS_DENY\"]",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "require_attestations_by": {
+                "Description": "The resource names of the attestors that must attest to a\ncontainer image. If the attestor is in a different project from the\npolicy, it should be specified in the format 'projects/*/attestors/*'.\nEach attestor must exist before a policy can reference it. To add an\nattestor to a policy the principal issuing the policy change\nrequest must be able to read the attestor resource.\n\nNote: this field must be non-empty when the evaluation_mode field\nspecifies REQUIRE_ATTESTATION, otherwise it must be empty.",
+                "Optional": true,
+                "Type": "TypeSet"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "A descriptive comment.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "global_policy_evaluation_mode": {
+        "Computed": true,
+        "Description": "Controls the evaluation of a Google-maintained global admission policy\nfor common system-level images. Images not covered by the global\npolicy will be subject to the project admission policy. Possible values: [\"ENABLE\", \"DISABLE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

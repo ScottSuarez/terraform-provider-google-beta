@@ -1,0 +1,23 @@
+code_compilation_config:
+    assertion_schema: TypeString
+    database_suffix: TypeString
+    default_database: TypeString
+    default_location: TypeString
+    default_schema: TypeString
+    schema_suffix: TypeString
+    table_prefix: TypeString
+    vars: TypeMap(TypeString)
+cron_schedule: TypeString
+git_commitish: TypeString
+name: TypeString
+project: TypeString
+recent_scheduled_release_records:
+    compilation_result: TypeString
+    error_status:
+        code: TypeInt
+        message: TypeString
+    release_time: TypeString
+region: TypeString
+repository: TypeString
+time_zone: TypeString
+

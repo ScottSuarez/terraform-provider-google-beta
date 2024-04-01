@@ -1,0 +1,46 @@
+client_id:
+    Type: TypeString
+    Description: OAuth client ID
+    Required: "true"
+client_secret:
+    Type: TypeString
+    Description: OAuth client secret
+    Required: "true"
+enabled:
+    Type: TypeBool
+    Description: If this IDP allows the user to sign in
+    Optional: "true"
+idp_id:
+    Type: TypeString
+    Description: |-
+        ID of the IDP. Possible values include:
+
+        * 'apple.com'
+
+        * 'facebook.com'
+
+        * 'gc.apple.com'
+
+        * 'github.com'
+
+        * 'google.com'
+
+        * 'linkedin.com'
+
+        * 'microsoft.com'
+
+        * 'playgames.google.com'
+
+        * 'twitter.com'
+
+        * 'yahoo.com'
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the DefaultSupportedIdpConfig resource
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,34 @@
+filter:
+    Type: TypeString
+    Required: "true"
+projects:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        create_time:
+            Type: TypeString
+            Computed: "true"
+        labels:
+            Type: TypeMap
+            Description: A set of key/value label pairs assigned on a project.
+            Computed: "true"
+        lifecycle_state:
+            Type: TypeString
+            Description: The numeric identifier of the project.
+            Computed: "true"
+        name:
+            Type: TypeString
+            Description: The optional user-assigned display name of the Project.
+            Computed: "true"
+        number:
+            Type: TypeString
+            Description: The numeric identifier of the project.
+            Computed: "true"
+        parent:
+            Type: TypeMap
+            Description: An optional reference to a parent Resource.
+            Computed: "true"
+        project_id:
+            Type: TypeString
+            Computed: "true"
+

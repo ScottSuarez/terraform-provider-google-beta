@@ -1,0 +1,37 @@
+{
+    "access_id": {
+        "Computed": true,
+        "Description": "The access ID of the HMAC Key.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "secret": {
+        "Computed": true,
+        "Description": "HMAC secret key material.",
+        "Type": "TypeString"
+    },
+    "service_account_email": {
+        "Description": "The email address of the key's associated service account.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Description": "The state of the key. Can be set to one of ACTIVE, INACTIVE. Default value: \"ACTIVE\" Possible values: [\"ACTIVE\", \"INACTIVE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "time_created": {
+        "Computed": true,
+        "Description": "'The creation time of the HMAC key in RFC 3339 format. '",
+        "Type": "TypeString"
+    },
+    "updated": {
+        "Computed": true,
+        "Description": "'The last modification time of the HMAC key metadata in RFC 3339 format.'",
+        "Type": "TypeString"
+    }
+}

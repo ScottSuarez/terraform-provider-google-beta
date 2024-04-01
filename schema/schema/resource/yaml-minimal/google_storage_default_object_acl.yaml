@@ -1,0 +1,3 @@
+bucket: TypeString
+role_entity: TypeSet(TypeString)
+

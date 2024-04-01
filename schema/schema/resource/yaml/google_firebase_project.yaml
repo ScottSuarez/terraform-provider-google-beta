@@ -1,0 +1,13 @@
+display_name:
+    Type: TypeString
+    Description: The GCP project display name
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+project_number:
+    Type: TypeString
+    Description: The number of the google project that firebase is enabled on.
+    Computed: "true"
+

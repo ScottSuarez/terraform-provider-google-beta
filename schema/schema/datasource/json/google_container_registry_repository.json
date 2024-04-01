@@ -1,0 +1,15 @@
+{
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "repository_url": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

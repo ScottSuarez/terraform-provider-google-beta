@@ -1,0 +1,3 @@
+ingress_policy_name: TypeString
+resource: TypeString
+

@@ -1,0 +1,31 @@
+complex_data_type_reference_parsing: TypeString
+dataset: TypeString
+default_search_handling_strict: TypeBool
+disable_referential_integrity: TypeBool
+disable_resource_versioning: TypeBool
+effective_labels: TypeMap(TypeString)
+enable_history_import: TypeBool
+enable_history_modifications: TypeBool
+enable_update_create: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+notification_config:
+    pubsub_topic: TypeString
+notification_configs:
+    pubsub_topic: TypeString
+    send_full_resource: TypeBool
+    send_previous_resource_on_delete: TypeBool
+self_link: TypeString
+stream_configs:
+    bigquery_destination:
+        dataset_uri: TypeString
+        schema_config:
+            last_updated_partition_config:
+                expiration_ms: TypeString
+                type: TypeString
+            recursive_structure_depth: TypeInt
+            schema_type: TypeString
+    resource_types: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+version: TypeString
+

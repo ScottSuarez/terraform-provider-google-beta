@@ -1,0 +1,6 @@
+b64_mac_key: TypeString
+key_id: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+

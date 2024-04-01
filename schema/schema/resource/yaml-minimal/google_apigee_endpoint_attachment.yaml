@@ -1,0 +1,8 @@
+connection_state: TypeString
+endpoint_attachment_id: TypeString
+host: TypeString
+location: TypeString
+name: TypeString
+org_id: TypeString
+service_attachment: TypeString
+

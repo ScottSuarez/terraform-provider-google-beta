@@ -1,0 +1,9 @@
+config_id: TypeString
+description: TypeString
+name: TypeString
+organization: TypeString
+pubsub_topic: TypeString
+service_account: TypeString
+streaming_config:
+    filter: TypeString
+

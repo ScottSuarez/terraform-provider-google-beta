@@ -1,0 +1,90 @@
+{
+    "display_name": {
+        "Description": "The display name of the rule.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "The hash of the resource. Used internally during updates.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the policy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The attachment point is identified by its URL-encoded full resource name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Description": "Rules to be applied.",
+        "Properties": {
+            "deny_rule": {
+                "Description": "A deny rule in an IAM deny policy.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "denial_condition": {
+                        "Description": "User defined CEVAL expression. A CEVAL expression is used to specify match criteria such as origin.ip, source.region_code and contents in the request header.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "description": {
+                                "Description": "Description of the expression. This is a longer text which describes the expression,\ne.g. when hovered over it in a UI.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "expression": {
+                                "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "location": {
+                                "Description": "String indicating the location of the expression for error reporting,\ne.g. a file name and a position in the file.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "title": {
+                                "Description": "Title for the expression, i.e. a short string describing its purpose.\nThis can be used e.g. in UIs which allow to enter the expression.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "denied_permissions": {
+                        "Description": "The permissions that are explicitly denied by this rule. Each permission uses the format '{service-fqdn}/{resource}.{verb}',\nwhere '{service-fqdn}' is the fully qualified domain name for the service. For example, 'iam.googleapis.com/roles.list'.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "denied_principals": {
+                        "Description": "The identities that are prevented from using one or more permissions on Google Cloud resources.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exception_permissions": {
+                        "Description": "Specifies the permissions that this rule excludes from the set of denied permissions given by deniedPermissions.\nIf a permission appears in deniedPermissions and in exceptionPermissions then it will not be denied.\nThe excluded permissions can be specified using the same syntax as deniedPermissions.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exception_principals": {
+                        "Description": "The identities that are excluded from the deny rule, even if they are listed in the deniedPrincipals.\nFor example, you could add a Google group to the deniedPrincipals, then exclude specific users who belong to that group.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "description": {
+                "Description": "The description of the rule.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

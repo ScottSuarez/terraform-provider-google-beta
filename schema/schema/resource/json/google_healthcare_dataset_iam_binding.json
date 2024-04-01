@@ -1,0 +1,37 @@
+{
+    "condition": {
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "expression": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "title": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "dataset_id": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "members": {
+        "Required": true,
+        "Type": "TypeSet"
+    },
+    "role": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

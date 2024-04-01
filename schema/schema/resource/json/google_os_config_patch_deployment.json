@@ -1,0 +1,646 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the patch deployment was created. Timestamp is in RFC3339 text format.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description of the patch deployment. Length of the description is limited to 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "duration": {
+        "Description": "Duration of the patch. After the duration ends, the patch times out.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\"",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "instance_filter": {
+        "Description": "VM instances to patch.",
+        "MaxItems": 1,
+        "Properties": {
+            "all": {
+                "AtLeastOneOf": "instance_filter.0.all, instance_filter.0.group_labels, instance_filter.0.zones, instance_filter.0.instances, instance_filter.0.instance_name_prefixes",
+                "Description": "Target all VM instances in the project. If true, no other criteria is permitted.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "group_labels": {
+                "AtLeastOneOf": "instance_filter.0.all, instance_filter.0.group_labels, instance_filter.0.zones, instance_filter.0.instances, instance_filter.0.instance_name_prefixes",
+                "Description": "Targets VM instances matching ANY of these GroupLabels. This allows targeting of disparate groups of VM instances.",
+                "Optional": true,
+                "Properties": {
+                    "labels": {
+                        "Description": "Compute Engine instance labels that must be present for a VM instance to be targeted by this filter",
+                        "Required": true,
+                        "Type": "TypeMap"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "instance_name_prefixes": {
+                "AtLeastOneOf": "instance_filter.0.all, instance_filter.0.group_labels, instance_filter.0.zones, instance_filter.0.instances, instance_filter.0.instance_name_prefixes",
+                "Description": "Targets VMs whose name starts with one of these prefixes. Similar to labels, this is another way to group\nVMs when targeting configs, for example prefix=\"prod-\".",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "instances": {
+                "AtLeastOneOf": "instance_filter.0.all, instance_filter.0.group_labels, instance_filter.0.zones, instance_filter.0.instances, instance_filter.0.instance_name_prefixes",
+                "Description": "Targets any of the VM instances specified. Instances are specified by their URI in the 'form zones/{{zone}}/instances/{{instance_name}}',\n'projects/{{project_id}}/zones/{{zone}}/instances/{{instance_name}}', or\n'https://www.googleapis.com/compute/v1/projects/{{project_id}}/zones/{{zone}}/instances/{{instance_name}}'",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "zones": {
+                "AtLeastOneOf": "instance_filter.0.all, instance_filter.0.group_labels, instance_filter.0.zones, instance_filter.0.instances, instance_filter.0.instance_name_prefixes",
+                "Description": "Targets VM instances in ANY of these zones. Leave empty to target VM instances in any zone.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "last_execute_time": {
+        "Computed": true,
+        "Description": "The last time a patch job was started by this deployment. Timestamp is in RFC3339 text format.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Unique name for the patch deployment resource in a project.\nThe patch deployment name is in the form: projects/{project_id}/patchDeployments/{patchDeploymentId}.",
+        "Type": "TypeString"
+    },
+    "one_time_schedule": {
+        "Description": "Schedule a one-time execution.",
+        "ExactlyOneOf": "one_time_schedule, recurring_schedule",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "execute_time": {
+                "Description": "The desired patch job execution time. A timestamp in RFC3339 UTC \"Zulu\" format,\naccurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "patch_config": {
+        "Description": "Patch configuration that is applied.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "apt": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "Apt update settings. Use this setting to override the default apt patch rules.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "excludes": {
+                        "AtLeastOneOf": "patch_config.0.apt.0.type, patch_config.0.apt.0.excludes, patch_config.0.apt.0.exclusive_packages",
+                        "Description": "List of packages to exclude from update. These packages will be excluded.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exclusive_packages": {
+                        "AtLeastOneOf": "patch_config.0.apt.0.type, patch_config.0.apt.0.excludes, patch_config.0.apt.0.exclusive_packages",
+                        "Description": "An exclusive list of packages to be updated. These are the only packages that will be updated.\nIf these packages are not installed, they will be ignored. This field cannot be specified with\nany other patch configuration fields.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "type": {
+                        "AtLeastOneOf": "patch_config.0.apt.0.type, patch_config.0.apt.0.excludes, patch_config.0.apt.0.exclusive_packages",
+                        "Description": "By changing the type to DIST, the patching is performed using apt-get dist-upgrade instead. Possible values: [\"DIST\", \"UPGRADE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "goo": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "goo update settings. Use this setting to override the default goo patch rules.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "goo update settings. Use this setting to override the default goo patch rules.",
+                        "Required": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "mig_instances_allowed": {
+                "Description": "Allows the patch job to run on Managed instance groups (MIGs).",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "post_step": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "The ExecStep to run after the patch update.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "linux_exec_step_config": {
+                        "AtLeastOneOf": "patch_config.0.post_step.0.linux_exec_step_config, patch_config.0.post_step.0.windows_exec_step_config",
+                        "Description": "The ExecStepConfig for all Linux VMs targeted by the PatchJob.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allowed_success_codes": {
+                                "Description": "Defaults to [0]. A list of possible return values that the execution can return to indicate a success.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "gcs_object": {
+                                "Description": "A Cloud Storage object containing the executable.",
+                                "ExactlyOneOf": "patch_config.0.post_step.0.linux_exec_step_config.0.local_path, patch_config.0.post_step.0.linux_exec_step_config.0.gcs_object",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "bucket": {
+                                        "Description": "Bucket of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "generation_number": {
+                                        "Description": "Generation number of the Cloud Storage object. This is used to ensure that the ExecStep specified by this PatchJob does not change.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "object": {
+                                        "Description": "Name of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "interpreter": {
+                                "Description": "The script interpreter to use to run the script. If no interpreter is specified the script will\nbe executed directly, which will likely only succeed for scripts with shebang lines. Possible values: [\"SHELL\", \"POWERSHELL\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "local_path": {
+                                "Description": "An absolute path to the executable on the VM.",
+                                "ExactlyOneOf": "patch_config.0.post_step.0.linux_exec_step_config.0.local_path, patch_config.0.post_step.0.linux_exec_step_config.0.gcs_object",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "windows_exec_step_config": {
+                        "AtLeastOneOf": "patch_config.0.post_step.0.linux_exec_step_config, patch_config.0.post_step.0.windows_exec_step_config",
+                        "Description": "The ExecStepConfig for all Windows VMs targeted by the PatchJob.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allowed_success_codes": {
+                                "Description": "Defaults to [0]. A list of possible return values that the execution can return to indicate a success.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "gcs_object": {
+                                "Description": "A Cloud Storage object containing the executable.",
+                                "ExactlyOneOf": "patch_config.0.post_step.0.windows_exec_step_config.0.local_path, patch_config.0.post_step.0.windows_exec_step_config.0.gcs_object",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "bucket": {
+                                        "Description": "Bucket of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "generation_number": {
+                                        "Description": "Generation number of the Cloud Storage object. This is used to ensure that the ExecStep specified by this PatchJob does not change.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "object": {
+                                        "Description": "Name of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "interpreter": {
+                                "Description": "The script interpreter to use to run the script. If no interpreter is specified the script will\nbe executed directly, which will likely only succeed for scripts with shebang lines. Possible values: [\"SHELL\", \"POWERSHELL\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "local_path": {
+                                "Description": "An absolute path to the executable on the VM.",
+                                "ExactlyOneOf": "patch_config.0.post_step.0.windows_exec_step_config.0.local_path, patch_config.0.post_step.0.windows_exec_step_config.0.gcs_object",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "pre_step": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "The ExecStep to run before the patch update.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "linux_exec_step_config": {
+                        "AtLeastOneOf": "patch_config.0.pre_step.0.linux_exec_step_config, patch_config.0.pre_step.0.windows_exec_step_config",
+                        "Description": "The ExecStepConfig for all Linux VMs targeted by the PatchJob.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allowed_success_codes": {
+                                "Description": "Defaults to [0]. A list of possible return values that the execution can return to indicate a success.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "gcs_object": {
+                                "Description": "A Cloud Storage object containing the executable.",
+                                "ExactlyOneOf": "patch_config.0.pre_step.0.linux_exec_step_config.0.local_path, patch_config.0.pre_step.0.linux_exec_step_config.0.gcs_object",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "bucket": {
+                                        "Description": "Bucket of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "generation_number": {
+                                        "Description": "Generation number of the Cloud Storage object. This is used to ensure that the ExecStep specified by this PatchJob does not change.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "object": {
+                                        "Description": "Name of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "interpreter": {
+                                "Description": "The script interpreter to use to run the script. If no interpreter is specified the script will\nbe executed directly, which will likely only succeed for scripts with shebang lines. Possible values: [\"SHELL\", \"POWERSHELL\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "local_path": {
+                                "Description": "An absolute path to the executable on the VM.",
+                                "ExactlyOneOf": "patch_config.0.pre_step.0.linux_exec_step_config.0.local_path, patch_config.0.pre_step.0.linux_exec_step_config.0.gcs_object",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "windows_exec_step_config": {
+                        "AtLeastOneOf": "patch_config.0.pre_step.0.linux_exec_step_config, patch_config.0.pre_step.0.windows_exec_step_config",
+                        "Description": "The ExecStepConfig for all Windows VMs targeted by the PatchJob.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allowed_success_codes": {
+                                "Description": "Defaults to [0]. A list of possible return values that the execution can return to indicate a success.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "gcs_object": {
+                                "Description": "A Cloud Storage object containing the executable.",
+                                "ExactlyOneOf": "patch_config.0.pre_step.0.windows_exec_step_config.0.local_path, patch_config.0.pre_step.0.windows_exec_step_config.0.gcs_object",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "bucket": {
+                                        "Description": "Bucket of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "generation_number": {
+                                        "Description": "Generation number of the Cloud Storage object. This is used to ensure that the ExecStep specified by this PatchJob does not change.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "object": {
+                                        "Description": "Name of the Cloud Storage object.",
+                                        "Required": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "interpreter": {
+                                "Description": "The script interpreter to use to run the script. If no interpreter is specified the script will\nbe executed directly, which will likely only succeed for scripts with shebang lines. Possible values: [\"SHELL\", \"POWERSHELL\"]",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "local_path": {
+                                "Description": "An absolute path to the executable on the VM.",
+                                "ExactlyOneOf": "patch_config.0.pre_step.0.windows_exec_step_config.0.local_path, patch_config.0.pre_step.0.windows_exec_step_config.0.gcs_object",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "reboot_config": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "Post-patch reboot settings. Possible values: [\"DEFAULT\", \"ALWAYS\", \"NEVER\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "windows_update": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "Windows update settings. Use this setting to override the default Windows patch rules.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "classifications": {
+                        "AtLeastOneOf": "patch_config.0.windows_update.0.classifications, patch_config.0.windows_update.0.excludes, patch_config.0.windows_update.0.exclusive_patches",
+                        "ConflictsWith": "patch_config.0.windows_update.0.exclusive_patches",
+                        "Description": "Only apply updates of these windows update classifications. If empty, all updates are applied. Possible values: [\"CRITICAL\", \"SECURITY\", \"DEFINITION\", \"DRIVER\", \"FEATURE_PACK\", \"SERVICE_PACK\", \"TOOL\", \"UPDATE_ROLLUP\", \"UPDATE\"]",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "excludes": {
+                        "AtLeastOneOf": "patch_config.0.windows_update.0.classifications, patch_config.0.windows_update.0.excludes, patch_config.0.windows_update.0.exclusive_patches",
+                        "ConflictsWith": "patch_config.0.windows_update.0.exclusive_patches",
+                        "Description": "List of KBs to exclude from update.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exclusive_patches": {
+                        "AtLeastOneOf": "patch_config.0.windows_update.0.classifications, patch_config.0.windows_update.0.excludes, patch_config.0.windows_update.0.exclusive_patches",
+                        "ConflictsWith": "patch_config.0.windows_update.0.classifications, patch_config.0.windows_update.0.excludes",
+                        "Description": "An exclusive list of kbs to be updated. These are the only patches that will be updated.\nThis field must not be used with other patch configurations.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "yum": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "Yum update settings. Use this setting to override the default yum patch rules.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "excludes": {
+                        "AtLeastOneOf": "patch_config.0.yum.0.security, patch_config.0.yum.0.minimal, patch_config.0.yum.0.excludes, patch_config.0.yum.0.exclusive_packages",
+                        "Description": "List of packages to exclude from update. These packages will be excluded.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exclusive_packages": {
+                        "AtLeastOneOf": "patch_config.0.yum.0.security, patch_config.0.yum.0.minimal, patch_config.0.yum.0.excludes, patch_config.0.yum.0.exclusive_packages",
+                        "Description": "An exclusive list of packages to be updated. These are the only packages that will be updated.\nIf these packages are not installed, they will be ignored. This field cannot be specified with\nany other patch configuration fields.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "minimal": {
+                        "AtLeastOneOf": "patch_config.0.yum.0.security, patch_config.0.yum.0.minimal, patch_config.0.yum.0.excludes, patch_config.0.yum.0.exclusive_packages",
+                        "Description": "Will cause patch to run yum update-minimal instead.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "security": {
+                        "AtLeastOneOf": "patch_config.0.yum.0.security, patch_config.0.yum.0.minimal, patch_config.0.yum.0.excludes, patch_config.0.yum.0.exclusive_packages",
+                        "Description": "Adds the --security flag to yum update. Not supported on all platforms.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "zypper": {
+                "AtLeastOneOf": "patch_config.0.reboot_config, patch_config.0.apt, patch_config.0.yum, patch_config.0.goo, patch_config.0.zypper, patch_config.0.windows_update, patch_config.0.pre_step, patch_config.0.post_step",
+                "Description": "zypper update settings. Use this setting to override the default zypper patch rules.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "categories": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "Install only patches with these categories. Common categories include security, recommended, and feature.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "excludes": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "List of packages to exclude from update.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "exclusive_patches": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "An exclusive list of patches to be updated. These are the only patches that will be installed using 'zypper patch patch:' command.\nThis field must not be used with any other patch configuration fields.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "severities": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "Install only patches with these severities. Common severities include critical, important, moderate, and low.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "with_optional": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "Adds the --with-optional flag to zypper patch.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "with_update": {
+                        "AtLeastOneOf": "patch_config.0.zypper.0.with_optional, patch_config.0.zypper.0.with_update, patch_config.0.zypper.0.categories, patch_config.0.zypper.0.severities, patch_config.0.zypper.0.excludes, patch_config.0.zypper.0.exclusive_patches",
+                        "Description": "Adds the --with-update flag, to zypper patch.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "patch_deployment_id": {
+        "Description": "A name for the patch deployment in the project. When creating a name the following rules apply:\n* Must contain only lowercase letters, numbers, and hyphens.\n* Must start with a letter.\n* Must be between 1-63 characters.\n* Must end with a number or a letter.\n* Must be unique within the project.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "recurring_schedule": {
+        "Description": "Schedule recurring executions.",
+        "ExactlyOneOf": "one_time_schedule, recurring_schedule",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "end_time": {
+                "Description": "The end time at which a recurring patch deployment schedule is no longer active.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "last_execute_time": {
+                "Computed": true,
+                "Description": "The time the last patch job ran successfully.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            },
+            "monthly": {
+                "Description": "Schedule with monthly executions.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "month_day": {
+                        "Description": "One day of the month. 1-31 indicates the 1st to the 31st day. -1 indicates the last day of the month.\nMonths without the target day will be skipped. For example, a schedule to run \"every month on the 31st\"\nwill not run in February, April, June, etc.",
+                        "ExactlyOneOf": "recurring_schedule.0.monthly.0.week_day_of_month, recurring_schedule.0.monthly.0.month_day",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "week_day_of_month": {
+                        "Description": "Week day in a month.",
+                        "ExactlyOneOf": "recurring_schedule.0.monthly.0.week_day_of_month, recurring_schedule.0.monthly.0.month_day",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "day_of_week": {
+                                "Description": "A day of the week. Possible values: [\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "day_offset": {
+                                "Description": "Represents the number of days before or after the given week day of month that the patch deployment is scheduled for.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "week_ordinal": {
+                                "Description": "Week number in a month. 1-4 indicates the 1st to 4th week of the month. -1 indicates the last week of the month.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "next_execute_time": {
+                "Computed": true,
+                "Description": "The time the next patch job is scheduled to run.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            },
+            "start_time": {
+                "Description": "The time that the recurring schedule becomes effective. Defaults to createTime of the patch deployment.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "time_of_day": {
+                "Description": "Time of the day to run a recurring deployment.",
+                "MaxItems": 1,
+                "Properties": {
+                    "hours": {
+                        "AtLeastOneOf": "recurring_schedule.0.time_of_day.0.hours, recurring_schedule.0.time_of_day.0.minutes, recurring_schedule.0.time_of_day.0.seconds, recurring_schedule.0.time_of_day.0.nanos",
+                        "Description": "Hours of day in 24 hour format. Should be from 0 to 23.\nAn API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "minutes": {
+                        "AtLeastOneOf": "recurring_schedule.0.time_of_day.0.hours, recurring_schedule.0.time_of_day.0.minutes, recurring_schedule.0.time_of_day.0.seconds, recurring_schedule.0.time_of_day.0.nanos",
+                        "Description": "Minutes of hour of day. Must be from 0 to 59.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "nanos": {
+                        "AtLeastOneOf": "recurring_schedule.0.time_of_day.0.hours, recurring_schedule.0.time_of_day.0.minutes, recurring_schedule.0.time_of_day.0.seconds, recurring_schedule.0.time_of_day.0.nanos",
+                        "Description": "Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "seconds": {
+                        "AtLeastOneOf": "recurring_schedule.0.time_of_day.0.hours, recurring_schedule.0.time_of_day.0.minutes, recurring_schedule.0.time_of_day.0.seconds, recurring_schedule.0.time_of_day.0.nanos",
+                        "Description": "Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "time_zone": {
+                "Description": "Defines the time zone that timeOfDay is relative to. The rules for daylight saving time are\ndetermined by the chosen time zone.",
+                "MaxItems": 1,
+                "Properties": {
+                    "id": {
+                        "Description": "IANA Time Zone Database time zone, e.g. \"America/New_York\".",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "version": {
+                        "Description": "IANA Time Zone Database version number, e.g. \"2019a\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "weekly": {
+                "Description": "Schedule with weekly executions.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "day_of_week": {
+                        "Description": "IANA Time Zone Database time zone, e.g. \"America/New_York\". Possible values: [\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\", \"SUNDAY\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "rollout": {
+        "Description": "Rollout strategy of the patch job.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "disruption_budget": {
+                "Description": "The maximum number (or percentage) of VMs per zone to disrupt at any given moment. The number of VMs calculated from multiplying the percentage by the total number of VMs in a zone is rounded up.\nDuring patching, a VM is considered disrupted from the time the agent is notified to begin until patching has completed. This disruption time includes the time to complete reboot and any post-patch steps.\nA VM contributes to the disruption budget if its patching operation fails either when applying the patches, running pre or post patch steps, or if it fails to respond with a success notification before timing out. VMs that are not running or do not have an active agent do not count toward this disruption budget.\nFor zone-by-zone rollouts, if the disruption budget in a zone is exceeded, the patch job stops, because continuing to the next zone requires completion of the patch process in the previous zone.\nFor example, if the disruption budget has a fixed value of 10, and 8 VMs fail to patch in the current zone, the patch job continues to patch 2 VMs at a time until the zone is completed. When that zone is completed successfully, patching begins with 10 VMs at a time in the next zone. If 10 VMs in the next zone fail to patch, the patch job stops.",
+                "MaxItems": 1,
+                "Properties": {
+                    "fixed": {
+                        "Description": "Specifies a fixed value.",
+                        "ExactlyOneOf": "rollout.0.disruption_budget.0.fixed, rollout.0.disruption_budget.0.percentage",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "percentage": {
+                        "Description": "Specifies the relative value defined as a percentage, which will be multiplied by a reference value.",
+                        "ExactlyOneOf": "rollout.0.disruption_budget.0.fixed, rollout.0.disruption_budget.0.percentage",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "mode": {
+                "Description": "Mode of the patch rollout. Possible values: [\"ZONE_BY_ZONE\", \"CONCURRENT_ZONES\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the patch deployment was last updated. Timestamp is in RFC3339 text format.\nA timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds. Example: \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

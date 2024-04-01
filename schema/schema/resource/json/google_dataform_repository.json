@@ -1,0 +1,118 @@
+{
+    "display_name": {
+        "Description": "Optional. The repository's user-friendly name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "git_remote_settings": {
+        "Description": "Optional. If set, configures this repository to be linked to a Git remote.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "authentication_token_secret_version": {
+                "Description": "The name of the Secret Manager secret version to use as an authentication token for Git operations. This secret is for assigning with HTTPS only(for SSH use 'ssh_authentication_config'). Must be in the format projects/*/secrets/*/versions/*.",
+                "ExactlyOneOf": "git_remote_settings.0.authentication_token_secret_version, git_remote_settings.0.ssh_authentication_config",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "default_branch": {
+                "Description": "The Git remote's default branch name.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "ssh_authentication_config": {
+                "Description": "Authentication fields for remote uris using SSH protocol.",
+                "ExactlyOneOf": "git_remote_settings.0.authentication_token_secret_version, git_remote_settings.0.ssh_authentication_config",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "host_public_key": {
+                        "Description": "Content of a public SSH key to verify an identity of a remote Git host.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "user_private_key_secret_version": {
+                        "Description": "The name of the Secret Manager secret version to use as a ssh private key for Git operations. Must be in the format projects/*/secrets/*/versions/*.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "token_status": {
+                "Computed": true,
+                "Description": "Indicates the status of the Git access token. https://cloud.google.com/dataform/reference/rest/v1beta1/projects.locations.repositories#TokenStatus",
+                "Type": "TypeString"
+            },
+            "url": {
+                "Description": "The Git remote's URL.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Optional. Repository user labels.\nAn object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Description": "The repository's name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "npmrc_environment_variables_secret_version": {
+        "Description": "Optional. The name of the Secret Manager secret version to be used to interpolate variables into the .npmrc file for package installation operations. Must be in the format projects/*/secrets/*/versions/*. The file itself must be in a JSON format.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "A reference to the region",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Description": "The service account to run workflow invocations under.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "workspace_compilation_overrides": {
+        "Description": "If set, fields of workspaceCompilationOverrides override the default compilation settings that are specified in dataform.json when creating workspace-scoped compilation results.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "default_database": {
+                "Description": "The default database (Google Cloud project ID).",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "schema_suffix": {
+                "Description": "The suffix that should be appended to all schema (BigQuery dataset ID) names.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "table_prefix": {
+                "Description": "The prefix that should be prepended to all table names.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

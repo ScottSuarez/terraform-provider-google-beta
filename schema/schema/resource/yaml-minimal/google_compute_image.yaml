@@ -1,0 +1,27 @@
+archive_size_bytes: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+disk_size_gb: TypeInt
+effective_labels: TypeMap(TypeString)
+family: TypeString
+guest_os_features:
+    type: TypeString
+image_encryption_key:
+    kms_key_self_link: TypeString
+    kms_key_service_account: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+licenses: TypeList(TypeString)
+name: TypeString
+project: TypeString
+raw_disk:
+    container_type: TypeString
+    sha1: TypeString
+    source: TypeString
+self_link: TypeString
+source_disk: TypeString
+source_image: TypeString
+source_snapshot: TypeString
+storage_locations: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+

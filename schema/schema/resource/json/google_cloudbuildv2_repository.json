@@ -1,0 +1,53 @@
+{
+    "annotations": {
+        "Description": "Allows clients to store small amounts of arbitrary data.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. Server assigned timestamp for when the connection was created.",
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Description": "The location for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the repository.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent_connection": {
+        "Description": "The connection for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "remote_uri": {
+        "Description": "Required. Git Clone HTTPS URI.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. Server assigned timestamp for when the connection was updated.",
+        "Type": "TypeString"
+    }
+}

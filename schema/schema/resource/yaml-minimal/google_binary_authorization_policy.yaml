@@ -1,0 +1,15 @@
+admission_whitelist_patterns:
+    name_pattern: TypeString
+cluster_admission_rules:
+    cluster: TypeString
+    enforcement_mode: TypeString
+    evaluation_mode: TypeString
+    require_attestations_by: TypeSet(TypeString)
+default_admission_rule:
+    enforcement_mode: TypeString
+    evaluation_mode: TypeString
+    require_attestations_by: TypeSet(TypeString)
+description: TypeString
+global_policy_evaluation_mode: TypeString
+project: TypeString
+

@@ -1,0 +1,238 @@
+autoclass:
+    Type: TypeList
+    Description: The bucket's autoclass configuration.
+    Computed: "true"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: While set to true, autoclass automatically transitions objects in your bucket to appropriate storage classes based on each object's access pattern.
+            Computed: "true"
+        terminal_storage_class:
+            Type: TypeString
+            Description: 'The storage class that objects in the bucket eventually transition to if they are not read for a certain length of time. Supported values include: NEARLINE, ARCHIVE.'
+            Computed: "true"
+cors:
+    Type: TypeList
+    Description: The bucket's Cross-Origin Resource Sharing (CORS) configuration.
+    Computed: "true"
+    Properties:
+        max_age_seconds:
+            Type: TypeInt
+            Description: The value, in seconds, to return in the Access-Control-Max-Age header used in preflight responses.
+            Computed: "true"
+        method:
+            Type: TypeList
+            Description: 'The list of HTTP methods on which to include CORS response headers, (GET, OPTIONS, POST, etc) Note: "*" is permitted in the list of methods, and means "any method".'
+            Computed: "true"
+        origin:
+            Type: TypeList
+            Description: 'The list of Origins eligible to receive CORS response headers. Note: "*" is permitted in the list of origins, and means "any Origin".'
+            Computed: "true"
+        response_header:
+            Type: TypeList
+            Description: The list of HTTP headers other than the simple response headers to give permission for the user-agent to share across domains.
+            Computed: "true"
+custom_placement_config:
+    Type: TypeList
+    Description: The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty.
+    Computed: "true"
+    Properties:
+        data_locations:
+            Type: TypeSet
+            Description: 'The list of individual regions that comprise a dual-region bucket. See the docs for a list of acceptable regions. Note: If any of the data_locations changes, it will recreate the bucket.'
+            Computed: "true"
+default_event_based_hold:
+    Type: TypeBool
+    Description: Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+enable_object_retention:
+    Type: TypeBool
+    Description: Enables each object in the bucket to have its own retention policy, which prevents deletion until stored for a specific length of time.
+    Computed: "true"
+encryption:
+    Type: TypeList
+    Description: The bucket's encryption configuration.
+    Computed: "true"
+    Properties:
+        default_kms_key_name:
+            Type: TypeString
+            Description: A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified. You must pay attention to whether the crypto key is available in the location that this bucket is created in. See the docs for more details.
+            Computed: "true"
+force_destroy:
+    Type: TypeBool
+    Description: When deleting a bucket, this boolean option will delete all contained objects. If you try to delete a bucket that contains objects, Terraform will fail that run.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: A set of key/value label pairs to assign to the bucket.
+    Computed: "true"
+lifecycle_rule:
+    Type: TypeList
+    Description: The bucket's Lifecycle Rules configuration.
+    Computed: "true"
+    Properties:
+        action:
+            Type: TypeSet
+            Description: The Lifecycle Rule's action configuration. A single block of this type is supported.
+            Computed: "true"
+            Properties:
+                storage_class:
+                    Type: TypeString
+                    Description: 'The target Storage Class of objects affected by this Lifecycle Rule. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.'
+                    Computed: "true"
+                type:
+                    Type: TypeString
+                    Description: 'The type of the action of this Lifecycle Rule. Supported values include: Delete, SetStorageClass and AbortIncompleteMultipartUpload.'
+                    Computed: "true"
+        condition:
+            Type: TypeSet
+            Description: The Lifecycle Rule's condition configuration.
+            Computed: "true"
+            Properties:
+                age:
+                    Type: TypeInt
+                    Description: Minimum age of an object in days to satisfy this condition.
+                    Computed: "true"
+                created_before:
+                    Type: TypeString
+                    Description: Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
+                    Computed: "true"
+                custom_time_before:
+                    Type: TypeString
+                    Description: Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
+                    Computed: "true"
+                days_since_custom_time:
+                    Type: TypeInt
+                    Description: Number of days elapsed since the user-specified timestamp set on an object.
+                    Computed: "true"
+                days_since_noncurrent_time:
+                    Type: TypeInt
+                    Description: |-
+                        Number of days elapsed since the noncurrent timestamp of an object. This
+                        										condition is relevant only for versioned objects.
+                    Computed: "true"
+                matches_prefix:
+                    Type: TypeList
+                    Description: One or more matching name prefixes to satisfy this condition.
+                    Computed: "true"
+                matches_storage_class:
+                    Type: TypeList
+                    Description: 'Storage Class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE, STANDARD, DURABLE_REDUCED_AVAILABILITY.'
+                    Computed: "true"
+                matches_suffix:
+                    Type: TypeList
+                    Description: One or more matching name suffixes to satisfy this condition.
+                    Computed: "true"
+                no_age:
+                    Type: TypeBool
+                    Description: While set true, age value will be omitted.Required to set true when age is unset in the config file.
+                    Computed: "true"
+                noncurrent_time_before:
+                    Type: TypeString
+                    Description: Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
+                    Computed: "true"
+                num_newer_versions:
+                    Type: TypeInt
+                    Description: Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.
+                    Computed: "true"
+                with_state:
+                    Type: TypeString
+                    Description: 'Match to live and/or archived objects. Unversioned buckets have only live objects. Supported values include: "LIVE", "ARCHIVED", "ANY".'
+                    Computed: "true"
+location:
+    Type: TypeString
+    Description: The Google Cloud Storage location
+    Computed: "true"
+logging:
+    Type: TypeList
+    Description: The bucket's Access & Storage Logs configuration.
+    Computed: "true"
+    Properties:
+        log_bucket:
+            Type: TypeString
+            Description: The bucket that will receive log objects.
+            Computed: "true"
+        log_object_prefix:
+            Type: TypeString
+            Description: The object prefix for log objects. If it's not provided, by default Google Cloud Storage sets this to this bucket's name.
+            Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the bucket.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+public_access_prevention:
+    Type: TypeString
+    Description: Prevents public access to a bucket.
+    Computed: "true"
+requester_pays:
+    Type: TypeBool
+    Description: Enables Requester Pays on a storage bucket.
+    Computed: "true"
+retention_policy:
+    Type: TypeList
+    Description: Configuration of the bucket's data retention policy for how long objects in the bucket should be retained.
+    Computed: "true"
+    Properties:
+        is_locked:
+            Type: TypeBool
+            Description: 'If set to true, the bucket will be locked and permanently restrict edits to the bucket''s retention policy.  Caution: Locking a bucket is an irreversible action.'
+            Computed: "true"
+        retention_period:
+            Type: TypeInt
+            Description: The period of time, in seconds, that objects in the bucket must be retained and cannot be deleted, overwritten, or archived. The value must be less than 3,155,760,000 seconds.
+            Computed: "true"
+rpo:
+    Type: TypeString
+    Description: Specifies the RPO setting of bucket. If set 'ASYNC_TURBO', The Turbo Replication will be enabled for the dual-region bucket. Value 'DEFAULT' will set RPO setting to default. Turbo Replication is only for buckets in dual-regions.See the docs for more details.
+    Computed: "true"
+self_link:
+    Type: TypeString
+    Description: The URI of the created resource.
+    Computed: "true"
+storage_class:
+    Type: TypeString
+    Description: 'The Storage Class of the new bucket. Supported values include: STANDARD, MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+uniform_bucket_level_access:
+    Type: TypeBool
+    Description: Enables uniform bucket-level access on a bucket.
+    Computed: "true"
+url:
+    Type: TypeString
+    Description: The base URL of the bucket, in the format gs://<bucket-name>.
+    Computed: "true"
+versioning:
+    Type: TypeList
+    Description: The bucket's Versioning configuration.
+    Computed: "true"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: While set to true, versioning is fully enabled for this bucket.
+            Computed: "true"
+website:
+    Type: TypeList
+    Description: Configuration if the bucket acts as a website.
+    Computed: "true"
+    Properties:
+        main_page_suffix:
+            Type: TypeString
+            Description: Behaves as the bucket's directory index where missing objects are treated as potential directories.
+            Computed: "true"
+        not_found_page:
+            Type: TypeString
+            Description: The custom object to return when a requested resource is not found.
+            Computed: "true"
+

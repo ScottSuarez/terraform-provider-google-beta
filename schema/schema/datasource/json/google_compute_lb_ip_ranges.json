@@ -1,0 +1,10 @@
+{
+    "http_ssl_tcp_internal": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "network": {
+        "Computed": true,
+        "Type": "TypeList"
+    }
+}

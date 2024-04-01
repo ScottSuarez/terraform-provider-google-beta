@@ -1,0 +1,34 @@
+asset_status:
+    active_assets: TypeInt
+    security_policy_applying_assets: TypeInt
+    update_time: TypeString
+create_time: TypeString
+description: TypeString
+discovery_spec:
+    csv_options:
+        delimiter: TypeString
+        disable_type_inference: TypeBool
+        encoding: TypeString
+        header_rows: TypeInt
+    enabled: TypeBool
+    exclude_patterns: TypeList(TypeString)
+    include_patterns: TypeList(TypeString)
+    json_options:
+        disable_type_inference: TypeBool
+        encoding: TypeString
+    schedule: TypeString
+display_name: TypeString
+effective_labels: unknown
+labels: TypeMap(TypeString)
+lake: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+resource_spec:
+    location_type: TypeString
+state: TypeString
+terraform_labels: unknown
+type: TypeString
+uid: TypeString
+update_time: TypeString
+

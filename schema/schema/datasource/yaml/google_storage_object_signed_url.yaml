@@ -1,0 +1,28 @@
+bucket:
+    Type: TypeString
+    Required: "true"
+content_md5:
+    Type: TypeString
+    Optional: "true"
+content_type:
+    Type: TypeString
+    Optional: "true"
+credentials:
+    Type: TypeString
+    Optional: "true"
+duration:
+    Type: TypeString
+    Optional: "true"
+extension_headers:
+    Type: TypeMap
+    Optional: "true"
+http_method:
+    Type: TypeString
+    Optional: "true"
+path:
+    Type: TypeString
+    Required: "true"
+signed_url:
+    Type: TypeString
+    Computed: "true"
+

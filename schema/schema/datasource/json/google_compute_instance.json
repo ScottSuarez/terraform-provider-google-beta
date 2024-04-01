@@ -1,0 +1,675 @@
+{
+    "advanced_machine_features": {
+        "Computed": true,
+        "Description": "Controls for advanced machine-related behavior features.",
+        "Properties": {
+            "enable_nested_virtualization": {
+                "Computed": true,
+                "Description": "Whether to enable nested virtualization or not.",
+                "Type": "TypeBool"
+            },
+            "threads_per_core": {
+                "Computed": true,
+                "Description": "The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.",
+                "Type": "TypeInt"
+            },
+            "visible_core_count": {
+                "Computed": true,
+                "Description": "The number of physical cores to expose to an instance. Multiply by the number of threads per core to compute the total number of virtual CPUs to expose to the instance. If unset, the number of cores is inferred from the instance\\'s nominal CPU count and the underlying platform\\'s SMT width.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "allow_stopping_for_update": {
+        "Computed": true,
+        "Description": "If true, allows Terraform to stop the instance to update its properties. If you try to update a property that requires stopping the instance without setting this field, the update will fail.",
+        "Type": "TypeBool"
+    },
+    "attached_disk": {
+        "Computed": true,
+        "Description": "List of disks attached to the instance",
+        "Properties": {
+            "device_name": {
+                "Computed": true,
+                "Description": "Name with which the attached disk is accessible under /dev/disk/by-id/",
+                "Type": "TypeString"
+            },
+            "disk_encryption_key_raw": {
+                "Computed": true,
+                "Description": "A 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to encrypt this disk. Only one of kms_key_self_link and disk_encryption_key_raw may be set.",
+                "Type": "TypeString"
+            },
+            "disk_encryption_key_sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
+                "Type": "TypeString"
+            },
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The self_link of the encryption key that is stored in Google Cloud KMS to encrypt this disk. Only one of kms_key_self_link and disk_encryption_key_raw may be set.",
+                "Type": "TypeString"
+            },
+            "mode": {
+                "Computed": true,
+                "Description": "Read/write mode for the disk. One of \"READ_ONLY\" or \"READ_WRITE\".",
+                "Type": "TypeString"
+            },
+            "source": {
+                "Computed": true,
+                "Description": "The name or self_link of the disk attached to this instance.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "boot_disk": {
+        "Computed": true,
+        "Description": "The boot disk for the instance.",
+        "Properties": {
+            "auto_delete": {
+                "Computed": true,
+                "Description": "Whether the disk will be auto-deleted when the instance is deleted.",
+                "Type": "TypeBool"
+            },
+            "device_name": {
+                "Computed": true,
+                "Description": "Name with which attached disk will be accessible under /dev/disk/by-id/",
+                "Type": "TypeString"
+            },
+            "disk_encryption_key_raw": {
+                "Computed": true,
+                "Description": "A 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to encrypt this disk. Only one of kms_key_self_link and disk_encryption_key_raw may be set.",
+                "Type": "TypeString"
+            },
+            "disk_encryption_key_sha256": {
+                "Computed": true,
+                "Description": "The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
+                "Type": "TypeString"
+            },
+            "initialize_params": {
+                "Computed": true,
+                "Description": "Parameters with which a disk was created alongside the instance.",
+                "Properties": {
+                    "enable_confidential_compute": {
+                        "Computed": true,
+                        "Description": "A flag to enable confidential compute mode on boot disk",
+                        "Type": "TypeBool"
+                    },
+                    "image": {
+                        "Computed": true,
+                        "Description": "The image from which this disk was initialised.",
+                        "Type": "TypeString"
+                    },
+                    "labels": {
+                        "Computed": true,
+                        "Description": "A set of key/value label pairs assigned to the disk.",
+                        "Type": "TypeMap"
+                    },
+                    "provisioned_iops": {
+                        "Computed": true,
+                        "Description": "Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. Values must be between 10,000 and 120,000.",
+                        "Type": "TypeInt"
+                    },
+                    "provisioned_throughput": {
+                        "Computed": true,
+                        "Description": "Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be between 1 and 7,124.",
+                        "Type": "TypeInt"
+                    },
+                    "resource_manager_tags": {
+                        "Computed": true,
+                        "Description": "A map of resource manager tags. Resource manager tag keys and values have the same definition as resource manager tags. Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/456. The field is ignored (both PUT \u0026 PATCH) when empty.",
+                        "Type": "TypeMap"
+                    },
+                    "size": {
+                        "Computed": true,
+                        "Description": "The size of the image in gigabytes.",
+                        "Type": "TypeInt"
+                    },
+                    "type": {
+                        "Computed": true,
+                        "Description": "The Google Compute Engine disk type. Such as pd-standard, pd-ssd or pd-balanced.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "kms_key_self_link": {
+                "Computed": true,
+                "Description": "The self_link of the encryption key that is stored in Google Cloud KMS to encrypt this disk. Only one of kms_key_self_link and disk_encryption_key_raw may be set.",
+                "Type": "TypeString"
+            },
+            "mode": {
+                "Computed": true,
+                "Description": "Read/write mode for the disk. One of \"READ_ONLY\" or \"READ_WRITE\".",
+                "Type": "TypeString"
+            },
+            "source": {
+                "Computed": true,
+                "Description": "The name or self_link of the disk attached to this instance.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "can_ip_forward": {
+        "Computed": true,
+        "Description": "Whether sending and receiving of packets with non-matching source or destination IPs is allowed.",
+        "Type": "TypeBool"
+    },
+    "confidential_instance_config": {
+        "Computed": true,
+        "Description": "The Confidential VM config being used by the instance.  on_host_maintenance has to be set to TERMINATE or this will fail to create.",
+        "Properties": {
+            "confidential_instance_type": {
+                "Computed": true,
+                "Description": "\n\t\t\t\t\t\t\t\tSpecifies which confidential computing technology to use.\n\t\t\t\t\t\t\t\tThis could be one of the following values: SEV, SEV_SNP.\n\t\t\t\t\t\t\t\tIf SEV_SNP, min_cpu_platform = \"AMD Milan\" is currently required.",
+                "Type": "TypeString"
+            },
+            "enable_confidential_compute": {
+                "Computed": true,
+                "Description": "Defines whether the instance should have confidential compute enabled. Field will be deprecated in a future release",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cpu_platform": {
+        "Computed": true,
+        "Description": "The CPU platform used by this instance.",
+        "Type": "TypeString"
+    },
+    "current_status": {
+        "Computed": true,
+        "Description": "\n\t\t\t\t\tCurrent status of the instance.\n\t\t\t\t\tThis could be one of the following values: PROVISIONING, STAGING, RUNNING, STOPPING, SUSPENDING, SUSPENDED, REPAIRING, and TERMINATED.\n\t\t\t\t\tFor more information about the status of the instance, see [Instance life cycle](https://cloud.google.com/compute/docs/instances/instance-life-cycle).",
+        "Type": "TypeString"
+    },
+    "deletion_protection": {
+        "Computed": true,
+        "Description": "Whether deletion protection is enabled on this instance.",
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "A brief description of the resource.",
+        "Type": "TypeString"
+    },
+    "desired_status": {
+        "Computed": true,
+        "Description": "Desired status of the instance. Either \"RUNNING\" or \"TERMINATED\".",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_display": {
+        "Computed": true,
+        "Description": "Whether the instance has virtual displays enabled.",
+        "Type": "TypeBool"
+    },
+    "guest_accelerator": {
+        "Computed": true,
+        "Description": "List of the type and count of accelerator cards attached to the instance.",
+        "Properties": {
+            "count": {
+                "Computed": true,
+                "Description": "The number of the guest accelerator cards exposed to this instance.",
+                "Type": "TypeInt"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The accelerator type resource exposed to this instance. E.g. nvidia-tesla-k80.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "hostname": {
+        "Computed": true,
+        "Description": "A custom hostname for the instance. Must be a fully qualified DNS name and RFC-1035-valid. Valid format is a series of labels 1-63 characters long matching the regular expression [a-z]([-a-z0-9]*[a-z0-9]), concatenated with periods. The entire hostname must not exceed 253 characters. Changing this forces a new resource to be created.",
+        "Type": "TypeString"
+    },
+    "instance_id": {
+        "Computed": true,
+        "Description": "The server-assigned unique identifier of this instance.",
+        "Type": "TypeString"
+    },
+    "label_fingerprint": {
+        "Computed": true,
+        "Description": "The unique fingerprint of the labels.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "A set of key/value label pairs assigned to the instance.\n\t\t\t\t\n\t\t\t\t**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\n\t\t\t\tPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "machine_type": {
+        "Computed": true,
+        "Description": "The machine type to create.",
+        "Type": "TypeString"
+    },
+    "metadata": {
+        "Computed": true,
+        "Description": "Metadata key/value pairs made available within the instance.",
+        "Type": "TypeMap"
+    },
+    "metadata_fingerprint": {
+        "Computed": true,
+        "Description": "The unique fingerprint of the metadata.",
+        "Type": "TypeString"
+    },
+    "metadata_startup_script": {
+        "Computed": true,
+        "Description": "Metadata startup scripts made available within the instance.",
+        "Type": "TypeString"
+    },
+    "min_cpu_platform": {
+        "Computed": true,
+        "Description": "The minimum CPU platform specified for the VM instance.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the instance. One of name or self_link must be provided.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "network_interface": {
+        "Computed": true,
+        "Description": "The networks attached to the instance.",
+        "Properties": {
+            "access_config": {
+                "Computed": true,
+                "Description": "Access configurations, i.e. IPs via which this instance can be accessed via the Internet.",
+                "Properties": {
+                    "nat_ip": {
+                        "Computed": true,
+                        "Description": "The IP address that is be 1:1 mapped to the instance's network ip.",
+                        "Type": "TypeString"
+                    },
+                    "network_tier": {
+                        "Computed": true,
+                        "Description": "The networking tier used for configuring this instance. One of PREMIUM or STANDARD.",
+                        "Type": "TypeString"
+                    },
+                    "public_ptr_domain_name": {
+                        "Computed": true,
+                        "Description": "The DNS domain name for the public PTR record.",
+                        "Type": "TypeString"
+                    },
+                    "security_policy": {
+                        "Computed": true,
+                        "Description": "A full or partial URL to a security policy to add to this instance. If this field is set to an empty string it will remove the associated security policy.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "alias_ip_range": {
+                "Computed": true,
+                "Description": "An array of alias IP ranges for this network interface.",
+                "Properties": {
+                    "ip_cidr_range": {
+                        "Computed": true,
+                        "Description": "The IP CIDR range represented by this alias IP range.",
+                        "Type": "TypeString"
+                    },
+                    "subnetwork_range_name": {
+                        "Computed": true,
+                        "Description": "The subnetwork secondary range name specifying the secondary range from which to allocate the IP CIDR range for this alias IP range.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "internal_ipv6_prefix_length": {
+                "Computed": true,
+                "Description": "The prefix length of the primary internal IPv6 range.",
+                "Type": "TypeInt"
+            },
+            "ipv6_access_config": {
+                "Computed": true,
+                "Description": "An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.",
+                "Properties": {
+                    "external_ipv6": {
+                        "Computed": true,
+                        "Description": "The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored in externalIpv6PrefixLength in ipv6AccessConfig. To use a static external IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an external IPv6 address from the instance's subnetwork.",
+                        "Type": "TypeString"
+                    },
+                    "external_ipv6_prefix_length": {
+                        "Computed": true,
+                        "Description": "The prefix length of the external IPv6 range.",
+                        "Type": "TypeString"
+                    },
+                    "name": {
+                        "Computed": true,
+                        "Description": "The name of this access configuration. In ipv6AccessConfigs, the recommended name is External IPv6.",
+                        "Type": "TypeString"
+                    },
+                    "network_tier": {
+                        "Computed": true,
+                        "Description": "The service-level to be provided for IPv6 traffic when the subnet has an external subnet. Only PREMIUM tier is valid for IPv6",
+                        "Type": "TypeString"
+                    },
+                    "public_ptr_domain_name": {
+                        "Computed": true,
+                        "Description": "The domain name to be used when creating DNSv6 records for the external IPv6 ranges.",
+                        "Type": "TypeString"
+                    },
+                    "security_policy": {
+                        "Computed": true,
+                        "Description": "A full or partial URL to a security policy to add to this instance. If this field is set to an empty string it will remove the associated security policy.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ipv6_access_type": {
+                "Computed": true,
+                "Description": "One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.",
+                "Type": "TypeString"
+            },
+            "ipv6_address": {
+                "Computed": true,
+                "Description": "An IPv6 internal network address for this network interface. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.",
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The name of the interface",
+                "Type": "TypeString"
+            },
+            "network": {
+                "Computed": true,
+                "Description": "The name or self_link of the network attached to this interface.",
+                "Type": "TypeString"
+            },
+            "network_attachment": {
+                "Computed": true,
+                "Description": "The URL of the network attachment that this interface should connect to in the following format: projects/{projectNumber}/regions/{region_name}/networkAttachments/{network_attachment_name}.",
+                "Type": "TypeString"
+            },
+            "network_ip": {
+                "Computed": true,
+                "Description": "The private IP address assigned to the instance.",
+                "Type": "TypeString"
+            },
+            "nic_type": {
+                "Computed": true,
+                "Description": "The type of vNIC to be used on this interface. Possible values:GVNIC, VIRTIO_NET",
+                "Type": "TypeString"
+            },
+            "queue_count": {
+                "Computed": true,
+                "Description": "The networking queue count that's specified by users for the network interface. Both Rx and Tx queues will be set to this number. It will be empty if not specified.",
+                "Type": "TypeInt"
+            },
+            "security_policy": {
+                "Computed": true,
+                "Description": "A full or partial URL to a security policy to add to this instance. If this field is set to an empty string it will remove the associated security policy.",
+                "Type": "TypeString"
+            },
+            "stack_type": {
+                "Computed": true,
+                "Description": "The stack type for this network interface to identify whether the IPv6 feature is enabled or not. If not specified, IPV4_ONLY will be used.",
+                "Type": "TypeString"
+            },
+            "subnetwork": {
+                "Computed": true,
+                "Description": "The name or self_link of the subnetwork attached to this interface.",
+                "Type": "TypeString"
+            },
+            "subnetwork_project": {
+                "Computed": true,
+                "Description": "The project in which the subnetwork belongs.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "network_performance_config": {
+        "Computed": true,
+        "Description": "Configures network performance settings for the instance. If not specified, the instance will be created with its default network performance configuration.",
+        "Properties": {
+            "total_egress_bandwidth_tier": {
+                "Computed": true,
+                "Description": "The egress bandwidth tier to enable. Possible values:TIER_1, DEFAULT",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "params": {
+        "Computed": true,
+        "Description": "Stores additional params passed with the request, but not persisted as part of resource payload.",
+        "Properties": {
+            "resource_manager_tags": {
+                "Computed": true,
+                "Description": "A map of resource manager tags. Resource manager tag keys and values have the same definition as resource manager tags. Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/456. The field is ignored (both PUT \u0026 PATCH) when empty.",
+                "Type": "TypeMap"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Description": "The ID of the project in which the resource belongs. If self_link is provided, this value is ignored. If neither self_link nor project are provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reservation_affinity": {
+        "Computed": true,
+        "Description": "Specifies the reservations that this instance can consume from.",
+        "Properties": {
+            "specific_reservation": {
+                "Computed": true,
+                "Description": "Specifies the label selector for the reservation to use.",
+                "Properties": {
+                    "key": {
+                        "Computed": true,
+                        "Description": "Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, specify compute.googleapis.com/reservation-name as the key and specify the name of your reservation as the only value.",
+                        "Type": "TypeString"
+                    },
+                    "values": {
+                        "Computed": true,
+                        "Description": "Corresponds to the label values of a reservation resource.",
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The type of reservation from which this instance can consume resources.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "resource_policies": {
+        "Computed": true,
+        "Description": "A list of self_links of resource policies to attach to the instance. Currently a max of 1 resource policy is supported.",
+        "Type": "TypeList"
+    },
+    "scheduling": {
+        "Computed": true,
+        "Description": "The scheduling strategy being used by the instance.",
+        "Properties": {
+            "automatic_restart": {
+                "Computed": true,
+                "Description": "Specifies if the instance should be restarted if it was terminated by Compute Engine (not a user).",
+                "Type": "TypeBool"
+            },
+            "instance_termination_action": {
+                "Computed": true,
+                "Description": "Specifies the action GCE should take when SPOT VM is preempted.",
+                "Type": "TypeString"
+            },
+            "local_ssd_recovery_timeout": {
+                "Computed": true,
+                "Description": "Specifies the maximum amount of time a Local Ssd Vm should wait while\n  recovery of the Local Ssd state is attempted. Its value should be in\n  between 0 and 168 hours with hour granularity and the default value being 1\n  hour.",
+                "Properties": {
+                    "nanos": {
+                        "Computed": true,
+                        "Description": "Span of time that's a fraction of a second at nanosecond\nresolution. Durations less than one second are represented\nwith a 0 seconds field and a positive nanos field. Must\nbe from 0 to 999,999,999 inclusive.",
+                        "Type": "TypeInt"
+                    },
+                    "seconds": {
+                        "Computed": true,
+                        "Description": "Span of time at a resolution of a second.\nMust be from 0 to 315,576,000,000 inclusive.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "maintenance_interval": {
+                "Computed": true,
+                "Description": "Specifies the frequency of planned maintenance events. The accepted values are: PERIODIC",
+                "Type": "TypeString"
+            },
+            "max_run_duration": {
+                "Computed": true,
+                "Description": "The timeout for new network connections to hosts.",
+                "Properties": {
+                    "nanos": {
+                        "Computed": true,
+                        "Description": "Span of time that's a fraction of a second at nanosecond\nresolution. Durations less than one second are represented\nwith a 0 seconds field and a positive nanos field. Must\nbe from 0 to 999,999,999 inclusive.",
+                        "Type": "TypeInt"
+                    },
+                    "seconds": {
+                        "Computed": true,
+                        "Description": "Span of time at a resolution of a second.\nMust be from 0 to 315,576,000,000 inclusive.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "min_node_cpus": {
+                "Computed": true,
+                "Type": "TypeInt"
+            },
+            "node_affinities": {
+                "Computed": true,
+                "Description": "Specifies node affinities or anti-affinities to determine which sole-tenant nodes your instances and managed instance groups will use as host systems.",
+                "Properties": {
+                    "key": {
+                        "Computed": true,
+                        "Type": "TypeString"
+                    },
+                    "operator": {
+                        "Computed": true,
+                        "Type": "TypeString"
+                    },
+                    "values": {
+                        "Computed": true,
+                        "Type": "TypeSet"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "on_host_maintenance": {
+                "Computed": true,
+                "Description": "Describes maintenance behavior for the instance. One of MIGRATE or TERMINATE,",
+                "Type": "TypeString"
+            },
+            "preemptible": {
+                "Computed": true,
+                "Description": "Whether the instance is preemptible.",
+                "Type": "TypeBool"
+            },
+            "provisioning_model": {
+                "Computed": true,
+                "Description": "Whether the instance is spot. If this is set as SPOT.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "scratch_disk": {
+        "Computed": true,
+        "Description": "The scratch disks attached to the instance.",
+        "Properties": {
+            "device_name": {
+                "Computed": true,
+                "Description": "Name with which the attached disk is accessible under /dev/disk/by-id/",
+                "Type": "TypeString"
+            },
+            "interface": {
+                "Computed": true,
+                "Description": "The disk interface used for attaching this disk. One of SCSI or NVME.",
+                "Type": "TypeString"
+            },
+            "size": {
+                "Computed": true,
+                "Description": "The size of the disk in gigabytes. One of 375 or 3000.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Description": "The URI of the created resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The service account to attach to the instance.",
+        "Properties": {
+            "email": {
+                "Computed": true,
+                "Description": "The service account e-mail address.",
+                "Type": "TypeString"
+            },
+            "scopes": {
+                "Computed": true,
+                "Description": "A list of service scopes.",
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "shielded_instance_config": {
+        "Computed": true,
+        "Description": "The shielded vm config being used by the instance.",
+        "Properties": {
+            "enable_integrity_monitoring": {
+                "Computed": true,
+                "Description": "Whether integrity monitoring is enabled for the instance.",
+                "Type": "TypeBool"
+            },
+            "enable_secure_boot": {
+                "Computed": true,
+                "Description": "Whether secure boot is enabled for the instance.",
+                "Type": "TypeBool"
+            },
+            "enable_vtpm": {
+                "Computed": true,
+                "Description": "Whether the instance uses vTPM.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "tags": {
+        "Computed": true,
+        "Description": "The list of tags attached to the instance.",
+        "Type": "TypeSet"
+    },
+    "tags_fingerprint": {
+        "Computed": true,
+        "Description": "The unique fingerprint of the tags.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "zone": {
+        "Description": "The zone of the instance. If self_link is provided, this value is ignored. If neither self_link nor zone are provided, the provider zone is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

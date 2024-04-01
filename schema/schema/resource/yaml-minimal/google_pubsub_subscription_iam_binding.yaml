@@ -1,0 +1,10 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+subscription: TypeString
+

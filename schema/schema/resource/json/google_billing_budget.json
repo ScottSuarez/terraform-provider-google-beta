@@ -1,0 +1,220 @@
+{
+    "all_updates_rule": {
+        "Description": "Defines notifications that are sent on every update to the\nbilling account's spend, regardless of the thresholds defined\nusing threshold rules.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "disable_default_iam_recipients": {
+                "Description": "Boolean. When set to true, disables default notifications sent\nwhen a threshold is exceeded. Default recipients are\nthose with Billing Account Administrators and Billing\nAccount Users IAM roles for the target account.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "monitoring_notification_channels": {
+                "AtLeastOneOf": "all_updates_rule.0.pubsub_topic, all_updates_rule.0.monitoring_notification_channels",
+                "Description": "The full resource name of a monitoring notification\nchannel in the form\nprojects/{project_id}/notificationChannels/{channel_id}.\nA maximum of 5 channels are allowed.",
+                "MaxItems": 5,
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "pubsub_topic": {
+                "AtLeastOneOf": "all_updates_rule.0.pubsub_topic, all_updates_rule.0.monitoring_notification_channels",
+                "Description": "The name of the Cloud Pub/Sub topic where budget related\nmessages will be published, in the form\nprojects/{project_id}/topics/{topic_id}. Updates are sent\nat regular intervals to the topic.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "schema_version": {
+                "Description": "The schema version of the notification. Only \"1.0\" is\naccepted. It represents the JSON schema as defined in\nhttps://cloud.google.com/billing/docs/how-to/budgets#notification_format.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "amount": {
+        "Description": "The budgeted amount for each usage period.",
+        "MaxItems": 1,
+        "Properties": {
+            "last_period_amount": {
+                "Description": "Configures a budget amount that is automatically set to 100% of\nlast period's spend.\nBoolean. Set value to true to use. Do not set to false, instead\nuse the 'specified_amount' block.",
+                "ExactlyOneOf": "amount.0.specified_amount, amount.0.last_period_amount",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "specified_amount": {
+                "Description": "A specified amount to use as the budget. currencyCode is\noptional. If specified, it must match the currency of the\nbilling account. The currencyCode is provided on output.",
+                "ExactlyOneOf": "amount.0.specified_amount, amount.0.last_period_amount",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "currency_code": {
+                        "Computed": true,
+                        "Description": "The 3-letter currency code defined in ISO 4217.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "nanos": {
+                        "Description": "Number of nano (10^-9) units of the amount.\nThe value must be between -999,999,999 and +999,999,999\ninclusive. If units is positive, nanos must be positive or\nzero. If units is zero, nanos can be positive, zero, or\nnegative. If units is negative, nanos must be negative or\nzero. For example $-1.75 is represented as units=-1 and\nnanos=-750,000,000.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "units": {
+                        "Description": "The whole units of the amount. For example if currencyCode\nis \"USD\", then 1 unit is one US dollar.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "billing_account": {
+        "Description": "ID of the billing account to set a budget on.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "budget_filter": {
+        "Computed": true,
+        "Description": "Filters that define which resources are used to compute the actual\nspend against the budget.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "calendar_period": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Description": "A CalendarPeriod represents the abstract concept of a recurring time period that has a\ncanonical start. Grammatically, \"the start of the current CalendarPeriod\".\nAll calendar times begin at 12 AM US and Canadian Pacific Time (UTC-8).\n\nExactly one of 'calendar_period', 'custom_period' must be provided. Possible values: [\"MONTH\", \"QUARTER\", \"YEAR\", \"CALENDAR_PERIOD_UNSPECIFIED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "credit_types": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Computed": true,
+                "Description": "Optional. If creditTypesTreatment is INCLUDE_SPECIFIED_CREDITS,\nthis is a list of credit types to be subtracted from gross cost to determine the spend for threshold calculations. See a list of acceptable credit type values.\nIf creditTypesTreatment is not INCLUDE_SPECIFIED_CREDITS, this field must be empty.\n\n**Note:** If the field has a value in the config and needs to be removed, the field has to be an emtpy array in the config.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "credit_types_treatment": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Description": "Specifies how credits should be treated when determining spend\nfor threshold calculations. Default value: \"INCLUDE_ALL_CREDITS\" Possible values: [\"INCLUDE_ALL_CREDITS\", \"EXCLUDE_ALL_CREDITS\", \"INCLUDE_SPECIFIED_CREDITS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "custom_period": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Description": "Specifies to track usage from any start date (required) to any end date (optional).\nThis time period is static, it does not recur.\n\nExactly one of 'calendar_period', 'custom_period' must be provided.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "end_date": {
+                        "Description": "Optional. The end date of the time period. Budgets with elapsed end date won't be processed.\nIf unset, specifies to track all usage incurred since the startDate.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "day": {
+                                "Description": "Day of a month. Must be from 1 to 31 and valid for the year and month.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            },
+                            "month": {
+                                "Description": "Month of a year. Must be from 1 to 12.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            },
+                            "year": {
+                                "Description": "Year of the date. Must be from 1 to 9999.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "start_date": {
+                        "Description": "A start date is required. The start date must be after January 1, 2017.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "day": {
+                                "Description": "Day of a month. Must be from 1 to 31 and valid for the year and month.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            },
+                            "month": {
+                                "Description": "Month of a year. Must be from 1 to 12.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            },
+                            "year": {
+                                "Description": "Year of the date. Must be from 1 to 9999.",
+                                "Required": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "labels": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Computed": true,
+                "Description": "A single label and value pair specifying that usage from only\nthis set of labeled resources should be included in the budget.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "projects": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Description": "A set of projects of the form projects/{project_number},\nspecifying that usage from only this set of projects should be\nincluded in the budget. If omitted, the report will include\nall usage for the billing account, regardless of which project\nthe usage occurred on.",
+                "Optional": true,
+                "Type": "TypeSet"
+            },
+            "resource_ancestors": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Description": "A set of folder and organization names of the form folders/{folderId} or organizations/{organizationId},\nspecifying that usage from only this set of folders and organizations should be included in the budget.\nIf omitted, the budget includes all usage that the billing account pays for. If the folder or organization\ncontains projects that are paid for by a different Cloud Billing account, the budget doesn't apply to those projects.",
+                "Optional": true,
+                "Type": "TypeSet"
+            },
+            "services": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Computed": true,
+                "Description": "A set of services of the form services/{service_id},\nspecifying that usage from only this set of services should be\nincluded in the budget. If omitted, the report will include\nusage for all the services. The service names are available\nthrough the Catalog API:\nhttps://cloud.google.com/billing/v1/how-tos/catalog-api.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "subaccounts": {
+                "AtLeastOneOf": "budget_filter.0.projects, budget_filter.0.resource_ancestors, budget_filter.0.credit_types_treatment, budget_filter.0.services, budget_filter.0.subaccounts, budget_filter.0.labels, budget_filter.0.calendar_period, budget_filter.0.custom_period",
+                "Computed": true,
+                "Description": "A set of subaccounts of the form billingAccounts/{account_id},\nspecifying that usage from only this set of subaccounts should\nbe included in the budget. If a subaccount is set to the name of\nthe parent account, usage from the parent account will be included.\nIf the field is omitted, the report will include usage from the parent\naccount and all subaccounts, if they exist.\n\n**Note:** If the field has a value in the config and needs to be removed, the field has to be an emtpy array in the config.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "User data for display name in UI. Must be \u003c= 60 chars.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Resource name of the budget. The resource name\nimplies the scope of a budget. Values are of the form\nbillingAccounts/{billingAccountId}/budgets/{budgetId}.",
+        "Type": "TypeString"
+    },
+    "threshold_rules": {
+        "Description": "Rules that trigger alerts (notifications of thresholds being\ncrossed) when spend exceeds the specified percentages of the\nbudget.",
+        "Optional": true,
+        "Properties": {
+            "spend_basis": {
+                "Description": "The type of basis used to determine if spend has passed\nthe threshold. Default value: \"CURRENT_SPEND\" Possible values: [\"CURRENT_SPEND\", \"FORECASTED_SPEND\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "threshold_percent": {
+                "Description": "Send an alert when this threshold is exceeded. This is a\n1.0-based percentage, so 0.5 = 50%. Must be \u003e= 0.",
+                "Required": true,
+                "Type": "TypeFloat"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

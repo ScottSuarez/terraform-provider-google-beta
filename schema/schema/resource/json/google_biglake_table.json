@@ -1,0 +1,83 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The creation time of the table. A timestamp in RFC3339 UTC\n\"Zulu\" format, with nanosecond resolution and up to nine fractional\ndigits. Examples: \"2014-10-02T15:01:23Z\" and\n\"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "database": {
+        "Description": "The id of the parent database.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "Output only. The deletion time of the table. Only set after the\ntable is deleted. A timestamp in RFC3339 UTC \"Zulu\" format, with\nnanosecond resolution and up to nine fractional digits. Examples:\n\"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "The checksum of a table object computed by the server based on the value\nof other fields. It may be sent on update requests to ensure the client\nhas an up-to-date value before proceeding. It is only checked for update\ntable operations.",
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "Output only. The time when this table is considered expired. Only set\nafter the table is deleted. A timestamp in RFC3339 UTC \"Zulu\" format,\nwith nanosecond resolution and up to nine fractional digits. Examples:\n\"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "hive_options": {
+        "Description": "Options of a Hive table.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "parameters": {
+                "Description": "Stores user supplied Hive table parameters. An object containing a\nlist of \"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "storage_descriptor": {
+                "Description": "Stores physical storage information on the data.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "input_format": {
+                        "Description": "The fully qualified Java class name of the input format.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "location_uri": {
+                        "Description": "Cloud Storage folder URI where the table data is stored, starting with \"gs://\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "output_format": {
+                        "Description": "The fully qualified Java class name of the output format.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "table_type": {
+                "Description": "Hive table type. For example, MANAGED_TABLE, EXTERNAL_TABLE.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Output only. The name of the Table. Format:\nprojects/{project_id_or_number}/locations/{locationId}/catalogs/{catalogId}/databases/{databaseId}/tables/{tableId}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The database type. Possible values: [\"HIVE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The last modification time of the table. A timestamp in\nRFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and\n\"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

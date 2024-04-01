@@ -1,0 +1,42 @@
+autoscaling_policy:
+    cooldown_period: TypeInt
+    cpu_utilization:
+        predictive_method: TypeString
+        target: TypeFloat
+    load_balancing_utilization:
+        target: TypeFloat
+    max_replicas: TypeInt
+    metric:
+        filter: TypeString
+        name: TypeString
+        single_instance_assignment: TypeFloat
+        target: TypeFloat
+        type: TypeString
+    min_replicas: TypeInt
+    mode: TypeString
+    scale_down_control:
+        max_scaled_down_replicas:
+            fixed: TypeInt
+            percent: TypeInt
+        time_window_sec: TypeInt
+    scale_in_control:
+        max_scaled_in_replicas:
+            fixed: TypeInt
+            percent: TypeInt
+        time_window_sec: TypeInt
+    scaling_schedules:
+        description: TypeString
+        disabled: TypeBool
+        duration_sec: TypeInt
+        min_required_replicas: TypeInt
+        name: TypeString
+        schedule: TypeString
+        time_zone: TypeString
+creation_timestamp: TypeString
+description: TypeString
+name: TypeString
+project: TypeString
+self_link: TypeString
+target: TypeString
+zone: TypeString
+

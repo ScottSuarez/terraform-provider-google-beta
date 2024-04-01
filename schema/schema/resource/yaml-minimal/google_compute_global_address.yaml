@@ -1,0 +1,16 @@
+address: TypeString
+address_type: TypeString
+creation_timestamp: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+ip_version: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+network: TypeString
+prefix_length: TypeInt
+project: TypeString
+purpose: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+

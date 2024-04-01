@@ -1,0 +1,11 @@
+interconnect_attachment: TypeString
+ip_range: TypeString
+name: TypeString
+private_ip_address: TypeString
+project: TypeString
+redundant_interface: TypeString
+region: TypeString
+router: TypeString
+subnetwork: TypeString
+vpn_tunnel: TypeString
+

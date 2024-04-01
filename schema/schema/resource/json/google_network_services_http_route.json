@@ -1,0 +1,461 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the HttpRoute was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gateways": {
+        "Description": "Gateways defines a list of gateways this HttpRoute is attached to, as one of the routing rules to route the requests served by the gateway.\nEach gateway reference should match the pattern: projects/*/locations/global/gateways/\u003cgateway_name\u003e",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "hostnames": {
+        "Description": "Set of hosts that should match against the HTTP host header to select a HttpRoute to process the request.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the HttpRoute resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "meshes": {
+        "Description": "Meshes defines a list of meshes this HttpRoute is attached to, as one of the routing rules to route the requests served by the mesh.\nEach mesh reference should match the pattern: projects/*/locations/global/meshes/\u003cmesh_name\u003e.\nThe attached Mesh should be of a type SIDECAR.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the HttpRoute resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Description": "Rules that define how traffic is routed and handled.",
+        "Properties": {
+            "action": {
+                "Description": "The detailed rule defining how to route matched traffic.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "cors_policy": {
+                        "Description": "The specification for allowing client side cross-origin requests.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "allow_credentials": {
+                                "Description": "In response to a preflight request, setting this to true indicates that the actual request can include user credentials.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "allow_headers": {
+                                "Description": "Specifies the content for Access-Control-Allow-Headers header.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "allow_methods": {
+                                "Description": "Specifies the content for Access-Control-Allow-Methods header.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "allow_origin_regexes": {
+                                "Description": "Specifies the regular expression patterns that match allowed origins.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "allow_origins": {
+                                "Description": "Specifies the list of origins that will be allowed to do CORS requests.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "disabled": {
+                                "Description": "If true, the CORS policy is disabled. The default value is false, which indicates that the CORS policy is in effect.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "expose_headers": {
+                                "Description": "Specifies the content for Access-Control-Expose-Headers header.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "max_age": {
+                                "Description": "Specifies how long result of a preflight request can be cached in seconds.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "destinations": {
+                        "Description": "The destination to which traffic should be forwarded.",
+                        "Optional": true,
+                        "Properties": {
+                            "service_name": {
+                                "Description": "The URL of a BackendService to route traffic to.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "weight": {
+                                "Description": "Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports.\nIf only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend.\nIf weights are specified for any one service name, they need to be specified for all of them.\nIf weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "fault_injection_policy": {
+                        "Description": "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "abort": {
+                                "Description": "Specification of how client requests are aborted as part of fault injection before being sent to a destination.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "http_status": {
+                                        "Description": "The HTTP status code used to abort the request.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "percentage": {
+                                        "Description": "The percentage of traffic which will be aborted.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "delay": {
+                                "Description": "Specification of how client requests are delayed as part of fault injection before being sent to a destination.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "fixed_delay": {
+                                        "Description": "Specify a fixed delay before forwarding the request.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "percentage": {
+                                        "Description": "The percentage of traffic on which delay will be injected.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "redirect": {
+                        "Description": "If set, the request is directed as configured by this field.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "host_redirect": {
+                                "Description": "The host that will be used in the redirect response instead of the one that was supplied in the request.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "https_redirect": {
+                                "Description": "If set to true, the URL scheme in the redirected request is set to https.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "path_redirect": {
+                                "Description": "The path that will be used in the redirect response instead of the one that was supplied in the request. pathRedirect can not be supplied together with prefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request will be used for the redirect.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "port_redirect": {
+                                "Description": "The port that will be used in the redirected request instead of the one that was supplied in the request.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "prefix_rewrite": {
+                                "Description": "Indicates that during redirection, the matched prefix (or path) should be swapped with this value.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "response_code": {
+                                "Description": "The HTTP Status code to use for the redirect.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "strip_query": {
+                                "Description": "If set to true, any accompanying query portion of the original URL is removed prior to redirecting the request.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "request_header_modifier": {
+                        "Description": "The specification for modifying the headers of a matching request prior to delivery of the request to the destination.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "add": {
+                                "Description": "Add the headers with given map where key is the name of the header, value is the value of the header.",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "remove": {
+                                "Description": "Remove headers (matching by header names) specified in the list.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "set": {
+                                "Description": "Completely overwrite/replace the headers with given map where key is the name of the header, value is the value of the header.",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "request_mirror_policy": {
+                        "Description": "Specifies the policy on how requests intended for the routes destination are shadowed to a separate mirrored destination.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "destination": {
+                                "Description": "The destination the requests will be mirrored to.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "service_name": {
+                                        "Description": "The URL of a BackendService to route traffic to.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "weight": {
+                                        "Description": "Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports.\nIf only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend.\nIf weights are specified for any one service name, they need to be specified for all of them.\nIf weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "response_header_modifier": {
+                        "Description": "The specification for modifying the headers of a response prior to sending the response back to the client.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "add": {
+                                "Description": "Add the headers with given map where key is the name of the header, value is the value of the header.",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "remove": {
+                                "Description": "Remove headers (matching by header names) specified in the list.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            },
+                            "set": {
+                                "Description": "Completely overwrite/replace the headers with given map where key is the name of the header, value is the value of the header.",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "retry_policy": {
+                        "Description": "Specifies the retry policy associated with this route.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "num_retries": {
+                                "Description": "Specifies the allowed number of retries.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            },
+                            "per_try_timeout": {
+                                "Description": "Specifies a non-zero timeout per retry attempt. A duration in seconds with up to nine fractional digits, ending with 's'. Example: \"3.5s\".",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "retry_conditions": {
+                                "Description": "Specifies one or more conditions when this retry policy applies.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "timeout": {
+                        "Description": "Specifies the timeout for selected route.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "url_rewrite": {
+                        "Description": "The specification for rewrite URL before forwarding requests to the destination.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "host_rewrite": {
+                                "Description": "Prior to forwarding the request to the selected destination, the requests host header is replaced by this value.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "path_prefix_rewrite": {
+                                "Description": "Prior to forwarding the request to the selected destination, the matching portion of the requests path is replaced by this value.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "matches": {
+                "Description": "A list of matches define conditions used for matching the rule against incoming HTTP requests. Each match is independent, i.e. this rule will be matched if ANY one of the matches is satisfied.\nIf no matches field is specified, this rule will unconditionally match traffic.\nIf a default rule is desired to be configured, add a rule with no matches specified to the end of the rules list.",
+                "Optional": true,
+                "Properties": {
+                    "full_path_match": {
+                        "Description": "The HTTP request path value should exactly match this value.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "headers": {
+                        "Description": "Specifies a list of HTTP request headers to match against.",
+                        "Optional": true,
+                        "Properties": {
+                            "exact_match": {
+                                "Description": "The value of the header should match exactly the content of exactMatch.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "header": {
+                                "Description": "The name of the HTTP header to match against.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "invert_match": {
+                                "Description": "If specified, the match result will be inverted before checking. Default value is set to false.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "prefix_match": {
+                                "Description": "The value of the header must start with the contents of prefixMatch.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "present_match": {
+                                "Description": "A header with headerName must exist. The match takes place whether or not the header has a value.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "range_match": {
+                                "Description": "If specified, the rule will match if the request header value is within the range.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "end": {
+                                        "Description": "End of the range (exclusive).",
+                                        "Required": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "start": {
+                                        "Description": "Start of the range (inclusive).",
+                                        "Required": true,
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "regex_match": {
+                                "Description": "The value of the header must match the regular expression specified in regexMatch.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "suffix_match": {
+                                "Description": "The value of the header must end with the contents of suffixMatch.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "ignore_case": {
+                        "Description": "Specifies if prefixMatch and fullPathMatch matches are case sensitive. The default value is false.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "prefix_match": {
+                        "Description": "The HTTP request path value must begin with specified prefixMatch. prefixMatch must begin with a /.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "query_parameters": {
+                        "Description": "Specifies a list of query parameters to match against.",
+                        "Optional": true,
+                        "Properties": {
+                            "exact_match": {
+                                "Description": "The value of the query parameter must exactly match the contents of exactMatch.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "present_match": {
+                                "Description": "Specifies that the QueryParameterMatcher matches if request contains query parameter, irrespective of whether the parameter has a value or not.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "query_parameter": {
+                                "Description": "The name of the query parameter to match.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "regex_match": {
+                                "Description": "The value of the query parameter must match the regular expression specified by regexMatch.For regular expression grammar, please see https://github.com/google/re2/wiki/Syntax",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "regex_match": {
+                        "Description": "The HTTP request path value must satisfy the regular expression specified by regexMatch after removing any query parameters and anchor supplied with the original URL. For regular expression grammar, please see https://github.com/google/re2/wiki/Syntax",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the HttpRoute was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

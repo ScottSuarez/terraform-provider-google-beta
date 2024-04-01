@@ -1,0 +1,21 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+gateways: TypeList(TypeString)
+labels: TypeMap(TypeString)
+meshes: TypeList(TypeString)
+name: TypeString
+project: TypeString
+rules:
+    action:
+        destinations:
+            service_name: TypeString
+            weight: TypeInt
+        original_destination: TypeBool
+    matches:
+        address: TypeString
+        port: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

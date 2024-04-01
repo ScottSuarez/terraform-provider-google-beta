@@ -1,0 +1,20 @@
+{
+    "uptime_check_ips": {
+        "Computed": true,
+        "Properties": {
+            "ip_address": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "location": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "region": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

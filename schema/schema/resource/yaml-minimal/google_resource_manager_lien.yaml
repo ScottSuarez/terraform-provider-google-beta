@@ -1,0 +1,7 @@
+create_time: TypeString
+name: TypeString
+origin: TypeString
+parent: TypeString
+reason: TypeString
+restrictions: TypeList(TypeString)
+

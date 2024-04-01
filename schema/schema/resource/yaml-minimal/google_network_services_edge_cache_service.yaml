@@ -1,0 +1,106 @@
+description: TypeString
+disable_http2: TypeBool
+disable_quic: TypeBool
+edge_security_policy: TypeString
+edge_ssl_certificates: TypeList(TypeString)
+effective_labels: TypeMap(TypeString)
+ipv4_addresses: TypeList(TypeString)
+ipv6_addresses: TypeList(TypeString)
+labels: TypeMap(TypeString)
+log_config:
+    enable: TypeBool
+    sample_rate: TypeFloat
+name: TypeString
+project: TypeString
+require_tls: TypeBool
+routing:
+    host_rule:
+        description: TypeString
+        hosts: TypeList(TypeString)
+        path_matcher: TypeString
+    path_matcher:
+        description: TypeString
+        name: TypeString
+        route_rule:
+            description: TypeString
+            header_action:
+                request_header_to_add:
+                    header_name: TypeString
+                    header_value: TypeString
+                    replace: TypeBool
+                request_header_to_remove:
+                    header_name: TypeString
+                response_header_to_add:
+                    header_name: TypeString
+                    header_value: TypeString
+                    replace: TypeBool
+                response_header_to_remove:
+                    header_name: TypeString
+            match_rule:
+                full_path_match: TypeString
+                header_match:
+                    exact_match: TypeString
+                    header_name: TypeString
+                    invert_match: TypeBool
+                    prefix_match: TypeString
+                    present_match: TypeBool
+                    suffix_match: TypeString
+                ignore_case: TypeBool
+                path_template_match: TypeString
+                prefix_match: TypeString
+                query_parameter_match:
+                    exact_match: TypeString
+                    name: TypeString
+                    present_match: TypeBool
+            origin: TypeString
+            priority: TypeString
+            route_action:
+                cdn_policy:
+                    add_signatures:
+                        actions: TypeList(TypeString)
+                        copied_parameters: TypeList(TypeString)
+                        keyset: TypeString
+                        token_query_parameter: TypeString
+                        token_ttl: TypeString
+                    cache_key_policy:
+                        exclude_host: TypeBool
+                        exclude_query_string: TypeBool
+                        excluded_query_parameters: TypeList(TypeString)
+                        include_protocol: TypeBool
+                        included_cookie_names: TypeList(TypeString)
+                        included_header_names: TypeList(TypeString)
+                        included_query_parameters: TypeList(TypeString)
+                    cache_mode: TypeString
+                    client_ttl: TypeString
+                    default_ttl: TypeString
+                    max_ttl: TypeString
+                    negative_caching: TypeBool
+                    negative_caching_policy: TypeMap(TypeString)
+                    signed_request_keyset: TypeString
+                    signed_request_maximum_expiration_ttl: TypeString
+                    signed_request_mode: TypeString
+                    signed_token_options:
+                        allowed_signature_algorithms: TypeList(TypeString)
+                        token_query_parameter: TypeString
+                cors_policy:
+                    allow_credentials: TypeBool
+                    allow_headers: TypeList(TypeString)
+                    allow_methods: TypeList(TypeString)
+                    allow_origins: TypeList(TypeString)
+                    disabled: TypeBool
+                    expose_headers: TypeList(TypeString)
+                    max_age: TypeString
+                url_rewrite:
+                    host_rewrite: TypeString
+                    path_prefix_rewrite: TypeString
+                    path_template_rewrite: TypeString
+            url_redirect:
+                host_redirect: TypeString
+                https_redirect: TypeBool
+                path_redirect: TypeString
+                prefix_redirect: TypeString
+                redirect_response_code: TypeString
+                strip_query: TypeBool
+ssl_policy: TypeString
+terraform_labels: TypeMap(TypeString)
+

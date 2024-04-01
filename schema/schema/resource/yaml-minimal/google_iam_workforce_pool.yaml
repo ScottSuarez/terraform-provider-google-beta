@@ -1,0 +1,14 @@
+access_restrictions:
+    allowed_services:
+        domain: TypeString
+    disable_programmatic_signin: TypeBool
+description: TypeString
+disabled: TypeBool
+display_name: TypeString
+location: TypeString
+name: TypeString
+parent: TypeString
+session_duration: TypeString
+state: TypeString
+workforce_pool_id: TypeString
+

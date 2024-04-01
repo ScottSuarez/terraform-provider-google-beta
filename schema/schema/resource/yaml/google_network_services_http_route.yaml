@@ -1,0 +1,382 @@
+create_time:
+    Type: TypeString
+    Description: Time the HttpRoute was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+gateways:
+    Type: TypeList
+    Description: |-
+        Gateways defines a list of gateways this HttpRoute is attached to, as one of the routing rules to route the requests served by the gateway.
+        Each gateway reference should match the pattern: projects/*/locations/global/gateways/<gateway_name>
+    Optional: "true"
+hostnames:
+    Type: TypeList
+    Description: Set of hosts that should match against the HTTP host header to select a HttpRoute to process the request.
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of label tags associated with the HttpRoute resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+meshes:
+    Type: TypeList
+    Description: |-
+        Meshes defines a list of meshes this HttpRoute is attached to, as one of the routing rules to route the requests served by the mesh.
+        Each mesh reference should match the pattern: projects/*/locations/global/meshes/<mesh_name>.
+        The attached Mesh should be of a type SIDECAR.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the HttpRoute resource.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+rules:
+    Type: TypeList
+    Description: Rules that define how traffic is routed and handled.
+    Required: "true"
+    Properties:
+        action:
+            Type: TypeList
+            Description: The detailed rule defining how to route matched traffic.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cors_policy:
+                    Type: TypeList
+                    Description: The specification for allowing client side cross-origin requests.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        allow_credentials:
+                            Type: TypeBool
+                            Description: In response to a preflight request, setting this to true indicates that the actual request can include user credentials.
+                            Optional: "true"
+                        allow_headers:
+                            Type: TypeList
+                            Description: Specifies the content for Access-Control-Allow-Headers header.
+                            Optional: "true"
+                        allow_methods:
+                            Type: TypeList
+                            Description: Specifies the content for Access-Control-Allow-Methods header.
+                            Optional: "true"
+                        allow_origin_regexes:
+                            Type: TypeList
+                            Description: Specifies the regular expression patterns that match allowed origins.
+                            Optional: "true"
+                        allow_origins:
+                            Type: TypeList
+                            Description: Specifies the list of origins that will be allowed to do CORS requests.
+                            Optional: "true"
+                        disabled:
+                            Type: TypeBool
+                            Description: If true, the CORS policy is disabled. The default value is false, which indicates that the CORS policy is in effect.
+                            Optional: "true"
+                        expose_headers:
+                            Type: TypeList
+                            Description: Specifies the content for Access-Control-Expose-Headers header.
+                            Optional: "true"
+                        max_age:
+                            Type: TypeString
+                            Description: Specifies how long result of a preflight request can be cached in seconds.
+                            Optional: "true"
+                destinations:
+                    Type: TypeList
+                    Description: The destination to which traffic should be forwarded.
+                    Optional: "true"
+                    Properties:
+                        service_name:
+                            Type: TypeString
+                            Description: The URL of a BackendService to route traffic to.
+                            Optional: "true"
+                        weight:
+                            Type: TypeInt
+                            Description: |-
+                                Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports.
+                                If only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend.
+                                If weights are specified for any one service name, they need to be specified for all of them.
+                                If weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.
+                            Optional: "true"
+                fault_injection_policy:
+                    Type: TypeList
+                    Description: The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        abort:
+                            Type: TypeList
+                            Description: Specification of how client requests are aborted as part of fault injection before being sent to a destination.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                http_status:
+                                    Type: TypeInt
+                                    Description: The HTTP status code used to abort the request.
+                                    Optional: "true"
+                                percentage:
+                                    Type: TypeInt
+                                    Description: The percentage of traffic which will be aborted.
+                                    Optional: "true"
+                        delay:
+                            Type: TypeList
+                            Description: Specification of how client requests are delayed as part of fault injection before being sent to a destination.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                fixed_delay:
+                                    Type: TypeString
+                                    Description: Specify a fixed delay before forwarding the request.
+                                    Optional: "true"
+                                percentage:
+                                    Type: TypeInt
+                                    Description: The percentage of traffic on which delay will be injected.
+                                    Optional: "true"
+                redirect:
+                    Type: TypeList
+                    Description: If set, the request is directed as configured by this field.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        host_redirect:
+                            Type: TypeString
+                            Description: The host that will be used in the redirect response instead of the one that was supplied in the request.
+                            Optional: "true"
+                        https_redirect:
+                            Type: TypeBool
+                            Description: If set to true, the URL scheme in the redirected request is set to https.
+                            Optional: "true"
+                        path_redirect:
+                            Type: TypeString
+                            Description: The path that will be used in the redirect response instead of the one that was supplied in the request. pathRedirect can not be supplied together with prefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request will be used for the redirect.
+                            Optional: "true"
+                        port_redirect:
+                            Type: TypeInt
+                            Description: The port that will be used in the redirected request instead of the one that was supplied in the request.
+                            Optional: "true"
+                        prefix_rewrite:
+                            Type: TypeString
+                            Description: Indicates that during redirection, the matched prefix (or path) should be swapped with this value.
+                            Optional: "true"
+                        response_code:
+                            Type: TypeString
+                            Description: The HTTP Status code to use for the redirect.
+                            Optional: "true"
+                        strip_query:
+                            Type: TypeBool
+                            Description: If set to true, any accompanying query portion of the original URL is removed prior to redirecting the request.
+                            Optional: "true"
+                request_header_modifier:
+                    Type: TypeList
+                    Description: The specification for modifying the headers of a matching request prior to delivery of the request to the destination.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        add:
+                            Type: TypeMap
+                            Description: Add the headers with given map where key is the name of the header, value is the value of the header.
+                            Optional: "true"
+                        remove:
+                            Type: TypeList
+                            Description: Remove headers (matching by header names) specified in the list.
+                            Optional: "true"
+                        set:
+                            Type: TypeMap
+                            Description: Completely overwrite/replace the headers with given map where key is the name of the header, value is the value of the header.
+                            Optional: "true"
+                request_mirror_policy:
+                    Type: TypeList
+                    Description: Specifies the policy on how requests intended for the routes destination are shadowed to a separate mirrored destination.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        destination:
+                            Type: TypeList
+                            Description: The destination the requests will be mirrored to.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                service_name:
+                                    Type: TypeString
+                                    Description: The URL of a BackendService to route traffic to.
+                                    Optional: "true"
+                                weight:
+                                    Type: TypeInt
+                                    Description: |-
+                                        Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports.
+                                        If only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend.
+                                        If weights are specified for any one service name, they need to be specified for all of them.
+                                        If weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.
+                                    Optional: "true"
+                response_header_modifier:
+                    Type: TypeList
+                    Description: The specification for modifying the headers of a response prior to sending the response back to the client.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        add:
+                            Type: TypeMap
+                            Description: Add the headers with given map where key is the name of the header, value is the value of the header.
+                            Optional: "true"
+                        remove:
+                            Type: TypeList
+                            Description: Remove headers (matching by header names) specified in the list.
+                            Optional: "true"
+                        set:
+                            Type: TypeMap
+                            Description: Completely overwrite/replace the headers with given map where key is the name of the header, value is the value of the header.
+                            Optional: "true"
+                retry_policy:
+                    Type: TypeList
+                    Description: Specifies the retry policy associated with this route.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        num_retries:
+                            Type: TypeInt
+                            Description: Specifies the allowed number of retries.
+                            Optional: "true"
+                        per_try_timeout:
+                            Type: TypeString
+                            Description: 'Specifies a non-zero timeout per retry attempt. A duration in seconds with up to nine fractional digits, ending with ''s''. Example: "3.5s".'
+                            Optional: "true"
+                        retry_conditions:
+                            Type: TypeList
+                            Description: Specifies one or more conditions when this retry policy applies.
+                            Optional: "true"
+                timeout:
+                    Type: TypeString
+                    Description: Specifies the timeout for selected route.
+                    Optional: "true"
+                url_rewrite:
+                    Type: TypeList
+                    Description: The specification for rewrite URL before forwarding requests to the destination.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        host_rewrite:
+                            Type: TypeString
+                            Description: Prior to forwarding the request to the selected destination, the requests host header is replaced by this value.
+                            Optional: "true"
+                        path_prefix_rewrite:
+                            Type: TypeString
+                            Description: Prior to forwarding the request to the selected destination, the matching portion of the requests path is replaced by this value.
+                            Optional: "true"
+        matches:
+            Type: TypeList
+            Description: |-
+                A list of matches define conditions used for matching the rule against incoming HTTP requests. Each match is independent, i.e. this rule will be matched if ANY one of the matches is satisfied.
+                If no matches field is specified, this rule will unconditionally match traffic.
+                If a default rule is desired to be configured, add a rule with no matches specified to the end of the rules list.
+            Optional: "true"
+            Properties:
+                full_path_match:
+                    Type: TypeString
+                    Description: The HTTP request path value should exactly match this value.
+                    Optional: "true"
+                headers:
+                    Type: TypeList
+                    Description: Specifies a list of HTTP request headers to match against.
+                    Optional: "true"
+                    Properties:
+                        exact_match:
+                            Type: TypeString
+                            Description: The value of the header should match exactly the content of exactMatch.
+                            Optional: "true"
+                        header:
+                            Type: TypeString
+                            Description: The name of the HTTP header to match against.
+                            Optional: "true"
+                        invert_match:
+                            Type: TypeBool
+                            Description: If specified, the match result will be inverted before checking. Default value is set to false.
+                            Optional: "true"
+                        prefix_match:
+                            Type: TypeString
+                            Description: The value of the header must start with the contents of prefixMatch.
+                            Optional: "true"
+                        present_match:
+                            Type: TypeBool
+                            Description: A header with headerName must exist. The match takes place whether or not the header has a value.
+                            Optional: "true"
+                        range_match:
+                            Type: TypeList
+                            Description: If specified, the rule will match if the request header value is within the range.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                end:
+                                    Type: TypeInt
+                                    Description: End of the range (exclusive).
+                                    Required: "true"
+                                start:
+                                    Type: TypeInt
+                                    Description: Start of the range (inclusive).
+                                    Required: "true"
+                        regex_match:
+                            Type: TypeString
+                            Description: The value of the header must match the regular expression specified in regexMatch.
+                            Optional: "true"
+                        suffix_match:
+                            Type: TypeString
+                            Description: The value of the header must end with the contents of suffixMatch.
+                            Optional: "true"
+                ignore_case:
+                    Type: TypeBool
+                    Description: Specifies if prefixMatch and fullPathMatch matches are case sensitive. The default value is false.
+                    Optional: "true"
+                prefix_match:
+                    Type: TypeString
+                    Description: The HTTP request path value must begin with specified prefixMatch. prefixMatch must begin with a /.
+                    Optional: "true"
+                query_parameters:
+                    Type: TypeList
+                    Description: Specifies a list of query parameters to match against.
+                    Optional: "true"
+                    Properties:
+                        exact_match:
+                            Type: TypeString
+                            Description: The value of the query parameter must exactly match the contents of exactMatch.
+                            Optional: "true"
+                        present_match:
+                            Type: TypeBool
+                            Description: Specifies that the QueryParameterMatcher matches if request contains query parameter, irrespective of whether the parameter has a value or not.
+                            Optional: "true"
+                        query_parameter:
+                            Type: TypeString
+                            Description: The name of the query parameter to match.
+                            Optional: "true"
+                        regex_match:
+                            Type: TypeString
+                            Description: The value of the query parameter must match the regular expression specified by regexMatch.For regular expression grammar, please see https://github.com/google/re2/wiki/Syntax
+                            Optional: "true"
+                regex_match:
+                    Type: TypeString
+                    Description: The HTTP request path value must satisfy the regular expression specified by regexMatch after removing any query parameters and anchor supplied with the original URL. For regular expression grammar, please see https://github.com/google/re2/wiki/Syntax
+                    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the HttpRoute was updated in UTC.
+    Computed: "true"
+

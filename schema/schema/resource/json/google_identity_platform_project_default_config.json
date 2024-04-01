@@ -1,0 +1,106 @@
+{
+    "name": {
+        "Computed": true,
+        "Description": "The name of the Config resource. Example: \"projects/my-awesome-project/config\"",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "sign_in": {
+        "Description": "Configuration related to local sign in methods.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_duplicate_emails": {
+                "Description": "Whether to allow more than one account to have the same email.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "anonymous": {
+                "Description": "Configuration options related to authenticating an anonymous user.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Whether anonymous user auth is enabled for the project or not.",
+                        "Required": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "email": {
+                "Description": "Configuration options related to authenticating a user by their email address.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Whether email auth is enabled for the project or not.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "password_required": {
+                        "Description": "Whether a password is required for email auth or not. If true, both an email and\npassword must be provided to sign in. If false, a user may sign in via either\nemail/password or email link.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "hash_config": {
+                "Computed": true,
+                "Description": "Output only. Hash config information.",
+                "Properties": {
+                    "algorithm": {
+                        "Computed": true,
+                        "Description": "Different password hash algorithms used in Identity Toolkit.",
+                        "Type": "TypeString"
+                    },
+                    "memory_cost": {
+                        "Computed": true,
+                        "Description": "Memory cost for hash calculation. Used by scrypt and other similar password derivation algorithms. See https://tools.ietf.org/html/rfc7914 for explanation of field.",
+                        "Type": "TypeInt"
+                    },
+                    "rounds": {
+                        "Computed": true,
+                        "Description": "How many rounds for hash calculation. Used by scrypt and other similar password derivation algorithms.",
+                        "Type": "TypeInt"
+                    },
+                    "salt_separator": {
+                        "Computed": true,
+                        "Description": "Non-printable character to be inserted between the salt and plain text password in base64.",
+                        "Type": "TypeString"
+                    },
+                    "signer_key": {
+                        "Computed": true,
+                        "Description": "Signer key in base64.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "phone_number": {
+                "Description": "Configuration options related to authenticated a user by their phone number.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Whether phone number auth is enabled for the project or not.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "test_phone_numbers": {
+                        "Description": "A map of \u003ctest phone number, fake code\u003e that can be used for phone auth testing.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

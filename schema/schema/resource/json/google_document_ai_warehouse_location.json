@@ -1,0 +1,32 @@
+{
+    "access_control_mode": {
+        "Description": "The access control mode for accessing the customer data. Possible values: [\"ACL_MODE_DOCUMENT_LEVEL_ACCESS_CONTROL_GCI\", \"ACL_MODE_DOCUMENT_LEVEL_ACCESS_CONTROL_BYOID\", \"ACL_MODE_UNIVERSAL_ACCESS\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "database_type": {
+        "Description": "The type of database used to store customer data. Possible values: [\"DB_INFRA_SPANNER\", \"DB_CLOUD_SQL_POSTGRES\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "document_creator_default_role": {
+        "Description": "The default role for the person who create a document. Possible values: [\"DOCUMENT_ADMIN\", \"DOCUMENT_EDITOR\", \"DOCUMENT_VIEWER\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "kms_key": {
+        "Description": "The KMS key used for CMEK encryption. It is required that\nthe kms key is in the same region as the endpoint. The\nsame key will be used for all provisioned resources, if\nencryption is available. If the kmsKey is left empty, no\nencryption will be enforced.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location in which the instance is to be provisioned. It takes the form projects/{projectNumber}/locations/{location}.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project_number": {
+        "Description": "The unique identifier of the project.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

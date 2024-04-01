@@ -1,0 +1,27 @@
+create_time: TypeString
+description: TypeString
+effective_labels: unknown
+hub: TypeString
+labels: TypeMap(TypeString)
+linked_interconnect_attachments:
+    site_to_site_data_transfer: TypeBool
+    uris: TypeList(TypeString)
+linked_router_appliance_instances:
+    instances:
+        ip_address: TypeString
+        virtual_machine: TypeString
+    site_to_site_data_transfer: TypeBool
+linked_vpc_network:
+    exclude_export_ranges: TypeList(TypeString)
+    uri: TypeString
+linked_vpn_tunnels:
+    site_to_site_data_transfer: TypeBool
+    uris: TypeList(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: unknown
+unique_id: TypeString
+update_time: TypeString
+

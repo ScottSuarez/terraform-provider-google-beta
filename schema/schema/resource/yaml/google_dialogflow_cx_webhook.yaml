@@ -1,0 +1,87 @@
+disabled:
+    Type: TypeBool
+    Description: Indicates whether the webhook is disabled.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: The human-readable name of the webhook, unique within the agent.
+    Required: "true"
+enable_spell_correction:
+    Type: TypeBool
+    Description: Indicates if automatic spell correction is enabled in detect intent requests.
+    Optional: "true"
+enable_stackdriver_logging:
+    Type: TypeBool
+    Description: Determines whether this agent should log conversation queries.
+    Optional: "true"
+generic_web_service:
+    Type: TypeList
+    Description: Configuration for a generic web service.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        allowed_ca_certs:
+            Type: TypeList
+            Description: Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.
+            Optional: "true"
+        request_headers:
+            Type: TypeMap
+            Description: The HTTP request headers to send together with webhook requests.
+            Optional: "true"
+        uri:
+            Type: TypeString
+            Description: Whether to use speech adaptation for speech recognition.
+            Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique identifier of the webhook.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/webhooks/<Webhook ID>.
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The agent to create a webhook for.
+        Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>.
+    Optional: "true"
+security_settings:
+    Type: TypeString
+    Description: 'Name of the SecuritySettings reference for the agent. Format: projects/<Project ID>/locations/<Location ID>/securitySettings/<Security Settings ID>.'
+    Optional: "true"
+service_directory:
+    Type: TypeList
+    Description: Configuration for a Service Directory service.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        generic_web_service:
+            Type: TypeList
+            Description: The name of Service Directory service.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                allowed_ca_certs:
+                    Type: TypeList
+                    Description: Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.
+                    Optional: "true"
+                request_headers:
+                    Type: TypeMap
+                    Description: The HTTP request headers to send together with webhook requests.
+                    Optional: "true"
+                uri:
+                    Type: TypeString
+                    Description: Whether to use speech adaptation for speech recognition.
+                    Required: "true"
+        service:
+            Type: TypeString
+            Description: The name of Service Directory service.
+            Required: "true"
+start_flow:
+    Type: TypeString
+    Description: 'Name of the start flow in this agent. A start flow will be automatically created when the agent is created, and can only be deleted by deleting the agent. Format: projects/<Project ID>/locations/<Location ID>/agents/<Agent ID>/flows/<Flow ID>.'
+    Computed: "true"
+timeout:
+    Type: TypeString
+    Description: Webhook execution timeout.
+    Optional: "true"
+

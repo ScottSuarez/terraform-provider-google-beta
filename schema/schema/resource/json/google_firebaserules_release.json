@@ -1,0 +1,33 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. Time the release was created.",
+        "Type": "TypeString"
+    },
+    "disabled": {
+        "Computed": true,
+        "Description": "Disable the release to keep it from being served. The response code of NOT_FOUND will be given for executables generated from this Release.",
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "Format: `projects/{project_id}/releases/{release_id}`\\Firestore Rules Releases will **always** have the name 'cloud.firestore'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ruleset_name": {
+        "Description": "Name of the `Ruleset` referred to by this `Release`. The `Ruleset` must exist for the `Release` to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. Time the release was updated.",
+        "Type": "TypeString"
+    }
+}

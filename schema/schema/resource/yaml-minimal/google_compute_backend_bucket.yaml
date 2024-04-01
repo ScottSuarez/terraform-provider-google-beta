@@ -1,0 +1,28 @@
+bucket_name: TypeString
+cdn_policy:
+    bypass_cache_on_request_headers:
+        header_name: TypeString
+    cache_key_policy:
+        include_http_headers: TypeList(TypeString)
+        query_string_whitelist: TypeList(TypeString)
+    cache_mode: TypeString
+    client_ttl: TypeInt
+    default_ttl: TypeInt
+    max_ttl: TypeInt
+    negative_caching: TypeBool
+    negative_caching_policy:
+        code: TypeInt
+        ttl: TypeInt
+    request_coalescing: TypeBool
+    serve_while_stale: TypeInt
+    signed_url_cache_max_age_sec: TypeInt
+compression_mode: TypeString
+creation_timestamp: TypeString
+custom_response_headers: TypeList(TypeString)
+description: TypeString
+edge_security_policy: TypeString
+enable_cdn: TypeBool
+name: TypeString
+project: TypeString
+self_link: TypeString
+

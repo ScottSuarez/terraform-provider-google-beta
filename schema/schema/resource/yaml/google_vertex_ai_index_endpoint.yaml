@@ -1,0 +1,84 @@
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the Index was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: The description of the Index.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: The display name of the Index. The name can be up to 128 characters long and can consist of any UTF-8 characters.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+etag:
+    Type: TypeString
+    Description: Used to perform consistent read-modify-write updates.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        The labels with user-defined metadata to organize your Indexes.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the Index.
+    Computed: "true"
+network:
+    Type: TypeString
+    Description: |-
+        The full name of the Google Compute Engine [network](https://cloud.google.com//compute/docs/networks-and-firewalls#networks) to which the index endpoint should be peered.
+        Private services access must already be configured for the network. If left unspecified, the index endpoint is not peered with any network.
+        [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): 'projects/{project}/global/networks/{network}'.
+        Where '{project}' is a project number, as in '12345', and '{network}' is network name.
+    Optional: "true"
+    ConflictsWith: private_service_connect_config
+private_service_connect_config:
+    Type: TypeList
+    Description: Optional. Configuration for private service connect. 'network' and 'privateServiceConnectConfig' are mutually exclusive.
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: network
+    MaxItems: "1"
+    Properties:
+        enable_private_service_connect:
+            Type: TypeBool
+            Description: If set to true, the IndexEndpoint is created without private service access.
+            Required: "true"
+        project_allowlist:
+            Type: TypeList
+            Description: A list of Projects from which the forwarding rule will target the service attachment.
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+public_endpoint_domain_name:
+    Type: TypeString
+    Description: If publicEndpointEnabled is true, this field will be populated with the domain name to use for this index endpoint.
+    Computed: "true"
+public_endpoint_enabled:
+    Type: TypeBool
+    Description: If true, the deployed index will be accessible through public endpoint.
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the index endpoint. eg us-central1
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the Index was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+

@@ -1,0 +1,56 @@
+display_name:
+    Type: TypeString
+    Description: An arbitrary user-provided name for the AppConnector.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: ID of the AppConnector.
+    Required: "true"
+principal_info:
+    Type: TypeList
+    Description: Principal information about the Identity of the AppConnector.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        service_account:
+            Type: TypeList
+            Description: ServiceAccount represents a GCP service account.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                email:
+                    Type: TypeString
+                    Description: Email address of the service account.
+                    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the AppConnector.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: Represents the different states of a AppConnector.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

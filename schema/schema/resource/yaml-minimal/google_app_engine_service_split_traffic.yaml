@@ -1,0 +1,7 @@
+migrate_traffic: TypeBool
+project: TypeString
+service: TypeString
+split:
+    allocations: TypeMap(TypeString)
+    shard_by: TypeString
+

@@ -1,0 +1,11 @@
+creation_timestamp: TypeString
+description: TypeString
+instance: TypeString
+name: TypeString
+nat_policy: TypeString
+network: TypeString
+project: TypeString
+security_policy: TypeString
+self_link: TypeString
+zone: TypeString
+

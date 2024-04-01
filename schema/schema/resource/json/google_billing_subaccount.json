@@ -1,0 +1,26 @@
+{
+    "billing_account_id": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "master_billing_account": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "open": {
+        "Computed": true,
+        "Type": "TypeBool"
+    }
+}

@@ -1,0 +1,867 @@
+backfill_all:
+    Type: TypeList
+    Description: Backfill strategy to automatically backfill the Stream's objects. Specific objects can be excluded.
+    Optional: "true"
+    ExactlyOneOf: backfill_all, backfill_none
+    MaxItems: "1"
+    Properties:
+        mysql_excluded_objects:
+            Type: TypeList
+            Description: MySQL data source objects to avoid backfilling.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                mysql_databases:
+                    Type: TypeList
+                    Description: MySQL databases on the server
+                    Required: "true"
+                    MinItems: "1"
+                    Properties:
+                        database:
+                            Type: TypeString
+                            Description: Database name.
+                            Required: "true"
+                        mysql_tables:
+                            Type: TypeList
+                            Description: Tables in the database.
+                            Optional: "true"
+                            MinItems: "1"
+                            Properties:
+                                mysql_columns:
+                                    Type: TypeList
+                                    Description: MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        collation:
+                                            Type: TypeString
+                                            Description: Column collation.
+                                            Optional: "true"
+                                        column:
+                                            Type: TypeString
+                                            Description: Column name.
+                                            Optional: "true"
+                                        data_type:
+                                            Type: TypeString
+                                            Description: |-
+                                                The MySQL data type. Full data types list can be found here:
+                                                https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+                                            Optional: "true"
+                                        length:
+                                            Type: TypeInt
+                                            Description: Column length.
+                                            Computed: "true"
+                                        nullable:
+                                            Type: TypeBool
+                                            Description: Whether or not the column can accept a null value.
+                                            Optional: "true"
+                                        ordinal_position:
+                                            Type: TypeInt
+                                            Description: The ordinal position of the column in the table.
+                                            Optional: "true"
+                                        primary_key:
+                                            Type: TypeBool
+                                            Description: Whether or not the column represents a primary key.
+                                            Optional: "true"
+                                table:
+                                    Type: TypeString
+                                    Description: Table name.
+                                    Required: "true"
+        oracle_excluded_objects:
+            Type: TypeList
+            Description: PostgreSQL data source objects to avoid backfilling.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                oracle_schemas:
+                    Type: TypeList
+                    Description: Oracle schemas/databases in the database server
+                    Required: "true"
+                    MinItems: "1"
+                    Properties:
+                        oracle_tables:
+                            Type: TypeList
+                            Description: Tables in the database.
+                            Optional: "true"
+                            MinItems: "1"
+                            Properties:
+                                oracle_columns:
+                                    Type: TypeList
+                                    Description: Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        column:
+                                            Type: TypeString
+                                            Description: Column name.
+                                            Optional: "true"
+                                        data_type:
+                                            Type: TypeString
+                                            Description: |-
+                                                The Oracle data type. Full data types list can be found here:
+                                                https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html
+                                            Optional: "true"
+                                        encoding:
+                                            Type: TypeString
+                                            Description: Column encoding.
+                                            Computed: "true"
+                                        length:
+                                            Type: TypeInt
+                                            Description: Column length.
+                                            Computed: "true"
+                                        nullable:
+                                            Type: TypeBool
+                                            Description: Whether or not the column can accept a null value.
+                                            Computed: "true"
+                                        ordinal_position:
+                                            Type: TypeInt
+                                            Description: The ordinal position of the column in the table.
+                                            Computed: "true"
+                                        precision:
+                                            Type: TypeInt
+                                            Description: Column precision.
+                                            Computed: "true"
+                                        primary_key:
+                                            Type: TypeBool
+                                            Description: Whether or not the column represents a primary key.
+                                            Computed: "true"
+                                        scale:
+                                            Type: TypeInt
+                                            Description: Column scale.
+                                            Computed: "true"
+                                table:
+                                    Type: TypeString
+                                    Description: Table name.
+                                    Required: "true"
+                        schema:
+                            Type: TypeString
+                            Description: Schema name.
+                            Required: "true"
+        postgresql_excluded_objects:
+            Type: TypeList
+            Description: PostgreSQL data source objects to avoid backfilling.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                postgresql_schemas:
+                    Type: TypeList
+                    Description: PostgreSQL schemas on the server
+                    Required: "true"
+                    MinItems: "1"
+                    Properties:
+                        postgresql_tables:
+                            Type: TypeList
+                            Description: Tables in the schema.
+                            Optional: "true"
+                            MinItems: "1"
+                            Properties:
+                                postgresql_columns:
+                                    Type: TypeList
+                                    Description: PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        column:
+                                            Type: TypeString
+                                            Description: Column name.
+                                            Optional: "true"
+                                        data_type:
+                                            Type: TypeString
+                                            Description: |-
+                                                The PostgreSQL data type. Full data types list can be found here:
+                                                https://www.postgresql.org/docs/current/datatype.html
+                                            Optional: "true"
+                                        length:
+                                            Type: TypeInt
+                                            Description: Column length.
+                                            Computed: "true"
+                                        nullable:
+                                            Type: TypeBool
+                                            Description: Whether or not the column can accept a null value.
+                                            Optional: "true"
+                                        ordinal_position:
+                                            Type: TypeInt
+                                            Description: The ordinal position of the column in the table.
+                                            Optional: "true"
+                                        precision:
+                                            Type: TypeInt
+                                            Description: Column precision.
+                                            Computed: "true"
+                                        primary_key:
+                                            Type: TypeBool
+                                            Description: Whether or not the column represents a primary key.
+                                            Optional: "true"
+                                        scale:
+                                            Type: TypeInt
+                                            Description: Column scale.
+                                            Computed: "true"
+                                table:
+                                    Type: TypeString
+                                    Description: Table name.
+                                    Required: "true"
+                        schema:
+                            Type: TypeString
+                            Description: Database name.
+                            Required: "true"
+backfill_none:
+    Type: TypeList
+    Description: Backfill strategy to disable automatic backfill for the Stream's objects.
+    Optional: "true"
+    ExactlyOneOf: backfill_all, backfill_none
+    MaxItems: "1"
+    Properties: {}
+customer_managed_encryption_key:
+    Type: TypeString
+    Description: |-
+        A reference to a KMS encryption key. If provided, it will be used to encrypt the data. If left blank, data
+        will be encrypted using an internal Stream-specific encryption key provisioned through KMS.
+    Optional: "true"
+desired_state:
+    Type: TypeString
+    Description: Desired state of the Stream. Set this field to 'RUNNING' to start the stream, and 'PAUSED' to pause the stream.
+    Optional: "true"
+destination_config:
+    Type: TypeList
+    Description: Destination connection profile configuration.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        bigquery_destination_config:
+            Type: TypeList
+            Description: A configuration for how data should be loaded to Cloud Storage.
+            Optional: "true"
+            ExactlyOneOf: destination_config.0.gcs_destination_config, destination_config.0.bigquery_destination_config
+            MaxItems: "1"
+            Properties:
+                data_freshness:
+                    Type: TypeString
+                    Description: |-
+                        The guaranteed data freshness (in seconds) when querying tables created by the stream.
+                        Editing this field will only affect new tables created in the future, but existing tables
+                        will not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.
+                        A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s". Defaults to 900s.
+                    Optional: "true"
+                single_target_dataset:
+                    Type: TypeList
+                    Description: A single target dataset to which all data will be streamed.
+                    Optional: "true"
+                    ExactlyOneOf: destination_config.0.bigquery_destination_config.0.single_target_dataset, destination_config.0.bigquery_destination_config.0.source_hierarchy_datasets
+                    MaxItems: "1"
+                    Properties:
+                        dataset_id:
+                            Type: TypeString
+                            Description: |-
+                                Dataset ID in the format projects/{project}/datasets/{dataset_id} or
+                                {project}:{dataset_id}
+                            Required: "true"
+                source_hierarchy_datasets:
+                    Type: TypeList
+                    Description: Destination datasets are created so that hierarchy of the destination data objects matches the source hierarchy.
+                    Optional: "true"
+                    ExactlyOneOf: destination_config.0.bigquery_destination_config.0.single_target_dataset, destination_config.0.bigquery_destination_config.0.source_hierarchy_datasets
+                    MaxItems: "1"
+                    Properties:
+                        dataset_template:
+                            Type: TypeList
+                            Description: Dataset template used for dynamic dataset creation.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                dataset_id_prefix:
+                                    Type: TypeString
+                                    Description: |-
+                                        If supplied, every created dataset will have its name prefixed by the provided value.
+                                        The prefix and name will be separated by an underscore. i.e. _.
+                                    Optional: "true"
+                                kms_key_name:
+                                    Type: TypeString
+                                    Description: |-
+                                        Describes the Cloud KMS encryption key that will be used to protect destination BigQuery
+                                        table. The BigQuery Service Account associated with your project requires access to this
+                                        encryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}.
+                                        See https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.
+                                    Optional: "true"
+                                location:
+                                    Type: TypeString
+                                    Description: |-
+                                        The geographic location where the dataset should reside.
+                                        See https://cloud.google.com/bigquery/docs/locations for supported locations.
+                                    Required: "true"
+        destination_connection_profile:
+            Type: TypeString
+            Description: 'Destination connection profile resource. Format: projects/{project}/locations/{location}/connectionProfiles/{name}'
+            Required: "true"
+        gcs_destination_config:
+            Type: TypeList
+            Description: A configuration for how data should be loaded to Cloud Storage.
+            Optional: "true"
+            ExactlyOneOf: destination_config.0.gcs_destination_config, destination_config.0.bigquery_destination_config
+            MaxItems: "1"
+            Properties:
+                avro_file_format:
+                    Type: TypeList
+                    Description: AVRO file format configuration.
+                    Optional: "true"
+                    ExactlyOneOf: destination_config.0.gcs_destination_config.0.avro_file_format, destination_config.0.gcs_destination_config.0.json_file_format
+                    MaxItems: "1"
+                    Properties: {}
+                file_rotation_interval:
+                    Type: TypeString
+                    Description: |-
+                        The maximum duration for which new events are added before a file is closed and a new file is created.
+                        A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s". Defaults to 900s.
+                    Computed: "true"
+                    Optional: "true"
+                file_rotation_mb:
+                    Type: TypeInt
+                    Description: The maximum file size to be saved in the bucket.
+                    Computed: "true"
+                    Optional: "true"
+                json_file_format:
+                    Type: TypeList
+                    Description: JSON file format configuration.
+                    Optional: "true"
+                    ExactlyOneOf: destination_config.0.gcs_destination_config.0.avro_file_format, destination_config.0.gcs_destination_config.0.json_file_format
+                    MaxItems: "1"
+                    Properties:
+                        compression:
+                            Type: TypeString
+                            Description: 'Compression of the loaded JSON file. Possible values: ["NO_COMPRESSION", "GZIP"]'
+                            Optional: "true"
+                        schema_file_format:
+                            Type: TypeString
+                            Description: 'The schema file format along JSON data files. Possible values: ["NO_SCHEMA_FILE", "AVRO_SCHEMA_FILE"]'
+                            Optional: "true"
+                path:
+                    Type: TypeString
+                    Description: Path inside the Cloud Storage bucket to write data to.
+                    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Display name.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The name of the location this stream is located in.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The stream's name.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+source_config:
+    Type: TypeList
+    Description: Source connection profile configuration.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        mysql_source_config:
+            Type: TypeList
+            Description: MySQL data source configuration.
+            Optional: "true"
+            ExactlyOneOf: source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config
+            MaxItems: "1"
+            Properties:
+                exclude_objects:
+                    Type: TypeList
+                    Description: MySQL objects to exclude from the stream.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        mysql_databases:
+                            Type: TypeList
+                            Description: MySQL databases on the server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                database:
+                                    Type: TypeString
+                                    Description: Database name.
+                                    Required: "true"
+                                mysql_tables:
+                                    Type: TypeList
+                                    Description: Tables in the database.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        mysql_columns:
+                                            Type: TypeList
+                                            Description: MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                collation:
+                                                    Type: TypeString
+                                                    Description: Column collation.
+                                                    Optional: "true"
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The MySQL data type. Full data types list can be found here:
+                                                        https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+                                                    Optional: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Optional: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Optional: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Optional: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                include_objects:
+                    Type: TypeList
+                    Description: MySQL objects to retrieve from the source.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        mysql_databases:
+                            Type: TypeList
+                            Description: MySQL databases on the server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                database:
+                                    Type: TypeString
+                                    Description: Database name.
+                                    Required: "true"
+                                mysql_tables:
+                                    Type: TypeList
+                                    Description: Tables in the database.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        mysql_columns:
+                                            Type: TypeList
+                                            Description: MySQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                collation:
+                                                    Type: TypeString
+                                                    Description: Column collation.
+                                                    Optional: "true"
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The MySQL data type. Full data types list can be found here:
+                                                        https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+                                                    Optional: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Optional: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Optional: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Optional: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                max_concurrent_backfill_tasks:
+                    Type: TypeInt
+                    Description: |-
+                        Maximum number of concurrent backfill tasks. The number should be non negative.
+                        If not set (or set to 0), the system's default value will be used.
+                    Computed: "true"
+                    Optional: "true"
+                max_concurrent_cdc_tasks:
+                    Type: TypeInt
+                    Description: |-
+                        Maximum number of concurrent CDC tasks. The number should be non negative.
+                        If not set (or set to 0), the system's default value will be used.
+                    Computed: "true"
+                    Optional: "true"
+        oracle_source_config:
+            Type: TypeList
+            Description: MySQL data source configuration.
+            Optional: "true"
+            ExactlyOneOf: source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config
+            MaxItems: "1"
+            Properties:
+                drop_large_objects:
+                    Type: TypeList
+                    Description: Configuration to drop large object values.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties: {}
+                exclude_objects:
+                    Type: TypeList
+                    Description: Oracle objects to exclude from the stream.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        oracle_schemas:
+                            Type: TypeList
+                            Description: Oracle schemas/databases in the database server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                oracle_tables:
+                                    Type: TypeList
+                                    Description: Tables in the database.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        oracle_columns:
+                                            Type: TypeList
+                                            Description: Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The Oracle data type. Full data types list can be found here:
+                                                        https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html
+                                                    Optional: "true"
+                                                encoding:
+                                                    Type: TypeString
+                                                    Description: Column encoding.
+                                                    Computed: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Computed: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Computed: "true"
+                                                precision:
+                                                    Type: TypeInt
+                                                    Description: Column precision.
+                                                    Computed: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Computed: "true"
+                                                scale:
+                                                    Type: TypeInt
+                                                    Description: Column scale.
+                                                    Computed: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                                schema:
+                                    Type: TypeString
+                                    Description: Schema name.
+                                    Required: "true"
+                include_objects:
+                    Type: TypeList
+                    Description: Oracle objects to retrieve from the source.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        oracle_schemas:
+                            Type: TypeList
+                            Description: Oracle schemas/databases in the database server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                oracle_tables:
+                                    Type: TypeList
+                                    Description: Tables in the database.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        oracle_columns:
+                                            Type: TypeList
+                                            Description: Oracle columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The Oracle data type. Full data types list can be found here:
+                                                        https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html
+                                                    Optional: "true"
+                                                encoding:
+                                                    Type: TypeString
+                                                    Description: Column encoding.
+                                                    Computed: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Computed: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Computed: "true"
+                                                precision:
+                                                    Type: TypeInt
+                                                    Description: Column precision.
+                                                    Computed: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Computed: "true"
+                                                scale:
+                                                    Type: TypeInt
+                                                    Description: Column scale.
+                                                    Computed: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                                schema:
+                                    Type: TypeString
+                                    Description: Schema name.
+                                    Required: "true"
+                max_concurrent_backfill_tasks:
+                    Type: TypeInt
+                    Description: |-
+                        Maximum number of concurrent backfill tasks. The number should be non negative.
+                        If not set (or set to 0), the system's default value will be used.
+                    Computed: "true"
+                    Optional: "true"
+                max_concurrent_cdc_tasks:
+                    Type: TypeInt
+                    Description: |-
+                        Maximum number of concurrent CDC tasks. The number should be non negative.
+                        If not set (or set to 0), the system's default value will be used.
+                    Computed: "true"
+                    Optional: "true"
+                stream_large_objects:
+                    Type: TypeList
+                    Description: Configuration to drop large object values.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties: {}
+        postgresql_source_config:
+            Type: TypeList
+            Description: PostgreSQL data source configuration.
+            Optional: "true"
+            ExactlyOneOf: source_config.0.mysql_source_config, source_config.0.oracle_source_config, source_config.0.postgresql_source_config
+            MaxItems: "1"
+            Properties:
+                exclude_objects:
+                    Type: TypeList
+                    Description: PostgreSQL objects to exclude from the stream.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        postgresql_schemas:
+                            Type: TypeList
+                            Description: PostgreSQL schemas on the server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                postgresql_tables:
+                                    Type: TypeList
+                                    Description: Tables in the schema.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        postgresql_columns:
+                                            Type: TypeList
+                                            Description: PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The PostgreSQL data type. Full data types list can be found here:
+                                                        https://www.postgresql.org/docs/current/datatype.html
+                                                    Optional: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Optional: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Optional: "true"
+                                                precision:
+                                                    Type: TypeInt
+                                                    Description: Column precision.
+                                                    Computed: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Optional: "true"
+                                                scale:
+                                                    Type: TypeInt
+                                                    Description: Column scale.
+                                                    Computed: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                                schema:
+                                    Type: TypeString
+                                    Description: Database name.
+                                    Required: "true"
+                include_objects:
+                    Type: TypeList
+                    Description: PostgreSQL objects to retrieve from the source.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        postgresql_schemas:
+                            Type: TypeList
+                            Description: PostgreSQL schemas on the server
+                            Required: "true"
+                            MinItems: "1"
+                            Properties:
+                                postgresql_tables:
+                                    Type: TypeList
+                                    Description: Tables in the schema.
+                                    Optional: "true"
+                                    MinItems: "1"
+                                    Properties:
+                                        postgresql_columns:
+                                            Type: TypeList
+                                            Description: PostgreSQL columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+                                            Optional: "true"
+                                            MinItems: "1"
+                                            Properties:
+                                                column:
+                                                    Type: TypeString
+                                                    Description: Column name.
+                                                    Optional: "true"
+                                                data_type:
+                                                    Type: TypeString
+                                                    Description: |-
+                                                        The PostgreSQL data type. Full data types list can be found here:
+                                                        https://www.postgresql.org/docs/current/datatype.html
+                                                    Optional: "true"
+                                                length:
+                                                    Type: TypeInt
+                                                    Description: Column length.
+                                                    Computed: "true"
+                                                nullable:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column can accept a null value.
+                                                    Optional: "true"
+                                                ordinal_position:
+                                                    Type: TypeInt
+                                                    Description: The ordinal position of the column in the table.
+                                                    Optional: "true"
+                                                precision:
+                                                    Type: TypeInt
+                                                    Description: Column precision.
+                                                    Computed: "true"
+                                                primary_key:
+                                                    Type: TypeBool
+                                                    Description: Whether or not the column represents a primary key.
+                                                    Optional: "true"
+                                                scale:
+                                                    Type: TypeInt
+                                                    Description: Column scale.
+                                                    Computed: "true"
+                                        table:
+                                            Type: TypeString
+                                            Description: Table name.
+                                            Required: "true"
+                                schema:
+                                    Type: TypeString
+                                    Description: Database name.
+                                    Required: "true"
+                max_concurrent_backfill_tasks:
+                    Type: TypeInt
+                    Description: |-
+                        Maximum number of concurrent backfill tasks. The number should be non
+                        negative. If not set (or set to 0), the system's default value will be used.
+                    Computed: "true"
+                    Optional: "true"
+                publication:
+                    Type: TypeString
+                    Description: |-
+                        The name of the publication that includes the set of all tables
+                        that are defined in the stream's include_objects.
+                    Required: "true"
+                replication_slot:
+                    Type: TypeString
+                    Description: |-
+                        The name of the logical replication slot that's configured with
+                        the pgoutput plugin.
+                    Required: "true"
+        source_connection_profile:
+            Type: TypeString
+            Description: 'Source connection profile resource. Format: projects/{project}/locations/{location}/connectionProfiles/{name}'
+            Required: "true"
+state:
+    Type: TypeString
+    Description: The state of the stream.
+    Computed: "true"
+stream_id:
+    Type: TypeString
+    Description: The stream identifier.
+    Required: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

@@ -1,0 +1,106 @@
+collector_ilb:
+    Type: TypeList
+    Description: |-
+        The Forwarding Rule resource (of type load_balancing_scheme=INTERNAL)
+        that will be used as collector for mirrored traffic. The
+        specified forwarding rule must have is_mirroring_collector
+        set to true.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        url:
+            Type: TypeString
+            Description: The URL of the forwarding rule.
+            Required: "true"
+description:
+    Type: TypeString
+    Description: A human-readable description of the rule.
+    Optional: "true"
+filter:
+    Type: TypeList
+    Description: A filter for mirrored traffic.  If unset, all traffic is mirrored.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        cidr_ranges:
+            Type: TypeList
+            Description: |-
+                IP CIDR ranges that apply as a filter on the source (ingress) or
+                destination (egress) IP in the IP header. Only IPv4 is supported.
+            Optional: "true"
+        direction:
+            Type: TypeString
+            Description: 'Direction of traffic to mirror. Default value: "BOTH" Possible values: ["INGRESS", "EGRESS", "BOTH"]'
+            Optional: "true"
+        ip_protocols:
+            Type: TypeList
+            Description: Possible IP protocols including tcp, udp, icmp and esp
+            Optional: "true"
+mirrored_resources:
+    Type: TypeList
+    Description: A means of specifying which resources to mirror.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        instances:
+            Type: TypeList
+            Description: All the listed instances will be mirrored.  Specify at most 50.
+            Optional: "true"
+            AtLeastOneOf: mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags
+            Properties:
+                url:
+                    Type: TypeString
+                    Description: The URL of the instances where this rule should be active.
+                    Required: "true"
+        subnetworks:
+            Type: TypeList
+            Description: All instances in one of these subnetworks will be mirrored.
+            Optional: "true"
+            AtLeastOneOf: mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags
+            Properties:
+                url:
+                    Type: TypeString
+                    Description: The URL of the subnetwork where this rule should be active.
+                    Required: "true"
+        tags:
+            Type: TypeList
+            Description: All instances with these tags will be mirrored.
+            Optional: "true"
+            AtLeastOneOf: mirrored_resources.0.subnetworks, mirrored_resources.0.instances, mirrored_resources.0.tags
+name:
+    Type: TypeString
+    Description: The name of the packet mirroring rule
+    Required: "true"
+network:
+    Type: TypeList
+    Description: |-
+        Specifies the mirrored VPC network. Only packets in this network
+        will be mirrored. All mirrored VMs should have a NIC in the given
+        network. All mirrored subnetworks should belong to the given network.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        url:
+            Type: TypeString
+            Description: The full self_link URL of the network where this rule is active.
+            Required: "true"
+priority:
+    Type: TypeInt
+    Description: |-
+        Since only one rule can be active at a time, priority is
+        used to break ties in the case of two rules that apply to
+        the same instances.
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: |-
+        The Region in which the created address should reside.
+        If it is not provided, the provider region is used.
+    Computed: "true"
+    Optional: "true"
+

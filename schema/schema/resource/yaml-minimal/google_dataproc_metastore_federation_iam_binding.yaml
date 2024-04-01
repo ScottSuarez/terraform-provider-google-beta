@@ -1,0 +1,11 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+federation_id: TypeString
+location: TypeString
+members: TypeSet(TypeString)
+project: TypeString
+role: TypeString
+

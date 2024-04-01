@@ -1,0 +1,9 @@
+display_name: TypeString
+enable_fuzzy_extraction: TypeBool
+entities:
+    synonyms: TypeList(TypeString)
+    value: TypeString
+kind: TypeString
+name: TypeString
+project: TypeString
+

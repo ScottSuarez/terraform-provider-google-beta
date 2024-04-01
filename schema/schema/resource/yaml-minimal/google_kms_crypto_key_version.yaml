@@ -1,0 +1,17 @@
+algorithm: TypeString
+attestation:
+    cert_chains:
+        cavium_certs: TypeString
+        google_card_certs: TypeString
+        google_partition_certs: TypeString
+    content: TypeString
+    external_protection_level_options:
+        ekm_connection_key_path: TypeString
+        external_key_uri: TypeString
+    format: TypeString
+crypto_key: TypeString
+generate_time: TypeString
+name: TypeString
+protection_level: TypeString
+state: TypeString
+

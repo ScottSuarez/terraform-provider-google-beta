@@ -1,0 +1,599 @@
+available_maintenance_versions:
+    Type: TypeList
+    Description: Available Maintenance versions.
+    Computed: "true"
+clone:
+    Type: TypeList
+    Description: Configuration for creating a new instance as a clone of another instance.
+    Optional: "true"
+    AtLeastOneOf: settings, clone
+    MaxItems: "1"
+    Properties:
+        allocated_ip_range:
+            Type: TypeString
+            Description: 'The name of the allocated ip range for the private ip CloudSQL instance. For example: "google-managed-services-default". If set, the cloned instance ip will be created in the allocated range. The range name must comply with [RFC 1035](https://tools.ietf.org/html/rfc1035). Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?.'
+            Optional: "true"
+        database_names:
+            Type: TypeList
+            Description: (SQL Server only, use with point_in_time) clone only the specified databases from the source instance. Clone all databases if empty.
+            Optional: "true"
+        point_in_time:
+            Type: TypeString
+            Description: The timestamp of the point in time that should be restored.
+            Optional: "true"
+        preferred_zone:
+            Type: TypeString
+            Description: (Point-in-time recovery for PostgreSQL only) Clone to an instance in the specified zone. If no zone is specified, clone to the same zone as the source instance.
+            Optional: "true"
+        source_instance_name:
+            Type: TypeString
+            Description: The name of the instance from which the point in time should be restored.
+            Required: "true"
+connection_name:
+    Type: TypeString
+    Description: The connection name of the instance to be used in connection strings. For example, when connecting with Cloud SQL Proxy.
+    Computed: "true"
+database_version:
+    Type: TypeString
+    Description: The MySQL, PostgreSQL or SQL Server (beta) version to use. Supported values include MYSQL_5_6, MYSQL_5_7, MYSQL_8_0, POSTGRES_9_6, POSTGRES_10, POSTGRES_11, POSTGRES_12, POSTGRES_13, POSTGRES_14, POSTGRES_15, SQLSERVER_2017_STANDARD, SQLSERVER_2017_ENTERPRISE, SQLSERVER_2017_EXPRESS, SQLSERVER_2017_WEB. Database Version Policies includes an up-to-date reference of supported versions.
+    Required: "true"
+deletion_protection:
+    Type: TypeBool
+    Description: Used to block Terraform from deleting a SQL Instance. Defaults to true.
+    Optional: "true"
+dns_name:
+    Type: TypeString
+    Description: The dns name of the instance.
+    Computed: "true"
+encryption_key_name:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+first_ip_address:
+    Type: TypeString
+    Description: The first IPv4 address of any type assigned. This is to support accessing the first address in the list in a terraform output when the resource is configured with a count.
+    Computed: "true"
+instance_type:
+    Type: TypeString
+    Description: The type of the instance. The valid values are:- 'SQL_INSTANCE_TYPE_UNSPECIFIED', 'CLOUD_SQL_INSTANCE', 'ON_PREMISES_INSTANCE' and 'READ_REPLICA_INSTANCE'.
+    Computed: "true"
+    Optional: "true"
+ip_address:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        ip_address:
+            Type: TypeString
+            Computed: "true"
+        time_to_retire:
+            Type: TypeString
+            Computed: "true"
+        type:
+            Type: TypeString
+            Computed: "true"
+maintenance_version:
+    Type: TypeString
+    Description: Maintenance version.
+    Computed: "true"
+    Optional: "true"
+master_instance_name:
+    Type: TypeString
+    Description: The name of the instance that will act as the master in the replication setup. Note, this requires the master to have binary_log_enabled set, as well as existing backups.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the instance. If the name is left blank, Terraform will randomly generate one when the instance is first created. This is done because after a name is used, it cannot be reused for up to one week.
+    Computed: "true"
+    Optional: "true"
+private_ip_address:
+    Type: TypeString
+    Description: IPv4 address assigned. This is a workaround for an issue fixed in Terraform 0.12 but also provides a convenient way to access an IP of a specific type without performing filtering in a Terraform config.
+    Computed: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+psc_service_attachment_link:
+    Type: TypeString
+    Description: The link to service attachment of PSC instance.
+    Computed: "true"
+public_ip_address:
+    Type: TypeString
+    Description: IPv4 address assigned. This is a workaround for an issue fixed in Terraform 0.12 but also provides a convenient way to access an IP of a specific type without performing filtering in a Terraform config.
+    Computed: "true"
+region:
+    Type: TypeString
+    Description: The region the instance will sit in. Note, Cloud SQL is not available in all regions. A valid region must be provided to use this resource. If a region is not provided in the resource definition, the provider region will be used instead, but this will be an apply-time error for instances if the provider region is not supported with Cloud SQL. If you choose not to provide the region argument for this resource, make sure you understand this.
+    Computed: "true"
+    Optional: "true"
+replica_configuration:
+    Type: TypeList
+    Description: The configuration for replication.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        ca_certificate:
+            Type: TypeString
+            Description: PEM representation of the trusted CA's x509 certificate.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        client_certificate:
+            Type: TypeString
+            Description: PEM representation of the replica's x509 certificate.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        client_key:
+            Type: TypeString
+            Description: PEM representation of the replica's private key. The corresponding public key in encoded in the client_certificate.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        connect_retry_interval:
+            Type: TypeInt
+            Description: The number of seconds between connect retries. MySQL's default is 60 seconds.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        dump_file_path:
+            Type: TypeString
+            Description: Path to a SQL file in Google Cloud Storage from which replica instances are created. Format is gs://bucket/filename.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        failover_target:
+            Type: TypeBool
+            Description: Specifies if the replica is the failover target. If the field is set to true the replica will be designated as a failover replica. If the master instance fails, the replica instance will be promoted as the new master instance. Not supported for Postgres
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        master_heartbeat_period:
+            Type: TypeInt
+            Description: Time in ms between replication heartbeats.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        password:
+            Type: TypeString
+            Description: Password for the replication connection.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        ssl_cipher:
+            Type: TypeString
+            Description: Permissible ciphers for use in SSL encryption.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        username:
+            Type: TypeString
+            Description: Username for replication connection.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+        verify_server_certificate:
+            Type: TypeBool
+            Description: True if the master's common name value is checked during the SSL handshake.
+            Optional: "true"
+            AtLeastOneOf: replica_configuration.0.ca_certificate, replica_configuration.0.client_certificate, replica_configuration.0.client_key, replica_configuration.0.connect_retry_interval, replica_configuration.0.dump_file_path, replica_configuration.0.failover_target, replica_configuration.0.master_heartbeat_period, replica_configuration.0.password, replica_configuration.0.ssl_cipher, replica_configuration.0.username, replica_configuration.0.verify_server_certificate
+restore_backup_context:
+    Type: TypeList
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        backup_run_id:
+            Type: TypeInt
+            Description: The ID of the backup run to restore from.
+            Required: "true"
+        instance_id:
+            Type: TypeString
+            Description: The ID of the instance that the backup was taken from.
+            Optional: "true"
+        project:
+            Type: TypeString
+            Description: The full project ID of the source instance.
+            Optional: "true"
+root_password:
+    Type: TypeString
+    Description: Initial root password. Required for MS SQL Server.
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: The URI of the created resource.
+    Computed: "true"
+server_ca_cert:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        cert:
+            Type: TypeString
+            Description: The CA Certificate used to connect to the SQL Instance via SSL.
+            Computed: "true"
+        common_name:
+            Type: TypeString
+            Description: The CN valid for the CA Cert.
+            Computed: "true"
+        create_time:
+            Type: TypeString
+            Description: Creation time of the CA Cert.
+            Computed: "true"
+        expiration_time:
+            Type: TypeString
+            Description: Expiration time of the CA Cert.
+            Computed: "true"
+        sha1_fingerprint:
+            Type: TypeString
+            Description: SHA Fingerprint of the CA Cert.
+            Computed: "true"
+service_account_email_address:
+    Type: TypeString
+    Description: The service account email address assigned to the instance.
+    Computed: "true"
+settings:
+    Type: TypeList
+    Description: The settings to use for the database. The configuration is detailed below.
+    Computed: "true"
+    Optional: "true"
+    AtLeastOneOf: settings, clone
+    MaxItems: "1"
+    Properties:
+        activation_policy:
+            Type: TypeString
+            Description: This specifies when the instance should be active. Can be either ALWAYS, NEVER or ON_DEMAND.
+            Optional: "true"
+        active_directory_config:
+            Type: TypeList
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                domain:
+                    Type: TypeString
+                    Description: Domain name of the Active Directory for SQL Server (e.g., mydomain.com).
+                    Required: "true"
+        advanced_machine_features:
+            Type: TypeList
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                threads_per_core:
+                    Type: TypeInt
+                    Description: The number of threads per physical core. Can be 1 or 2.
+                    Optional: "true"
+        availability_type:
+            Type: TypeString
+            Description: |-
+                The availability type of the Cloud SQL instance, high availability
+                (REGIONAL) or single zone (ZONAL). For all instances, ensure that
+                settings.backup_configuration.enabled is set to true.
+                For MySQL instances, ensure that settings.backup_configuration.binary_log_enabled is set to true.
+                For Postgres instances, ensure that settings.backup_configuration.point_in_time_recovery_enabled
+                is set to true. Defaults to ZONAL.
+            Optional: "true"
+        backup_configuration:
+            Type: TypeList
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                backup_retention_settings:
+                    Type: TypeList
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                    MaxItems: "1"
+                    Properties:
+                        retained_backups:
+                            Type: TypeInt
+                            Description: Number of backups to retain.
+                            Required: "true"
+                        retention_unit:
+                            Type: TypeString
+                            Description: The unit that 'retainedBackups' represents. Defaults to COUNT
+                            Optional: "true"
+                binary_log_enabled:
+                    Type: TypeBool
+                    Description: True if binary logging is enabled. If settings.backup_configuration.enabled is false, this must be as well. Can only be used with MySQL.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                enabled:
+                    Type: TypeBool
+                    Description: True if backup configuration is enabled.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                location:
+                    Type: TypeString
+                    Description: Location of the backup configuration.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                point_in_time_recovery_enabled:
+                    Type: TypeBool
+                    Description: True if Point-in-time recovery is enabled.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                start_time:
+                    Type: TypeString
+                    Description: HH:MM format time indicating when backup configuration starts.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+                transaction_log_retention_days:
+                    Type: TypeInt
+                    Description: The number of days of transaction logs we retain for point in time restore, from 1-7. (For PostgreSQL Enterprise Plus instances, from 1 to 35.)
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.backup_configuration.0.binary_log_enabled, settings.0.backup_configuration.0.enabled, settings.0.backup_configuration.0.start_time, settings.0.backup_configuration.0.location, settings.0.backup_configuration.0.point_in_time_recovery_enabled, settings.0.backup_configuration.0.backup_retention_settings, settings.0.backup_configuration.0.transaction_log_retention_days
+        collation:
+            Type: TypeString
+            Description: The name of server instance collation.
+            Optional: "true"
+        connector_enforcement:
+            Type: TypeString
+            Description: Specifies if connections must use Cloud SQL connectors.
+            Computed: "true"
+            Optional: "true"
+        data_cache_config:
+            Type: TypeList
+            Description: Data cache configurations.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                data_cache_enabled:
+                    Type: TypeBool
+                    Description: Whether data cache is enabled for the instance.
+                    Optional: "true"
+        database_flags:
+            Type: TypeSet
+            Optional: "true"
+            Properties:
+                name:
+                    Type: TypeString
+                    Description: Name of the flag.
+                    Required: "true"
+                value:
+                    Type: TypeString
+                    Description: Value of the flag.
+                    Required: "true"
+        deletion_protection_enabled:
+            Type: TypeBool
+            Description: Configuration to protect against accidental instance deletion.
+            Optional: "true"
+        deny_maintenance_period:
+            Type: TypeList
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                end_date:
+                    Type: TypeString
+                    Description: End date before which maintenance will not take place. The date is in format yyyy-mm-dd i.e., 2020-11-01, or mm-dd, i.e., 11-01
+                    Required: "true"
+                start_date:
+                    Type: TypeString
+                    Description: Start date after which maintenance will not take place. The date is in format yyyy-mm-dd i.e., 2020-11-01, or mm-dd, i.e., 11-01
+                    Required: "true"
+                time:
+                    Type: TypeString
+                    Description: 'Time in UTC when the "deny maintenance period" starts on start_date and ends on end_date. The time is in format: HH:mm:SS, i.e., 00:00:00'
+                    Required: "true"
+        disk_autoresize:
+            Type: TypeBool
+            Description: Enables auto-resizing of the storage size. Defaults to true.
+            Optional: "true"
+        disk_autoresize_limit:
+            Type: TypeInt
+            Description: The maximum size, in GB, to which storage capacity can be automatically increased. The default value is 0, which specifies that there is no limit.
+            Optional: "true"
+        disk_size:
+            Type: TypeInt
+            Description: The size of data disk, in GB. Size of a running instance cannot be reduced but can be increased. The minimum value is 10GB.
+            Computed: "true"
+            Optional: "true"
+        disk_type:
+            Type: TypeString
+            Description: 'The type of data disk: PD_SSD or PD_HDD. Defaults to PD_SSD.'
+            Optional: "true"
+        edition:
+            Type: TypeString
+            Description: The edition of the instance, can be ENTERPRISE or ENTERPRISE_PLUS.
+            Optional: "true"
+        insights_config:
+            Type: TypeList
+            Description: Configuration of Query Insights.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                query_insights_enabled:
+                    Type: TypeBool
+                    Description: True if Query Insights feature is enabled.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.insights_config.0.query_insights_enabled, settings.0.insights_config.0.query_string_length, settings.0.insights_config.0.record_application_tags, settings.0.insights_config.0.record_client_address, settings.0.insights_config.0.query_plans_per_minute
+                query_plans_per_minute:
+                    Type: TypeInt
+                    Description: Number of query execution plans captured by Insights per minute for all queries combined. Between 0 and 20. Default to 5.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.insights_config.0.query_insights_enabled, settings.0.insights_config.0.query_string_length, settings.0.insights_config.0.record_application_tags, settings.0.insights_config.0.record_client_address, settings.0.insights_config.0.query_plans_per_minute
+                query_string_length:
+                    Type: TypeInt
+                    Description: Maximum query length stored in bytes. Between 256 and 4500. Default to 1024.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.insights_config.0.query_insights_enabled, settings.0.insights_config.0.query_string_length, settings.0.insights_config.0.record_application_tags, settings.0.insights_config.0.record_client_address, settings.0.insights_config.0.query_plans_per_minute
+                record_application_tags:
+                    Type: TypeBool
+                    Description: True if Query Insights will record application tags from query when enabled.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.insights_config.0.query_insights_enabled, settings.0.insights_config.0.query_string_length, settings.0.insights_config.0.record_application_tags, settings.0.insights_config.0.record_client_address, settings.0.insights_config.0.query_plans_per_minute
+                record_client_address:
+                    Type: TypeBool
+                    Description: True if Query Insights will record client address when enabled.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.insights_config.0.query_insights_enabled, settings.0.insights_config.0.query_string_length, settings.0.insights_config.0.record_application_tags, settings.0.insights_config.0.record_client_address, settings.0.insights_config.0.query_plans_per_minute
+        ip_configuration:
+            Type: TypeList
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                allocated_ip_range:
+                    Type: TypeString
+                    Description: 'The name of the allocated ip range for the private ip CloudSQL instance. For example: "google-managed-services-default". If set, the instance ip will be created in the allocated range. The range name must comply with RFC 1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?.'
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                authorized_networks:
+                    Type: TypeSet
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                    Properties:
+                        expiration_time:
+                            Type: TypeString
+                            Optional: "true"
+                        name:
+                            Type: TypeString
+                            Optional: "true"
+                        value:
+                            Type: TypeString
+                            Required: "true"
+                enable_private_path_for_google_cloud_services:
+                    Type: TypeBool
+                    Description: Whether Google Cloud services such as BigQuery are allowed to access data in this Cloud SQL instance over a private IP connection. SQLSERVER database type is not supported.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                ipv4_enabled:
+                    Type: TypeBool
+                    Description: Whether this Cloud SQL instance should be assigned a public IPV4 address. At least ipv4_enabled must be enabled or a private_network must be configured.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                private_network:
+                    Type: TypeString
+                    Description: The VPC network from which the Cloud SQL instance is accessible for private IP. For example, projects/myProject/global/networks/default. Specifying a network enables private IP. At least ipv4_enabled must be enabled or a private_network must be configured. This setting can be updated, but it cannot be removed after it is set.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                psc_config:
+                    Type: TypeSet
+                    Description: PSC settings for a Cloud SQL instance.
+                    Optional: "true"
+                    Properties:
+                        allowed_consumer_projects:
+                            Type: TypeSet
+                            Description: List of consumer projects that are allow-listed for PSC connections to this instance. This instance can be connected to with PSC from any network in these projects. Each consumer project in this list may be represented by a project number (numeric) or by a project id (alphanumeric).
+                            Optional: "true"
+                        psc_enabled:
+                            Type: TypeBool
+                            Description: Whether PSC connectivity is enabled for this instance.
+                            Optional: "true"
+                require_ssl:
+                    Type: TypeBool
+                    Description: Whether SSL connections over IP are enforced or not. To change this field, also set the corresponding value in ssl_mode if it has been set too.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+                ssl_mode:
+                    Type: TypeString
+                    Description: Specify how SSL connection should be enforced in DB connections. This field provides more SSL enforcment options compared to require_ssl. To change this field, also set the correspoding value in require_ssl.
+                    Computed: "true"
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.ip_configuration.0.authorized_networks, settings.0.ip_configuration.0.ipv4_enabled, settings.0.ip_configuration.0.require_ssl, settings.0.ip_configuration.0.private_network, settings.0.ip_configuration.0.allocated_ip_range, settings.0.ip_configuration.0.enable_private_path_for_google_cloud_services, settings.0.ip_configuration.0.psc_config, settings.0.ip_configuration.0.ssl_mode
+        location_preference:
+            Type: TypeList
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                follow_gae_application:
+                    Type: TypeString
+                    Description: A Google App Engine application whose zone to remain in. Must be in the same region as this instance.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.location_preference.0.follow_gae_application, settings.0.location_preference.0.zone
+                secondary_zone:
+                    Type: TypeString
+                    Description: The preferred Compute Engine zone for the secondary/failover
+                    Optional: "true"
+                zone:
+                    Type: TypeString
+                    Description: The preferred compute engine zone.
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.location_preference.0.follow_gae_application, settings.0.location_preference.0.zone
+        maintenance_window:
+            Type: TypeList
+            Description: Declares a one-hour maintenance window when an Instance can automatically restart to apply updates. The maintenance window is specified in UTC time.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                day:
+                    Type: TypeInt
+                    Description: Day of week (1-7), starting on Monday
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.maintenance_window.0.day, settings.0.maintenance_window.0.hour, settings.0.maintenance_window.0.update_track
+                hour:
+                    Type: TypeInt
+                    Description: Hour of day (0-23), ignored if day not set
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.maintenance_window.0.day, settings.0.maintenance_window.0.hour, settings.0.maintenance_window.0.update_track
+                update_track:
+                    Type: TypeString
+                    Description: Receive updates earlier (canary) or later (stable)
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.maintenance_window.0.day, settings.0.maintenance_window.0.hour, settings.0.maintenance_window.0.update_track
+        password_validation_policy:
+            Type: TypeList
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                complexity:
+                    Type: TypeString
+                    Description: Password complexity.
+                    Optional: "true"
+                disallow_username_substring:
+                    Type: TypeBool
+                    Description: Disallow username as a part of the password.
+                    Optional: "true"
+                enable_password_policy:
+                    Type: TypeBool
+                    Description: Whether the password policy is enabled or not.
+                    Required: "true"
+                min_length:
+                    Type: TypeInt
+                    Description: Minimum number of characters allowed.
+                    Optional: "true"
+                password_change_interval:
+                    Type: TypeString
+                    Description: Minimum interval after which the password can be changed. This flag is only supported for PostgresSQL.
+                    Optional: "true"
+                reuse_interval:
+                    Type: TypeInt
+                    Description: Number of previous passwords that cannot be reused.
+                    Optional: "true"
+        pricing_plan:
+            Type: TypeString
+            Description: Pricing plan for this instance, can only be PER_USE.
+            Optional: "true"
+        sql_server_audit_config:
+            Type: TypeList
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                bucket:
+                    Type: TypeString
+                    Description: The name of the destination bucket (e.g., gs://mybucket).
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.sql_server_audit_config.0.bucket, settings.0.sql_server_audit_config.0.retention_interval, settings.0.sql_server_audit_config.0.upload_interval
+                retention_interval:
+                    Type: TypeString
+                    Description: 'How long to keep generated audit files. A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s"..'
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.sql_server_audit_config.0.bucket, settings.0.sql_server_audit_config.0.retention_interval, settings.0.sql_server_audit_config.0.upload_interval
+                upload_interval:
+                    Type: TypeString
+                    Description: 'How often to upload generated audit files. A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s".'
+                    Optional: "true"
+                    AtLeastOneOf: settings.0.sql_server_audit_config.0.bucket, settings.0.sql_server_audit_config.0.retention_interval, settings.0.sql_server_audit_config.0.upload_interval
+        tier:
+            Type: TypeString
+            Description: The machine type to use. See tiers for more details and supported versions. Postgres supports only shared-core machine types, and custom machine types such as db-custom-2-13312. See the Custom Machine Type Documentation to learn about specifying custom machine types.
+            Required: "true"
+        time_zone:
+            Type: TypeString
+            Description: The time_zone to be used by the database engine (supported only for SQL Server), in SQL Server timezone format.
+            Optional: "true"
+        user_labels:
+            Type: TypeMap
+            Description: A set of key/value user label pairs to assign to the instance.
+            Computed: "true"
+            Optional: "true"
+        version:
+            Type: TypeInt
+            Description: Used to make sure changes to the settings block are atomic.
+            Computed: "true"
+

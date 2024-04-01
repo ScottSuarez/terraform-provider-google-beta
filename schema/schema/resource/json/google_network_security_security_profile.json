@@ -1,0 +1,109 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the security profile was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of the security profile. The Max length is 512 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other fields,\nand may be sent on update and delete requests to ensure the client has an up-to-date\nvalue before proceeding.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "A map of key/value label pairs to assign to the resource.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of the security profile.\nThe default value is 'global'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the security profile resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The name of the parent this security profile belongs to.\nFormat: organizations/{organization_id}.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "threat_prevention_profile": {
+        "Description": "The threat prevention configuration for the security profile.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "severity_overrides": {
+                "Description": "The configuration for overriding threats actions by severity match.",
+                "Optional": true,
+                "Properties": {
+                    "action": {
+                        "Description": "Threat action override. Possible values: [\"ALERT\", \"ALLOW\", \"DEFAULT_ACTION\", \"DENY\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "severity": {
+                        "Description": "Severity level to match. Possible values: [\"CRITICAL\", \"HIGH\", \"INFORMATIONAL\", \"LOW\", \"MEDIUM\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "threat_overrides": {
+                "Description": "The configuration for overriding threats actions by threat id match.\nIf a threat is matched both by configuration provided in severity overrides\nand threat overrides, the threat overrides action is applied.",
+                "Optional": true,
+                "Properties": {
+                    "action": {
+                        "Description": "Threat action. Possible values: [\"ALERT\", \"ALLOW\", \"DEFAULT_ACTION\", \"DENY\"]",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "threat_id": {
+                        "Description": "Vendor-specific ID of a threat to override.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "type": {
+                        "Computed": true,
+                        "Description": "Type of threat.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "type": {
+        "Description": "The type of security profile. Possible values: [\"THREAT_PREVENTION\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the security profile was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

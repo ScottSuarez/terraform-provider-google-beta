@@ -1,0 +1,128 @@
+{
+    "aes_encryption": {
+        "Description": "Enables AES-128 and AES-256 encryption for Kerberos-based communication with Active Directory.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "backup_operators": {
+        "Description": "Domain user/group accounts to be added to the Backup Operators group of the SMB service. The Backup Operators group allows members to backup and restore files regardless of whether they have read or write access to the files. Comma-separated list.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Create time of the active directory. A timestamp in RFC3339 UTC \"Zulu\" format. Examples: \"2023-06-22T09:13:01.617Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "dns": {
+        "Description": "Comma separated list of DNS server IP addresses for the Active Directory domain.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "domain": {
+        "Description": "Fully qualified domain name for the Active Directory domain.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "encrypt_dc_connections": {
+        "Description": "If enabled, traffic between the SMB server to Domain Controller (DC) will be encrypted.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "kdc_hostname": {
+        "Description": "Hostname of the Active Directory server used as Kerberos Key Distribution Center. Only requried for volumes using kerberized NFSv4.1",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "kdc_ip": {
+        "Description": "IP address of the Active Directory server used as Kerberos Key Distribution Center.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels as key value pairs. Example: '{ \"owner\": \"Bob\", \"department\": \"finance\", \"purpose\": \"testing\" }'.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "ldap_signing": {
+        "Description": "Specifies whether or not the LDAP traffic needs to be signed.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "location": {
+        "Description": "Name of the region for the policy to apply to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name of the Active Directory pool. Needs to be unique per location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "net_bios_prefix": {
+        "Description": "NetBIOS name prefix of the server to be created.\nA five-character random ID is generated automatically, for example, -6f9a, and appended to the prefix. The full UNC share path will have the following format:\n'\\\\NetBIOS_PREFIX-ABCD.DOMAIN_NAME\\SHARE_NAME'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "nfs_users_with_ldap": {
+        "Description": "Local UNIX users on clients without valid user information in Active Directory are blocked from access to LDAP enabled volumes.\nThis option can be used to temporarily switch such volumes to AUTH_SYS authentication (user ID + 1-16 groups).",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "organizational_unit": {
+        "Computed": true,
+        "Description": "Name of the Organizational Unit where you intend to create the computer account for NetApp Volumes.\nDefaults to 'CN=Computers' if left empty.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "password": {
+        "Description": "Password for specified username. Note - Manual changes done to the password will not be detected. Terraform will not re-apply the password, unless you use a new password in Terraform.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "security_operators": {
+        "Description": "Domain accounts that require elevated privileges such as 'SeSecurityPrivilege' to manage security logs. Comma-separated list.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "site": {
+        "Description": "Specifies an Active Directory site to manage domain controller selection.\nUse when Active Directory domain controllers in multiple regions are configured. Defaults to 'Default-First-Site-Name' if left empty.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The state of the Active Directory policy (not the Active Directory itself).",
+        "Type": "TypeString"
+    },
+    "state_details": {
+        "Computed": true,
+        "Description": "The state details of the Active Directory.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "username": {
+        "Description": "Username for the Active Directory account with permissions to create the compute account within the specified organizational unit.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

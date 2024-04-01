@@ -1,0 +1,17 @@
+bgp:
+    advertise_mode: TypeString
+    advertised_groups: TypeList(TypeString)
+    advertised_ip_ranges:
+        description: TypeString
+        range: TypeString
+    asn: TypeInt
+    keepalive_interval: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+encrypted_interconnect_router: TypeBool
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+

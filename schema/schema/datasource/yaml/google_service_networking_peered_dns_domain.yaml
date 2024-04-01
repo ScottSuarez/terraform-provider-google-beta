@@ -1,0 +1,19 @@
+dns_suffix:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Required: "true"
+network:
+    Type: TypeString
+    Required: "true"
+parent:
+    Type: TypeString
+    Computed: "true"
+project:
+    Type: TypeString
+    Required: "true"
+service:
+    Type: TypeString
+    Required: "true"
+

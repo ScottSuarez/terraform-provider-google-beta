@@ -1,0 +1,52 @@
+{
+    "data_exchange_id": {
+        "Description": "The ID of the data exchange. Must contain only Unicode letters, numbers (0-9), underscores (_). Should not use characters that require URL-escaping, or characters outside of ASCII, spaces.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description of the data exchange.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Human-readable display name of the data exchange. The display name must contain only Unicode letters, numbers (0-9), underscores (_), dashes (-), spaces ( ), and must not start or end with spaces.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "documentation": {
+        "Description": "Documentation describing the data exchange.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "icon": {
+        "Description": "Base64 encoded image representing the data exchange.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "listing_count": {
+        "Computed": true,
+        "Description": "Number of listings contained in the data exchange.",
+        "Type": "TypeInt"
+    },
+    "location": {
+        "Description": "The name of the location this data exchange.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the data exchange, for example:\n\"projects/myproject/locations/US/dataExchanges/123\"",
+        "Type": "TypeString"
+    },
+    "primary_contact": {
+        "Description": "Email or URL of the primary point of contact of the data exchange.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

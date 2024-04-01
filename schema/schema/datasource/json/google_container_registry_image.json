@@ -1,0 +1,27 @@
+{
+    "digest": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "image_url": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "tag": {
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

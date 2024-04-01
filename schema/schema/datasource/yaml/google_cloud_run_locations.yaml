@@ -1,0 +1,8 @@
+locations:
+    Type: TypeList
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

@@ -1,0 +1,41 @@
+{
+    "description": {
+        "Description": "The description of the response policy, such as 'My new response policy'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "gke_clusters": {
+        "Description": "The list of Google Kubernetes Engine clusters that can see this zone.",
+        "Optional": true,
+        "Properties": {
+            "gke_cluster_name": {
+                "Description": "The resource name of the cluster to bind this ManagedZone to.\nThis should be specified in the format like\n'projects/*/locations/*/clusters/*'",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "networks": {
+        "Description": "The list of network names specifying networks to which this policy is applied.",
+        "Optional": true,
+        "Properties": {
+            "network_url": {
+                "Description": "The fully qualified URL of the VPC network to bind to.\nThis should be formatted like\n'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "response_policy_name": {
+        "Description": "The user assigned name for this Response Policy, such as 'myresponsepolicy'.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

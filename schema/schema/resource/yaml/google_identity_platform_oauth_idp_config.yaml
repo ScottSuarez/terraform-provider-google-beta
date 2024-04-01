@@ -1,0 +1,29 @@
+client_id:
+    Type: TypeString
+    Description: The client id of an OAuth client.
+    Required: "true"
+client_secret:
+    Type: TypeString
+    Description: The client secret of the OAuth client, to enable OIDC code flow.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Human friendly display name.
+    Optional: "true"
+enabled:
+    Type: TypeBool
+    Description: If this config allows users to sign in with the provider.
+    Optional: "true"
+issuer:
+    Type: TypeString
+    Description: For OIDC Idps, the issuer identifier.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the OauthIdpConfig. Must start with 'oidc.'.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

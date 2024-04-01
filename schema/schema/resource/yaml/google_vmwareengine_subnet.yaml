@@ -1,0 +1,75 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        Creation time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and
+        up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+dhcp_address_ranges:
+    Type: TypeList
+    Description: DHCP address ranges.
+    Computed: "true"
+    Properties:
+        first_address:
+            Type: TypeString
+            Description: The first IP address of the range.
+            Computed: "true"
+        last_address:
+            Type: TypeString
+            Description: The last IP address of the range.
+            Computed: "true"
+gateway_id:
+    Type: TypeString
+    Description: The canonical identifier of the logical router that this subnet is attached to.
+    Computed: "true"
+gateway_ip:
+    Type: TypeString
+    Description: The IP address of the gateway of this subnet. Must fall within the IP prefix defined above.
+    Computed: "true"
+ip_cidr_range:
+    Type: TypeString
+    Description: The IP address range of the subnet in CIDR format.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The ID of the subnet. For userDefined subnets, this name should be in the format of "service-n",
+        where n ranges from 1 to 5.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The resource name of the private cloud to create a new subnet in.
+        Resource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.
+        For example: projects/my-project/locations/us-west1-a/privateClouds/my-cloud
+    Required: "true"
+standard_config:
+    Type: TypeBool
+    Description: |-
+        Whether the NSX-T configuration in the backend follows the standard configuration supported by Google Cloud.
+        If false, the subnet cannot be modified through Google Cloud, only through NSX-T directly.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: State of the subnet.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: The type of the subnet.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: System-generated unique identifier for the resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Last updated time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+vlan_id:
+    Type: TypeInt
+    Description: VLAN ID of the VLAN on which the subnet is configured.
+    Computed: "true"
+

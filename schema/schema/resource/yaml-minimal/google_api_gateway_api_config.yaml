@@ -1,0 +1,28 @@
+api: TypeString
+api_config_id: TypeString
+api_config_id_prefix: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+gateway_config:
+    backend_config:
+        google_service_account: TypeString
+grpc_services:
+    file_descriptor_set:
+        contents: TypeString
+        path: TypeString
+    source:
+        contents: TypeString
+        path: TypeString
+labels: TypeMap(TypeString)
+managed_service_configs:
+    contents: TypeString
+    path: TypeString
+name: TypeString
+openapi_documents:
+    document:
+        contents: TypeString
+        path: TypeString
+project: TypeString
+service_config_id: TypeString
+terraform_labels: TypeMap(TypeString)
+

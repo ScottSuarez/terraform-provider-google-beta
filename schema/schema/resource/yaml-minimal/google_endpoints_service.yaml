@@ -1,0 +1,20 @@
+apis:
+    methods:
+        name: TypeString
+        request_type: TypeString
+        response_type: TypeString
+        syntax: TypeString
+    name: TypeString
+    syntax: TypeString
+    version: TypeString
+config_id: TypeString
+dns_address: TypeString
+endpoints:
+    address: TypeString
+    name: TypeString
+grpc_config: TypeString
+openapi_config: TypeString
+project: TypeString
+protoc_output_base64: TypeString
+service_name: TypeString
+

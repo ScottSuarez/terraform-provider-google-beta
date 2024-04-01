@@ -1,0 +1,11 @@
+description: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+type: TypeString
+uid: TypeString
+vpc_networks:
+    network: TypeString
+    type: TypeString
+

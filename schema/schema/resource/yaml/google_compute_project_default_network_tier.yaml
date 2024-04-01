@@ -1,0 +1,10 @@
+network_tier:
+    Type: TypeString
+    Description: 'The default network tier to be configured for the project. This field can take the following values: PREMIUM or STANDARD.'
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+

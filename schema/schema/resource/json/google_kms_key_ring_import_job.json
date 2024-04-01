@@ -1,0 +1,66 @@
+{
+    "attestation": {
+        "Computed": true,
+        "Description": "Statement that was generated and signed by the key creator (for example, an HSM) at key creation time.\nUse this statement to verify attributes of the key as stored on the HSM, independently of Google.\nOnly present if the chosen ImportMethod is one with a protection level of HSM.",
+        "Properties": {
+            "content": {
+                "Computed": true,
+                "Description": "The attestation data provided by the HSM when the key operation was performed.\nA base64-encoded string.",
+                "Type": "TypeString"
+            },
+            "format": {
+                "Computed": true,
+                "Description": "The format of the attestation data.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "The time at which this resource is scheduled for expiration and can no longer be used.\nThis is in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "import_job_id": {
+        "Description": "It must be unique within a KeyRing and match the regular expression [a-zA-Z0-9_-]{1,63}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "import_method": {
+        "Description": "The wrapping method to be used for incoming key material. Possible values: [\"RSA_OAEP_3072_SHA1_AES_256\", \"RSA_OAEP_4096_SHA1_AES_256\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "key_ring": {
+        "Description": "The KeyRing that this import job belongs to.\nFormat: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyRing}}''.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for this ImportJob in the format projects/*/locations/*/keyRings/*/importJobs/*.",
+        "Type": "TypeString"
+    },
+    "protection_level": {
+        "Description": "The protection level of the ImportJob. This must match the protectionLevel of the\nversionTemplate on the CryptoKey you attempt to import into. Possible values: [\"SOFTWARE\", \"HSM\", \"EXTERNAL\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "public_key": {
+        "Computed": true,
+        "Description": "The public key with which to wrap key material prior to import. Only returned if state is 'ACTIVE'.",
+        "Properties": {
+            "pem": {
+                "Computed": true,
+                "Description": "The public key, encoded in PEM format. For more information, see the RFC 7468 sections\nfor General Considerations and Textual Encoding of Subject Public Key Info.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state of the ImportJob, indicating if it can be used.",
+        "Type": "TypeString"
+    }
+}

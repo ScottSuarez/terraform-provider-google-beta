@@ -1,0 +1,143 @@
+bucket_name:
+    Type: TypeString
+    Description: Cloud Storage bucket name.
+    Computed: "true"
+cdn_policy:
+    Type: TypeList
+    Description: Cloud CDN configuration for this Backend Bucket.
+    Computed: "true"
+    Properties:
+        bypass_cache_on_request_headers:
+            Type: TypeList
+            Description: Bypass the cache when the specified request headers are matched - e.g. Pragma or Authorization headers. Up to 5 headers can be specified. The cache is bypassed for all cdnPolicy.cacheMode settings.
+            Computed: "true"
+            Properties:
+                header_name:
+                    Type: TypeString
+                    Description: The header field name to match on when bypassing cache. Values are case-insensitive.
+                    Computed: "true"
+        cache_key_policy:
+            Type: TypeList
+            Description: The CacheKeyPolicy for this CdnPolicy.
+            Computed: "true"
+            Properties:
+                include_http_headers:
+                    Type: TypeList
+                    Description: |-
+                        Allows HTTP request headers (by name) to be used in the
+                        cache key.
+                    Computed: "true"
+                query_string_whitelist:
+                    Type: TypeList
+                    Description: |-
+                        Names of query string parameters to include in cache keys.
+                        Default parameters are always included. '&' and '=' will
+                        be percent encoded and not treated as delimiters.
+                    Computed: "true"
+        cache_mode:
+            Type: TypeString
+            Description: |-
+                Specifies the cache setting for all responses from this backend.
+                The possible values are: USE_ORIGIN_HEADERS, FORCE_CACHE_ALL and CACHE_ALL_STATIC Possible values: ["USE_ORIGIN_HEADERS", "FORCE_CACHE_ALL", "CACHE_ALL_STATIC"]
+            Computed: "true"
+        client_ttl:
+            Type: TypeInt
+            Description: Specifies the maximum allowed TTL for cached content served by this origin.
+            Computed: "true"
+        default_ttl:
+            Type: TypeInt
+            Description: |-
+                Specifies the default TTL for cached content served by this origin for responses
+                that do not have an existing valid TTL (max-age or s-max-age).
+            Computed: "true"
+        max_ttl:
+            Type: TypeInt
+            Description: Specifies the maximum allowed TTL for cached content served by this origin.
+            Computed: "true"
+        negative_caching:
+            Type: TypeBool
+            Description: Negative caching allows per-status code TTLs to be set, in order to apply fine-grained caching for common errors or redirects.
+            Computed: "true"
+        negative_caching_policy:
+            Type: TypeList
+            Description: |-
+                Sets a cache TTL for the specified HTTP status code. negativeCaching must be enabled to configure negativeCachingPolicy.
+                Omitting the policy and leaving negativeCaching enabled will use Cloud CDN's default cache TTLs.
+            Computed: "true"
+            Properties:
+                code:
+                    Type: TypeInt
+                    Description: |-
+                        The HTTP status code to define a TTL against. Only HTTP status codes 300, 301, 308, 404, 405, 410, 421, 451 and 501
+                        can be specified as values, and you cannot specify a status code more than once.
+                    Computed: "true"
+                ttl:
+                    Type: TypeInt
+                    Description: |-
+                        The TTL (in seconds) for which to cache responses with the corresponding status code. The maximum allowed value is 1800s
+                        (30 minutes), noting that infrequently accessed objects may be evicted from the cache before the defined TTL.
+                    Computed: "true"
+        request_coalescing:
+            Type: TypeBool
+            Description: If true then Cloud CDN will combine multiple concurrent cache fill requests into a small number of requests to the origin.
+            Computed: "true"
+        serve_while_stale:
+            Type: TypeInt
+            Description: Serve existing content from the cache (if available) when revalidating content with the origin, or when an error is encountered when refreshing the cache.
+            Computed: "true"
+        signed_url_cache_max_age_sec:
+            Type: TypeInt
+            Description: |-
+                Maximum number of seconds the response to a signed URL request will
+                be considered fresh. After this time period,
+                the response will be revalidated before being served.
+                When serving responses to signed URL requests,
+                Cloud CDN will internally behave as though
+                all responses from this backend had a "Cache-Control: public,
+                max-age=[TTL]" header, regardless of any existing Cache-Control
+                header. The actual headers served in responses will not be altered.
+            Computed: "true"
+compression_mode:
+    Type: TypeString
+    Description: 'Compress text responses using Brotli or gzip compression, based on the client''s Accept-Encoding header. Possible values: ["AUTOMATIC", "DISABLED"]'
+    Computed: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+custom_response_headers:
+    Type: TypeList
+    Description: Headers that the HTTP/S load balancer should add to proxied responses.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: |-
+        An optional textual description of the resource; provided by the
+        client when the resource is created.
+    Computed: "true"
+edge_security_policy:
+    Type: TypeString
+    Description: The security policy associated with this backend bucket.
+    Computed: "true"
+enable_cdn:
+    Type: TypeBool
+    Description: If true, enable Cloud CDN for this BackendBucket.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. Provided by the client when the resource is
+        created. The name must be 1-63 characters long, and comply with
+        RFC1035.  Specifically, the name must be 1-63 characters long and
+        match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means
+        the first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the
+        last character, which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+

@@ -1,0 +1,12 @@
+names:
+    Type: TypeList
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

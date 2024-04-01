@@ -1,0 +1,18 @@
+annotations: TypeMap(TypeString)
+create_time: TypeString
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+env: TypeMap(TypeString)
+host: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+workstation_cluster_id: TypeString
+workstation_config_id: TypeString
+workstation_id: TypeString
+

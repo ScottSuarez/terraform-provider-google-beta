@@ -1,0 +1,83 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+gateways: TypeList(TypeString)
+hostnames: TypeList(TypeString)
+labels: TypeMap(TypeString)
+meshes: TypeList(TypeString)
+name: TypeString
+project: TypeString
+rules:
+    action:
+        cors_policy:
+            allow_credentials: TypeBool
+            allow_headers: TypeList(TypeString)
+            allow_methods: TypeList(TypeString)
+            allow_origin_regexes: TypeList(TypeString)
+            allow_origins: TypeList(TypeString)
+            disabled: TypeBool
+            expose_headers: TypeList(TypeString)
+            max_age: TypeString
+        destinations:
+            service_name: TypeString
+            weight: TypeInt
+        fault_injection_policy:
+            abort:
+                http_status: TypeInt
+                percentage: TypeInt
+            delay:
+                fixed_delay: TypeString
+                percentage: TypeInt
+        redirect:
+            host_redirect: TypeString
+            https_redirect: TypeBool
+            path_redirect: TypeString
+            port_redirect: TypeInt
+            prefix_rewrite: TypeString
+            response_code: TypeString
+            strip_query: TypeBool
+        request_header_modifier:
+            add: TypeMap(TypeString)
+            remove: TypeList(TypeString)
+            set: TypeMap(TypeString)
+        request_mirror_policy:
+            destination:
+                service_name: TypeString
+                weight: TypeInt
+        response_header_modifier:
+            add: TypeMap(TypeString)
+            remove: TypeList(TypeString)
+            set: TypeMap(TypeString)
+        retry_policy:
+            num_retries: TypeInt
+            per_try_timeout: TypeString
+            retry_conditions: TypeList(TypeString)
+        timeout: TypeString
+        url_rewrite:
+            host_rewrite: TypeString
+            path_prefix_rewrite: TypeString
+    matches:
+        full_path_match: TypeString
+        headers:
+            exact_match: TypeString
+            header: TypeString
+            invert_match: TypeBool
+            prefix_match: TypeString
+            present_match: TypeBool
+            range_match:
+                end: TypeInt
+                start: TypeInt
+            regex_match: TypeString
+            suffix_match: TypeString
+        ignore_case: TypeBool
+        prefix_match: TypeString
+        query_parameters:
+            exact_match: TypeString
+            present_match: TypeBool
+            query_parameter: TypeString
+            regex_match: TypeString
+        regex_match: TypeString
+self_link: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

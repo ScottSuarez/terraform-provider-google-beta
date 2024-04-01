@@ -1,0 +1,272 @@
+{
+    "accelerator_config": {
+        "Computed": true,
+        "ConflictsWith": "accelerator_type",
+        "Description": "The AccleratorConfig for the TPU Node. 'accelerator_config' cannot be used at the same time\nas 'accelerator_type'. If neither is specified, 'accelerator_type' defaults to 'v2-8'.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "topology": {
+                "Description": "Topology of TPU in chips.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "type": {
+                "Description": "Type of TPU. Possible values: [\"V2\", \"V3\", \"V4\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "accelerator_type": {
+        "Computed": true,
+        "ConflictsWith": "accelerator_config",
+        "Description": "TPU accelerator type for the TPU. 'accelerator_type' cannot be used at the same time as\n'accelerator_config'. If neither is specified, 'accelerator_type' defaults to 'v2-8'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "api_version": {
+        "Computed": true,
+        "Description": "The API version that created this Node.",
+        "Type": "TypeString"
+    },
+    "cidr_block": {
+        "Computed": true,
+        "Description": "The CIDR block that the TPU node will use when selecting an IP address. This CIDR block must\nbe a /29 block; the Compute Engine networks API forbids a smaller block, and using a larger\nblock would be wasteful (a node can only consume one IP address). Errors will occur if the\nCIDR block has already been used for a currently existing TPU node, the CIDR block conflicts\nwith any subnetworks in the user's provided network, or the provided network is peered with\nanother network that is using that CIDR block.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "data_disks": {
+        "Description": "The additional data disks for the Node.",
+        "Optional": true,
+        "Properties": {
+            "mode": {
+                "Description": "The mode in which to attach this disk. If not specified, the default is READ_WRITE\nmode. Only applicable to dataDisks. Default value: \"READ_WRITE\" Possible values: [\"READ_WRITE\", \"READ_ONLY\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "source_disk": {
+                "Description": "Specifies the full path to an existing disk. For example:\n\"projects/my-project/zones/us-central1-c/disks/my-disk\".",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "Text description of the TPU.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "health": {
+        "Computed": true,
+        "Description": "The health status of the TPU node.",
+        "Type": "TypeString"
+    },
+    "health_description": {
+        "Computed": true,
+        "Description": "If this field is populated, it contains a description of why the TPU Node is unhealthy.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Resource labels to represent user-provided metadata.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "metadata": {
+        "Description": "Custom metadata to apply to the TPU Node. Can set startup-script and shutdown-script.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "multislice_node": {
+        "Computed": true,
+        "Description": "Whether the Node belongs to a Multislice group.",
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "The immutable name of the TPU.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network_config": {
+        "Computed": true,
+        "Description": "Network configurations for the TPU node.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "can_ip_forward": {
+                "Description": "Allows the TPU node to send and receive packets with non-matching destination or source\nIPs. This is required if you plan to use the TPU workers to forward routes.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "enable_external_ips": {
+                "Description": "Indicates that external IP addresses would be associated with the TPU workers. If set to\nfalse, the specified subnetwork or network should have Private Google Access enabled.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "network": {
+                "Computed": true,
+                "Description": "The name of the network for the TPU node. It must be a preexisting Google Compute Engine\nnetwork. If both network and subnetwork are specified, the given subnetwork must belong\nto the given network. If network is not specified, it will be looked up from the\nsubnetwork if one is provided, or otherwise use \"default\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "subnetwork": {
+                "Computed": true,
+                "Description": "The name of the subnetwork for the TPU node. It must be a preexisting Google Compute\nEngine subnetwork. If both network and subnetwork are specified, the given subnetwork\nmust belong to the given network. If subnetwork is not specified, the subnetwork with the\nsame name as the network will be used.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "network_endpoints": {
+        "Computed": true,
+        "Description": "The network endpoints where TPU workers can be accessed and sent work. It is recommended that\nruntime clients of the node reach out to the 0th entry in this map first.",
+        "Properties": {
+            "access_config": {
+                "Computed": true,
+                "Description": "The access config for the TPU worker.",
+                "Properties": {
+                    "external_ip": {
+                        "Computed": true,
+                        "Description": "An external IP address associated with the TPU worker.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ip_address": {
+                "Computed": true,
+                "Description": "The internal IP address of this network endpoint.",
+                "Type": "TypeString"
+            },
+            "port": {
+                "Computed": true,
+                "Description": "The port of this network endpoint.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "queued_resource": {
+        "Computed": true,
+        "Description": "The qualified name of the QueuedResource that requested this Node.",
+        "Type": "TypeString"
+    },
+    "runtime_version": {
+        "Description": "Runtime version for the TPU.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "scheduling_config": {
+        "Description": "The scheduling options for this node.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "preemptible": {
+                "Description": "Defines whether the node is preemptible.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "reserved": {
+                "Description": "Whether the node is created under a reservation.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The Google Cloud Platform Service Account to be used by the TPU node VMs. If None is\nspecified, the default compute service account will be used.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "email": {
+                "Computed": true,
+                "Description": "Email address of the service account. If empty, default Compute service account will be used.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "scope": {
+                "Computed": true,
+                "Description": "The list of scopes to be made available for this service account. If empty, access to all\nCloud APIs will be allowed.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "shielded_instance_config": {
+        "Description": "Shielded Instance options.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enable_secure_boot": {
+                "Description": "Defines whether the instance has Secure Boot enabled.",
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The current state for the TPU Node.",
+        "Type": "TypeString"
+    },
+    "symptoms": {
+        "Computed": true,
+        "Description": "The Symptoms that have occurred to the TPU Node.",
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Description": "Timestamp when the Symptom is created.",
+                "Type": "TypeString"
+            },
+            "details": {
+                "Computed": true,
+                "Description": "Detailed information of the current Symptom.",
+                "Type": "TypeString"
+            },
+            "symptom_type": {
+                "Computed": true,
+                "Description": "Type of the Symptom.",
+                "Type": "TypeString"
+            },
+            "worker_id": {
+                "Computed": true,
+                "Description": "A string used to uniquely distinguish a worker within a TPU node.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "tags": {
+        "Description": "Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "zone": {
+        "Computed": true,
+        "Description": "The GCP location for the TPU. If it is not provided, the provider zone is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

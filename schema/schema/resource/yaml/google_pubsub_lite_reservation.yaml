@@ -1,0 +1,20 @@
+name:
+    Type: TypeString
+    Description: Name of the reservation.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the pubsub lite reservation.
+    Optional: "true"
+throughput_capacity:
+    Type: TypeInt
+    Description: |-
+        The reserved throughput capacity. Every unit of throughput capacity is
+        equivalent to 1 MiB/s of published messages or 2 MiB/s of subscribed
+        messages.
+    Required: "true"
+

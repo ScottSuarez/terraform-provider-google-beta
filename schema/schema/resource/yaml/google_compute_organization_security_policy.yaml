@@ -1,0 +1,32 @@
+description:
+    Type: TypeString
+    Description: A textual description for the organization security policy.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: A textual name of the security policy.
+    Required: "true"
+fingerprint:
+    Type: TypeString
+    Description: |-
+        Fingerprint of this resource. This field is used internally during
+        updates of this resource.
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The parent of this OrganizationSecurityPolicy in the Cloud Resource Hierarchy.
+        Format: organizations/{organization_id} or folders/{folder_id}
+    Required: "true"
+policy_id:
+    Type: TypeString
+    Description: The unique identifier for the resource. This identifier is defined by the server.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: |-
+        The type indicates the intended use of the security policy.
+        For organization security policies, the only supported type
+        is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]
+    Optional: "true"
+

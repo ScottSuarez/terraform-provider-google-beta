@@ -1,0 +1,33 @@
+connection_state:
+    Type: TypeString
+    Description: State of the endpoint attachment connection to the service attachment.
+    Computed: "true"
+endpoint_attachment_id:
+    Type: TypeString
+    Description: ID of the endpoint attachment.
+    Required: "true"
+host:
+    Type: TypeString
+    Description: Host that can be used in either HTTP Target Endpoint directly, or as the host in Target Server.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: Location of the endpoint attachment.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the Endpoint Attachment in the following format:
+        organizations/{organization}/endpointAttachments/{endpointAttachment}.
+    Computed: "true"
+org_id:
+    Type: TypeString
+    Description: |-
+        The Apigee Organization associated with the Apigee instance,
+        in the format 'organizations/{{org_name}}'.
+    Required: "true"
+service_attachment:
+    Type: TypeString
+    Description: 'Format: projects/*/regions/*/serviceAttachments/*'
+    Required: "true"
+

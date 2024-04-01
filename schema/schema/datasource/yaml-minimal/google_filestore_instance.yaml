@@ -1,0 +1,29 @@
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+file_shares:
+    capacity_gb: TypeInt
+    name: TypeString
+    nfs_export_options:
+        access_mode: TypeString
+        anon_gid: TypeInt
+        anon_uid: TypeInt
+        ip_ranges: TypeList(TypeString)
+        squash_mode: TypeString
+    source_backup: TypeString
+kms_key_name: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+networks:
+    connect_mode: TypeString
+    ip_addresses: TypeList(TypeString)
+    modes: TypeList(TypeString)
+    network: TypeString
+    reserved_ip_range: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+tier: TypeString
+zone: TypeString
+

@@ -1,0 +1,25 @@
+fingerprint:
+    Type: TypeString
+    Description: |-
+        The fingerprint used for optimistic locking of this resource.  Used
+        internally during updates.
+    Computed: "true"
+metadata:
+    Type: TypeList
+    Description: The metadata key/value pairs assigned to all the instances in the corresponding scope.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        items:
+            Type: TypeMap
+            Description: A metadata key/value items map. The total size of all keys and values must be less than 512KB
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: A reference to the zone where the machine resides.
+    Required: "true"
+

@@ -1,0 +1,4 @@
+location: TypeString
+project: TypeString
+static_ips: TypeList(TypeString)
+

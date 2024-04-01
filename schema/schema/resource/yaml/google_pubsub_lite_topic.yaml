@@ -1,0 +1,72 @@
+name:
+    Type: TypeString
+    Description: Name of the topic.
+    Required: "true"
+partition_config:
+    Type: TypeList
+    Description: The settings for this topic's partitions.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        capacity:
+            Type: TypeList
+            Description: The capacity configuration.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                publish_mib_per_sec:
+                    Type: TypeInt
+                    Description: Subscribe throughput capacity per partition in MiB/s. Must be >= 4 and <= 16.
+                    Required: "true"
+                subscribe_mib_per_sec:
+                    Type: TypeInt
+                    Description: Publish throughput capacity per partition in MiB/s. Must be >= 4 and <= 16.
+                    Required: "true"
+        count:
+            Type: TypeInt
+            Description: The number of partitions in the topic. Must be at least 1.
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the pubsub lite topic.
+    Optional: "true"
+reservation_config:
+    Type: TypeList
+    Description: The settings for this topic's Reservation usage.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        throughput_reservation:
+            Type: TypeString
+            Description: The Reservation to use for this topic's throughput capacity.
+            Optional: "true"
+retention_config:
+    Type: TypeList
+    Description: The settings for a topic's message retention.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        per_partition_bytes:
+            Type: TypeString
+            Description: |-
+                The provisioned storage, in bytes, per partition. If the number of bytes stored
+                in any of the topic's partitions grows beyond this value, older messages will be
+                dropped to make room for newer ones, regardless of the value of period.
+            Required: "true"
+        period:
+            Type: TypeString
+            Description: |-
+                How long a published message is retained. If unset, messages will be retained as
+                long as the bytes retained for each partition is below perPartitionBytes. A
+                duration in seconds with up to nine fractional digits, terminated by 's'.
+                Example: "3.5s".
+            Optional: "true"
+zone:
+    Type: TypeString
+    Description: The zone of the pubsub lite topic.
+    Optional: "true"
+

@@ -1,0 +1,160 @@
+cluster_config:
+    autoscaling_config:
+        policy_uri: TypeString
+    auxiliary_node_groups:
+        node_group:
+            name: TypeString
+            node_group_config:
+                accelerators:
+                    accelerator_count: TypeInt
+                    accelerator_type: TypeString
+                disk_config:
+                    boot_disk_size_gb: TypeInt
+                    boot_disk_type: TypeString
+                    num_local_ssds: TypeInt
+                instance_names: TypeList(TypeString)
+                machine_type: TypeString
+                min_cpu_platform: TypeString
+                num_instances: TypeInt
+            roles: TypeList(TypeString)
+        node_group_id: TypeString
+    bucket: TypeString
+    dataproc_metric_config:
+        metrics:
+            metric_overrides: TypeSet(TypeString)
+            metric_source: TypeString
+    encryption_config:
+        kms_key_name: TypeString
+    endpoint_config:
+        enable_http_port_access: TypeBool
+        http_ports: unknown
+    gce_cluster_config:
+        internal_ip_only: TypeBool
+        metadata: TypeMap(TypeString)
+        network: TypeString
+        node_group_affinity:
+            node_group_uri: TypeString
+        reservation_affinity:
+            consume_reservation_type: TypeString
+            key: TypeString
+            values: TypeSet(TypeString)
+        service_account: TypeString
+        service_account_scopes: TypeSet(TypeString)
+        shielded_instance_config:
+            enable_integrity_monitoring: TypeBool
+            enable_secure_boot: TypeBool
+            enable_vtpm: TypeBool
+        subnetwork: TypeString
+        tags: TypeSet(TypeString)
+        zone: TypeString
+    initialization_action:
+        script: TypeString
+        timeout_sec: TypeInt
+    lifecycle_config:
+        auto_delete_time: TypeString
+        idle_delete_ttl: TypeString
+        idle_start_time: TypeString
+    master_config:
+        accelerators:
+            accelerator_count: TypeInt
+            accelerator_type: TypeString
+        disk_config:
+            boot_disk_size_gb: TypeInt
+            boot_disk_type: TypeString
+            num_local_ssds: TypeInt
+        image_uri: TypeString
+        instance_names: TypeList(TypeString)
+        machine_type: TypeString
+        min_cpu_platform: TypeString
+        num_instances: TypeInt
+    metastore_config:
+        dataproc_metastore_service: TypeString
+    preemptible_worker_config:
+        disk_config:
+            boot_disk_size_gb: TypeInt
+            boot_disk_type: TypeString
+            num_local_ssds: TypeInt
+        instance_flexibility_policy:
+            instance_selection_list:
+                machine_types: TypeList(TypeString)
+                rank: TypeInt
+            instance_selection_results:
+                machine_type: TypeString
+                vm_count: TypeInt
+        instance_names: TypeList(TypeString)
+        num_instances: TypeInt
+        preemptibility: TypeString
+    security_config:
+        kerberos_config:
+            cross_realm_trust_admin_server: TypeString
+            cross_realm_trust_kdc: TypeString
+            cross_realm_trust_realm: TypeString
+            cross_realm_trust_shared_password_uri: TypeString
+            enable_kerberos: TypeBool
+            kdc_db_key_uri: TypeString
+            key_password_uri: TypeString
+            keystore_password_uri: TypeString
+            keystore_uri: TypeString
+            kms_key_uri: TypeString
+            realm: TypeString
+            root_principal_password_uri: TypeString
+            tgt_lifetime_hours: TypeInt
+            truststore_password_uri: TypeString
+            truststore_uri: TypeString
+    software_config:
+        image_version: TypeString
+        optional_components: TypeSet(TypeString)
+        override_properties: TypeMap(TypeString)
+        properties: unknown
+    staging_bucket: TypeString
+    temp_bucket: TypeString
+    worker_config:
+        accelerators:
+            accelerator_count: TypeInt
+            accelerator_type: TypeString
+        disk_config:
+            boot_disk_size_gb: TypeInt
+            boot_disk_type: TypeString
+            num_local_ssds: TypeInt
+        image_uri: TypeString
+        instance_names: TypeList(TypeString)
+        machine_type: TypeString
+        min_cpu_platform: TypeString
+        min_num_instances: TypeInt
+        num_instances: TypeInt
+effective_labels: TypeMap(TypeString)
+graceful_decommission_timeout: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+virtual_cluster_config:
+    auxiliary_services_config:
+        metastore_config:
+            dataproc_metastore_service: TypeString
+        spark_history_server_config:
+            dataproc_cluster: TypeString
+    kubernetes_cluster_config:
+        gke_cluster_config:
+            gke_cluster_target: TypeString
+            node_pool_target:
+                node_pool: TypeString
+                node_pool_config:
+                    autoscaling:
+                        max_node_count: TypeInt
+                        min_node_count: TypeInt
+                    config:
+                        local_ssd_count: TypeInt
+                        machine_type: TypeString
+                        min_cpu_platform: TypeString
+                        preemptible: TypeBool
+                        spot: TypeBool
+                    locations: TypeSet(TypeString)
+                roles: TypeSet(TypeString)
+        kubernetes_namespace: TypeString
+        kubernetes_software_config:
+            component_version: TypeMap(TypeString)
+            properties: TypeMap(TypeString)
+    staging_bucket: TypeString
+

@@ -1,0 +1,27 @@
+cluster:
+    Type: TypeString
+    Description: |-
+        Identifies the alloydb cluster. Must be in the format
+        'projects/{project}/locations/{location}/clusters/{cluster_id}'
+    Required: "true"
+database_roles:
+    Type: TypeList
+    Description: List of database roles this database user has.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the resource in the form of projects/{project}/locations/{location}/clusters/{cluster}/users/{user}.
+    Computed: "true"
+password:
+    Type: TypeString
+    Description: Password for this database user.
+    Optional: "true"
+user_id:
+    Type: TypeString
+    Description: The database role name of the user.
+    Required: "true"
+user_type:
+    Type: TypeString
+    Description: 'The type of this user. Possible values: ["ALLOYDB_BUILT_IN", "ALLOYDB_IAM_USER"]'
+    Required: "true"
+

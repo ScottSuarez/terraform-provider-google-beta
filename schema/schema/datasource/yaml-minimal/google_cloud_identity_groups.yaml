@@ -1,0 +1,17 @@
+groups:
+    additional_group_keys:
+        id: TypeString
+        namespace: TypeString
+    create_time: TypeString
+    description: TypeString
+    display_name: TypeString
+    group_key:
+        id: TypeString
+        namespace: TypeString
+    initial_group_config: TypeString
+    labels: TypeMap(TypeString)
+    name: TypeString
+    parent: TypeString
+    update_time: TypeString
+parent: TypeString
+

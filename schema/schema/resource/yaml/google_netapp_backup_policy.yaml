@@ -1,0 +1,66 @@
+assigned_volume_count:
+    Type: TypeInt
+    Description: The total number of volumes assigned by this backup policy.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: 'Create time of the backup policy. A timestamp in RFC3339 UTC "Zulu" format. Examples: "2023-06-22T09:13:01.617Z".'
+    Computed: "true"
+daily_backup_limit:
+    Type: TypeInt
+    Description: Number of daily backups to keep. Note that the minimum daily backup limit is 2.
+    Required: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+enabled:
+    Type: TypeBool
+    Description: |-
+        If enabled, make backups automatically according to the schedules.
+        This will be applied to all volumes that have this policy attached and enforced on volume level.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels as key value pairs. Example: '{ "owner": "Bob", "department": "finance", "purpose": "testing" }'.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Name of the region for the policy to apply to.
+    Required: "true"
+monthly_backup_limit:
+    Type: TypeInt
+    Description: Number of monthly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the backup policy. Needs to be unique per location.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The state of the backup policy.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+weekly_backup_limit:
+    Type: TypeInt
+    Description: Number of weekly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.
+    Required: "true"
+

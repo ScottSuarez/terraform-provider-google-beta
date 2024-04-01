@@ -1,0 +1,61 @@
+{
+    "backup_pool": {
+        "Description": "URL to the backup target pool. Must also set failover_ratio.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Textual description field.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "failover_ratio": {
+        "Description": "Ratio (0 to 1) of failed nodes before using the backup pool (which must also be set).",
+        "Optional": true,
+        "Type": "TypeFloat"
+    },
+    "health_checks": {
+        "Description": "List of zero or one health check name or self_link. Only legacy google_compute_http_health_check is supported.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "instances": {
+        "Computed": true,
+        "Description": "List of instances in the pool. They can be given as URLs, or in the form of \"zone/name\". Note that the instances need not exist at the time of target pool creation, so there is no need to use the Terraform interpolators to create a dependency on the instances from the target pool.",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "name": {
+        "Description": "A unique name for the resource, required by GCE. Changing this forces a new resource to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "Where the target pool resides. Defaults to project region.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "security_policy": {
+        "Description": "The resource URL for the security policy associated with this target pool.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "The URI of the created resource.",
+        "Type": "TypeString"
+    },
+    "session_affinity": {
+        "Description": "How to distribute load. Options are \"NONE\" (no affinity). \"CLIENT_IP\" (hash of the source/dest addresses / ports), and \"CLIENT_IP_PROTO\" also includes the protocol (default \"NONE\").",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

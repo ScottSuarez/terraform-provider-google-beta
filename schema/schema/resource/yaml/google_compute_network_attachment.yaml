@@ -1,0 +1,91 @@
+connection_endpoints:
+    Type: TypeList
+    Description: An array of connections for all the producers connected to this network attachment.
+    Computed: "true"
+    Properties:
+        ip_address:
+            Type: TypeString
+            Description: The IPv4 address assigned to the producer instance network interface. This value will be a range in case of Serverless.
+            Computed: "true"
+        project_id_or_num:
+            Type: TypeString
+            Description: The project id or number of the interface to which the IP was assigned.
+            Computed: "true"
+        secondary_ip_cidr_ranges:
+            Type: TypeString
+            Description: Alias IP ranges from the same subnetwork.
+            Computed: "true"
+        status:
+            Type: TypeString
+            Description: The status of a connected endpoint to this network attachment.
+            Computed: "true"
+        subnetwork:
+            Type: TypeString
+            Description: The subnetwork used to assign the IP to the producer instance network interface.
+            Computed: "true"
+connection_preference:
+    Type: TypeString
+    Description: 'The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules. Possible values: ["ACCEPT_AUTOMATIC", "ACCEPT_MANUAL", "INVALID"]'
+    Required: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource. Provide this property when you create the resource.
+    Optional: "true"
+fingerprint:
+    Type: TypeString
+    Description: |-
+        Fingerprint of this resource. A hash of the contents stored in this object. This
+        field is used in optimistic locking. An up-to-date fingerprint must be provided in order to patch.
+    Computed: "true"
+id:
+    Type: TypeString
+    Description: The unique identifier for the resource type. The server generates this identifier.
+    Computed: "true"
+kind:
+    Type: TypeString
+    Description: Type of the resource.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
+    Required: "true"
+network:
+    Type: TypeString
+    Description: |-
+        The URL of the network which the Network Attachment belongs to. Practically it is inferred by fetching the network of the first subnetwork associated.
+        Because it is required that all the subnetworks must be from the same network, it is assured that the Network Attachment belongs to the same network as all the subnetworks.
+    Computed: "true"
+producer_accept_lists:
+    Type: TypeList
+    Description: Projects that are allowed to connect to this network attachment. The project can be specified using its id or number.
+    Optional: "true"
+producer_reject_lists:
+    Type: TypeList
+    Description: Projects that are not allowed to connect to this network attachment. The project can be specified using its id or number.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: URL of the region where the network attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL for the resource.
+    Computed: "true"
+self_link_with_id:
+    Type: TypeString
+    Description: Server-defined URL for this resource's resource id.
+    Computed: "true"
+subnetworks:
+    Type: TypeList
+    Description: An array of URLs where each entry is the URL of a subnet provided by the service consumer to use for endpoints in the producers that connect to this network attachment.
+    Required: "true"
+

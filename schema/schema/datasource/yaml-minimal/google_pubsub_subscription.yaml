@@ -1,0 +1,44 @@
+ack_deadline_seconds: TypeInt
+bigquery_config:
+    drop_unknown_fields: TypeBool
+    table: TypeString
+    use_table_schema: TypeBool
+    use_topic_schema: TypeBool
+    write_metadata: TypeBool
+cloud_storage_config:
+    avro_config:
+        write_metadata: TypeBool
+    bucket: TypeString
+    filename_prefix: TypeString
+    filename_suffix: TypeString
+    max_bytes: TypeInt
+    max_duration: TypeString
+    state: TypeString
+dead_letter_policy:
+    dead_letter_topic: TypeString
+    max_delivery_attempts: TypeInt
+effective_labels: TypeMap(TypeString)
+enable_exactly_once_delivery: TypeBool
+enable_message_ordering: TypeBool
+expiration_policy:
+    ttl: TypeString
+filter: TypeString
+labels: TypeMap(TypeString)
+message_retention_duration: TypeString
+name: TypeString
+project: TypeString
+push_config:
+    attributes: TypeMap(TypeString)
+    no_wrapper:
+        write_metadata: TypeBool
+    oidc_token:
+        audience: TypeString
+        service_account_email: TypeString
+    push_endpoint: TypeString
+retain_acked_messages: TypeBool
+retry_policy:
+    maximum_backoff: TypeString
+    minimum_backoff: TypeString
+terraform_labels: TypeMap(TypeString)
+topic: TypeString
+

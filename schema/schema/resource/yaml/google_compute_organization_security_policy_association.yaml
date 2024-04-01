@@ -1,0 +1,17 @@
+attachment_id:
+    Type: TypeString
+    Description: The resource that the security policy is attached to.
+    Required: "true"
+display_name:
+    Type: TypeString
+    Description: The display name of the security policy of the association.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name for an association.
+    Required: "true"
+policy_id:
+    Type: TypeString
+    Description: The security policy ID of the association.
+    Required: "true"
+

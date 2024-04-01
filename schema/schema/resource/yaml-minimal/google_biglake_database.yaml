@@ -1,0 +1,11 @@
+catalog: TypeString
+create_time: TypeString
+delete_time: TypeString
+expire_time: TypeString
+hive_options:
+    location_uri: TypeString
+    parameters: TypeMap(TypeString)
+name: TypeString
+type: TypeString
+update_time: TypeString
+

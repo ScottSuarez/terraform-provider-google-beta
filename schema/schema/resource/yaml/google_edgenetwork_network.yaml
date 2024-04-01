@@ -1,0 +1,49 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        The time when the subnet was created.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: Labels associated with this resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The Google Cloud region to which the target Distributed Cloud Edge zone belongs.
+    Required: "true"
+mtu:
+    Type: TypeInt
+    Description: 'IP (L3) MTU value of the network. Default value is ''1500''. Possible values are: ''1500'', ''9000''.'
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The canonical name of this resource, with format
+        'projects/{{project}}/locations/{{location}}/zones/{{zone}}/networks/{{network_id}}'
+    Computed: "true"
+network_id:
+    Type: TypeString
+    Description: A unique ID that identifies this network.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time when the subnet was last updated.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.
+    Computed: "true"
+zone:
+    Type: TypeString
+    Description: The name of the target Distributed Cloud Edge zone.
+    Required: "true"
+

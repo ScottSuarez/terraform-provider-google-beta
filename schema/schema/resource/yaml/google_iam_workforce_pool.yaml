@@ -1,0 +1,86 @@
+access_restrictions:
+    Type: TypeList
+    Description: |-
+        Configure access restrictions on the workforce pool users. This is an optional field. If specified web
+        sign-in can be restricted to given set of services or programmatic sign-in can be disabled for pool users.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        allowed_services:
+            Type: TypeList
+            Description: |-
+                Services allowed for web sign-in with the workforce pool.
+                If not set by default there are no restrictions.
+            Optional: "true"
+            Properties:
+                domain:
+                    Type: TypeString
+                    Description: |-
+                        Domain name of the service.
+                        Example: console.cloud.google
+                    Optional: "true"
+        disable_programmatic_signin:
+            Type: TypeBool
+            Description: |-
+                Disable programmatic sign-in by disabling token issue via the Security Token API endpoint.
+                See [Security Token Service API](https://cloud.google.com/iam/docs/reference/sts/rest).
+            Optional: "true"
+description:
+    Type: TypeString
+    Description: A user-specified description of the pool. Cannot exceed 256 characters.
+    Optional: "true"
+disabled:
+    Type: TypeBool
+    Description: |-
+        Whether the pool is disabled. You cannot use a disabled pool to exchange tokens,
+        or use existing tokens to access resources. If the pool is re-enabled, existing tokens grant access again.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: A user-specified display name of the pool in Google Cloud Console. Cannot exceed 32 characters.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Output only. The resource name of the pool.
+        Format: 'locations/{location}/workforcePools/{workforcePoolId}'
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: 'Immutable. The resource name of the parent. Format: ''organizations/{org-id}''.'
+    Required: "true"
+session_duration:
+    Type: TypeString
+    Description: |-
+        Duration that the Google Cloud access tokens, console sign-in sessions,
+        and 'gcloud' sign-in sessions from this pool are valid.
+        Must be greater than 15 minutes (900s) and less than 12 hours (43200s).
+        If 'sessionDuration' is not configured, minted credentials have a default duration of one hour (3600s).
+        A duration in seconds with up to nine fractional digits, ending with ''s''. Example: "'3.5s'".
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: |-
+        Output only. The state of the pool.
+         * STATE_UNSPECIFIED: State unspecified.
+         * ACTIVE: The pool is active, and may be used in Google Cloud policies.
+         * DELETED: The pool is soft-deleted. Soft-deleted pools are permanently deleted
+           after approximately 30 days. You can restore a soft-deleted pool using
+           [workforcePools.undelete](https://cloud.google.com/iam/docs/reference/rest/v1/locations.workforcePools/undelete#google.iam.admin.v1.WorkforcePools.UndeleteWorkforcePool).
+           You cannot reuse the ID of a soft-deleted pool until it is permanently deleted.
+           While a pool is deleted, you cannot use it to exchange tokens, or use
+           existing tokens to access resources. If the pool is undeleted, existing
+           tokens grant access again.
+    Computed: "true"
+workforce_pool_id:
+    Type: TypeString
+    Description: |-
+        The name of the pool. The ID must be a globally unique string of 6 to 63 lowercase letters,
+        digits, or hyphens. It must start with a letter, and cannot have a trailing hyphen.
+        The prefix 'gcp-' is reserved for use by Google, and may not be specified.
+    Required: "true"
+

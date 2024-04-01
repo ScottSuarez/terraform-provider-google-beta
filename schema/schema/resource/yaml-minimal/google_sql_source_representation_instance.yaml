@@ -1,0 +1,13 @@
+ca_certificate: TypeString
+client_certificate: TypeString
+client_key: TypeString
+database_version: TypeString
+dump_file_path: TypeString
+host: TypeString
+name: TypeString
+password: TypeString
+port: TypeInt
+project: TypeString
+region: TypeString
+username: TypeString
+

@@ -1,0 +1,84 @@
+description:
+    Type: TypeString
+    Description: A human-readable description of this TargetServer.
+    Optional: "true"
+env_id:
+    Type: TypeString
+    Description: |-
+        The Apigee environment group associated with the Apigee environment,
+        in the format 'organizations/{{org_name}}/environments/{{env_name}}'.
+    Required: "true"
+host:
+    Type: TypeString
+    Description: The host name this target connects to. Value must be a valid hostname as described by RFC-1123.
+    Required: "true"
+is_enabled:
+    Type: TypeBool
+    Description: Enabling/disabling a TargetServer is useful when TargetServers are used in load balancing configurations, and one or more TargetServers need to taken out of rotation periodically. Defaults to true.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The resource id of this reference. Values must match the regular expression [\w\s-.]+.
+    Required: "true"
+port:
+    Type: TypeInt
+    Description: The port number this target connects to on the given host. Value must be between 1 and 65535, inclusive.
+    Required: "true"
+protocol:
+    Type: TypeString
+    Description: 'Immutable. The protocol used by this TargetServer. Possible values: ["HTTP", "HTTP2", "GRPC_TARGET", "GRPC", "EXTERNAL_CALLOUT"]'
+    Computed: "true"
+    Optional: "true"
+s_sl_info:
+    Type: TypeList
+    Description: Specifies TLS configuration info for this TargetServer. The JSON name is sSLInfo for legacy/backwards compatibility reasons -- Edge originally supported SSL, and the name is still used for TLS configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        ciphers:
+            Type: TypeList
+            Description: 'The SSL/TLS cipher suites to be used. For programmable proxies, it must be one of the cipher suite names listed in: http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#ciphersuites. For configurable proxies, it must follow the configuration specified in: https://commondatastorage.googleapis.com/chromium-boringssl-docs/ssl.h.html#Cipher-suite-configuration. This setting has no effect for configurable proxies when negotiating TLS 1.3.'
+            Optional: "true"
+        client_auth_enabled:
+            Type: TypeBool
+            Description: Enables two-way TLS.
+            Optional: "true"
+        common_name:
+            Type: TypeList
+            Description: The TLS Common Name of the certificate.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                value:
+                    Type: TypeString
+                    Description: The TLS Common Name string of the certificate.
+                    Optional: "true"
+                wildcard_match:
+                    Type: TypeBool
+                    Description: Indicates whether the cert should be matched against as a wildcard cert.
+                    Optional: "true"
+        enabled:
+            Type: TypeBool
+            Description: Enables TLS. If false, neither one-way nor two-way TLS will be enabled.
+            Required: "true"
+        ignore_validation_errors:
+            Type: TypeBool
+            Description: If true, Edge ignores TLS certificate errors. Valid when configuring TLS for target servers and target endpoints, and when configuring virtual hosts that use 2-way TLS. When used with a target endpoint/target server, if the backend system uses SNI and returns a cert with a subject Distinguished Name (DN) that does not match the hostname, there is no way to ignore the error and the connection fails.
+            Optional: "true"
+        key_alias:
+            Type: TypeString
+            Description: Required if clientAuthEnabled is true. The resource ID for the alias containing the private key and cert.
+            Optional: "true"
+        key_store:
+            Type: TypeString
+            Description: Required if clientAuthEnabled is true. The resource ID of the keystore.
+            Optional: "true"
+        protocols:
+            Type: TypeList
+            Description: The TLS versioins to be used.
+            Optional: "true"
+        trust_store:
+            Type: TypeString
+            Description: The resource ID of the truststore.
+            Optional: "true"
+

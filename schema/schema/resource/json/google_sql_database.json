@@ -1,0 +1,38 @@
+{
+    "charset": {
+        "Computed": true,
+        "Description": "The charset value. See MySQL's\n[Supported Character Sets and Collations](https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html)\nand Postgres' [Character Set Support](https://www.postgresql.org/docs/9.6/static/multibyte.html)\nfor more details and supported values. Postgres databases only support\na value of 'UTF8' at creation time.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "collation": {
+        "Computed": true,
+        "Description": "The collation value. See MySQL's\n[Supported Character Sets and Collations](https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html)\nand Postgres' [Collation Support](https://www.postgresql.org/docs/9.6/static/collation.html)\nfor more details and supported values. Postgres databases only support\na value of 'en_US.UTF8' at creation time.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Description": "The deletion policy for the database. Setting ABANDON allows the resource\nto be abandoned rather than deleted. This is useful for Postgres, where databases cannot be\ndeleted from the API if there are users other than cloudsqlsuperuser with access. Possible\nvalues are: \"ABANDON\", \"DELETE\". Defaults to \"DELETE\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "instance": {
+        "Description": "The name of the Cloud SQL instance. This does not include the project\nID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the database in the Cloud SQL instance.\nThis does not include the project ID or instance name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

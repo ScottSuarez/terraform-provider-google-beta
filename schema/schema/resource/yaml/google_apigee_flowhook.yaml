@@ -1,0 +1,25 @@
+continue_on_error:
+    Type: TypeBool
+    Description: Flag that specifies whether execution should continue if the flow hook throws an exception. Set to true to continue execution. Set to false to stop execution if the flow hook throws an exception. Defaults to true.
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: Description of the flow hook.
+    Optional: "true"
+environment:
+    Type: TypeString
+    Description: The resource ID of the environment.
+    Required: "true"
+flow_hook_point:
+    Type: TypeString
+    Description: Where in the API call flow the flow hook is invoked. Must be one of PreProxyFlowHook, PostProxyFlowHook, PreTargetFlowHook, or PostTargetFlowHook.
+    Required: "true"
+org_id:
+    Type: TypeString
+    Description: The Apigee Organization associated with the environment
+    Required: "true"
+sharedflow:
+    Type: TypeString
+    Description: Id of the Sharedflow attaching to a flowhook point.
+    Required: "true"
+

@@ -1,0 +1,6 @@
+etag: TypeString
+location: TypeString
+membership_id: TypeString
+policy_data: TypeString
+project: TypeString
+

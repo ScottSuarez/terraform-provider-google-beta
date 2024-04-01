@@ -1,0 +1,17 @@
+{
+    "name": {
+        "Computed": true,
+        "Description": "The generated id for the TagBinding. This is a string of the form: 'tagBindings/{full-resource-name}/{tag-value-name}'",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The full resource name of the resource the TagValue is bound to. E.g. //cloudresourcemanager.googleapis.com/projects/123",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "tag_value": {
+        "Description": "The TagValue of the TagBinding. Must be of the form tagValues/456.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

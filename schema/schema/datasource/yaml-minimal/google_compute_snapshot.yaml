@@ -1,0 +1,28 @@
+chain_name: TypeString
+creation_timestamp: TypeString
+description: TypeString
+disk_size_gb: TypeInt
+effective_labels: TypeMap(TypeString)
+filter: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+licenses: TypeList(TypeString)
+most_recent: TypeBool
+name: TypeString
+project: TypeString
+self_link: TypeString
+snapshot_encryption_key:
+    kms_key_self_link: TypeString
+    kms_key_service_account: TypeString
+    raw_key: TypeString
+    sha256: TypeString
+snapshot_id: TypeInt
+source_disk: TypeString
+source_disk_encryption_key:
+    kms_key_service_account: TypeString
+    raw_key: TypeString
+storage_bytes: TypeInt
+storage_locations: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+zone: TypeString
+

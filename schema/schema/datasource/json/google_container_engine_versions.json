@@ -1,0 +1,42 @@
+{
+    "default_cluster_version": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "latest_master_version": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "latest_node_version": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "release_channel_default_version": {
+        "Computed": true,
+        "Type": "TypeMap"
+    },
+    "release_channel_latest_version": {
+        "Computed": true,
+        "Type": "TypeMap"
+    },
+    "valid_master_versions": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "valid_node_versions": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "version_prefix": {
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

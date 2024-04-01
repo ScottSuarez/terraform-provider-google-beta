@@ -1,0 +1,24 @@
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+is_default_negative_intent: TypeBool
+is_default_welcome_intent: TypeBool
+is_fallback: TypeBool
+labels: TypeMap(TypeString)
+language_code: TypeString
+name: TypeString
+parameters:
+    entity_type: TypeString
+    id: TypeString
+    is_list: TypeBool
+    redact: TypeBool
+parent: TypeString
+priority: TypeInt
+terraform_labels: TypeMap(TypeString)
+training_phrases:
+    id: TypeString
+    parts:
+        parameter_id: TypeString
+        text: TypeString
+    repeat_count: TypeInt
+

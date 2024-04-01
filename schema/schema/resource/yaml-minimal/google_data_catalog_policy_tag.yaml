@@ -1,0 +1,7 @@
+child_policy_tags: TypeList(TypeString)
+description: TypeString
+display_name: TypeString
+name: TypeString
+parent_policy_tag: TypeString
+taxonomy: TypeString
+

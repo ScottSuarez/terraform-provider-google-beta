@@ -1,0 +1,8 @@
+disable_default_sink: TypeBool
+folder: TypeString
+kms_key_name: TypeString
+kms_service_account_id: TypeString
+logging_service_account_id: TypeString
+name: TypeString
+storage_location: TypeString
+

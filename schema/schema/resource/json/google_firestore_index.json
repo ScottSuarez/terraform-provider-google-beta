@@ -1,0 +1,55 @@
+{
+    "api_scope": {
+        "Description": "The API scope at which a query is run. Default value: \"ANY_API\" Possible values: [\"ANY_API\", \"DATASTORE_MODE_API\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "collection": {
+        "Description": "The collection being indexed.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "database": {
+        "Description": "The Firestore database id. Defaults to '\"(default)\"'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "fields": {
+        "Description": "The fields supported by this index. The last field entry is always for\nthe field path '__name__'. If, on creation, '__name__' was not\nspecified as the last field, it will be added automatically with the\nsame direction as that of the last field defined. If the final field\nin a composite index is not directional, the '__name__' will be\nordered '\"ASCENDING\"' (unless explicitly specified otherwise).",
+        "MinItems": 2,
+        "Properties": {
+            "array_config": {
+                "Description": "Indicates that this field supports operations on arrayValues. Only one of 'order' and 'arrayConfig' can\nbe specified. Possible values: [\"CONTAINS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "field_path": {
+                "Description": "Name of the field.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "order": {
+                "Description": "Indicates that this field supports ordering by the specified order or comparing using =, \u003c, \u003c=, \u003e, \u003e=.\nOnly one of 'order' and 'arrayConfig' can be specified. Possible values: [\"ASCENDING\", \"DESCENDING\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "A server defined name for this index. Format:\n'projects/{{project}}/databases/{{database}}/collectionGroups/{{collection}}/indexes/{{server_generated_id}}'",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "query_scope": {
+        "Description": "The scope at which a query is run. Default value: \"COLLECTION\" Possible values: [\"COLLECTION\", \"COLLECTION_GROUP\", \"COLLECTION_RECURSIVE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

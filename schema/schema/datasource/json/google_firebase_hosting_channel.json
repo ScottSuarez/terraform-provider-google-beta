@@ -1,0 +1,47 @@
+{
+    "channel_id": {
+        "Description": "Required. Immutable. A unique ID within the site that identifies the channel.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "The time at which the channel will be automatically deleted. If null, the channel\nwill not be automatically deleted. This field is present in the output whether it's\nset directly or via the 'ttl' field.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Text labels used for extra metadata and/or filtering\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully-qualified resource name for the channel, in the format:\nsites/SITE_ID/channels/CHANNEL_ID",
+        "Type": "TypeString"
+    },
+    "retained_release_count": {
+        "Computed": true,
+        "Description": "The number of previous releases to retain on the channel for rollback or other\npurposes. Must be a number between 1-100. Defaults to 10 for new channels.",
+        "Type": "TypeInt"
+    },
+    "site_id": {
+        "Description": "Required. The ID of the site in which to create this channel.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "ttl": {
+        "Computed": true,
+        "Description": "Input only. A time-to-live for this channel. Sets 'expire_time' to the provided\nduration past the time of the request. A duration in seconds with up to nine fractional\ndigits, terminated by 's'. Example: \"86400s\" (one day).",
+        "Type": "TypeString"
+    }
+}

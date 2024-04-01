@@ -1,0 +1,29 @@
+{
+    "dispatch_rules": {
+        "Description": "Rules to match an HTTP request and dispatch that request to a service.",
+        "Properties": {
+            "domain": {
+                "Description": "Domain name to match against. The wildcard \"*\" is supported if specified before a period: \"*.\".\nDefaults to matching all domains: \"*\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "path": {
+                "Description": "Pathname within the host. Must start with a \"/\". A single \"*\" can be included at the end of the path.\nThe sum of the lengths of the domain and path may not exceed 100 characters.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "service": {
+                "Description": "Pathname within the host. Must start with a \"/\". A single \"*\" can be included at the end of the path.\nThe sum of the lengths of the domain and path may not exceed 100 characters.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

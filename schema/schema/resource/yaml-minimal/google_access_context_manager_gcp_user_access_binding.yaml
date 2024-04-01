@@ -1,0 +1,5 @@
+access_levels: TypeList(TypeString)
+group_key: TypeString
+name: TypeString
+organization_id: TypeString
+

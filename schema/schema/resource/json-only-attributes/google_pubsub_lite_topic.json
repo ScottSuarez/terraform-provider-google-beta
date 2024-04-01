@@ -1,0 +1,1 @@
+["name","partition_config","partition_config.capacity","partition_config.capacity.publish_mib_per_sec","partition_config.capacity.subscribe_mib_per_sec","partition_config.count","project","region","reservation_config","reservation_config.throughput_reservation","retention_config","retention_config.per_partition_bytes","retention_config.period","zone"]

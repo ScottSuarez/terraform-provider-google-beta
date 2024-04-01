@@ -1,0 +1,10 @@
+creation_timestamp: TypeString
+description: TypeString
+fingerprint: TypeString
+name: TypeString
+network_firewall_policy_id: TypeString
+project: TypeString
+rule_tuple_count: TypeInt
+self_link: TypeString
+self_link_with_id: TypeString
+

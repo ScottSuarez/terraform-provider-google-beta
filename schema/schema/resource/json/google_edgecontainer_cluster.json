@@ -1,0 +1,406 @@
+{
+    "authorization": {
+        "Description": "RBAC policy that will be applied and managed by GEC.",
+        "MaxItems": 1,
+        "Properties": {
+            "admin_users": {
+                "Description": "User that will be granted the cluster-admin role on the cluster, providing\nfull access to the cluster. Currently, this is a singular field, but will\nbe expanded to allow multiple admins in the future.",
+                "MaxItems": 1,
+                "Properties": {
+                    "username": {
+                        "Description": "An active Google username.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "cluster_ca_certificate": {
+        "Computed": true,
+        "Description": "The PEM-encoded public certificate of the cluster's CA.",
+        "Type": "TypeString"
+    },
+    "control_plane": {
+        "Description": "The configuration of the cluster control plane.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "local": {
+                "Computed": true,
+                "Description": "Local control plane configuration.",
+                "ExactlyOneOf": "control_plane.0.remote, control_plane.0.local",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "machine_filter": {
+                        "Description": "Only machines matching this filter will be allowed to host control\nplane nodes. The filtering language accepts strings like \"name=\u003cname\u003e\",\nand is documented here: [AIP-160](https://google.aip.dev/160).",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "node_count": {
+                        "Computed": true,
+                        "Description": "The number of nodes to serve as replicas of the Control Plane.\nOnly 1 and 3 are supported.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "node_location": {
+                        "Computed": true,
+                        "Description": "Name of the Google Distributed Cloud Edge zones where this node pool\nwill be created. For example: 'us-central1-edge-customer-a'.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "shared_deployment_policy": {
+                        "Computed": true,
+                        "Description": "Policy configuration about how user applications are deployed. Possible values: [\"SHARED_DEPLOYMENT_POLICY_UNSPECIFIED\", \"ALLOWED\", \"DISALLOWED\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "remote": {
+                "Computed": true,
+                "Description": "Remote control plane configuration.",
+                "ExactlyOneOf": "control_plane.0.remote, control_plane.0.local",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "node_location": {
+                        "Computed": true,
+                        "Description": "Name of the Google Distributed Cloud Edge zones where this node pool\nwill be created. For example: 'us-central1-edge-customer-a'.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "control_plane_encryption": {
+        "Computed": true,
+        "Description": "Remote control plane disk encryption options. This field is only used when\nenabling CMEK support.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "kms_key": {
+                "Computed": true,
+                "Description": "The Cloud KMS CryptoKey e.g.\nprojects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{cryptoKey}\nto use for protecting control plane disks. If not specified, a\nGoogle-managed key will be used instead.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "kms_key_active_version": {
+                "Computed": true,
+                "Description": "The Cloud KMS CryptoKeyVersion currently in use for protecting control\nplane disks. Only applicable if kms_key is set.",
+                "Type": "TypeString"
+            },
+            "kms_key_state": {
+                "Computed": true,
+                "Description": "Availability of the Cloud KMS CryptoKey. If not 'KEY_AVAILABLE', then\nnodes may go offline as they cannot access their local data. This can be\ncaused by a lack of permissions to use the key, or if the key is disabled\nor deleted.",
+                "Type": "TypeString"
+            },
+            "kms_status": {
+                "Computed": true,
+                "Description": "Error status returned by Cloud KMS when using this key. This field may be\npopulated only if 'kms_key_state' is not 'KMS_KEY_STATE_KEY_AVAILABLE'.\nIf populated, this field contains the error status reported by Cloud KMS.",
+                "Properties": {
+                    "code": {
+                        "Computed": true,
+                        "Description": "The status code, which should be an enum value of google.rpc.Code.",
+                        "Type": "TypeInt"
+                    },
+                    "message": {
+                        "Computed": true,
+                        "Description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "control_plane_version": {
+        "Computed": true,
+        "Description": "The control plane release version.",
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The time the cluster was created, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "default_max_pods_per_node": {
+        "Computed": true,
+        "Description": "The default maximum number of pods per node used if a maximum value is not\nspecified explicitly for a node pool in this cluster. If unspecified, the\nKubernetes default value will be used.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "endpoint": {
+        "Computed": true,
+        "Description": "The IP address of the Kubernetes API server.",
+        "Type": "TypeString"
+    },
+    "external_load_balancer_ipv4_address_pools": {
+        "Computed": true,
+        "Description": "Address pools for cluster data plane external load balancing.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "fleet": {
+        "Description": "Fleet related configuration.\nFleets are a Google Cloud concept for logically organizing clusters,\nletting you use and manage multi-cluster capabilities and apply\nconsistent policies across your systems.",
+        "MaxItems": 1,
+        "Properties": {
+            "membership": {
+                "Computed": true,
+                "Description": "The name of the managed Hub Membership resource associated to this cluster.\nMembership names are formatted as\n'projects/\u003cproject-number\u003e/locations/global/membership/\u003ccluster-id\u003e'.",
+                "Type": "TypeString"
+            },
+            "project": {
+                "Description": "The name of the Fleet host project where this cluster will be registered.\nProject names are formatted as\n'projects/\u003cproject-number\u003e'.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "User-defined labels for the edgecloud cluster.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of the resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "maintenance_events": {
+        "Computed": true,
+        "Description": "All the maintenance events scheduled for the cluster, including the ones\nongoing, planned for the future and done in the past (up to 90 days).",
+        "Properties": {
+            "create_time": {
+                "Computed": true,
+                "Description": "The time when the maintenance event request was created.",
+                "Type": "TypeString"
+            },
+            "end_time": {
+                "Computed": true,
+                "Description": "The time when the maintenance event ended, either successfully or not. If\nthe maintenance event is split into multiple maintenance windows,\nend_time is only updated when the whole flow ends.",
+                "Type": "TypeString"
+            },
+            "operation": {
+                "Computed": true,
+                "Description": "The operation for running the maintenance event. Specified in the format\nprojects/*/locations/*/operations/*. If the maintenance event is split\ninto multiple operations (e.g. due to maintenance windows), the latest\none is recorded.",
+                "Type": "TypeString"
+            },
+            "schedule": {
+                "Computed": true,
+                "Description": "The schedule of the maintenance event.",
+                "Type": "TypeString"
+            },
+            "start_time": {
+                "Computed": true,
+                "Description": "The time when the maintenance event started.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "Indicates the maintenance event state.",
+                "Type": "TypeString"
+            },
+            "target_version": {
+                "Computed": true,
+                "Description": "The target version of the cluster.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "Indicates the maintenance event type.",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "The time when the maintenance event message was updated.",
+                "Type": "TypeString"
+            },
+            "uuid": {
+                "Computed": true,
+                "Description": "UUID of the maintenance event.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "maintenance_policy": {
+        "Computed": true,
+        "Description": "Cluster-wide maintenance policy configuration.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "window": {
+                "Description": "Specifies the maintenance window in which maintenance may be performed.",
+                "MaxItems": 1,
+                "Properties": {
+                    "recurring_window": {
+                        "Description": "Represents an arbitrary window of time that recurs.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "recurrence": {
+                                "Computed": true,
+                                "Description": "An RRULE (https://tools.ietf.org/html/rfc5545#section-3.8.5.3) for how\nthis window recurs. They go on for the span of time between the start and\nend time.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "window": {
+                                "Computed": true,
+                                "Description": "Represents an arbitrary window of time.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "end_time": {
+                                        "Computed": true,
+                                        "Description": "The time that the window ends. The end time must take place after the\nstart time.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "start_time": {
+                                        "Computed": true,
+                                        "Description": "The time that the window first starts.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The GDCE cluster name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "networking": {
+        "Description": "Fleet related configuration.\nFleets are a Google Cloud concept for logically organizing clusters,\nletting you use and manage multi-cluster capabilities and apply\nconsistent policies across your systems.",
+        "MaxItems": 1,
+        "Properties": {
+            "cluster_ipv4_cidr_blocks": {
+                "Description": "All pods in the cluster are assigned an RFC1918 IPv4 address from these\nblocks. Only a single block is supported. This field cannot be changed\nafter creation.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "cluster_ipv6_cidr_blocks": {
+                "Description": "If specified, dual stack mode is enabled and all pods in the cluster are\nassigned an IPv6 address from these blocks alongside from an IPv4\naddress. Only a single block is supported. This field cannot be changed\nafter creation.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "network_type": {
+                "Computed": true,
+                "Description": "IP addressing type of this cluster i.e. SINGLESTACK_V4 vs DUALSTACK_V4_V6.",
+                "Type": "TypeString"
+            },
+            "services_ipv4_cidr_blocks": {
+                "Description": "All services in the cluster are assigned an RFC1918 IPv4 address from these\nblocks. Only a single block is supported. This field cannot be changed\nafter creation.",
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "services_ipv6_cidr_blocks": {
+                "Description": "If specified, dual stack mode is enabled and all services in the cluster are\nassigned an IPv6 address from these blocks alongside from an IPv4\naddress. Only a single block is supported. This field cannot be changed\nafter creation.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "node_version": {
+        "Computed": true,
+        "Description": "The lowest release version among all worker nodes. This field can be empty\nif the cluster does not have any worker nodes.",
+        "Type": "TypeString"
+    },
+    "port": {
+        "Computed": true,
+        "Description": "The port number of the Kubernetes API server.",
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "release_channel": {
+        "Computed": true,
+        "Description": "The release channel a cluster is subscribed to. Possible values: [\"RELEASE_CHANNEL_UNSPECIFIED\", \"NONE\", \"REGULAR\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "status": {
+        "Computed": true,
+        "Description": "Indicates the status of the cluster.",
+        "Type": "TypeString"
+    },
+    "system_addons_config": {
+        "Computed": true,
+        "Description": "Config that customers are allowed to define for GDCE system add-ons.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "ingress": {
+                "Computed": true,
+                "Description": "Config for the Ingress add-on which allows customers to create an Ingress\nobject to manage external access to the servers in a cluster. The add-on\nconsists of istiod and istio-ingress.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "disabled": {
+                        "Computed": true,
+                        "Description": "Whether Ingress is disabled.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "ipv4_vip": {
+                        "Computed": true,
+                        "Description": "Ingress VIP.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "target_version": {
+        "Computed": true,
+        "Description": "The target cluster version. For example: \"1.5.0\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time the cluster was last updated, in RFC3339 text format.",
+        "Type": "TypeString"
+    }
+}

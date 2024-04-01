@@ -1,0 +1,47 @@
+location:
+    Type: TypeString
+    Description: The location for the management server (management console)
+    Required: "true"
+management_uri:
+    Type: TypeList
+    Description: The management console URI
+    Computed: "true"
+    Properties:
+        api:
+            Type: TypeString
+            Description: The management console api endpoint.
+            Computed: "true"
+        web_ui:
+            Type: TypeString
+            Description: The management console webUi.
+            Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of management server (management console)
+    Required: "true"
+networks:
+    Type: TypeList
+    Description: Network details to create management server (management console).
+    Required: "true"
+    Properties:
+        network:
+            Type: TypeString
+            Description: Network with format 'projects/{{project_id}}/global/networks/{{network_id}}'
+            Required: "true"
+        peering_mode:
+            Type: TypeString
+            Description: 'Type of Network peeringMode Default value: "PRIVATE_SERVICE_ACCESS" Possible values: ["PRIVATE_SERVICE_ACCESS"]'
+            Optional: "true"
+oauth2_client_id:
+    Type: TypeString
+    Description: The oauth2ClientId of management console.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+type:
+    Type: TypeString
+    Description: 'The type of management server (management console). Default value: "BACKUP_RESTORE" Possible values: ["BACKUP_RESTORE"]'
+    Optional: "true"
+

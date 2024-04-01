@@ -1,0 +1,35 @@
+{
+    "bandwidth_limit": {
+        "Description": "Specifies the bandwidth limit details. If this field is unspecified, the default value is set as 'No Limit'.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "limit_mbps": {
+                "Description": "Bandwidth rate in megabytes per second, distributed across all the agents in the pool.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "Specifies the client-specified AgentPool description.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the agent pool to create.\n\nThe agentPoolId must meet the following requirements:\n* Length of 128 characters or less.\n* Not start with the string goog.\n* Start with a lowercase ASCII character, followed by:\n  * Zero or more: lowercase Latin alphabet characters, numerals, hyphens (-), periods (.), underscores (_), or tildes (~).\n  * One or more numerals or lowercase ASCII characters.\n\nAs expressed by the regular expression: ^(?!goog)[a-z]([a-z0-9-._~]*[a-z0-9])?$.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Specifies the state of the AgentPool.",
+        "Type": "TypeString"
+    }
+}

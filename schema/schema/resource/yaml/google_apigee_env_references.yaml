@@ -1,0 +1,23 @@
+description:
+    Type: TypeString
+    Description: Optional. A human-readable description of this reference.
+    Optional: "true"
+env_id:
+    Type: TypeString
+    Description: |-
+        The Apigee environment group associated with the Apigee environment,
+        in the format 'organizations/{{org_name}}/environments/{{env_name}}'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Required. The resource id of this reference. Values must match the regular expression [\w\s-.]+.
+    Required: "true"
+refers:
+    Type: TypeString
+    Description: Required. The id of the resource to which this reference refers. Must be the id of a resource that exists in the parent environment and is of the given resourceType.
+    Required: "true"
+resource_type:
+    Type: TypeString
+    Description: The type of resource referred to by this reference. Valid values are 'KeyStore' or 'TrustStore'.
+    Required: "true"
+

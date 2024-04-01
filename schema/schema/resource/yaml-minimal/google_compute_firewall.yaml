@@ -1,0 +1,25 @@
+allow:
+    ports: TypeList(TypeString)
+    protocol: TypeString
+creation_timestamp: TypeString
+deny:
+    ports: TypeList(TypeString)
+    protocol: TypeString
+description: TypeString
+destination_ranges: TypeSet(TypeString)
+direction: TypeString
+disabled: TypeBool
+enable_logging: TypeBool
+log_config:
+    metadata: TypeString
+name: TypeString
+network: TypeString
+priority: TypeInt
+project: TypeString
+self_link: TypeString
+source_ranges: TypeSet(TypeString)
+source_service_accounts: TypeSet(TypeString)
+source_tags: TypeSet(TypeString)
+target_service_accounts: TypeSet(TypeString)
+target_tags: TypeSet(TypeString)
+

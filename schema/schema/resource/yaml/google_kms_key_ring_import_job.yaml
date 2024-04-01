@@ -1,0 +1,64 @@
+attestation:
+    Type: TypeList
+    Description: |-
+        Statement that was generated and signed by the key creator (for example, an HSM) at key creation time.
+        Use this statement to verify attributes of the key as stored on the HSM, independently of Google.
+        Only present if the chosen ImportMethod is one with a protection level of HSM.
+    Computed: "true"
+    Properties:
+        content:
+            Type: TypeString
+            Description: |-
+                The attestation data provided by the HSM when the key operation was performed.
+                A base64-encoded string.
+            Computed: "true"
+        format:
+            Type: TypeString
+            Description: The format of the attestation data.
+            Computed: "true"
+expire_time:
+    Type: TypeString
+    Description: |-
+        The time at which this resource is scheduled for expiration and can no longer be used.
+        This is in RFC3339 text format.
+    Computed: "true"
+import_job_id:
+    Type: TypeString
+    Description: It must be unique within a KeyRing and match the regular expression [a-zA-Z0-9_-]{1,63}
+    Required: "true"
+import_method:
+    Type: TypeString
+    Description: 'The wrapping method to be used for incoming key material. Possible values: ["RSA_OAEP_3072_SHA1_AES_256", "RSA_OAEP_4096_SHA1_AES_256"]'
+    Required: "true"
+key_ring:
+    Type: TypeString
+    Description: |-
+        The KeyRing that this import job belongs to.
+        Format: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyRing}}''.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name for this ImportJob in the format projects/*/locations/*/keyRings/*/importJobs/*.
+    Computed: "true"
+protection_level:
+    Type: TypeString
+    Description: |-
+        The protection level of the ImportJob. This must match the protectionLevel of the
+        versionTemplate on the CryptoKey you attempt to import into. Possible values: ["SOFTWARE", "HSM", "EXTERNAL"]
+    Required: "true"
+public_key:
+    Type: TypeList
+    Description: The public key with which to wrap key material prior to import. Only returned if state is 'ACTIVE'.
+    Computed: "true"
+    Properties:
+        pem:
+            Type: TypeString
+            Description: |-
+                The public key, encoded in PEM format. For more information, see the RFC 7468 sections
+                for General Considerations and Textual Encoding of Subject Public Key Info.
+            Computed: "true"
+state:
+    Type: TypeString
+    Description: The current state of the ImportJob, indicating if it can be used.
+    Computed: "true"
+

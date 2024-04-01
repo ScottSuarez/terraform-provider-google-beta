@@ -1,0 +1,4 @@
+bucket_name: TypeString
+prefix: TypeString
+project: TypeString
+

@@ -1,0 +1,155 @@
+annotations:
+    Type: TypeMap
+    Description: |-
+        Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels. https://google.aip.dev/128
+        An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+        Please refer to the field 'effective_annotations' for all of the annotations present on the resource.
+    Optional: "true"
+backup_id:
+    Type: TypeString
+    Description: The ID of the alloydb backup.
+    Required: "true"
+cluster_name:
+    Type: TypeString
+    Description: The full resource name of the backup source cluster (e.g., projects/{project}/locations/{location}/clusters/{clusterId}).
+    Required: "true"
+cluster_uid:
+    Type: TypeString
+    Description: Output only. The system-generated UID of the cluster which was used to create this resource.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        Output only. Create time stamp. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: |-
+        Output only. Delete time stamp. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: User-provided description of the backup.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: User-settable and human-readable display name for the Backup.
+    Optional: "true"
+effective_annotations:
+    Type: TypeMap
+    Description: All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+encryption_config:
+    Type: TypeList
+    Description: EncryptionConfig describes the encryption config of a cluster or a backup that is encrypted with a CMEK (customer-managed encryption key).
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key_name:
+            Type: TypeString
+            Description: 'The fully-qualified resource name of the KMS key. Each Cloud KMS key is regionalized and has the following format: projects/[PROJECT]/locations/[REGION]/keyRings/[RING]/cryptoKeys/[KEY_NAME].'
+            Optional: "true"
+encryption_info:
+    Type: TypeList
+    Description: EncryptionInfo describes the encryption information of a cluster or a backup.
+    Computed: "true"
+    Properties:
+        encryption_type:
+            Type: TypeString
+            Description: Output only. Type of encryption.
+            Computed: "true"
+        kms_key_versions:
+            Type: TypeList
+            Description: Output only. Cloud KMS key versions that are being used to protect the database or the backup.
+            Computed: "true"
+etag:
+    Type: TypeString
+    Description: For Resource freshness validation (https://google.aip.dev/154)
+    Computed: "true"
+expiry_quantity:
+    Type: TypeList
+    Description: |-
+        Output only. The QuantityBasedExpiry of the backup, specified by the backup's retention policy.
+        Once the expiry quantity is over retention, the backup is eligible to be garbage collected.
+    Computed: "true"
+    Properties:
+        retention_count:
+            Type: TypeInt
+            Description: Output only. The backup's position among its backups with the same source cluster and type, by descending chronological order create time (i.e. newest first).
+            Computed: "true"
+        total_retention_count:
+            Type: TypeInt
+            Description: Output only. The length of the quantity-based queue, specified by the backup's retention policy.
+            Computed: "true"
+expiry_time:
+    Type: TypeString
+    Description: |-
+        Output only. The time at which after the backup is eligible to be garbage collected.
+        It is the duration specified by the backup's retention policy, added to the backup's createTime.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        User-defined labels for the alloydb backup. An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location where the alloydb backup should reside.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: 'Output only. The name of the backup resource with the format: * projects/{project}/locations/{region}/backups/{backupId}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: |-
+        Output only. Reconciling (https://google.aip.dev/128#reconciliation), if true, indicates that the service is actively updating the resource.
+        This can happen due to user-triggered updates or system actions like failover or maintenance.
+    Computed: "true"
+size_bytes:
+    Type: TypeString
+    Description: Output only. The size of the backup in bytes.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: Output only. The current state of the backup.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+type:
+    Type: TypeString
+    Description: 'The backup type, which suggests the trigger for the backup. Possible values: ["TYPE_UNSPECIFIED", "ON_DEMAND", "AUTOMATED", "CONTINUOUS"]'
+    Computed: "true"
+    Optional: "true"
+uid:
+    Type: TypeString
+    Description: Output only. The system-generated UID of the resource. The UID is assigned when the resource is created, and it is retained until it is deleted.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Output only. Update time stamp. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+        Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

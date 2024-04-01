@@ -1,0 +1,16 @@
+attestation_authority:
+    hint:
+        human_readable_name: TypeString
+create_time: TypeString
+expiration_time: TypeString
+kind: TypeString
+long_description: TypeString
+name: TypeString
+project: TypeString
+related_note_names: TypeSet(TypeString)
+related_url:
+    label: TypeString
+    url: TypeString
+short_description: TypeString
+update_time: TypeString
+

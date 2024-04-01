@@ -1,0 +1,45 @@
+create_time: TypeString
+deployed_models:
+    automatic_resources:
+        max_replica_count: TypeInt
+        min_replica_count: TypeInt
+    create_time: TypeString
+    dedicated_resources:
+        autoscaling_metric_specs:
+            metric_name: TypeString
+            target: TypeInt
+        machine_spec:
+            accelerator_count: TypeInt
+            accelerator_type: TypeString
+            machine_type: TypeString
+        max_replica_count: TypeInt
+        min_replica_count: TypeInt
+    display_name: TypeString
+    enable_access_logging: TypeBool
+    enable_container_logging: TypeBool
+    id: TypeString
+    model: TypeString
+    model_version_id: TypeString
+    private_endpoints:
+        explain_http_uri: TypeString
+        health_http_uri: TypeString
+        predict_http_uri: TypeString
+        service_attachment: TypeString
+    service_account: TypeString
+    shared_resources: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_spec:
+    kms_key_name: TypeString
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+model_deployment_monitoring_job: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

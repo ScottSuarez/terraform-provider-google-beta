@@ -1,0 +1,11 @@
+default_cluster_version: TypeString
+latest_master_version: TypeString
+latest_node_version: TypeString
+location: TypeString
+project: TypeString
+release_channel_default_version: TypeMap(TypeString)
+release_channel_latest_version: TypeMap(TypeString)
+valid_master_versions: TypeList(TypeString)
+valid_node_versions: TypeList(TypeString)
+version_prefix: TypeString
+

@@ -1,0 +1,82 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "User-provided description for this network peering.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "export_custom_routes": {
+        "Description": "True if custom routes are exported to the peered network; false otherwise.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "export_custom_routes_with_public_ip": {
+        "Description": "True if all subnet routes with a public IP address range are exported; false otherwise.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "import_custom_routes": {
+        "Description": "True if custom routes are imported from the peered network; false otherwise.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "import_custom_routes_with_public_ip": {
+        "Description": "True if custom routes are imported from the peered network; false otherwise.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Description": "The ID of the Network Peering.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peer_network": {
+        "Description": "The relative resource name of the network to peer with a standard VMware Engine network.\nThe provided network can be a consumer VPC network or another standard VMware Engine network.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peer_network_type": {
+        "Description": "The type of the network to peer with the VMware Engine network. Possible values: [\"STANDARD\", \"VMWARE_ENGINE_NETWORK\", \"PRIVATE_SERVICES_ACCESS\", \"NETAPP_CLOUD_VOLUMES\", \"THIRD_PARTY_SERVICE\", \"DELL_POWERSCALE\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the network peering.\nThis field has a value of 'ACTIVE' when there's a matching configuration in the peer network.\nNew values may be added to this enum when appropriate.",
+        "Type": "TypeString"
+    },
+    "state_details": {
+        "Computed": true,
+        "Description": "Details about the current state of the network peering.",
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last updated time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "vmware_engine_network": {
+        "Description": "The relative resource name of the VMware Engine network. Specify the name in the following form:\nprojects/{project}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId} where {project}\ncan either be a project number or a project ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "vmware_engine_network_canonical": {
+        "Computed": true,
+        "Description": "The canonical name of the VMware Engine network in the form:\nprojects/{project_number}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId}",
+        "Type": "TypeString"
+    }
+}

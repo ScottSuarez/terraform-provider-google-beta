@@ -1,0 +1,33 @@
+{
+    "name": {
+        "Description": "The name of the variable to manage. Note that variable names can be hierarchical using slashes (e.g. \"prod-variables/hostname\").",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The name of the RuntimeConfig resource containing this variable.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "text": {
+        "ExactlyOneOf": "text, value",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp in RFC3339 UTC \"Zulu\" format, accurate to nanoseconds, representing when the variable was last updated. Example: \"2016-10-09T12:33:37.578138407Z\".",
+        "Type": "TypeString"
+    },
+    "value": {
+        "ExactlyOneOf": "text, value",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

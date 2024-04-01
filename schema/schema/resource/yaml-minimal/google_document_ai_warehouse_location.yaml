@@ -1,0 +1,7 @@
+access_control_mode: TypeString
+database_type: TypeString
+document_creator_default_role: TypeString
+kms_key: TypeString
+location: TypeString
+project_number: TypeString
+

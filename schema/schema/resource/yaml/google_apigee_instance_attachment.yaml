@@ -1,0 +1,15 @@
+environment:
+    Type: TypeString
+    Description: The resource ID of the environment.
+    Required: "true"
+instance_id:
+    Type: TypeString
+    Description: |-
+        The Apigee instance associated with the Apigee environment,
+        in the format 'organizations/{{org_name}}/instances/{{instance_name}}'.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the newly created  attachment (output parameter).
+    Computed: "true"
+

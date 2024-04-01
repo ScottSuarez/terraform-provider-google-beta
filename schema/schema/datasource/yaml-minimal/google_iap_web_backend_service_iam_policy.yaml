@@ -1,0 +1,5 @@
+etag: TypeString
+policy_data: TypeString
+project: TypeString
+web_backend_service: TypeString
+

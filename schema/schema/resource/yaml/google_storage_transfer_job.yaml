@@ -1,0 +1,346 @@
+creation_time:
+    Type: TypeString
+    Description: When the Transfer Job was created.
+    Computed: "true"
+deletion_time:
+    Type: TypeString
+    Description: When the Transfer Job was deleted.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Unique description to identify the Transfer Job.
+    Required: "true"
+event_stream:
+    Type: TypeList
+    Optional: "true"
+    ConflictsWith: schedule
+    MaxItems: "1"
+    Properties:
+        event_stream_expiration_time:
+            Type: TypeString
+            Description: Specifies the data and time at which Storage Transfer Service stops listening for events from this stream. After this time, any transfers in progress will complete, but no new transfers are initiated
+            Optional: "true"
+        event_stream_start_time:
+            Type: TypeString
+            Description: Specifies the date and time that Storage Transfer Service starts listening for events from this stream. If no start time is specified or start time is in the past, Storage Transfer Service starts listening immediately
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: Specifies a unique name of the resource such as AWS SQS ARN in the form 'arn:aws:sqs:region:account_id:queue_name', or Pub/Sub subscription resource name in the form 'projects/{project}/subscriptions/{sub}'
+            Required: "true"
+last_modification_time:
+    Type: TypeString
+    Description: When the Transfer Job was last modified.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The name of the Transfer Job.
+    Computed: "true"
+    Optional: "true"
+notification_config:
+    Type: TypeList
+    Description: Notification configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        event_types:
+            Type: TypeSet
+            Description: Event types for which a notification is desired. If empty, send notifications for all event types. The valid types are "TRANSFER_OPERATION_SUCCESS", "TRANSFER_OPERATION_FAILED", "TRANSFER_OPERATION_ABORTED".
+            Optional: "true"
+        payload_format:
+            Type: TypeString
+            Description: The desired format of the notification message payloads. One of "NONE" or "JSON".
+            Required: "true"
+        pubsub_topic:
+            Type: TypeString
+            Description: The Topic.name of the Pub/Sub topic to which to publish notifications.
+            Required: "true"
+project:
+    Type: TypeString
+    Description: The project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+schedule:
+    Type: TypeList
+    Description: Schedule specification defining when the Transfer Job should be scheduled to start, end and what time to run.
+    Optional: "true"
+    ConflictsWith: event_stream
+    MaxItems: "1"
+    Properties:
+        repeat_interval:
+            Type: TypeString
+            Description: 'Interval between the start of each scheduled transfer. If unspecified, the default value is 24 hours. This value may not be less than 1 hour. A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s".'
+            Optional: "true"
+        schedule_end_date:
+            Type: TypeList
+            Description: The last day the recurring transfer will be run. If schedule_end_date is the same as schedule_start_date, the transfer will be executed only once.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                day:
+                    Type: TypeInt
+                    Description: Day of month. Must be from 1 to 31 and valid for the year and month.
+                    Required: "true"
+                month:
+                    Type: TypeInt
+                    Description: Month of year. Must be from 1 to 12.
+                    Required: "true"
+                year:
+                    Type: TypeInt
+                    Description: Year of date. Must be from 1 to 9999.
+                    Required: "true"
+        schedule_start_date:
+            Type: TypeList
+            Description: The first day the recurring transfer is scheduled to run. If schedule_start_date is in the past, the transfer will run for the first time on the following day.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                day:
+                    Type: TypeInt
+                    Description: Day of month. Must be from 1 to 31 and valid for the year and month.
+                    Required: "true"
+                month:
+                    Type: TypeInt
+                    Description: Month of year. Must be from 1 to 12.
+                    Required: "true"
+                year:
+                    Type: TypeInt
+                    Description: Year of date. Must be from 1 to 9999.
+                    Required: "true"
+        start_time_of_day:
+            Type: TypeList
+            Description: The time in UTC at which the transfer will be scheduled to start in a day. Transfers may start later than this time. If not specified, recurring and one-time transfers that are scheduled to run today will run immediately; recurring transfers that are scheduled to run on a future date will start at approximately midnight UTC on that date. Note that when configuring a transfer with the Cloud Platform Console, the transfer's start time in a day is specified in your local timezone.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                hours:
+                    Type: TypeInt
+                    Description: Hours of day in 24 hour format. Should be from 0 to 23.
+                    Required: "true"
+                minutes:
+                    Type: TypeInt
+                    Description: Minutes of hour of day. Must be from 0 to 59.
+                    Required: "true"
+                nanos:
+                    Type: TypeInt
+                    Description: Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+                    Required: "true"
+                seconds:
+                    Type: TypeInt
+                    Description: Seconds of minutes of the time. Must normally be from 0 to 59.
+                    Required: "true"
+status:
+    Type: TypeString
+    Description: 'Status of the job. Default: ENABLED. NOTE: The effect of the new job status takes place during a subsequent job run. For example, if you change the job status from ENABLED to DISABLED, and an operation spawned by the transfer is running, the status change would not affect the current operation.'
+    Optional: "true"
+transfer_spec:
+    Type: TypeList
+    Description: Transfer specification.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        aws_s3_data_source:
+            Type: TypeList
+            Description: An AWS S3 data source.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_source, transfer_spec.0.aws_s3_data_source, transfer_spec.0.http_data_source, transfer_spec.0.azure_blob_storage_data_source, transfer_spec.0.posix_data_source
+            MaxItems: "1"
+            Properties:
+                aws_access_key:
+                    Type: TypeList
+                    Description: AWS credentials block.
+                    Optional: "true"
+                    ExactlyOneOf: transfer_spec.0.aws_s3_data_source.0.aws_access_key, transfer_spec.0.aws_s3_data_source.0.role_arn
+                    MaxItems: "1"
+                    Properties:
+                        access_key_id:
+                            Type: TypeString
+                            Description: AWS Key ID.
+                            Required: "true"
+                        secret_access_key:
+                            Type: TypeString
+                            Description: AWS Secret Access Key.
+                            Required: "true"
+                bucket_name:
+                    Type: TypeString
+                    Description: S3 Bucket name.
+                    Required: "true"
+                path:
+                    Type: TypeString
+                    Description: S3 Bucket path in bucket to transfer.
+                    Optional: "true"
+                role_arn:
+                    Type: TypeString
+                    Description: The Amazon Resource Name (ARN) of the role to support temporary credentials via 'AssumeRoleWithWebIdentity'. For more information about ARNs, see [IAM ARNs](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns). When a role ARN is provided, Transfer Service fetches temporary credentials for the session using a 'AssumeRoleWithWebIdentity' call for the provided role using the [GoogleServiceAccount][] for this project.
+                    Optional: "true"
+                    ExactlyOneOf: transfer_spec.0.aws_s3_data_source.0.aws_access_key, transfer_spec.0.aws_s3_data_source.0.role_arn
+        azure_blob_storage_data_source:
+            Type: TypeList
+            Description: An Azure Blob Storage data source.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_source, transfer_spec.0.aws_s3_data_source, transfer_spec.0.http_data_source, transfer_spec.0.azure_blob_storage_data_source, transfer_spec.0.posix_data_source
+            MaxItems: "1"
+            Properties:
+                azure_credentials:
+                    Type: TypeList
+                    Description: ' Credentials used to authenticate API requests to Azure.'
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        sas_token:
+                            Type: TypeString
+                            Description: Azure shared access signature.
+                            Required: "true"
+                container:
+                    Type: TypeString
+                    Description: The container to transfer from the Azure Storage account.
+                    Required: "true"
+                path:
+                    Type: TypeString
+                    Description: Root path to transfer objects. Must be an empty string or full path name that ends with a '/'. This field is treated as an object prefix. As such, it should generally not begin with a '/'.
+                    Computed: "true"
+                    Optional: "true"
+                storage_account:
+                    Type: TypeString
+                    Description: The name of the Azure Storage account.
+                    Required: "true"
+        gcs_data_sink:
+            Type: TypeList
+            Description: A Google Cloud Storage data sink.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_sink, transfer_spec.0.posix_data_sink
+            MaxItems: "1"
+            Properties:
+                bucket_name:
+                    Type: TypeString
+                    Description: Google Cloud Storage bucket name.
+                    Required: "true"
+                path:
+                    Type: TypeString
+                    Description: Google Cloud Storage path in bucket to transfer
+                    Computed: "true"
+                    Optional: "true"
+        gcs_data_source:
+            Type: TypeList
+            Description: A Google Cloud Storage data source.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_source, transfer_spec.0.aws_s3_data_source, transfer_spec.0.http_data_source, transfer_spec.0.azure_blob_storage_data_source, transfer_spec.0.posix_data_source
+            MaxItems: "1"
+            Properties:
+                bucket_name:
+                    Type: TypeString
+                    Description: Google Cloud Storage bucket name.
+                    Required: "true"
+                path:
+                    Type: TypeString
+                    Description: Google Cloud Storage path in bucket to transfer
+                    Computed: "true"
+                    Optional: "true"
+        http_data_source:
+            Type: TypeList
+            Description: A HTTP URL data source.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_source, transfer_spec.0.aws_s3_data_source, transfer_spec.0.http_data_source, transfer_spec.0.azure_blob_storage_data_source, transfer_spec.0.posix_data_source
+            MaxItems: "1"
+            Properties:
+                list_url:
+                    Type: TypeString
+                    Description: The URL that points to the file that stores the object list entries. This file must allow public access. Currently, only URLs with HTTP and HTTPS schemes are supported.
+                    Required: "true"
+        object_conditions:
+            Type: TypeList
+            Description: Only objects that satisfy these object conditions are included in the set of data source and data sink objects. Object conditions based on objects' last_modification_time do not exclude objects in a data sink.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                exclude_prefixes:
+                    Type: TypeList
+                    Description: exclude_prefixes must follow the requirements described for include_prefixes.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+                include_prefixes:
+                    Type: TypeList
+                    Description: If include_refixes is specified, objects that satisfy the object conditions must have names that start with one of the include_prefixes and that do not start with any of the exclude_prefixes. If include_prefixes is not specified, all objects except those that have names starting with one of the exclude_prefixes must satisfy the object conditions.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+                last_modified_before:
+                    Type: TypeString
+                    Description: 'If specified, only objects with a "last modification time" before this timestamp and objects that don''t have a "last modification time" are transferred. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".'
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+                last_modified_since:
+                    Type: TypeString
+                    Description: 'If specified, only objects with a "last modification time" on or after this timestamp and objects that don''t have a "last modification time" are transferred. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".'
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+                max_time_elapsed_since_last_modification:
+                    Type: TypeString
+                    Description: 'A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s".'
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+                min_time_elapsed_since_last_modification:
+                    Type: TypeString
+                    Description: 'A duration in seconds with up to nine fractional digits, terminated by ''s''. Example: "3.5s".'
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.object_conditions.0.min_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.max_time_elapsed_since_last_modification, transfer_spec.0.object_conditions.0.include_prefixes, transfer_spec.0.object_conditions.0.exclude_prefixes, transfer_spec.0.object_conditions.0.last_modified_since, transfer_spec.0.object_conditions.0.last_modified_before
+        posix_data_sink:
+            Type: TypeList
+            Description: A POSIX filesystem data sink.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_sink, transfer_spec.0.posix_data_sink
+            MaxItems: "1"
+            Properties:
+                root_directory:
+                    Type: TypeString
+                    Description: Root directory path to the filesystem.
+                    Required: "true"
+        posix_data_source:
+            Type: TypeList
+            Description: A POSIX filesystem data source.
+            Optional: "true"
+            ExactlyOneOf: transfer_spec.0.gcs_data_source, transfer_spec.0.aws_s3_data_source, transfer_spec.0.http_data_source, transfer_spec.0.azure_blob_storage_data_source, transfer_spec.0.posix_data_source
+            MaxItems: "1"
+            Properties:
+                root_directory:
+                    Type: TypeString
+                    Description: Root directory path to the filesystem.
+                    Required: "true"
+        sink_agent_pool_name:
+            Type: TypeString
+            Description: Specifies the agent pool name associated with the posix data source. When unspecified, the default name is used.
+            Computed: "true"
+            Optional: "true"
+        source_agent_pool_name:
+            Type: TypeString
+            Description: Specifies the agent pool name associated with the posix data source. When unspecified, the default name is used.
+            Computed: "true"
+            Optional: "true"
+        transfer_options:
+            Type: TypeList
+            Description: Characteristics of how to treat files from datasource and sink during job. If the option delete_objects_unique_in_sink is true, object conditions based on objects' last_modification_time are ignored and do not exclude objects in a data source or a data sink.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                delete_objects_from_source_after_transfer:
+                    Type: TypeBool
+                    Description: Whether objects should be deleted from the source after they are transferred to the sink. Note that this option and delete_objects_unique_in_sink are mutually exclusive.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.transfer_options.0.overwrite_objects_already_existing_in_sink, transfer_spec.0.transfer_options.0.delete_objects_unique_in_sink, transfer_spec.0.transfer_options.0.delete_objects_from_source_after_transfer, transfer_spec.0.transfer_options.0.overwrite_when
+                    ConflictsWith: transfer_spec.transfer_options.delete_objects_unique_in_sink
+                delete_objects_unique_in_sink:
+                    Type: TypeBool
+                    Description: Whether objects that exist only in the sink should be deleted. Note that this option and delete_objects_from_source_after_transfer are mutually exclusive.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.transfer_options.0.overwrite_objects_already_existing_in_sink, transfer_spec.0.transfer_options.0.delete_objects_unique_in_sink, transfer_spec.0.transfer_options.0.delete_objects_from_source_after_transfer, transfer_spec.0.transfer_options.0.overwrite_when
+                    ConflictsWith: transfer_spec.transfer_options.delete_objects_from_source_after_transfer
+                overwrite_objects_already_existing_in_sink:
+                    Type: TypeBool
+                    Description: Whether overwriting objects that already exist in the sink is allowed.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.transfer_options.0.overwrite_objects_already_existing_in_sink, transfer_spec.0.transfer_options.0.delete_objects_unique_in_sink, transfer_spec.0.transfer_options.0.delete_objects_from_source_after_transfer, transfer_spec.0.transfer_options.0.overwrite_when
+                overwrite_when:
+                    Type: TypeString
+                    Description: When to overwrite objects that already exist in the sink. If not set, overwrite behavior is determined by overwriteObjectsAlreadyExistingInSink.
+                    Optional: "true"
+                    AtLeastOneOf: transfer_spec.0.transfer_options.0.overwrite_objects_already_existing_in_sink, transfer_spec.0.transfer_options.0.delete_objects_unique_in_sink, transfer_spec.0.transfer_options.0.delete_objects_from_source_after_transfer, transfer_spec.0.transfer_options.0.overwrite_when
+

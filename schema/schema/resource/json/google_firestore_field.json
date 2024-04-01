@@ -1,0 +1,70 @@
+{
+    "collection": {
+        "Description": "The id of the collection group to configure.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "database": {
+        "Description": "The Firestore database id. Defaults to '\"(default)\"'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "field": {
+        "Description": "The id of the field to configure.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "index_config": {
+        "Description": "The single field index configuration for this field.\nCreating an index configuration for this field will override any inherited configuration with the\nindexes specified. Configuring the index configuration with an empty block disables all indexes on\nthe field.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "indexes": {
+                "Description": "The indexes to configure on the field. Order or array contains must be specified.",
+                "Optional": true,
+                "Properties": {
+                    "array_config": {
+                        "Description": "Indicates that this field supports operations on arrayValues. Only one of 'order' and 'arrayConfig' can\nbe specified. Possible values: [\"CONTAINS\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "order": {
+                        "Description": "Indicates that this field supports ordering by the specified order or comparing using =, \u003c, \u003c=, \u003e, \u003e=, !=.\nOnly one of 'order' and 'arrayConfig' can be specified. Possible values: [\"ASCENDING\", \"DESCENDING\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "query_scope": {
+                        "Description": "The scope at which a query is run. Collection scoped queries require you specify\nthe collection at query time. Collection group scope allows queries across all\ncollections with the same id. Default value: \"COLLECTION\" Possible values: [\"COLLECTION\", \"COLLECTION_GROUP\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of this field. Format:\n'projects/{{project}}/databases/{{database}}/collectionGroups/{{collection}}/fields/{{field}}'",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ttl_config": {
+        "Description": "The TTL configuration for this Field. If set to an empty block (i.e. 'ttl_config {}'), a TTL policy is configured based on the field. If unset, a TTL policy is not configured (or will be disabled upon updating the resource).",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "state": {
+                "Computed": true,
+                "Description": "The state of TTL (time-to-live) configuration for documents that have this Field set.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

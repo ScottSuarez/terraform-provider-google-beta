@@ -1,0 +1,90 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "User-provided description for this network policy.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "edge_services_cidr": {
+        "Description": "IP address range in CIDR notation used to create internet access and external IP access.\nAn RFC 1918 CIDR block, with a \"/26\" prefix, is required. The range cannot overlap with any\nprefixes either in the consumer VPC network or in use by the private clouds attached to that VPC network.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "external_ip": {
+        "Computed": true,
+        "Description": "Network service that allows External IP addresses to be assigned to VMware workloads.\nThis service can only be enabled when internetAccess is also enabled.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enabled": {
+                "Description": "True if the service is enabled; false otherwise.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "State of the service. New values may be added to this enum when appropriate.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "internet_access": {
+        "Computed": true,
+        "Description": "Network service that allows VMware workloads to access the internet.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "enabled": {
+                "Description": "True if the service is enabled; false otherwise.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "State of the service. New values may be added to this enum when appropriate.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The resource name of the location (region) to create the new network policy in.\nResource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.\nFor example: projects/my-project/locations/us-central1",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the Network Policy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last updated time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "vmware_engine_network": {
+        "Description": "The relative resource name of the VMware Engine network. Specify the name in the following form:\nprojects/{project}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId} where {project}\ncan either be a project number or a project ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "vmware_engine_network_canonical": {
+        "Computed": true,
+        "Description": "The canonical name of the VMware Engine network in the form:\nprojects/{project_number}/locations/{location}/vmwareEngineNetworks/{vmwareEngineNetworkId}",
+        "Type": "TypeString"
+    }
+}

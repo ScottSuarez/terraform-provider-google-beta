@@ -1,0 +1,15 @@
+create_time: TypeString
+delete_time: TypeString
+location: TypeString
+membership_id: TypeString
+membership_rbac_role_binding_id: TypeString
+name: TypeString
+project: TypeString
+role:
+    predefined_role: TypeString
+state:
+    code: TypeString
+uid: TypeString
+update_time: TypeString
+user: TypeString
+

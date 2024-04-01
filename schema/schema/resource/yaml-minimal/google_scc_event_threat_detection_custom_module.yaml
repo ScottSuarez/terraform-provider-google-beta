@@ -1,0 +1,9 @@
+config: TypeString
+display_name: TypeString
+enablement_state: TypeString
+last_editor: TypeString
+name: TypeString
+organization: TypeString
+type: TypeString
+update_time: TypeString
+

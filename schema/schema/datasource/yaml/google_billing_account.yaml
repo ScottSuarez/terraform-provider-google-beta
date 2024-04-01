@@ -1,0 +1,23 @@
+billing_account:
+    Type: TypeString
+    Optional: "true"
+    ConflictsWith: display_name
+display_name:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: billing_account
+lookup_projects:
+    Type: TypeBool
+    Optional: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+open:
+    Type: TypeBool
+    Computed: "true"
+    Optional: "true"
+project_ids:
+    Type: TypeSet
+    Computed: "true"
+

@@ -1,0 +1,23 @@
+{
+    "location": {
+        "Computed": true,
+        "Description": "The name of the location this config is located in.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of the project's VPC SC Config.\nAlways of the form: projects/{project}/location/{location}/vpcscConfig",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpcsc_policy": {
+        "Description": "The VPC SC policy for project and location. Possible values: [\"DENY\", \"ALLOW\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

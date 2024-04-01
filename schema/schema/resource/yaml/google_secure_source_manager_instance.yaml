@@ -1,0 +1,99 @@
+create_time:
+    Type: TypeString
+    Description: Time the Instance was created in UTC.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+host_config:
+    Type: TypeList
+    Description: A list of hostnames for this instance.
+    Computed: "true"
+    Properties:
+        api:
+            Type: TypeString
+            Description: API hostname.
+            Computed: "true"
+        git_http:
+            Type: TypeString
+            Description: Git HTTP hostname.
+            Computed: "true"
+        git_ssh:
+            Type: TypeString
+            Description: Git SSH hostname.
+            Computed: "true"
+        html:
+            Type: TypeString
+            Description: HTML hostname.
+            Computed: "true"
+instance_id:
+    Type: TypeString
+    Description: The name for the Instance.
+    Required: "true"
+kms_key:
+    Type: TypeString
+    Description: Customer-managed encryption key name, in the format projects/*/locations/*/keyRings/*/cryptoKeys/*.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels as key value pairs.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the Instance.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The resource name for the Instance.
+    Computed: "true"
+private_config:
+    Type: TypeList
+    Description: Private settings for private instance.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        ca_pool:
+            Type: TypeString
+            Description: CA pool resource, resource must in the format of 'projects/{project}/locations/{location}/caPools/{ca_pool}'.
+            Required: "true"
+        http_service_attachment:
+            Type: TypeString
+            Description: Service Attachment for HTTP, resource is in the format of 'projects/{project}/regions/{region}/serviceAttachments/{service_attachment}'.
+            Computed: "true"
+        is_private:
+            Type: TypeBool
+            Description: '''Indicate if it''s private instance.'''
+            Required: "true"
+        ssh_service_attachment:
+            Type: TypeString
+            Description: Service Attachment for SSH, resource is in the format of 'projects/{project}/regions/{region}/serviceAttachments/{service_attachment}'.
+            Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: The current state of the Instance.
+    Computed: "true"
+state_note:
+    Type: TypeString
+    Description: Provides information about the current instance state.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Instance was updated in UTC.
+    Computed: "true"
+

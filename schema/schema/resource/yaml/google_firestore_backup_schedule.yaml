@@ -1,0 +1,41 @@
+daily_recurrence:
+    Type: TypeList
+    Description: For a schedule that runs daily at a specified time.
+    Optional: "true"
+    ExactlyOneOf: daily_recurrence, weekly_recurrence
+    MaxItems: "1"
+    Properties: {}
+database:
+    Type: TypeString
+    Description: The Firestore database id. Defaults to '"(default)"'.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique backup schedule identifier across all locations and databases for the given project. Format:
+        'projects/{{project}}/databases/{{database}}/backupSchedules/{{backupSchedule}}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+retention:
+    Type: TypeString
+    Description: |-
+        At what relative time in the future, compared to its creation time, the backup should be deleted, e.g. keep backups for 7 days.
+        A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".
+
+        For a daily backup recurrence, set this to a value up to 7 days. If you set a weekly backup recurrence, set this to a value up to 14 weeks.
+    Required: "true"
+weekly_recurrence:
+    Type: TypeList
+    Description: For a schedule that runs weekly on a specific day and time.
+    Optional: "true"
+    ExactlyOneOf: weekly_recurrence, daily_recurrence
+    MaxItems: "1"
+    Properties:
+        day:
+            Type: TypeString
+            Description: 'The day of week to run. Possible values: ["DAY_OF_WEEK_UNSPECIFIED", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]'
+            Optional: "true"
+

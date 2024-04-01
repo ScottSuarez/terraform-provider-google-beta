@@ -1,0 +1,14 @@
+bucket_name:
+    Type: TypeString
+    Description: The bucket to store reports in.
+    Required: "true"
+prefix:
+    Type: TypeString
+    Description: A prefix for the reports, for instance, the project name.
+    Optional: "true"
+project:
+    Type: TypeString
+    Description: The project to set the export bucket on. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+

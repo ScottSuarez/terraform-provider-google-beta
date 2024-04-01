@@ -1,0 +1,5 @@
+instance: TypeString
+instance_group: TypeString
+project: TypeString
+zone: TypeString
+

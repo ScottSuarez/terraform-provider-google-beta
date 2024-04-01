@@ -1,0 +1,35 @@
+annotations: TypeMap(TypeString)
+autoscaling:
+    max_node_count: TypeInt
+    min_node_count: TypeInt
+azure_availability_zone: TypeString
+cluster: TypeString
+config:
+    image_type: TypeString
+    labels: TypeMap(TypeString)
+    proxy_config:
+        resource_group_id: TypeString
+        secret_id: TypeString
+    root_volume:
+        size_gib: TypeInt
+    ssh_config:
+        authorized_key: TypeString
+    tags: TypeMap(TypeString)
+    vm_size: TypeString
+create_time: TypeString
+effective_annotations: unknown
+etag: TypeString
+location: TypeString
+management:
+    auto_repair: TypeBool
+max_pods_constraint:
+    max_pods_per_node: TypeInt
+name: TypeString
+project: TypeString
+reconciling: TypeBool
+state: TypeString
+subnet_id: TypeString
+uid: TypeString
+update_time: TypeString
+version: TypeString
+

@@ -1,0 +1,19 @@
+billing_account_id:
+    Type: TypeString
+    Computed: "true"
+deletion_policy:
+    Type: TypeString
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Required: "true"
+master_billing_account:
+    Type: TypeString
+    Required: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+open:
+    Type: TypeBool
+    Computed: "true"
+

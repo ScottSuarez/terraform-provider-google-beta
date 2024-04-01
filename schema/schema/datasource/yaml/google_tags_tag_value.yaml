@@ -1,0 +1,25 @@
+create_time:
+    Type: TypeString
+    Computed: "true"
+description:
+    Type: TypeString
+    Computed: "true"
+id:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+namespaced_name:
+    Type: TypeString
+    Computed: "true"
+parent:
+    Type: TypeString
+    Required: "true"
+short_name:
+    Type: TypeString
+    Required: "true"
+update_time:
+    Type: TypeString
+    Computed: "true"
+

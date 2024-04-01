@@ -1,0 +1,68 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        The time when the subnet was created.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+ipv4_cidr:
+    Type: TypeList
+    Description: The ranges of ipv4 addresses that are owned by this subnetwork, in CIDR format.
+    Optional: "true"
+ipv6_cidr:
+    Type: TypeList
+    Description: The ranges of ipv6 addresses that are owned by this subnetwork, in CIDR format.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: Labels associated with this resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The Google Cloud region to which the target Distributed Cloud Edge zone belongs.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The canonical name of this resource, with format
+        'projects/{{project}}/locations/{{location}}/zones/{{zone}}/subnets/{{subnet_id}}'
+    Computed: "true"
+network:
+    Type: TypeString
+    Description: |-
+        The ID of the network to which this router belongs.
+        Must be of the form: 'projects/{{project}}/locations/{{location}}/zones/{{zone}}/networks/{{network_id}}'
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: Current stage of the resource to the device by config push.
+    Computed: "true"
+subnet_id:
+    Type: TypeString
+    Description: A unique ID that identifies this subnet.
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time when the subnet was last updated.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: '2014-10-02T15:01:23Z' and '2014-10-02T15:01:23.045123456Z'.
+    Computed: "true"
+vlan_id:
+    Type: TypeInt
+    Description: VLAN ID for this subnetwork. If not specified, one is assigned automatically.
+    Computed: "true"
+    Optional: "true"
+zone:
+    Type: TypeString
+    Description: The name of the target Distributed Cloud Edge zone.
+    Required: "true"
+

@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+folder: TypeString
+members: TypeSet(TypeString)
+role: TypeString
+

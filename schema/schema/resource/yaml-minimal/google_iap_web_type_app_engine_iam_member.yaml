@@ -1,0 +1,10 @@
+app_id: TypeString
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+member: TypeString
+project: TypeString
+role: TypeString
+

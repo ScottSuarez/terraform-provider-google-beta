@@ -1,0 +1,33 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the AccessPolicy was created in UTC.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Resource name of the AccessPolicy. Format: {policy_id}",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The parent of this AccessPolicy in the Cloud Resource Hierarchy.\nFormat: organizations/{organization_id}",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "scopes": {
+        "Description": "Folder or project on which this policy is applicable.\nFormat: folders/{{folder_id}} or projects/{{project_id}}",
+        "MaxItems": 1,
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "title": {
+        "Description": "Human readable title. Does not affect behavior.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the AccessPolicy was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

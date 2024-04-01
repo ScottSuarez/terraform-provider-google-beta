@@ -1,0 +1,376 @@
+{
+    "build_config": {
+        "Computed": true,
+        "Description": "Describes the Build step of the function that builds a container\nfrom the given source.",
+        "Properties": {
+            "build": {
+                "Computed": true,
+                "Description": "The Cloud Build name of the latest successful\ndeployment of the function.",
+                "Type": "TypeString"
+            },
+            "docker_repository": {
+                "Computed": true,
+                "Description": "User managed repository created in Artifact Registry optionally with a customer managed encryption key.",
+                "Type": "TypeString"
+            },
+            "entry_point": {
+                "Computed": true,
+                "Description": "The name of the function (as defined in source code) that will be executed.\nDefaults to the resource name suffix, if not specified. For backward\ncompatibility, if function with given name is not found, then the system\nwill try to use function named \"function\". For Node.js this is name of a\nfunction exported by the module specified in source_location.",
+                "Type": "TypeString"
+            },
+            "environment_variables": {
+                "Computed": true,
+                "Description": "User-provided build-time environment variables for the function.",
+                "Type": "TypeMap"
+            },
+            "runtime": {
+                "Computed": true,
+                "Description": "The runtime in which to run the function. Required when deploying a new\nfunction, optional when updating an existing function.",
+                "Type": "TypeString"
+            },
+            "source": {
+                "Computed": true,
+                "Description": "The location of the function source code.",
+                "Properties": {
+                    "repo_source": {
+                        "Computed": true,
+                        "Description": "If provided, get the source from this location in a Cloud Source Repository.",
+                        "Properties": {
+                            "branch_name": {
+                                "Computed": true,
+                                "Description": "Regex matching branches to build.",
+                                "Type": "TypeString"
+                            },
+                            "commit_sha": {
+                                "Computed": true,
+                                "Description": "Regex matching tags to build.",
+                                "Type": "TypeString"
+                            },
+                            "dir": {
+                                "Computed": true,
+                                "Description": "Directory, relative to the source root, in which to run the build.",
+                                "Type": "TypeString"
+                            },
+                            "invert_regex": {
+                                "Computed": true,
+                                "Description": "Only trigger a build if the revision regex does\nNOT match the revision regex.",
+                                "Type": "TypeBool"
+                            },
+                            "project_id": {
+                                "Computed": true,
+                                "Description": "ID of the project that owns the Cloud Source Repository. If omitted, the\nproject ID requesting the build is assumed.",
+                                "Type": "TypeString"
+                            },
+                            "repo_name": {
+                                "Computed": true,
+                                "Description": "Name of the Cloud Source Repository.",
+                                "Type": "TypeString"
+                            },
+                            "tag_name": {
+                                "Computed": true,
+                                "Description": "Regex matching tags to build.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "storage_source": {
+                        "Computed": true,
+                        "Description": "If provided, get the source from this location in Google Cloud Storage.",
+                        "Properties": {
+                            "bucket": {
+                                "Computed": true,
+                                "Description": "Google Cloud Storage bucket containing the source",
+                                "Type": "TypeString"
+                            },
+                            "generation": {
+                                "Computed": true,
+                                "Description": "Google Cloud Storage generation for the object. If the generation\nis omitted, the latest generation will be used.",
+                                "Type": "TypeInt"
+                            },
+                            "object": {
+                                "Computed": true,
+                                "Description": "Google Cloud Storage object containing the source.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "worker_pool": {
+                "Computed": true,
+                "Description": "Name of the Cloud Build Custom Worker Pool that should be used to build the function.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "User-provided description of a function.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "environment": {
+        "Computed": true,
+        "Description": "The environment the function is hosted on.",
+        "Type": "TypeString"
+    },
+    "event_trigger": {
+        "Computed": true,
+        "Description": "An Eventarc trigger managed by Google Cloud Functions that fires events in\nresponse to a condition in another service.",
+        "Properties": {
+            "event_filters": {
+                "Computed": true,
+                "Description": "Criteria used to filter events.",
+                "Properties": {
+                    "attribute": {
+                        "Computed": true,
+                        "Description": "'Required. The name of a CloudEvents attribute.\nCurrently, only a subset of attributes are supported for filtering. Use the 'gcloud eventarc providers describe' command to learn more about events and their attributes.\nDo not filter for the 'type' attribute here, as this is already achieved by the resource's 'event_type' attribute.",
+                        "Type": "TypeString"
+                    },
+                    "operator": {
+                        "Computed": true,
+                        "Description": "Optional. The operator used for matching the events with the value of\nthe filter. If not specified, only events that have an exact key-value\npair specified in the filter are matched.\nThe only allowed value is 'match-path-pattern'.\n[See documentation on path patterns here](https://cloud.google.com/eventarc/docs/path-patterns)'",
+                        "Type": "TypeString"
+                    },
+                    "value": {
+                        "Computed": true,
+                        "Description": "Required. The value for the attribute.\nIf the operator field is set as 'match-path-pattern', this value can be a path pattern instead of an exact value.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "event_type": {
+                "Computed": true,
+                "Description": "Required. The type of event to observe.",
+                "Type": "TypeString"
+            },
+            "pubsub_topic": {
+                "Computed": true,
+                "Description": "The name of a Pub/Sub topic in the same project that will be used\nas the transport topic for the event delivery.",
+                "Type": "TypeString"
+            },
+            "retry_policy": {
+                "Computed": true,
+                "Description": "Describes the retry policy in case of function's execution failure.\nRetried execution is charged as any other execution. Possible values: [\"RETRY_POLICY_UNSPECIFIED\", \"RETRY_POLICY_DO_NOT_RETRY\", \"RETRY_POLICY_RETRY\"]",
+                "Type": "TypeString"
+            },
+            "service_account_email": {
+                "Computed": true,
+                "Description": "Optional. The email of the trigger's service account. The service account\nmust have permission to invoke Cloud Run services. If empty, defaults to the\nCompute Engine default service account: {project_number}-compute@developer.gserviceaccount.com.",
+                "Type": "TypeString"
+            },
+            "trigger": {
+                "Computed": true,
+                "Description": "Output only. The resource name of the Eventarc trigger.",
+                "Type": "TypeString"
+            },
+            "trigger_region": {
+                "Computed": true,
+                "Description": "The region that the trigger will be in. The trigger will only receive\nevents originating in this region. It can be the same\nregion as the function, a different region or multi-region, or the global\nregion. If not provided, defaults to the same region as the function.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "kms_key_name": {
+        "Computed": true,
+        "Description": "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources.\nIt must match the pattern projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "A set of key/value label pairs associated with this Cloud Function.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of this cloud function.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "A user-defined name of the function. Function names must\nbe unique globally and match pattern 'projects/*/locations/*/functions/*'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_config": {
+        "Computed": true,
+        "Description": "Describes the Service being deployed.",
+        "Properties": {
+            "all_traffic_on_latest_revision": {
+                "Computed": true,
+                "Description": "Whether 100% of traffic is routed to the latest revision. Defaults to true.",
+                "Type": "TypeBool"
+            },
+            "available_cpu": {
+                "Computed": true,
+                "Description": "The number of CPUs used in a single container instance. Default value is calculated from available memory.",
+                "Type": "TypeString"
+            },
+            "available_memory": {
+                "Computed": true,
+                "Description": "The amount of memory available for a function.\nDefaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is\nsupplied the value is interpreted as bytes.",
+                "Type": "TypeString"
+            },
+            "environment_variables": {
+                "Computed": true,
+                "Description": "Environment variables that shall be available during function execution.",
+                "Type": "TypeMap"
+            },
+            "gcf_uri": {
+                "Computed": true,
+                "Description": "URIs of the Service deployed",
+                "Type": "TypeString"
+            },
+            "ingress_settings": {
+                "Computed": true,
+                "Description": "Available ingress settings. Defaults to \"ALLOW_ALL\" if unspecified. Default value: \"ALLOW_ALL\" Possible values: [\"ALLOW_ALL\", \"ALLOW_INTERNAL_ONLY\", \"ALLOW_INTERNAL_AND_GCLB\"]",
+                "Type": "TypeString"
+            },
+            "max_instance_count": {
+                "Computed": true,
+                "Description": "The limit on the maximum number of function instances that may coexist at a\ngiven time.",
+                "Type": "TypeInt"
+            },
+            "max_instance_request_concurrency": {
+                "Computed": true,
+                "Description": "Sets the maximum number of concurrent requests that each instance can receive. Defaults to 1.",
+                "Type": "TypeInt"
+            },
+            "min_instance_count": {
+                "Computed": true,
+                "Description": "The limit on the minimum number of function instances that may coexist at a\ngiven time.",
+                "Type": "TypeInt"
+            },
+            "secret_environment_variables": {
+                "Computed": true,
+                "Description": "Secret environment variables configuration.",
+                "Properties": {
+                    "key": {
+                        "Computed": true,
+                        "Description": "Name of the environment variable.",
+                        "Type": "TypeString"
+                    },
+                    "project_id": {
+                        "Computed": true,
+                        "Description": "Project identifier (preferrably project number but can also be the project ID) of the project that contains the secret. If not set, it will be populated with the function's project assuming that the secret exists in the same project as of the function.",
+                        "Type": "TypeString"
+                    },
+                    "secret": {
+                        "Computed": true,
+                        "Description": "Name of the secret in secret manager (not the full resource name).",
+                        "Type": "TypeString"
+                    },
+                    "version": {
+                        "Computed": true,
+                        "Description": "Version of the secret (version number or the string 'latest'). It is recommended to use a numeric version for secret environment variables as any updates to the secret value is not reflected until new instances start.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "secret_volumes": {
+                "Computed": true,
+                "Description": "Secret volumes configuration.",
+                "Properties": {
+                    "mount_path": {
+                        "Computed": true,
+                        "Description": "The path within the container to mount the secret volume. For example, setting the mountPath as /etc/secrets would mount the secret value files under the /etc/secrets directory. This directory will also be completely shadowed and unavailable to mount any other secrets. Recommended mount path: /etc/secrets",
+                        "Type": "TypeString"
+                    },
+                    "project_id": {
+                        "Computed": true,
+                        "Description": "Project identifier (preferrably project number but can also be the project ID) of the project that contains the secret. If not set, it will be populated with the function's project assuming that the secret exists in the same project as of the function.",
+                        "Type": "TypeString"
+                    },
+                    "secret": {
+                        "Computed": true,
+                        "Description": "Name of the secret in secret manager (not the full resource name).",
+                        "Type": "TypeString"
+                    },
+                    "versions": {
+                        "Computed": true,
+                        "Description": "List of secret versions to mount for this secret. If empty, the latest version of the secret will be made available in a file named after the secret under the mount point.'",
+                        "Properties": {
+                            "path": {
+                                "Computed": true,
+                                "Description": "Relative path of the file under the mount path where the secret value for this version will be fetched and made available. For example, setting the mountPath as '/etc/secrets' and path as secret_foo would mount the secret value file at /etc/secrets/secret_foo.",
+                                "Type": "TypeString"
+                            },
+                            "version": {
+                                "Computed": true,
+                                "Description": "Version of the secret (version number or the string 'latest'). It is preferable to use latest version with secret volumes as secret value changes are reflected immediately.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "service": {
+                "Computed": true,
+                "Description": "Name of the service associated with a Function.",
+                "Type": "TypeString"
+            },
+            "service_account_email": {
+                "Computed": true,
+                "Description": "The email of the service account for this function.",
+                "Type": "TypeString"
+            },
+            "timeout_seconds": {
+                "Computed": true,
+                "Description": "The function execution timeout. Execution is considered failed and\ncan be terminated if the function is not completed at the end of the\ntimeout period. Defaults to 60 seconds.",
+                "Type": "TypeInt"
+            },
+            "uri": {
+                "Computed": true,
+                "Description": "URI of the Service deployed.",
+                "Type": "TypeString"
+            },
+            "vpc_connector": {
+                "Computed": true,
+                "Description": "The Serverless VPC Access connector that this cloud function can connect to.",
+                "Type": "TypeString"
+            },
+            "vpc_connector_egress_settings": {
+                "Computed": true,
+                "Description": "Available egress settings. Possible values: [\"VPC_CONNECTOR_EGRESS_SETTINGS_UNSPECIFIED\", \"PRIVATE_RANGES_ONLY\", \"ALL_TRAFFIC\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Describes the current state of the function.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The last update timestamp of a Cloud Function.",
+        "Type": "TypeString"
+    },
+    "url": {
+        "Computed": true,
+        "Description": "Output only. The deployed url for the function.",
+        "Type": "TypeString"
+    }
+}

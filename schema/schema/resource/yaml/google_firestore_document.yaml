@@ -1,0 +1,39 @@
+collection:
+    Type: TypeString
+    Description: 'The collection ID, relative to database. For example: chatrooms or chatrooms/my-document/private-messages.'
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 format.
+    Computed: "true"
+database:
+    Type: TypeString
+    Description: The Firestore database id. Defaults to '"(default)"'.
+    Optional: "true"
+document_id:
+    Type: TypeString
+    Description: The client-assigned document ID to use for this document during creation.
+    Required: "true"
+fields:
+    Type: TypeString
+    Description: The document's [fields](https://cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents) formated as a json string.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        A server defined name for this index. Format:
+        'projects/{{project_id}}/databases/{{database_id}}/documents/{{path}}/{{document_id}}'
+    Computed: "true"
+path:
+    Type: TypeString
+    Description: A relative path to the collection this document exists within
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: Last update timestamp in RFC3339 format.
+    Computed: "true"
+

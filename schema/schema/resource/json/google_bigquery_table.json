@@ -1,0 +1,549 @@
+{
+    "clustering": {
+        "Description": "Specifies column names to use for data clustering. Up to four top-level columns are allowed, and should be specified in descending priority order.",
+        "MaxItems": 4,
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "creation_time": {
+        "Computed": true,
+        "Description": "The time when this table was created, in milliseconds since the epoch.",
+        "Type": "TypeInt"
+    },
+    "dataset_id": {
+        "Description": "The dataset ID to create the table in. Changing this forces a new resource to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "deletion_protection": {
+        "Description": "Whether or not to allow Terraform to destroy the instance. Unless this field is set to false in Terraform state, a terraform destroy or terraform apply that would delete the instance will fail.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "The field description.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "encryption_configuration": {
+        "Description": "Specifies how the table should be encrypted. If left blank, the table will be encrypted with a Google-managed key; that process is transparent to the user.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "kms_key_name": {
+                "Description": "The self link or full name of a key which should be used to encrypt this table. Note that the default bigquery service account will need to have encrypt/decrypt permissions on this key - you may want to see the google_bigquery_default_service_account datasource and the google_kms_crypto_key_iam_binding resource.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "kms_key_version": {
+                "Computed": true,
+                "Description": "The self link or full name of the kms key version used to encrypt this table.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "A hash of the resource.",
+        "Type": "TypeString"
+    },
+    "expiration_time": {
+        "Computed": true,
+        "Description": "The time when this table expires, in milliseconds since the epoch. If not present, the table will persist indefinitely. Expired tables will be deleted and their storage reclaimed.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "external_data_configuration": {
+        "Description": "Describes the data format, location, and other properties of a table stored outside of BigQuery. By defining these properties, the data source can then be queried as if it were a standard BigQuery table.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "autodetect": {
+                "Description": "Let BigQuery try to autodetect the schema and format of the table.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "avro_options": {
+                "Description": "Additional options if source_format is set to \"AVRO\"",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "use_avro_logical_types": {
+                        "Description": "If sourceFormat is set to \"AVRO\", indicates whether to interpret logical types as the corresponding BigQuery data type (for example, TIMESTAMP), instead of using the raw type (for example, INTEGER).",
+                        "Required": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "compression": {
+                "Description": "The compression type of the data source. Valid values are \"NONE\" or \"GZIP\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "connection_id": {
+                "Description": "The connection specifying the credentials to be used to read external storage, such as Azure Blob, Cloud Storage, or S3. The connectionId can have the form \"{{project}}.{{location}}.{{connection_id}}\" or \"projects/{{project}}/locations/{{location}}/connections/{{connection_id}}\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "csv_options": {
+                "Description": "Additional properties to set if source_format is set to \"CSV\".",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "allow_jagged_rows": {
+                        "Description": "Indicates if BigQuery should accept rows that are missing trailing optional columns.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "allow_quoted_newlines": {
+                        "Description": "Indicates if BigQuery should allow quoted data sections that contain newline characters in a CSV file. The default value is false.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encoding": {
+                        "Description": "The character encoding of the data. The supported values are UTF-8 or ISO-8859-1.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "field_delimiter": {
+                        "Description": "The separator for fields in a CSV file.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "quote": {
+                        "Description": "The value that is used to quote data sections in a CSV file. If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allow_quoted_newlines property to true. The API-side default is \", specified in Terraform escaped as \\\". Due to limitations with Terraform default values, this value is required to be explicitly set.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "skip_leading_rows": {
+                        "Description": "The number of rows at the top of a CSV file that BigQuery will skip when reading the data.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "file_set_spec_type": {
+                "Description": "Specifies how source URIs are interpreted for constructing the file set to load.  By default source URIs are expanded against the underlying storage.  Other options include specifying manifest files. Only applicable to object storage systems.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "google_sheets_options": {
+                "Description": "Additional options if source_format is set to \"GOOGLE_SHEETS\".",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "range": {
+                        "AtLeastOneOf": "external_data_configuration.0.google_sheets_options.0.skip_leading_rows, external_data_configuration.0.google_sheets_options.0.range",
+                        "Description": "Range of a sheet to query from. Only used when non-empty. At least one of range or skip_leading_rows must be set. Typical format: \"sheet_name!top_left_cell_id:bottom_right_cell_id\" For example: \"sheet1!A1:B20\"",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "skip_leading_rows": {
+                        "AtLeastOneOf": "external_data_configuration.0.google_sheets_options.0.skip_leading_rows, external_data_configuration.0.google_sheets_options.0.range",
+                        "Description": "The number of rows at the top of the sheet that BigQuery will skip when reading the data. At least one of range or skip_leading_rows must be set.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "hive_partitioning_options": {
+                "Description": "When set, configures hive partitioning support. Not all storage formats support hive partitioning -- requesting hive partitioning on an unsupported format will lead to an error, as will providing an invalid specification.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "mode": {
+                        "Description": "When set, what mode of hive partitioning to use when reading data.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "require_partition_filter": {
+                        "Description": "If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "source_uri_prefix": {
+                        "Description": "When hive partition detection is requested, a common for all source uris must be required. The prefix must end immediately before the partition key encoding begins.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ignore_unknown_values": {
+                "Description": "Indicates if BigQuery should allow extra values that are not represented in the table schema. If true, the extra values are ignored. If false, records with extra columns are treated as bad records, and if there are too many bad records, an invalid error is returned in the job result. The default value is false.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "json_options": {
+                "Description": "Additional properties to set if sourceFormat is set to JSON.\"",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "encoding": {
+                        "Description": "The character encoding of the data. The supported values are UTF-8, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "max_bad_records": {
+                "Description": "The maximum number of bad records that BigQuery can ignore when reading data.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "metadata_cache_mode": {
+                "Description": "Metadata Cache Mode for the table. Set this to enable caching of metadata from external data source.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "object_metadata": {
+                "ConflictsWith": "external_data_configuration.0.source_format",
+                "Description": "Object Metadata is used to create Object Tables. Object Tables contain a listing of objects (with their metadata) found at the sourceUris. If ObjectMetadata is set, sourceFormat should be omitted.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "parquet_options": {
+                "Description": "Additional properties to set if sourceFormat is set to PARQUET.\"",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enable_list_inference": {
+                        "Description": "Indicates whether to use schema inference specifically for Parquet LIST logical type.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "enum_as_string": {
+                        "Description": "Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "reference_file_schema_uri": {
+                "Description": "When creating an external table, the user can provide a reference file with the table schema. This is enabled for the following formats: AVRO, PARQUET, ORC.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "schema": {
+                "Computed": true,
+                "Description": "A JSON schema for the external table. Schema is required for CSV and JSON formats and is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats when using external tables.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "source_format": {
+                "Description": " Please see sourceFormat under ExternalDataConfiguration in Bigquery's public API documentation (https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#externaldataconfiguration) for supported formats. To use \"GOOGLE_SHEETS\" the scopes must include \"googleapis.com/auth/drive.readonly\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "source_uris": {
+                "Description": "A list of the fully-qualified URIs that point to your data in Google Cloud.",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "friendly_name": {
+        "Description": "A descriptive name for the table.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "A mapping of labels to assign to the resource.\n\n\t\t\t\t**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\n\t\t\t\tPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "last_modified_time": {
+        "Computed": true,
+        "Description": "The time when this table was last modified, in milliseconds since the epoch.",
+        "Type": "TypeInt"
+    },
+    "location": {
+        "Computed": true,
+        "Description": "The geographic location where the table resides. This value is inherited from the dataset.",
+        "Type": "TypeString"
+    },
+    "materialized_view": {
+        "Description": "If specified, configures this table as a materialized view.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_non_incremental_definition": {
+                "Description": "Allow non incremental materialized view definition. The default value is false.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "enable_refresh": {
+                "Description": "Specifies if BigQuery should automatically refresh materialized view when the base table is updated. The default is true.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "query": {
+                "Description": "A query whose result is persisted.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "refresh_interval_ms": {
+                "Description": "Specifies maximum frequency at which this materialized view will be refreshed. The default is 1800000.",
+                "Optional": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "max_staleness": {
+        "Description": "The maximum staleness of data that could be returned when the table (or stale MV) is queried. Staleness encoded as a string encoding of [SQL IntervalValue type](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#interval_type).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "num_bytes": {
+        "Computed": true,
+        "Description": "The geographic location where the table resides. This value is inherited from the dataset.",
+        "Type": "TypeInt"
+    },
+    "num_long_term_bytes": {
+        "Computed": true,
+        "Description": "The number of bytes in the table that are considered \"long-term storage\".",
+        "Type": "TypeInt"
+    },
+    "num_rows": {
+        "Computed": true,
+        "Description": "The number of rows of data in this table, excluding any data in the streaming buffer.",
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "range_partitioning": {
+        "Description": "If specified, configures range-based partitioning for this table.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "field": {
+                "Description": "The field used to determine how to create a range-based partition.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "range": {
+                "Description": "Information required to partition based on ranges. Structure is documented below.",
+                "MaxItems": 1,
+                "Properties": {
+                    "end": {
+                        "Description": "End of the range partitioning, exclusive.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "interval": {
+                        "Description": "The width of each range within the partition.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    },
+                    "start": {
+                        "Description": "Start of the range partitioning, inclusive.",
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "require_partition_filter": {
+        "ConflictsWith": "time_partitioning.0.require_partition_filter",
+        "Description": "If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "schema": {
+        "Computed": true,
+        "Description": "A JSON schema for the table.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "The URI of the created resource.",
+        "Type": "TypeString"
+    },
+    "table_constraints": {
+        "Description": "Defines the primary key and foreign keys.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "foreign_keys": {
+                "Description": "Present only if the table has a foreign key. The foreign key is not enforced.",
+                "Optional": true,
+                "Properties": {
+                    "column_references": {
+                        "Description": "The pair of the foreign key column and primary key column.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "referenced_column": {
+                                "Description": "The column in the primary key that are referenced by the referencingColumn.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "referencing_column": {
+                                "Description": "The column that composes the foreign key.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "name": {
+                        "Description": "Set only if the foreign key constraint is named.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "referenced_table": {
+                        "Description": "The table that holds the primary key and is referenced by this foreign key.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "dataset_id": {
+                                "Description": "The ID of the dataset containing this table.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "project_id": {
+                                "Description": "The ID of the project containing this table.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "table_id": {
+                                "Description": "The ID of the table. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters. Certain operations allow suffixing of the table ID with a partition decorator, such as sample_table$20190123.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "primary_key": {
+                "Description": "Represents a primary key constraint on a table's columns. Present only if the table has a primary key. The primary key is not enforced.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "columns": {
+                        "Description": "The columns that are composed of the primary key constraint.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "table_id": {
+        "Description": "A unique ID for the resource. Changing this forces a new resource to be created.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "table_replication_info": {
+        "Description": "Replication info of a table created using \"AS REPLICA\" DDL like: \"CREATE MATERIALIZED VIEW mv1 AS REPLICA OF src_mv\".",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "replication_interval_ms": {
+                "Description": "The interval at which the source materialized view is polled for updates. The default is 300000.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "source_dataset_id": {
+                "Description": "The ID of the source dataset.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "source_project_id": {
+                "Description": "The ID of the source project.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "source_table_id": {
+                "Description": "The ID of the source materialized view.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "time_partitioning": {
+        "Description": "If specified, configures time-based partitioning for this table.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "expiration_ms": {
+                "Computed": true,
+                "Description": "Number of milliseconds for which to keep the storage for a partition.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "field": {
+                "Description": "The field used to determine how to create a time-based partition. If time-based partitioning is enabled without this value, the table is partitioned based on the load time.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "require_partition_filter": {
+                "ConflictsWith": "require_partition_filter",
+                "Description": "If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "type": {
+                "Description": "The supported types are DAY, HOUR, MONTH, and YEAR, which will generate one partition per day, hour, month, and year, respectively.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "type": {
+        "Computed": true,
+        "Description": "Describes the table type.",
+        "Type": "TypeString"
+    },
+    "view": {
+        "Description": "If specified, configures this table as a view.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "query": {
+                "Description": "A query that BigQuery executes when the view is referenced.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "use_legacy_sql": {
+                "Description": "Specifies whether to use BigQuery's legacy SQL for this view. The default value is true. If set to false, the view will use BigQuery's standard SQL",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

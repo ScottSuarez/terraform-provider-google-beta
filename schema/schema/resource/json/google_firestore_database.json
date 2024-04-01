@@ -1,0 +1,85 @@
+{
+    "app_engine_integration_mode": {
+        "Computed": true,
+        "Description": "The App Engine integration mode to use for this database. Possible values: [\"ENABLED\", \"DISABLED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "concurrency_mode": {
+        "Computed": true,
+        "Description": "The concurrency control mode to use for this database. Possible values: [\"OPTIMISTIC\", \"PESSIMISTIC\", \"OPTIMISTIC_WITH_ENTITY_GROUPS\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The timestamp at which this database was created.",
+        "Type": "TypeString"
+    },
+    "delete_protection_state": {
+        "Computed": true,
+        "Description": "State of delete protection for the database.\nWhen delete protection is enabled, this database cannot be deleted.\nThe default value is 'DELETE_PROTECTION_STATE_UNSPECIFIED', which is currently equivalent to 'DELETE_PROTECTION_DISABLED'.\n**Note:** Additionally, to delete this database using 'terraform destroy', 'deletion_policy' must be set to 'DELETE'. Possible values: [\"DELETE_PROTECTION_STATE_UNSPECIFIED\", \"DELETE_PROTECTION_ENABLED\", \"DELETE_PROTECTION_DISABLED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "deletion_policy": {
+        "Description": "Deletion behavior for this database.\nIf the deletion policy is 'ABANDON', the database will be removed from Terraform state but not deleted from Google Cloud upon destruction.\nIf the deletion policy is 'DELETE', the database will both be removed from Terraform state and deleted from Google Cloud upon destruction.\nThe default value is 'ABANDON'.\nSee also 'delete_protection'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "earliest_version_time": {
+        "Computed": true,
+        "Description": "Output only. The earliest timestamp at which older versions of the data can be read from the database. See versionRetentionPeriod above; this field is populated with now - versionRetentionPeriod.\nThis value is continuously updated, and becomes stale the moment it is queried. If you are using this value to recover data, make sure to account for the time from the moment when the value is queried to the moment when you initiate the recovery.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "Output only. This checksum is computed by the server based on the value of other fields,\nand may be sent on update and delete requests to ensure the client has an\nup-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "key_prefix": {
+        "Computed": true,
+        "Description": "Output only. The keyPrefix for this database.\nThis keyPrefix is used, in combination with the project id (\"~\") to construct the application id\nthat is returned from the Cloud Datastore APIs in Google App Engine first generation runtimes.\nThis value may be empty in which case the appid to use for URL-encoded keys is the project_id (eg: foo instead of v~foo).",
+        "Type": "TypeString"
+    },
+    "location_id": {
+        "Description": "The location of the database. Available locations are listed at\nhttps://cloud.google.com/firestore/docs/locations.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID to use for the database, which will become the final\ncomponent of the database's resource name. This value should be 4-63\ncharacters. Valid characters are /[a-z][0-9]-/ with first character\na letter and the last a letter or a number. Must not be\nUUID-like /[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}/.\n\"(default)\" database id is also valid.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "point_in_time_recovery_enablement": {
+        "Description": "Whether to enable the PITR feature on this database.\nIf 'POINT_IN_TIME_RECOVERY_ENABLED' is selected, reads are supported on selected versions of the data from within the past 7 days.\nversionRetentionPeriod and earliestVersionTime can be used to determine the supported versions. These include reads against any timestamp within the past hour\nand reads against 1-minute snapshots beyond 1 hour and within 7 days.\nIf 'POINT_IN_TIME_RECOVERY_DISABLED' is selected, reads are supported on any version of the data from within the past 1 hour. Default value: \"POINT_IN_TIME_RECOVERY_DISABLED\" Possible values: [\"POINT_IN_TIME_RECOVERY_ENABLED\", \"POINT_IN_TIME_RECOVERY_DISABLED\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type of the database.\nSee https://cloud.google.com/datastore/docs/firestore-or-datastore\nfor information about how to choose. Possible values: [\"FIRESTORE_NATIVE\", \"DATASTORE_MODE\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. The system-generated UUID4 for this Database.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The timestamp at which this database was most recently updated.",
+        "Type": "TypeString"
+    },
+    "version_retention_period": {
+        "Computed": true,
+        "Description": "Output only. The period during which past versions of data are retained in the database.\nAny read or query can specify a readTime within this window, and will read the state of the database at that time.\nIf the PITR feature is enabled, the retention period is 7 days. Otherwise, the retention period is 1 hour.\nA duration in seconds with up to nine fractional digits, ending with 's'. Example: \"3.5s\".",
+        "Type": "TypeString"
+    }
+}

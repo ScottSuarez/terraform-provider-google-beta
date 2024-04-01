@@ -1,0 +1,110 @@
+{
+    "connection_endpoints": {
+        "Computed": true,
+        "Description": "An array of connections for all the producers connected to this network attachment.",
+        "Properties": {
+            "ip_address": {
+                "Computed": true,
+                "Description": "The IPv4 address assigned to the producer instance network interface. This value will be a range in case of Serverless.",
+                "Type": "TypeString"
+            },
+            "project_id_or_num": {
+                "Computed": true,
+                "Description": "The project id or number of the interface to which the IP was assigned.",
+                "Type": "TypeString"
+            },
+            "secondary_ip_cidr_ranges": {
+                "Computed": true,
+                "Description": "Alias IP ranges from the same subnetwork.",
+                "Type": "TypeString"
+            },
+            "status": {
+                "Computed": true,
+                "Description": "The status of a connected endpoint to this network attachment.",
+                "Type": "TypeString"
+            },
+            "subnetwork": {
+                "Computed": true,
+                "Description": "The subnetwork used to assign the IP to the producer instance network interface.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "connection_preference": {
+        "Description": "The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules. Possible values: [\"ACCEPT_AUTOMATIC\", \"ACCEPT_MANUAL\", \"INVALID\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource. Provide this property when you create the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "fingerprint": {
+        "Computed": true,
+        "Description": "Fingerprint of this resource. A hash of the contents stored in this object. This\nfield is used in optimistic locking. An up-to-date fingerprint must be provided in order to patch.",
+        "Type": "TypeString"
+    },
+    "id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource type. The server generates this identifier.",
+        "Type": "TypeString"
+    },
+    "kind": {
+        "Computed": true,
+        "Description": "Type of the resource.",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Computed": true,
+        "Description": "The URL of the network which the Network Attachment belongs to. Practically it is inferred by fetching the network of the first subnetwork associated.\nBecause it is required that all the subnetworks must be from the same network, it is assured that the Network Attachment belongs to the same network as all the subnetworks.",
+        "Type": "TypeString"
+    },
+    "producer_accept_lists": {
+        "Description": "Projects that are allowed to connect to this network attachment. The project can be specified using its id or number.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "producer_reject_lists": {
+        "Description": "Projects that are not allowed to connect to this network attachment. The project can be specified using its id or number.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "URL of the region where the network attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL for the resource.",
+        "Type": "TypeString"
+    },
+    "self_link_with_id": {
+        "Computed": true,
+        "Description": "Server-defined URL for this resource's resource id.",
+        "Type": "TypeString"
+    },
+    "subnetworks": {
+        "Description": "An array of URLs where each entry is the URL of a subnet provided by the service consumer to use for endpoints in the producers that connect to this network attachment.",
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

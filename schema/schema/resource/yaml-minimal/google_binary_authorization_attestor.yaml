@@ -1,0 +1,14 @@
+attestation_authority_note:
+    delegation_service_account_email: TypeString
+    note_reference: TypeString
+    public_keys:
+        ascii_armored_pgp_public_key: TypeString
+        comment: TypeString
+        id: TypeString
+        pkix_public_key:
+            public_key_pem: TypeString
+            signature_algorithm: TypeString
+description: TypeString
+name: TypeString
+project: TypeString
+

@@ -1,0 +1,4 @@
+bucket_id: TypeString
+name: TypeString
+project: TypeString
+

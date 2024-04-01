@@ -1,0 +1,16 @@
+create_time: TypeString
+delete_time: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+membership_binding_id: TypeString
+membership_id: TypeString
+name: TypeString
+project: TypeString
+scope: TypeString
+state:
+    code: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+

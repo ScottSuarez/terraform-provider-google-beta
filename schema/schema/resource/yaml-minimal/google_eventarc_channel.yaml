@@ -1,0 +1,12 @@
+activation_token: TypeString
+create_time: TypeString
+crypto_key_name: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+pubsub_topic: TypeString
+state: TypeString
+third_party_provider: TypeString
+uid: TypeString
+update_time: TypeString
+

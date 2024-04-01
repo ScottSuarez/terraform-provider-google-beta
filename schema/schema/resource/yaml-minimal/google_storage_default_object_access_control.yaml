@@ -1,0 +1,12 @@
+bucket: TypeString
+domain: TypeString
+email: TypeString
+entity: TypeString
+entity_id: TypeString
+generation: TypeInt
+object: TypeString
+project_team:
+    project_number: TypeString
+    team: TypeString
+role: TypeString
+

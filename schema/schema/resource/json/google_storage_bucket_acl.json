@@ -1,0 +1,25 @@
+{
+    "bucket": {
+        "Description": "The name of the bucket it applies to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "default_acl": {
+        "Description": "Configure this ACL to be the default ACL.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "predefined_acl": {
+        "ConflictsWith": "role_entity",
+        "Description": "The canned GCS ACL to apply. Must be set if role_entity is not.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "role_entity": {
+        "Computed": true,
+        "ConflictsWith": "predefined_acl",
+        "Description": "List of role/entity pairs in the form ROLE:entity. See GCS Bucket ACL documentation  for more details. Must be set if predefined_acl is not.",
+        "Optional": true,
+        "Type": "TypeList"
+    }
+}

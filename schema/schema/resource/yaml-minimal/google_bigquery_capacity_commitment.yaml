@@ -1,0 +1,13 @@
+capacity_commitment_id: TypeString
+commitment_end_time: TypeString
+commitment_start_time: TypeString
+edition: TypeString
+enforce_single_admin_project_per_org: TypeString
+location: TypeString
+name: TypeString
+plan: TypeString
+project: TypeString
+renewal_plan: TypeString
+slot_count: TypeInt
+state: TypeString
+

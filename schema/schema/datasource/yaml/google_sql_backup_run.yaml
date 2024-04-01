@@ -1,0 +1,31 @@
+backup_id:
+    Type: TypeInt
+    Description: The identifier for this backup run. Unique only for a specific Cloud SQL instance. If left empty and multiple backups exist for the instance, most_recent must be set to true.
+    Computed: "true"
+    Optional: "true"
+instance:
+    Type: TypeString
+    Description: Name of the database instance.
+    Required: "true"
+location:
+    Type: TypeString
+    Description: Location of the backups.
+    Computed: "true"
+most_recent:
+    Type: TypeBool
+    Description: Toggles use of the most recent backup run if multiple backups exist for a Cloud SQL instance.
+    Optional: "true"
+project:
+    Type: TypeString
+    Description: Project ID of the project that contains the instance.
+    Computed: "true"
+    Optional: "true"
+start_time:
+    Type: TypeString
+    Description: The time the backup operation actually started in UTC timezone in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.
+    Computed: "true"
+status:
+    Type: TypeString
+    Description: The status of this run.
+    Computed: "true"
+

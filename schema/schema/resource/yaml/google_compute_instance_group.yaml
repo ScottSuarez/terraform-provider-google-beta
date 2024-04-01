@@ -1,0 +1,50 @@
+description:
+    Type: TypeString
+    Description: An optional textual description of the instance group.
+    Optional: "true"
+instances:
+    Type: TypeSet
+    Description: The list of instances in the group, in self_link format. When adding instances they must all be in the same network and zone as the instance group.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the instance group. Must be 1-63 characters long and comply with RFC1035. Supported characters include lowercase letters, numbers, and hyphens.
+    Required: "true"
+named_port:
+    Type: TypeList
+    Description: The named port configuration.
+    Optional: "true"
+    Properties:
+        name:
+            Type: TypeString
+            Description: The name which the port will be mapped to.
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: The port number to map the name to.
+            Required: "true"
+network:
+    Type: TypeString
+    Description: The URL of the network the instance group is in. If this is different from the network where the instances are in, the creation fails. Defaults to the network where the instances are in (if neither network nor instances is specified, this field will be blank).
+    Computed: "true"
+    Optional: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: The URI of the created resource.
+    Computed: "true"
+size:
+    Type: TypeInt
+    Description: The number of instances in the group.
+    Computed: "true"
+zone:
+    Type: TypeString
+    Description: The zone that this instance group should be created in.
+    Computed: "true"
+    Optional: "true"
+

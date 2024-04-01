@@ -1,0 +1,32 @@
+{
+    "client_id": {
+        "Description": "OAuth client ID",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "client_secret": {
+        "Description": "OAuth client secret",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enabled": {
+        "Description": "If this IDP allows the user to sign in",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "idp_id": {
+        "Description": "ID of the IDP. Possible values include:\n\n* 'apple.com'\n\n* 'facebook.com'\n\n* 'gc.apple.com'\n\n* 'github.com'\n\n* 'google.com'\n\n* 'linkedin.com'\n\n* 'microsoft.com'\n\n* 'playgames.google.com'\n\n* 'twitter.com'\n\n* 'yahoo.com'",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The name of the DefaultSupportedIdpConfig resource",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

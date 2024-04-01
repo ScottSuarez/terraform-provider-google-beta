@@ -1,0 +1,17 @@
+app_engine_integration_mode: TypeString
+concurrency_mode: TypeString
+create_time: TypeString
+delete_protection_state: TypeString
+deletion_policy: TypeString
+earliest_version_time: TypeString
+etag: TypeString
+key_prefix: TypeString
+location_id: TypeString
+name: TypeString
+point_in_time_recovery_enablement: TypeString
+project: TypeString
+type: TypeString
+uid: TypeString
+update_time: TypeString
+version_retention_period: TypeString
+

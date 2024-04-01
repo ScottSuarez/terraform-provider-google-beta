@@ -1,0 +1,6 @@
+group: TypeString
+name: TypeString
+port: TypeInt
+project: TypeString
+zone: TypeString
+

@@ -1,0 +1,14 @@
+uptime_check_ips:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        ip_address:
+            Type: TypeString
+            Computed: "true"
+        location:
+            Type: TypeString
+            Computed: "true"
+        region:
+            Type: TypeString
+            Computed: "true"
+

@@ -1,0 +1,9 @@
+bucket: TypeString
+custom_attributes: TypeMap(TypeString)
+event_types: TypeSet(TypeString)
+notification_id: TypeString
+object_name_prefix: TypeString
+payload_format: TypeString
+self_link: TypeString
+topic: TypeString
+

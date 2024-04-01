@@ -1,0 +1,10 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+env_id: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+org_id: TypeString
+role: TypeString
+

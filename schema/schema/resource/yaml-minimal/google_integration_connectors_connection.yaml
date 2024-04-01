@@ -1,0 +1,154 @@
+auth_config:
+    additional_variable:
+        boolean_value: TypeBool
+        encryption_key_value:
+            kms_key_name: TypeString
+            type: TypeString
+        integer_value: TypeInt
+        key: TypeString
+        secret_value:
+            secret_version: TypeString
+        string_value: TypeString
+    auth_key: TypeString
+    auth_type: TypeString
+    oauth2_auth_code_flow:
+        auth_uri: TypeString
+        client_id: TypeString
+        client_secret:
+            secret_version: TypeString
+        enable_pkce: TypeBool
+        scopes: TypeList(TypeString)
+    oauth2_client_credentials:
+        client_id: TypeString
+        client_secret:
+            secret_version: TypeString
+    oauth2_jwt_bearer:
+        client_key:
+            secret_version: TypeString
+        jwt_claims:
+            audience: TypeString
+            issuer: TypeString
+            subject: TypeString
+    ssh_public_key:
+        cert_type: TypeString
+        ssh_client_cert:
+            secret_version: TypeString
+        ssh_client_cert_pass:
+            secret_version: TypeString
+        username: TypeString
+    user_password:
+        password:
+            secret_version: TypeString
+        username: TypeString
+config_variable:
+    boolean_value: TypeBool
+    encryption_key_value:
+        kms_key_name: TypeString
+        type: TypeString
+    integer_value: TypeInt
+    key: TypeString
+    secret_value:
+        secret_version: TypeString
+    string_value: TypeString
+connection_revision: TypeString
+connector_version: TypeString
+connector_version_infra_config:
+    ratelimit_threshold: TypeString
+connector_version_launch_stage: TypeString
+create_time: TypeString
+description: TypeString
+destination_config:
+    destination:
+        host: TypeString
+        port: TypeInt
+        service_attachment: TypeString
+    key: TypeString
+effective_labels: TypeMap(TypeString)
+eventing_config:
+    additional_variable:
+        boolean_value: TypeBool
+        encryption_key_value:
+            kms_key_name: TypeString
+            type: TypeString
+        integer_value: TypeInt
+        key: TypeString
+        secret_value:
+            secret_version: TypeString
+        string_value: TypeString
+    auth_config:
+        additional_variable:
+            boolean_value: TypeBool
+            encryption_key_value:
+                kms_key_name: TypeString
+                type: TypeString
+            integer_value: TypeInt
+            key: TypeString
+            secret_value:
+                secret_version: TypeString
+            string_value: TypeString
+        auth_key: TypeString
+        auth_type: TypeString
+        user_password:
+            password:
+                secret_version: TypeString
+            username: TypeString
+    enrichment_enabled: TypeBool
+    registration_destination_config:
+        destination:
+            host: TypeString
+            port: TypeInt
+            service_attachment: TypeString
+        key: TypeString
+eventing_enablement_type: TypeString
+eventing_runtime_data:
+    events_listener_endpoint: TypeString
+    status:
+        description: TypeString
+        state: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+lock_config:
+    locked: TypeBool
+    reason: TypeString
+log_config:
+    enabled: TypeBool
+name: TypeString
+node_config:
+    max_node_count: TypeInt
+    min_node_count: TypeInt
+project: TypeString
+service_account: TypeString
+service_directory: TypeString
+ssl_config:
+    additional_variable:
+        boolean_value: TypeBool
+        encryption_key_value:
+            kms_key_name: TypeString
+            type: TypeString
+        integer_value: TypeInt
+        key: TypeString
+        secret_value:
+            secret_version: TypeString
+        string_value: TypeString
+    client_cert_type: TypeString
+    client_certificate:
+        secret_version: TypeString
+    client_private_key:
+        secret_version: TypeString
+    client_private_key_pass:
+        secret_version: TypeString
+    private_server_certificate:
+        secret_version: TypeString
+    server_cert_type: TypeString
+    trust_model: TypeString
+    type: TypeString
+    use_ssl: TypeBool
+status:
+    description: TypeString
+    state: TypeString
+    status: TypeString
+subscription_type: TypeString
+suspended: TypeBool
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

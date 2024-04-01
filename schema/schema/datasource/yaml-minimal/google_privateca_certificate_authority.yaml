@@ -1,0 +1,92 @@
+access_urls:
+    ca_certificate_access_url: TypeString
+    crl_access_urls: TypeList(TypeString)
+certificate_authority_id: TypeString
+config:
+    subject_config:
+        subject:
+            common_name: TypeString
+            country_code: TypeString
+            locality: TypeString
+            organization: TypeString
+            organizational_unit: TypeString
+            postal_code: TypeString
+            province: TypeString
+            street_address: TypeString
+        subject_alt_name:
+            dns_names: TypeList(TypeString)
+            email_addresses: TypeList(TypeString)
+            ip_addresses: TypeList(TypeString)
+            uris: TypeList(TypeString)
+    x509_config:
+        additional_extensions:
+            critical: TypeBool
+            object_id:
+                object_id_path: TypeList(TypeInt)
+            value: TypeString
+        aia_ocsp_servers: TypeList(TypeString)
+        ca_options:
+            is_ca: TypeBool
+            max_issuer_path_length: TypeInt
+            non_ca: TypeBool
+            zero_max_issuer_path_length: TypeBool
+        key_usage:
+            base_key_usage:
+                cert_sign: TypeBool
+                content_commitment: TypeBool
+                crl_sign: TypeBool
+                data_encipherment: TypeBool
+                decipher_only: TypeBool
+                digital_signature: TypeBool
+                encipher_only: TypeBool
+                key_agreement: TypeBool
+                key_encipherment: TypeBool
+            extended_key_usage:
+                client_auth: TypeBool
+                code_signing: TypeBool
+                email_protection: TypeBool
+                ocsp_signing: TypeBool
+                server_auth: TypeBool
+                time_stamping: TypeBool
+            unknown_extended_key_usages:
+                object_id_path: TypeList(TypeInt)
+        name_constraints:
+            critical: TypeBool
+            excluded_dns_names: TypeList(TypeString)
+            excluded_email_addresses: TypeList(TypeString)
+            excluded_ip_ranges: TypeList(TypeString)
+            excluded_uris: TypeList(TypeString)
+            permitted_dns_names: TypeList(TypeString)
+            permitted_email_addresses: TypeList(TypeString)
+            permitted_ip_ranges: TypeList(TypeString)
+            permitted_uris: TypeList(TypeString)
+        policy_ids:
+            object_id_path: TypeList(TypeInt)
+create_time: TypeString
+deletion_protection: TypeBool
+desired_state: TypeString
+effective_labels: TypeMap(TypeString)
+gcs_bucket: TypeString
+ignore_active_certificates_on_deletion: TypeBool
+key_spec:
+    algorithm: TypeString
+    cloud_kms_key_version: TypeString
+labels: TypeMap(TypeString)
+lifetime: TypeString
+location: TypeString
+name: TypeString
+pem_ca_certificate: TypeString
+pem_ca_certificates: TypeList(TypeString)
+pem_csr: TypeString
+pool: TypeString
+project: TypeString
+skip_grace_period: TypeBool
+state: TypeString
+subordinate_config:
+    certificate_authority: TypeString
+    pem_issuer_chain:
+        pem_certificates: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+update_time: TypeString
+

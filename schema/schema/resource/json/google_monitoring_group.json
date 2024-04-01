@@ -1,0 +1,32 @@
+{
+    "display_name": {
+        "Description": "A user-assigned name for this group, used only for display\npurposes.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "filter": {
+        "Description": "The filter used to determine which monitored resources\nbelong to this group.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "is_cluster": {
+        "Description": "If true, the members of this group are considered to be a\ncluster. The system can perform additional analysis on\ngroups that are clusters.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "A unique identifier for this group. The format is\n\"projects/{project_id_or_number}/groups/{group_id}\".",
+        "Type": "TypeString"
+    },
+    "parent_name": {
+        "Description": "The name of the group's parent, if it has one. The format is\n\"projects/{project_id_or_number}/groups/{group_id}\". For\ngroups with no parent, parentName is the empty string, \"\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

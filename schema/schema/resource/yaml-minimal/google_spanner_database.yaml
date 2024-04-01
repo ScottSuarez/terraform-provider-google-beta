@@ -1,0 +1,12 @@
+database_dialect: TypeString
+ddl: TypeList(TypeString)
+deletion_protection: TypeBool
+enable_drop_protection: TypeBool
+encryption_config:
+    kms_key_name: TypeString
+instance: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+version_retention_period: TypeString
+

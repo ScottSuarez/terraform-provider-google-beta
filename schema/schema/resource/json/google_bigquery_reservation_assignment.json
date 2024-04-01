@@ -1,0 +1,39 @@
+{
+    "assignee": {
+        "Description": "The resource which will use the reservation. E.g. projects/myproject, folders/123, organizations/456.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "job_type": {
+        "Description": "Types of job, which could be specified when using the reservation. Possible values: JOB_TYPE_UNSPECIFIED, PIPELINE, QUERY",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Computed": true,
+        "Description": "The location for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Output only. The resource name of the assignment.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reservation": {
+        "Description": "The reservation for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Assignment will remain in PENDING state if no active capacity commitment is present. It will become ACTIVE when some capacity commitment becomes active. Possible values: STATE_UNSPECIFIED, PENDING, ACTIVE",
+        "Type": "TypeString"
+    }
+}

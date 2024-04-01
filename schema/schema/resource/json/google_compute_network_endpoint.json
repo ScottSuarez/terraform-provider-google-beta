@@ -1,0 +1,33 @@
+{
+    "instance": {
+        "Description": "The name for a specific VM instance that the IP address belongs to.\nThis is required for network endpoints of type GCE_VM_IP_PORT.\nThe instance must be in the same zone of network endpoint group.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ip_address": {
+        "Description": "IPv4 address of network endpoint. The IP address must belong\nto a VM in GCE (either the primary IP or as part of an aliased IP\nrange).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network_endpoint_group": {
+        "Description": "The network endpoint group this endpoint is part of.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "port": {
+        "Description": "Port number of network endpoint.\n**Note** 'port' is required unless the Network Endpoint Group is created\nwith the type of 'GCE_VM_IP'",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Description": "Zone where the containing network endpoint group is located.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

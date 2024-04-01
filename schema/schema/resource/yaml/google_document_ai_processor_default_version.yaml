@@ -1,0 +1,11 @@
+processor:
+    Type: TypeString
+    Description: The processor to set the version on.
+    Required: "true"
+version:
+    Type: TypeString
+    Description: |-
+        The version to set. Using 'stable' or 'rc' will cause the API to return the latest version in that release channel.
+        Apply 'lifecycle.ignore_changes' to the 'version' field to suppress this diff.
+    Required: "true"
+

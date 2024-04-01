@@ -1,0 +1,93 @@
+call_log_level:
+    Type: TypeString
+    Description: |-
+        Describes the level of platform logging to apply to calls and call responses during
+        executions of this workflow. If both the workflow and the execution specify a logging level,
+        the execution level takes precedence. Possible values: ["CALL_LOG_LEVEL_UNSPECIFIED", "LOG_ALL_CALLS", "LOG_ERRORS_ONLY", "LOG_NONE"]
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp of when the workflow was created in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+crypto_key_name:
+    Type: TypeString
+    Description: |-
+        The KMS key used to encrypt workflow and execution data.
+
+        Format: projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{cryptoKey}
+    Optional: "true"
+description:
+    Type: TypeString
+    Description: Description of the workflow provided by the user. Must be at most 1000 unicode characters long.
+    Computed: "true"
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        A set of key/value label pairs to assign to this Workflow.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Name of the Workflow.
+    Computed: "true"
+    Optional: "true"
+name_prefix:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ConflictsWith: name
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region of the workflow.
+    Optional: "true"
+revision_id:
+    Type: TypeString
+    Description: The revision of the workflow. A new one is generated if the service account or source contents is changed.
+    Computed: "true"
+service_account:
+    Type: TypeString
+    Description: |-
+        Name of the service account associated with the latest workflow version. This service
+        account represents the identity of the workflow and determines what permissions the workflow has.
+        Format: projects/{project}/serviceAccounts/{account} or {account}.
+        Using - as a wildcard for the {project} or not providing one at all will infer the project from the account.
+        The {account} value can be the email address or the unique_id of the service account.
+        If not provided, workflow will use the project's default service account.
+        Modifying this field for an existing workflow results in a new workflow revision.
+    Computed: "true"
+    Optional: "true"
+source_contents:
+    Type: TypeString
+    Description: Workflow code to be executed. The size limit is 128KB.
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: State of the workflow deployment.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp of when the workflow was last updated in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
+    Computed: "true"
+user_env_vars:
+    Type: TypeMap
+    Description: User-defined environment variables associated with this workflow revision. This map has a maximum length of 20. Each string can take up to 4KiB. Keys cannot be empty strings and cannot start with “GOOGLE” or “WORKFLOWS".
+    Optional: "true"
+

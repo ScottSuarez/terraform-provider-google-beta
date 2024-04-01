@@ -1,0 +1,7 @@
+{
+    "project": {
+        "Description": "The ID of the project that will serve as a Shared VPC host project",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

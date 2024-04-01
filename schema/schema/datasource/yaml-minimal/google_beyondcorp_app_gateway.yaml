@@ -1,0 +1,15 @@
+allocated_connections:
+    ingress_port: TypeInt
+    psc_uri: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+host_type: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+uri: TypeString
+

@@ -1,0 +1,5 @@
+disk: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+

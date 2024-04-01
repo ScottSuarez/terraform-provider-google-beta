@@ -1,0 +1,21 @@
+cluster:
+    autoscaling_config:
+        cpu_target: TypeInt
+        max_nodes: TypeInt
+        min_nodes: TypeInt
+        storage_target: TypeInt
+    cluster_id: TypeString
+    kms_key_name: TypeString
+    num_nodes: TypeInt
+    state: TypeString
+    storage_type: TypeString
+    zone: TypeString
+deletion_protection: TypeBool
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+instance_type: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+

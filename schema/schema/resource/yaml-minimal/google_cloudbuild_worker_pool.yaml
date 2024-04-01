@@ -1,0 +1,19 @@
+annotations: TypeMap(TypeString)
+create_time: TypeString
+delete_time: TypeString
+display_name: TypeString
+effective_annotations: unknown
+location: TypeString
+name: TypeString
+network_config:
+    peered_network: TypeString
+    peered_network_ip_range: TypeString
+project: TypeString
+state: TypeString
+uid: TypeString
+update_time: TypeString
+worker_config:
+    disk_size_gb: TypeInt
+    machine_type: TypeString
+    no_external_ip: TypeBool
+

@@ -1,0 +1,82 @@
+parent: TypeString
+service_perimeters:
+    create_time: TypeString
+    description: TypeString
+    name: TypeString
+    perimeter_type: TypeString
+    spec:
+        access_levels: TypeSet(TypeString)
+        egress_policies:
+            egress_from:
+                identities: TypeSet(TypeString)
+                identity_type: TypeString
+                source_restriction: TypeString
+                sources:
+                    access_level: TypeString
+            egress_to:
+                external_resources: TypeSet(TypeString)
+                operations:
+                    method_selectors:
+                        method: TypeString
+                        permission: TypeString
+                    service_name: TypeString
+                resources: TypeSet(TypeString)
+        ingress_policies:
+            ingress_from:
+                identities: TypeSet(TypeString)
+                identity_type: TypeString
+                sources:
+                    access_level: TypeString
+                    resource: TypeString
+            ingress_to:
+                operations:
+                    method_selectors:
+                        method: TypeString
+                        permission: TypeString
+                    service_name: TypeString
+                resources: TypeSet(TypeString)
+        resources: TypeSet(TypeString)
+        restricted_services: TypeSet(TypeString)
+        vpc_accessible_services:
+            allowed_services: TypeSet(TypeString)
+            enable_restriction: TypeBool
+    status:
+        access_levels: TypeSet(TypeString)
+        egress_policies:
+            egress_from:
+                identities: TypeSet(TypeString)
+                identity_type: TypeString
+                source_restriction: TypeString
+                sources:
+                    access_level: TypeString
+            egress_to:
+                external_resources: TypeSet(TypeString)
+                operations:
+                    method_selectors:
+                        method: TypeString
+                        permission: TypeString
+                    service_name: TypeString
+                resources: TypeSet(TypeString)
+        ingress_policies:
+            ingress_from:
+                identities: TypeSet(TypeString)
+                identity_type: TypeString
+                sources:
+                    access_level: TypeString
+                    resource: TypeString
+            ingress_to:
+                operations:
+                    method_selectors:
+                        method: TypeString
+                        permission: TypeString
+                    service_name: TypeString
+                resources: TypeSet(TypeString)
+        resources: TypeSet(TypeString)
+        restricted_services: TypeSet(TypeString)
+        vpc_accessible_services:
+            allowed_services: TypeSet(TypeString)
+            enable_restriction: TypeBool
+    title: TypeString
+    update_time: TypeString
+    use_explicit_dry_run_spec: TypeBool
+

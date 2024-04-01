@@ -1,0 +1,52 @@
+create_time:
+    Type: TypeString
+    Description: Time the Mesh was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: A free-text description of the resource. Max length 1024 characters.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+interception_port:
+    Type: TypeInt
+    Description: |-
+        Optional. If set to a valid TCP port (1-65535), instructs the SIDECAR proxy to listen on the
+        specified port of localhost (127.0.0.1) address. The SIDECAR proxy will expect all traffic to
+        be redirected to this port regardless of its actual ip:port destination. If unset, a port
+        '15001' is used as the interception port. This will is applicable only for sidecar proxy
+        deployments.
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Set of label tags associated with the Mesh resource.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Short name of the Mesh resource to be created.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Description: Server-defined URL of this resource.
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Mesh was updated in UTC.
+    Computed: "true"
+

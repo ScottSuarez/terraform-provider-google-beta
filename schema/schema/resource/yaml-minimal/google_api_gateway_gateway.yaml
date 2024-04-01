@@ -1,0 +1,11 @@
+api_config: TypeString
+default_hostname: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+gateway_id: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+

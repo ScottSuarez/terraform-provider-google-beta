@@ -1,0 +1,156 @@
+{
+    "advertise_mode": {
+        "Description": "User-specified flag to indicate which mode to use for advertisement.\nValid values of this enum field are: 'DEFAULT', 'CUSTOM' Default value: \"DEFAULT\" Possible values: [\"DEFAULT\", \"CUSTOM\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "advertised_groups": {
+        "Description": "User-specified list of prefix groups to advertise in custom\nmode, which currently supports the following option:\n\n* 'ALL_SUBNETS': Advertises all of the router's own VPC subnets.\nThis excludes any routes learned for subnets that use VPC Network\nPeering.\n\n\nNote that this field can only be populated if advertiseMode is 'CUSTOM'\nand overrides the list defined for the router (in the \"bgp\" message).\nThese groups are advertised in addition to any specified prefixes.\nLeave this field blank to advertise no custom groups.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "advertised_ip_ranges": {
+        "Description": "User-specified list of individual IP ranges to advertise in\ncustom mode. This field can only be populated if advertiseMode\nis 'CUSTOM' and is advertised to all peers of the router. These IP\nranges will be advertised in addition to any specified groups.\nLeave this field blank to advertise no custom IP ranges.",
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Description": "User-specified description for the IP range.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "range": {
+                "Description": "The IP range to advertise. The value must be a\nCIDR-formatted string.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "advertised_route_priority": {
+        "Description": "The priority of routes advertised to this BGP peer.\nWhere there is more than one matching route of maximum\nlength, the routes with the lowest priority value win.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "bfd": {
+        "Computed": true,
+        "Description": "BFD configuration for the BGP peering.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "min_receive_interval": {
+                "Description": "The minimum interval, in milliseconds, between BFD control packets\nreceived from the peer router. The actual value is negotiated\nbetween the two routers and is equal to the greater of this value\nand the transmit interval of the other router. If set, this value\nmust be between 1000 and 30000.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "min_transmit_interval": {
+                "Description": "The minimum interval, in milliseconds, between BFD control packets\ntransmitted to the peer router. The actual value is negotiated\nbetween the two routers and is equal to the greater of this value\nand the corresponding receive interval of the other router. If set,\nthis value must be between 1000 and 30000.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "multiplier": {
+                "Description": "The number of consecutive BFD packets that must be missed before\nBFD declares that a peer is unavailable. If set, the value must\nbe a value between 5 and 16.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "session_initialization_mode": {
+                "Description": "The BFD session initialization mode for this BGP peer.\nIf set to 'ACTIVE', the Cloud Router will initiate the BFD session\nfor this BGP peer. If set to 'PASSIVE', the Cloud Router will wait\nfor the peer router to initiate the BFD session for this BGP peer.\nIf set to 'DISABLED', BFD is disabled for this BGP peer. Possible values: [\"ACTIVE\", \"DISABLED\", \"PASSIVE\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "enable": {
+        "Description": "The status of the BGP peer connection. If set to false, any active session\nwith the peer is terminated and all associated routing information is removed.\nIf set to true, the peer connection can be established with routing information.\nThe default is true.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "enable_ipv6": {
+        "Description": "Enable IPv6 traffic over BGP Peer. If not specified, it is disabled by default.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "interface": {
+        "Description": "Name of the interface the BGP peer is associated with.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "ip_address": {
+        "Computed": true,
+        "Description": "IP address of the interface inside Google Cloud Platform.\nOnly IPv4 is supported.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ipv6_nexthop_address": {
+        "Computed": true,
+        "Description": "IPv6 address of the interface inside Google Cloud Platform.\nThe address must be in the range 2600:2d00:0:2::/64 or 2600:2d00:0:3::/64.\nIf you do not specify the next hop addresses, Google Cloud automatically\nassigns unused addresses from the 2600:2d00:0:2::/64 or 2600:2d00:0:3::/64 range for you.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "management_type": {
+        "Computed": true,
+        "Description": "The resource that configures and manages this BGP peer.\n\n* 'MANAGED_BY_USER' is the default value and can be managed by\nyou or other users\n* 'MANAGED_BY_ATTACHMENT' is a BGP peer that is configured and\nmanaged by Cloud Interconnect, specifically by an\nInterconnectAttachment of type PARTNER. Google automatically\ncreates, updates, and deletes this type of BGP peer when the\nPARTNER InterconnectAttachment is created, updated,\nor deleted.",
+        "Type": "TypeString"
+    },
+    "md5_authentication_key": {
+        "Description": "Present if MD5 authentication is enabled for the peering. Must be the name\nof one of the entries in the Router.md5_authentication_keys. The field must comply with RFC1035.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "key": {
+                "Description": "Value of the key.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "[REQUIRED] Name used to identify the key.\nMust be unique within a router. Must be referenced by exactly one bgpPeer. Must comply with RFC1035.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of this BGP peer. The name must be 1-63 characters long,\nand comply with RFC1035. Specifically, the name must be 1-63 characters\nlong and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which\nmeans the first character must be a lowercase letter, and all\nfollowing characters must be a dash, lowercase letter, or digit,\nexcept the last character, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peer_asn": {
+        "Description": "Peer BGP Autonomous System Number (ASN).\nEach BGP interface may use a different value.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "peer_ip_address": {
+        "Computed": true,
+        "Description": "IP address of the BGP interface outside Google Cloud Platform.\nOnly IPv4 is supported. Required if 'ip_address' is set.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "peer_ipv6_nexthop_address": {
+        "Computed": true,
+        "Description": "IPv6 address of the BGP interface outside Google Cloud Platform.\nThe address must be in the range 2600:2d00:0:2::/64 or 2600:2d00:0:3::/64.\nIf you do not specify the next hop addresses, Google Cloud automatically\nassigns unused addresses from the 2600:2d00:0:2::/64 or 2600:2d00:0:3::/64 range for you.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "Region where the router and BgpPeer reside.\nIf it is not provided, the provider region is used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "router": {
+        "Description": "The name of the Cloud Router in which this BgpPeer will be configured.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "router_appliance_instance": {
+        "Description": "The URI of the VM instance that is used as third-party router appliances\nsuch as Next Gen Firewalls, Virtual Routers, or Router Appliances.\nThe VM instance must be located in zones contained in the same region as\nthis Cloud Router. The VM instance is the peer side of the BGP session.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

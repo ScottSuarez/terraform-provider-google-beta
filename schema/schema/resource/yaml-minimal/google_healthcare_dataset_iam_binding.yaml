@@ -1,0 +1,9 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+dataset_id: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+role: TypeString
+

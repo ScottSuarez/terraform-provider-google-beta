@@ -1,0 +1,8 @@
+api_key_id: TypeString
+app_id: TypeString
+app_urls: TypeList(TypeString)
+deletion_policy: TypeString
+display_name: TypeString
+name: TypeString
+project: TypeString
+

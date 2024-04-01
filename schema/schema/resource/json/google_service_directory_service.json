@@ -1,0 +1,22 @@
+{
+    "metadata": {
+        "Description": "Metadata for the service. This data can be consumed\nby service clients. The entire metadata dictionary may contain\nup to 2000 characters, spread across all key-value pairs.\nMetadata that goes beyond any these limits will be rejected.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for the service in the\nformat 'projects/*/locations/*/namespaces/*/services/*'.",
+        "Type": "TypeString"
+    },
+    "namespace": {
+        "Description": "The resource name of the namespace this service will belong to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service_id": {
+        "Description": "The Resource ID must be 1-63 characters long, including digits,\nlowercase letters or the hyphen character.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

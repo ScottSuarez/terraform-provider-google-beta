@@ -1,0 +1,71 @@
+create_time: TypeString
+data:
+    entity: TypeString
+    resource: TypeString
+data_profile_spec:
+    exclude_fields:
+        field_names: TypeList(TypeString)
+    include_fields:
+        field_names: TypeList(TypeString)
+    post_scan_actions:
+        bigquery_export:
+            results_table: TypeString
+    row_filter: TypeString
+    sampling_percent: TypeFloat
+data_quality_spec:
+    post_scan_actions:
+        bigquery_export:
+            results_table: TypeString
+    row_filter: TypeString
+    rules:
+        column: TypeString
+        description: TypeString
+        dimension: TypeString
+        ignore_null: TypeBool
+        name: TypeString
+        non_null_expectation: {}
+        range_expectation:
+            max_value: TypeString
+            min_value: TypeString
+            strict_max_enabled: TypeBool
+            strict_min_enabled: TypeBool
+        regex_expectation:
+            regex: TypeString
+        row_condition_expectation:
+            sql_expression: TypeString
+        set_expectation:
+            values: TypeList(TypeString)
+        statistic_range_expectation:
+            max_value: TypeString
+            min_value: TypeString
+            statistic: TypeString
+            strict_max_enabled: TypeBool
+            strict_min_enabled: TypeBool
+        table_condition_expectation:
+            sql_expression: TypeString
+        threshold: TypeFloat
+        uniqueness_expectation: {}
+    sampling_percent: TypeFloat
+data_scan_id: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+execution_spec:
+    field: TypeString
+    trigger:
+        on_demand: {}
+        schedule:
+            cron: TypeString
+execution_status:
+    latest_job_end_time: TypeString
+    latest_job_start_time: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+uid: TypeString
+update_time: TypeString
+

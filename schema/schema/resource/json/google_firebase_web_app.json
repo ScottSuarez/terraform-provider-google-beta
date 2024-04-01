@@ -1,0 +1,38 @@
+{
+    "api_key_id": {
+        "Computed": true,
+        "Description": "The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the WebApp.\nIf apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the WebApp.\nThis auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "app_id": {
+        "Computed": true,
+        "Description": "The globally unique, Firebase-assigned identifier of the App.\nThis identifier should be treated as an opaque token, as the data format is not specified.",
+        "Type": "TypeString"
+    },
+    "app_urls": {
+        "Computed": true,
+        "Description": "The URLs where the 'WebApp' is hosted.",
+        "Type": "TypeList"
+    },
+    "deletion_policy": {
+        "Description": "Set to 'ABANDON' to allow the WebApp to be untracked from terraform state\nrather than deleted upon 'terraform destroy'. This is useful becaue the WebApp may be\nserving traffic. Set to 'DELETE' to delete the WebApp. Default to 'DELETE'",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The user-assigned display name of the App.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The fully qualified resource name of the App, for example:\nprojects/projectId/webApps/appId",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

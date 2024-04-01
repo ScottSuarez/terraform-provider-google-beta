@@ -1,0 +1,16 @@
+{
+    "name": {
+        "Description": "Name of the Location resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

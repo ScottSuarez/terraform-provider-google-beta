@@ -1,0 +1,32 @@
+annotations: TypeMap(TypeString)
+backup_id: TypeString
+cluster_name: TypeString
+cluster_uid: TypeString
+create_time: TypeString
+delete_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+encryption_config:
+    kms_key_name: TypeString
+encryption_info:
+    encryption_type: TypeString
+    kms_key_versions: TypeList(TypeString)
+etag: TypeString
+expiry_quantity:
+    retention_count: TypeInt
+    total_retention_count: TypeInt
+expiry_time: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+reconciling: TypeBool
+size_bytes: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+uid: TypeString
+update_time: TypeString
+

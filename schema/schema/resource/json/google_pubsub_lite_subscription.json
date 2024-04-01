@@ -1,0 +1,40 @@
+{
+    "delivery_config": {
+        "Description": "The settings for this subscription's message delivery.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "delivery_requirement": {
+                "Description": "When this subscription should send messages to subscribers relative to messages persistence in storage. Possible values: [\"DELIVER_IMMEDIATELY\", \"DELIVER_AFTER_STORED\", \"DELIVERY_REQUIREMENT_UNSPECIFIED\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the subscription.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "The region of the pubsub lite topic.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "topic": {
+        "Description": "A reference to a Topic resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Description": "The zone of the pubsub lite topic.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

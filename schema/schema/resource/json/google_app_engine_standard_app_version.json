@@ -1,0 +1,355 @@
+{
+    "app_engine_apis": {
+        "Description": "Allows App Engine second generation runtimes to access the legacy bundled services.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "automatic_scaling": {
+        "ConflictsWith": "basic_scaling, manual_scaling",
+        "Description": "Automatic scaling is based on request rate, response latencies, and other application metrics.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "max_concurrent_requests": {
+                "Description": "Number of concurrent requests an automatic scaling instance can accept before the scheduler spawns a new instance.\n\nDefaults to a runtime-specific value.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_idle_instances": {
+                "Description": "Maximum number of idle instances that should be maintained for this version.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_pending_latency": {
+                "Description": "Maximum amount of time that a request should wait in the pending queue before starting a new instance to handle it.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "min_idle_instances": {
+                "Description": "Minimum number of idle instances that should be maintained for this version. Only applicable for the default version of a service.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "min_pending_latency": {
+                "Description": "Minimum amount of time a request should wait in the pending queue before starting a new instance to handle it.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "standard_scheduler_settings": {
+                "Description": "Scheduler settings for standard environment.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "max_instances": {
+                        "Description": "Maximum number of instances to run for this version. Set to zero to disable maxInstances configuration.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "min_instances": {
+                        "Description": "Minimum number of instances to run for this version. Set to zero to disable minInstances configuration.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "target_cpu_utilization": {
+                        "Description": "Target CPU utilization ratio to maintain when scaling. Should be a value in the range [0.50, 0.95], zero, or a negative value.",
+                        "Optional": true,
+                        "Type": "TypeFloat"
+                    },
+                    "target_throughput_utilization": {
+                        "Description": "Target throughput utilization ratio to maintain when scaling. Should be a value in the range [0.50, 0.95], zero, or a negative value.",
+                        "Optional": true,
+                        "Type": "TypeFloat"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "basic_scaling": {
+        "ConflictsWith": "automatic_scaling, manual_scaling",
+        "Description": "Basic scaling creates instances when your application receives requests. Each instance will be shut down when the application becomes idle. Basic scaling is ideal for work that is intermittent or driven by user activity.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "idle_timeout": {
+                "Description": "Duration of time after the last request that an instance must wait before the instance is shut down.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \"3.5s\". Defaults to 900s.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "max_instances": {
+                "Description": "Maximum number of instances to create for this version. Must be in the range [1.0, 200.0].",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "delete_service_on_destroy": {
+        "Description": "If set to 'true', the service will be deleted if it is the last version.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "deployment": {
+        "Description": "Code and application artifacts that make up this version.",
+        "MaxItems": 1,
+        "Properties": {
+            "files": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files",
+                "Description": "Manifest of the files stored in Google Cloud Storage that are included as part of this version.\nAll files must be readable using the credentials supplied with this call.",
+                "Optional": true,
+                "Properties": {
+                    "name": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "sha1_sum": {
+                        "Description": "SHA1 checksum of the file",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "source_url": {
+                        "Description": "Source URL",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "zip": {
+                "AtLeastOneOf": "deployment.0.zip, deployment.0.files",
+                "Description": "Zip File",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "files_count": {
+                        "Description": "files count",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "source_url": {
+                        "Description": "Source URL",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "entrypoint": {
+        "Description": "The entrypoint for the application.",
+        "MaxItems": 1,
+        "Properties": {
+            "shell": {
+                "Description": "The format should be a shell command that can be fed to bash -c.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "env_variables": {
+        "Description": "Environment variables available to the application.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "handlers": {
+        "Computed": true,
+        "Description": "An ordered list of URL-matching patterns that should be applied to incoming requests.\nThe first matching URL handles the request and other request handlers are not attempted.",
+        "Optional": true,
+        "Properties": {
+            "auth_fail_action": {
+                "Description": "Actions to take when the user is not logged in. Possible values: [\"AUTH_FAIL_ACTION_REDIRECT\", \"AUTH_FAIL_ACTION_UNAUTHORIZED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "login": {
+                "Description": "Methods to restrict access to a URL based on login status. Possible values: [\"LOGIN_OPTIONAL\", \"LOGIN_ADMIN\", \"LOGIN_REQUIRED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "redirect_http_response_code": {
+                "Description": "30x code to use when performing redirects for the secure field. Possible values: [\"REDIRECT_HTTP_RESPONSE_CODE_301\", \"REDIRECT_HTTP_RESPONSE_CODE_302\", \"REDIRECT_HTTP_RESPONSE_CODE_303\", \"REDIRECT_HTTP_RESPONSE_CODE_307\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "script": {
+                "Description": "Executes a script to handle the requests that match this URL pattern.\nOnly the auto value is supported for Node.js in the App Engine standard environment, for example \"script:\" \"auto\".",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "script_path": {
+                        "Description": "Path to the script from the application root directory.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "security_level": {
+                "Description": "Security (HTTPS) enforcement for this URL. Possible values: [\"SECURE_DEFAULT\", \"SECURE_NEVER\", \"SECURE_OPTIONAL\", \"SECURE_ALWAYS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "static_files": {
+                "Description": "Files served directly to the user for a given URL, such as images, CSS stylesheets, or JavaScript source files. Static file handlers describe which files in the application directory are static files, and which URLs serve them.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "application_readable": {
+                        "Description": "Whether files should also be uploaded as code data. By default, files declared in static file handlers are uploaded as\nstatic data and are only served to end users; they cannot be read by the application. If enabled, uploads are charged\nagainst both your code and static data storage resource quotas.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "expiration": {
+                        "Description": "Time a static file served by this handler should be cached by web proxies and browsers.\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example \"3.5s\".",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "http_headers": {
+                        "Description": "HTTP headers to use for all responses from these URLs.\nAn object containing a list of \"key:value\" value pairs.\".",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    },
+                    "mime_type": {
+                        "Description": "MIME type used to serve all files served by this handler.\nDefaults to file-specific MIME types, which are derived from each file's filename extension.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "path": {
+                        "Description": "Path to the static files matched by the URL pattern, from the application root directory. The path can refer to text matched in groupings in the URL pattern.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "require_matching_file": {
+                        "Description": "Whether this handler should match the request if the file referenced by the handler does not exist.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "upload_path_regex": {
+                        "Description": "Regular expression that matches the file paths for all files that should be referenced by this handler.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "url_regex": {
+                "Description": "URL prefix. Uses regular expression syntax, which means regexp special characters must be escaped, but should not contain groupings.\nAll URLs that begin with this prefix are handled by this handler, using the portion of the URL after the prefix as part of the file path.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "inbound_services": {
+        "Description": "A list of the types of messages that this application is able to receive. Possible values: [\"INBOUND_SERVICE_MAIL\", \"INBOUND_SERVICE_MAIL_BOUNCE\", \"INBOUND_SERVICE_XMPP_ERROR\", \"INBOUND_SERVICE_XMPP_MESSAGE\", \"INBOUND_SERVICE_XMPP_SUBSCRIBE\", \"INBOUND_SERVICE_XMPP_PRESENCE\", \"INBOUND_SERVICE_CHANNEL_PRESENCE\", \"INBOUND_SERVICE_WARMUP\"]",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "instance_class": {
+        "Computed": true,
+        "Description": "Instance class that is used to run this version. Valid values are\nAutomaticScaling: F1, F2, F4, F4_1G\nBasicScaling or ManualScaling: B1, B2, B4, B4_1G, B8\nDefaults to F1 for AutomaticScaling and B2 for ManualScaling and BasicScaling. If no scaling is specified, AutomaticScaling is chosen.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "libraries": {
+        "Description": "Configuration for third-party Python runtime libraries that are required by the application.",
+        "Optional": true,
+        "Properties": {
+            "name": {
+                "Description": "Name of the library. Example \"django\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "Version of the library to select, or \"latest\".",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "manual_scaling": {
+        "ConflictsWith": "automatic_scaling, basic_scaling",
+        "Description": "A service with manual scaling runs continuously, allowing you to perform complex initialization and rely on the state of its memory over time.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "instances": {
+                "Description": "Number of instances to assign to the service at the start.\n\n**Note:** When managing the number of instances at runtime through the App Engine Admin API or the (now deprecated) Python 2\nModules API set_num_instances() you must use 'lifecycle.ignore_changes = [\"manual_scaling\"[0].instances]' to prevent drift detection.",
+                "Required": true,
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Full path to the Version resource in the API. Example, \"v1\".",
+        "Type": "TypeString"
+    },
+    "noop_on_destroy": {
+        "Description": "If set to 'true', the application version will not be deleted.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "runtime": {
+        "Description": "Desired runtime. Example python27.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "runtime_api_version": {
+        "Description": "The version of the API in the given runtime environment.\nPlease see the app.yaml reference for valid values at 'https://cloud.google.com/appengine/docs/standard/\u003clanguage\u003e/config/appref'\\\nSubstitute '\u003clanguage\u003e' with 'python', 'java', 'php', 'ruby', 'go' or 'nodejs'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Description": "AppEngine service resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The identity that the deployed version will run as. Admin API will use the App Engine Appspot service account as default if this field is neither provided in app.yaml file nor through CLI flag.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "threadsafe": {
+        "Description": "Whether multiple requests can be dispatched to this version at once.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "version_id": {
+        "Description": "Relative name of the version within the service. For example, 'v1'. Version names can contain only lowercase letters, numbers, or hyphens. Reserved names,\"default\", \"latest\", and any name with the prefix \"ah-\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpc_access_connector": {
+        "Description": "Enables VPC connectivity for standard apps.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "egress_setting": {
+                "Description": "The egress setting for the connector, controlling what traffic is diverted through it.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "Full Serverless VPC Access Connector name e.g. /projects/my-project/locations/us-central1/connectors/c1.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

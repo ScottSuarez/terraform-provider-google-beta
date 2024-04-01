@@ -1,0 +1,73 @@
+access_config:
+    access_type: TypeString
+    proxy_uri: TypeString
+    runtime_owner: TypeString
+effective_labels: TypeMap(TypeString)
+health_state: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+metrics:
+    system_metrics: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+software_config:
+    custom_gpu_driver_path: TypeString
+    enable_health_monitoring: TypeBool
+    idle_shutdown: TypeBool
+    idle_shutdown_timeout: TypeInt
+    install_gpu_driver: TypeBool
+    kernels:
+        repository: TypeString
+        tag: TypeString
+    notebook_upgrade_schedule: TypeString
+    post_startup_script: TypeString
+    post_startup_script_behavior: TypeString
+    upgradeable: TypeBool
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+virtual_machine:
+    instance_id: TypeString
+    instance_name: TypeString
+    virtual_machine_config:
+        accelerator_config:
+            core_count: TypeInt
+            type: TypeString
+        container_images:
+            repository: TypeString
+            tag: TypeString
+        data_disk:
+            auto_delete: TypeBool
+            boot: TypeBool
+            device_name: TypeString
+            guest_os_features: TypeList(TypeString)
+            index: TypeInt
+            initialize_params:
+                description: TypeString
+                disk_name: TypeString
+                disk_size_gb: TypeInt
+                disk_type: TypeString
+                labels: TypeMap(TypeString)
+            interface: TypeString
+            kind: TypeString
+            licenses: TypeList(TypeString)
+            mode: TypeString
+            source: TypeString
+            type: TypeString
+        encryption_config:
+            kms_key: TypeString
+        guest_attributes: TypeMap(TypeString)
+        internal_ip_only: TypeBool
+        labels: TypeMap(TypeString)
+        machine_type: TypeString
+        metadata: TypeMap(TypeString)
+        network: TypeString
+        nic_type: TypeString
+        reserved_ip_range: TypeString
+        shielded_instance_config:
+            enable_integrity_monitoring: TypeBool
+            enable_secure_boot: TypeBool
+            enable_vtpm: TypeBool
+        subnet: TypeString
+        tags: TypeList(TypeString)
+        zone: TypeString
+

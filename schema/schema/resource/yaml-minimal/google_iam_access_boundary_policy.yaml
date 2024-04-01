@@ -1,0 +1,15 @@
+display_name: TypeString
+etag: TypeString
+name: TypeString
+parent: TypeString
+rules:
+    access_boundary_rule:
+        availability_condition:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+        available_permissions: TypeList(TypeString)
+        available_resource: TypeString
+    description: TypeString
+

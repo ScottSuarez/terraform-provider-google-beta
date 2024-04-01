@@ -1,0 +1,4 @@
+bucket_self_link: TypeString
+location: TypeString
+project: TypeString
+

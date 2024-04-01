@@ -1,0 +1,7 @@
+digest: TypeString
+image_url: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+tag: TypeString
+

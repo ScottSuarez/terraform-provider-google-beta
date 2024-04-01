@@ -1,0 +1,12 @@
+creation_timestamp: TypeString
+custom_features: TypeSet(TypeString)
+description: TypeString
+enabled_features: TypeSet(TypeString)
+fingerprint: TypeString
+min_tls_version: TypeString
+name: TypeString
+profile: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+

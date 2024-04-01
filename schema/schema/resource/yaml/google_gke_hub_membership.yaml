@@ -1,0 +1,78 @@
+authority:
+    Type: TypeList
+    Description: |-
+        Authority encodes how Google will recognize identities from this Membership.
+        See the workload identity documentation for more details:
+        https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        issuer:
+            Type: TypeString
+            Description: |-
+                A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://' and // be a valid
+                with length <2000 characters. For example: 'https://container.googleapis.com/v1/projects/my-project/locations/us-west1/clusters/my-cluster' (must be 'locations' rather than 'zones'). If the cluster is provisioned with Terraform, this is '"https://container.googleapis.com/v1/${google_container_cluster.my-cluster.id}"'.
+            Required: "true"
+description:
+    Type: TypeString
+    Description: The name of this entity type to be displayed on the console. This field is unavailable in v1 of the API.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+endpoint:
+    Type: TypeList
+    Description: If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        gke_cluster:
+            Type: TypeList
+            Description: If this Membership is a Kubernetes API server hosted on GKE, this is a self link to its GCP resource.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                resource_link:
+                    Type: TypeString
+                    Description: |-
+                        Self-link of the GCP resource for the GKE cluster.
+                        For example: '//container.googleapis.com/projects/my-project/zones/us-west1-a/clusters/my-cluster'.
+                        It can be at the most 1000 characters in length. If the cluster is provisioned with Terraform,
+                        this can be '"//container.googleapis.com/${google_container_cluster.my-cluster.id}"' or
+                        'google_container_cluster.my-cluster.id'.
+                    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels to apply to this membership.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: |-
+        Location of the membership.
+        The default value is 'global'.
+    Optional: "true"
+membership_id:
+    Type: TypeString
+    Description: The client-provided identifier of the membership.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The unique identifier of the membership.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

@@ -1,0 +1,4 @@
+envgroup_id: TypeString
+environment: TypeString
+name: TypeString
+

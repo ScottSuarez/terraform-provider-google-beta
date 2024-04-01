@@ -1,0 +1,17 @@
+{
+    "display_name": {
+        "Computed": true,
+        "Description": "The GCP project display name",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project_number": {
+        "Computed": true,
+        "Description": "The number of the google project that firebase is enabled on.",
+        "Type": "TypeString"
+    }
+}

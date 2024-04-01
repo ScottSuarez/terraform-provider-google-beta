@@ -1,0 +1,148 @@
+{
+    "android_settings": {
+        "ConflictsWith": "web_settings, ios_settings",
+        "Description": "Settings for keys that can be used by Android apps.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_all_package_names": {
+                "Description": "If set to true, it means allowed_package_names will not be enforced.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "allowed_package_names": {
+                "Description": "Android package names of apps allowed to use the key. Example: 'com.companyname.appname'",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp corresponding to the creation of this Key.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Human-readable display name of this key. Modifiable by user.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "ios_settings": {
+        "ConflictsWith": "web_settings, android_settings",
+        "Description": "Settings for keys that can be used by iOS apps.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_all_bundle_ids": {
+                "Description": "If set to true, it means allowed_bundle_ids will not be enforced.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "allowed_bundle_ids": {
+                "Description": "iOS bundle ids of apps allowed to use the key. Example: 'com.companyname.productname.appname'",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "See [Creating and managing labels](https://cloud.google.com/recaptcha-enterprise/docs/labels).\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name for the Key in the format \"projects/{project}/keys/{key}\".",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "testing_options": {
+        "Description": "Options for user acceptance testing.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "testing_challenge": {
+                "Computed": true,
+                "Description": "For challenge-based keys only (CHECKBOX, INVISIBLE), all challenge requests for this site will return nocaptcha if NOCAPTCHA, or an unsolvable challenge if UNSOLVABLE_CHALLENGE. Possible values: TESTING_CHALLENGE_UNSPECIFIED, NOCAPTCHA, UNSOLVABLE_CHALLENGE",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "testing_score": {
+                "Description": "All assessments for this Key will return this score. Must be between 0 (likely not legitimate) and 1 (likely legitimate) inclusive.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "waf_settings": {
+        "Description": "Settings specific to keys that can be used for WAF (Web Application Firewall).",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "waf_feature": {
+                "Description": "Supported WAF features. For more information, see https://cloud.google.com/recaptcha-enterprise/docs/usecase#comparison_of_features. Possible values: CHALLENGE_PAGE, SESSION_TOKEN, ACTION_TOKEN, EXPRESS",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "waf_service": {
+                "Description": "The WAF service that uses this key. Possible values: CA, FASTLY",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "web_settings": {
+        "ConflictsWith": "android_settings, ios_settings",
+        "Description": "Settings for keys that can be used by websites.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_all_domains": {
+                "Description": "If set to true, it means allowed_domains will not be enforced.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "allow_amp_traffic": {
+                "Description": "If set to true, the key can be used on AMP (Accelerated Mobile Pages) websites. This is supported only for the SCORE integration type.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "allowed_domains": {
+                "Description": "Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: 'example.com' or 'subdomain.example.com'",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "challenge_security_preference": {
+                "Computed": true,
+                "Description": "Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE. Possible values: CHALLENGE_SECURITY_PREFERENCE_UNSPECIFIED, USABILITY, BALANCE, SECURITY",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "integration_type": {
+                "Description": "Required. Describes how this key is integrated with the website. Possible values: SCORE, CHECKBOX, INVISIBLE",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

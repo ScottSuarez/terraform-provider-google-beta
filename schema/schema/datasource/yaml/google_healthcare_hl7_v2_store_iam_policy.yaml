@@ -1,0 +1,10 @@
+etag:
+    Type: TypeString
+    Computed: "true"
+hl7_v2_store_id:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+

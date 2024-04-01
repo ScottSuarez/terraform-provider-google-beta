@@ -1,0 +1,21 @@
+authorization_policy: TypeString
+client_tls_policy: TypeString
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+endpoint_matcher:
+    metadata_label_matcher:
+        metadata_label_match_criteria: TypeString
+        metadata_labels:
+            label_name: TypeString
+            label_value: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+server_tls_policy: TypeString
+terraform_labels: TypeMap(TypeString)
+traffic_port_selector:
+    ports: TypeList(TypeString)
+type: TypeString
+update_time: TypeString
+

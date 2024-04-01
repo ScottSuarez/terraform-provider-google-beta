@@ -1,0 +1,26 @@
+{
+    "dns_suffix": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

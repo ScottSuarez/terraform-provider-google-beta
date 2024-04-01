@@ -1,0 +1,144 @@
+admin_cluster_membership: TypeString
+annotations: TypeMap(TypeString)
+bare_metal_version: TypeString
+binary_authorization:
+    evaluation_mode: TypeString
+cluster_operations:
+    enable_application_logs: TypeBool
+control_plane:
+    api_server_args:
+        argument: TypeString
+        value: TypeString
+    control_plane_node_pool_config:
+        node_pool_config:
+            labels: TypeMap(TypeString)
+            node_configs:
+                labels: TypeMap(TypeString)
+                node_ip: TypeString
+            operating_system: TypeString
+            taints:
+                effect: TypeString
+                key: TypeString
+                value: TypeString
+create_time: TypeString
+delete_time: TypeString
+description: TypeString
+effective_annotations: TypeMap(TypeString)
+endpoint: TypeString
+etag: TypeString
+fleet:
+    membership: TypeString
+load_balancer:
+    bgp_lb_config:
+        address_pools:
+            addresses: TypeList(TypeString)
+            avoid_buggy_ips: TypeBool
+            manual_assign: TypeString
+            pool: TypeString
+        asn: TypeInt
+        bgp_peer_configs:
+            asn: TypeInt
+            control_plane_nodes: TypeList(TypeString)
+            ip_address: TypeString
+        load_balancer_node_pool_config:
+            node_pool_config:
+                kubelet_config:
+                    registry_burst: TypeInt
+                    registry_pull_qps: TypeInt
+                    serialize_image_pulls_disabled: TypeBool
+                labels: TypeMap(TypeString)
+                node_configs:
+                    labels: TypeMap(TypeString)
+                    node_ip: TypeString
+                operating_system: TypeString
+                taints:
+                    effect: TypeString
+                    key: TypeString
+                    value: TypeString
+    manual_lb_config:
+        enabled: TypeBool
+    metal_lb_config:
+        address_pools:
+            addresses: TypeList(TypeString)
+            avoid_buggy_ips: TypeBool
+            manual_assign: TypeBool
+            pool: TypeString
+        load_balancer_node_pool_config:
+            node_pool_config:
+                labels: TypeMap(TypeString)
+                node_configs:
+                    labels: TypeMap(TypeString)
+                    node_ip: TypeString
+                operating_system: TypeString
+                taints:
+                    effect: TypeString
+                    key: TypeString
+                    value: TypeString
+    port_config:
+        control_plane_load_balancer_port: TypeInt
+    vip_config:
+        control_plane_vip: TypeString
+        ingress_vip: TypeString
+local_name: TypeString
+location: TypeString
+maintenance_config:
+    maintenance_address_cidr_blocks: TypeList(TypeString)
+name: TypeString
+network_config:
+    advanced_networking: TypeBool
+    island_mode_cidr:
+        pod_address_cidr_blocks: TypeList(TypeString)
+        service_address_cidr_blocks: TypeList(TypeString)
+    multiple_network_interfaces_config:
+        enabled: TypeBool
+    sr_iov_config:
+        enabled: TypeBool
+node_access_config:
+    login_user: TypeString
+node_config:
+    container_runtime: TypeString
+    max_pods_per_node: TypeInt
+os_environment_config:
+    package_repo_excluded: TypeBool
+project: TypeString
+proxy:
+    no_proxy: TypeList(TypeString)
+    uri: TypeString
+reconciling: TypeBool
+security_config:
+    authorization:
+        admin_users:
+            username: TypeString
+state: TypeString
+status:
+    conditions:
+        last_transition_time: TypeString
+        message: TypeString
+        reason: TypeString
+        state: TypeString
+        type: TypeString
+    error_message: TypeString
+storage:
+    lvp_node_mounts_config:
+        path: TypeString
+        storage_class: TypeString
+    lvp_share_config:
+        lvp_config:
+            path: TypeString
+            storage_class: TypeString
+        shared_path_pv_count: TypeInt
+uid: TypeString
+update_time: TypeString
+upgrade_policy:
+    policy: TypeString
+validation_check:
+    options: TypeString
+    scenario: TypeString
+    status:
+        result:
+            category: TypeString
+            description: TypeString
+            details: TypeString
+            options: TypeString
+            reason: TypeString
+

@@ -1,0 +1,132 @@
+{
+    "creation_timestamp": {
+        "Computed": true,
+        "Description": "Creation timestamp in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "detailed_status": {
+        "Computed": true,
+        "Description": "Detailed status message for the VPN tunnel.",
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "ike_version": {
+        "Description": "IKE protocol version to use when establishing the VPN tunnel with\npeer VPN gateway.\nAcceptable IKE versions are 1 or 2. Default version is 2.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "label_fingerprint": {
+        "Computed": true,
+        "Description": "The fingerprint used for optimistic locking of this resource.  Used\ninternally during updates.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels to apply to this VpnTunnel.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "local_traffic_selector": {
+        "Computed": true,
+        "Description": "Local traffic selector to use when establishing the VPN tunnel with\npeer VPN gateway. The value should be a CIDR formatted string,\nfor example '192.168.0.0/16'. The ranges should be disjoint.\nOnly IPv4 is supported.",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "name": {
+        "Description": "Name of the resource. The name must be 1-63 characters long, and\ncomply with RFC1035. Specifically, the name must be 1-63\ncharacters long and match the regular expression\n'[a-z]([-a-z0-9]*[a-z0-9])?' which means the first character\nmust be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit,\nexcept the last character, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "peer_external_gateway": {
+        "ConflictsWith": "peer_gcp_gateway",
+        "Description": "URL of the peer side external VPN gateway to which this VPN tunnel is connected.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "peer_external_gateway_interface": {
+        "Description": "The interface ID of the external VPN gateway to which this VPN tunnel is connected.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "peer_gcp_gateway": {
+        "ConflictsWith": "peer_external_gateway",
+        "Description": "URL of the peer side HA GCP VPN gateway to which this VPN tunnel is connected.\nIf provided, the VPN tunnel will automatically use the same vpn_gateway_interface\nID in the peer GCP VPN gateway.\nThis field must reference a 'google_compute_ha_vpn_gateway' resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "peer_ip": {
+        "Computed": true,
+        "Description": "IP address of the peer VPN gateway. Only IPv4 is supported.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region where the tunnel is located. If unset, is set to the region of 'target_vpn_gateway'.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "remote_traffic_selector": {
+        "Computed": true,
+        "Description": "Remote traffic selector to use when establishing the VPN tunnel with\npeer VPN gateway. The value should be a CIDR formatted string,\nfor example '192.168.0.0/16'. The ranges should be disjoint.\nOnly IPv4 is supported.",
+        "Optional": true,
+        "Type": "TypeSet"
+    },
+    "router": {
+        "Description": "URL of router resource to be used for dynamic routing.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "shared_secret": {
+        "Description": "Shared secret used to set the secure session between the Cloud VPN\ngateway and the peer VPN gateway.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "shared_secret_hash": {
+        "Computed": true,
+        "Description": "Hash of the shared secret.",
+        "Type": "TypeString"
+    },
+    "target_vpn_gateway": {
+        "Description": "URL of the Target VPN gateway with which this VPN tunnel is\nassociated.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "tunnel_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource. This identifier is defined by the server.",
+        "Type": "TypeString"
+    },
+    "vpn_gateway": {
+        "Description": "URL of the VPN gateway with which this VPN tunnel is associated.\nThis must be used if a High Availability VPN gateway resource is created.\nThis field must reference a 'google_compute_ha_vpn_gateway' resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpn_gateway_interface": {
+        "Description": "The interface ID of the VPN gateway with which this VPN tunnel is associated.",
+        "Optional": true,
+        "Type": "TypeInt"
+    }
+}

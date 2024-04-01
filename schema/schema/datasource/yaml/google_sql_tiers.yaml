@@ -1,0 +1,26 @@
+project:
+    Type: TypeString
+    Description: Project ID of the project for which to list tiers.
+    Computed: "true"
+    Optional: "true"
+tiers:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        disk_quota:
+            Type: TypeInt
+            Description: The maximum disk size of this tier in bytes.
+            Computed: "true"
+        ram:
+            Type: TypeInt
+            Description: The maximum ram usage of this tier in bytes.
+            Computed: "true"
+        region:
+            Type: TypeList
+            Description: The applicable regions for this tier.
+            Computed: "true"
+        tier:
+            Type: TypeString
+            Description: An identifier for the machine type, for example, db-custom-1-3840.
+            Computed: "true"
+

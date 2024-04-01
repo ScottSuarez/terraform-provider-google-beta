@@ -1,0 +1,169 @@
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+inspect_job:
+    actions:
+        deidentify:
+            cloud_storage_output: TypeString
+            file_types_to_transform: TypeList(TypeString)
+            transformation_config:
+                deidentify_template: TypeString
+                image_redact_template: TypeString
+                structured_deidentify_template: TypeString
+            transformation_details_storage_config:
+                table:
+                    dataset_id: TypeString
+                    project_id: TypeString
+                    table_id: TypeString
+        job_notification_emails: {}
+        pub_sub:
+            topic: TypeString
+        publish_findings_to_cloud_data_catalog: {}
+        publish_summary_to_cscc: {}
+        publish_to_stackdriver: {}
+        save_findings:
+            output_config:
+                output_schema: TypeString
+                table:
+                    dataset_id: TypeString
+                    project_id: TypeString
+                    table_id: TypeString
+    inspect_config:
+        custom_info_types:
+            dictionary:
+                cloud_storage_path:
+                    path: TypeString
+                word_list:
+                    words: TypeList(TypeString)
+            exclusion_type: TypeString
+            info_type:
+                name: TypeString
+                sensitivity_score:
+                    score: TypeString
+                version: TypeString
+            likelihood: TypeString
+            regex:
+                group_indexes: TypeList(TypeInt)
+                pattern: TypeString
+            sensitivity_score:
+                score: TypeString
+            stored_type:
+                create_time: TypeString
+                name: TypeString
+            surrogate_type: {}
+        exclude_info_types: TypeBool
+        include_quote: TypeBool
+        info_types:
+            name: TypeString
+            sensitivity_score:
+                score: TypeString
+            version: TypeString
+        limits:
+            max_findings_per_info_type:
+                info_type:
+                    name: TypeString
+                    sensitivity_score:
+                        score: TypeString
+                    version: TypeString
+                max_findings: TypeInt
+            max_findings_per_item: TypeInt
+            max_findings_per_request: TypeInt
+        min_likelihood: TypeString
+        rule_set:
+            info_types:
+                name: TypeString
+                sensitivity_score:
+                    score: TypeString
+                version: TypeString
+            rules:
+                exclusion_rule:
+                    dictionary:
+                        cloud_storage_path:
+                            path: TypeString
+                        word_list:
+                            words: TypeList(TypeString)
+                    exclude_by_hotword:
+                        hotword_regex:
+                            group_indexes: TypeList(TypeInt)
+                            pattern: TypeString
+                        proximity:
+                            window_after: TypeInt
+                            window_before: TypeInt
+                    exclude_info_types:
+                        info_types:
+                            name: TypeString
+                            sensitivity_score:
+                                score: TypeString
+                            version: TypeString
+                    matching_type: TypeString
+                    regex:
+                        group_indexes: TypeList(TypeInt)
+                        pattern: TypeString
+                hotword_rule:
+                    hotword_regex:
+                        group_indexes: TypeList(TypeInt)
+                        pattern: TypeString
+                    likelihood_adjustment:
+                        fixed_likelihood: TypeString
+                        relative_likelihood: TypeInt
+                    proximity:
+                        window_after: TypeInt
+                        window_before: TypeInt
+    inspect_template_name: TypeString
+    storage_config:
+        big_query_options:
+            excluded_fields:
+                name: TypeString
+            identifying_fields:
+                name: TypeString
+            included_fields:
+                name: TypeString
+            rows_limit: TypeInt
+            rows_limit_percent: TypeInt
+            sample_method: TypeString
+            table_reference:
+                dataset_id: TypeString
+                project_id: TypeString
+                table_id: TypeString
+        cloud_storage_options:
+            bytes_limit_per_file: TypeInt
+            bytes_limit_per_file_percent: TypeInt
+            file_set:
+                regex_file_set:
+                    bucket_name: TypeString
+                    exclude_regex: TypeList(TypeString)
+                    include_regex: TypeList(TypeString)
+                url: TypeString
+            file_types: TypeList(TypeString)
+            files_limit_percent: TypeInt
+            sample_method: TypeString
+        datastore_options:
+            kind:
+                name: TypeString
+            partition_id:
+                namespace_id: TypeString
+                project_id: TypeString
+        hybrid_options:
+            description: TypeString
+            labels: TypeMap(TypeString)
+            required_finding_label_keys: TypeList(TypeString)
+            table_options:
+                identifying_fields:
+                    name: TypeString
+        timespan_config:
+            enable_auto_population_of_timespan_config: TypeBool
+            end_time: TypeString
+            start_time: TypeString
+            timestamp_field:
+                name: TypeString
+last_run_time: TypeString
+name: TypeString
+parent: TypeString
+status: TypeString
+trigger_id: TypeString
+triggers:
+    manual: {}
+    schedule:
+        recurrence_period_duration: TypeString
+update_time: TypeString
+

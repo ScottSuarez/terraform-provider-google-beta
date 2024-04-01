@@ -1,0 +1,111 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time the TcpRoute was created in UTC.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A free-text description of the resource. Max length 1024 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "gateways": {
+        "Description": "Gateways defines a list of gateways this TcpRoute is attached to, as one of the routing rules to route the requests served by the gateway.\nEach gateway reference should match the pattern: projects/*/locations/global/gateways/\u003cgateway_name\u003e",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Set of label tags associated with the TcpRoute resource.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "meshes": {
+        "Description": "Meshes defines a list of meshes this TcpRoute is attached to, as one of the routing rules to route the requests served by the mesh.\nEach mesh reference should match the pattern: projects/*/locations/global/meshes/\u003cmesh_name\u003e\nThe attached Mesh should be of a type SIDECAR",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the TcpRoute resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "rules": {
+        "Description": "Rules that define how traffic is routed and handled. At least one RouteRule must be supplied.\nIf there are multiple rules then the action taken will be the first rule to match.",
+        "Properties": {
+            "action": {
+                "Description": "A detailed rule defining how to route traffic.",
+                "MaxItems": 1,
+                "Properties": {
+                    "destinations": {
+                        "Description": "The destination services to which traffic should be forwarded. At least one destination service is required.",
+                        "Optional": true,
+                        "Properties": {
+                            "service_name": {
+                                "Description": "The URL of a BackendService to route traffic to.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "weight": {
+                                "Description": "Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports.\nIf only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend.\nIf weights are specified for any one service name, they need to be specified for all of them.\nIf weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.",
+                                "Optional": true,
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "original_destination": {
+                        "Description": "If true, Router will use the destination IP and port of the original connection as the destination of the request.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "matches": {
+                "Description": "RouteMatch defines the predicate used to match requests to a given action. Multiple match types are \"OR\"ed for evaluation.\nIf no routeMatch field is specified, this rule will unconditionally match traffic.",
+                "Optional": true,
+                "Properties": {
+                    "address": {
+                        "Description": "Must be specified in the CIDR range format. A CIDR range consists of an IP Address and a prefix length to construct the subnet mask.\nBy default, the prefix length is 32 (i.e. matches a single IP address). Only IPV4 addresses are supported. Examples: \"10.0.0.1\" - matches against this exact IP address. \"10.0.0.0/8\" - matches against any IP address within the 10.0.0.0 subnet and 255.255.255.0 mask. \"0.0.0.0/0\" - matches against any IP address'.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "port": {
+                        "Description": "Specifies the destination port to match against.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "Server-defined URL of this resource.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Time the TcpRoute was updated in UTC.",
+        "Type": "TypeString"
+    }
+}

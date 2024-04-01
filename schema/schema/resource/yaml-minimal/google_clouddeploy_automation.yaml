@@ -1,0 +1,31 @@
+annotations: TypeMap(TypeString)
+create_time: TypeString
+delivery_pipeline: TypeString
+description: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+rules:
+    advance_rollout_rule:
+        id: TypeString
+        source_phases: TypeList(TypeString)
+        wait: TypeString
+    promote_release_rule:
+        destination_phase: TypeString
+        destination_target_id: TypeString
+        id: TypeString
+        wait: TypeString
+selector:
+    targets:
+        id: TypeString
+        labels: TypeMap(TypeString)
+service_account: TypeString
+suspended: TypeBool
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+

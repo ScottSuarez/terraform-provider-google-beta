@@ -1,0 +1,42 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The time at which the mute config was created. This field is set by\nthe server and will be ignored if provided on config creation.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A description of the mute config.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "filter": {
+        "Description": "An expression that defines the filter to apply across create/update\nevents of findings. While creating a filter string, be mindful of\nthe scope in which the mute configuration is being created. E.g.,\nIf a filter contains project = X but is created under the\nproject = Y scope, it might not match any findings.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "most_recent_editor": {
+        "Computed": true,
+        "Description": "Email address of the user who last edited the mute config. This\nfield is set by the server and will be ignored if provided on\nconfig creation or update.",
+        "Type": "TypeString"
+    },
+    "mute_config_id": {
+        "Description": "Unique identifier provided by the client within the parent scope.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Name of the mute config. Its format is\norganizations/{organization}/muteConfigs/{configId},\nfolders/{folder}/muteConfigs/{configId},\nor projects/{project}/muteConfigs/{configId}",
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "Resource name of the new mute configs's parent. Its format is\n\"organizations/[organization_id]\", \"folders/[folder_id]\", or\n\"projects/[project_id]\".",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The most recent time at which the mute config was\nupdated. This field is set by the server and will be ignored if\nprovided on config creation or update.",
+        "Type": "TypeString"
+    }
+}

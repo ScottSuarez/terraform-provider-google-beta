@@ -1,0 +1,11 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+dataset_id: TypeString
+etag: TypeString
+member: TypeString
+project: TypeString
+role: TypeString
+table_id: TypeString
+

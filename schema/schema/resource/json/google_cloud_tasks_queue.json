@@ -1,0 +1,123 @@
+{
+    "app_engine_routing_override": {
+        "Description": "Overrides for task-level appEngineRouting. These settings apply only\nto App Engine tasks in this queue",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "host": {
+                "Computed": true,
+                "Description": "The host that the task is sent to.",
+                "Type": "TypeString"
+            },
+            "instance": {
+                "Description": "App instance.\n\nBy default, the task is sent to an instance which is available when the task is attempted.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "service": {
+                "Description": "App service.\n\nBy default, the task is sent to the service which is the default service when the task is attempted.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "App version.\n\nBy default, the task is sent to the version which is the default version when the task is attempted.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location of the queue",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The queue name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "rate_limits": {
+        "Computed": true,
+        "Description": "Rate limits for task dispatches.\n\nThe queue's actual dispatch rate is the result of:\n\n* Number of tasks in the queue\n* User-specified throttling: rateLimits, retryConfig, and the queue's state.\n* System throttling due to 429 (Too Many Requests) or 503 (Service\n  Unavailable) responses from the worker, high error rates, or to\n  smooth sudden large traffic spikes.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "max_burst_size": {
+                "Computed": true,
+                "Description": "The max burst size.\n\nMax burst size limits how fast tasks in queue are processed when many tasks are\nin the queue and the rate is high. This field allows the queue to have a high\nrate so processing starts shortly after a task is enqueued, but still limits\nresource usage when many tasks are enqueued in a short period of time.",
+                "Type": "TypeInt"
+            },
+            "max_concurrent_dispatches": {
+                "Computed": true,
+                "Description": "The maximum number of concurrent tasks that Cloud Tasks allows to\nbe dispatched for this queue. After this threshold has been\nreached, Cloud Tasks stops dispatching tasks until the number of\nconcurrent requests decreases.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_dispatches_per_second": {
+                "Computed": true,
+                "Description": "The maximum rate at which tasks are dispatched from this queue.\n\nIf unspecified when the queue is created, Cloud Tasks will pick the default.",
+                "Optional": true,
+                "Type": "TypeFloat"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "retry_config": {
+        "Computed": true,
+        "Description": "Settings that determine the retry behavior.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "max_attempts": {
+                "Computed": true,
+                "Description": "Number of attempts per task.\n\nCloud Tasks will attempt the task maxAttempts times (that is, if\nthe first attempt fails, then there will be maxAttempts - 1\nretries). Must be \u003e= -1.\n\nIf unspecified when the queue is created, Cloud Tasks will pick\nthe default.\n\n-1 indicates unlimited attempts.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_backoff": {
+                "Computed": true,
+                "Description": "A task will be scheduled for retry between minBackoff and\nmaxBackoff duration after it fails, if the queue's RetryConfig\nspecifies that the task should be retried.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "max_doublings": {
+                "Computed": true,
+                "Description": "The time between retries will double maxDoublings times.\n\nA task's retry interval starts at minBackoff, then doubles maxDoublings times,\nthen increases linearly, and finally retries retries at intervals of maxBackoff\nup to maxAttempts times.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "max_retry_duration": {
+                "Computed": true,
+                "Description": "If positive, maxRetryDuration specifies the time limit for\nretrying a failed task, measured from when the task was first\nattempted. Once maxRetryDuration time has passed and the task has\nbeen attempted maxAttempts times, no further attempts will be\nmade and the task will be deleted.\n\nIf zero, then the task age is unlimited.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "min_backoff": {
+                "Computed": true,
+                "Description": "A task will be scheduled for retry between minBackoff and\nmaxBackoff duration after it fails, if the queue's RetryConfig\nspecifies that the task should be retried.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "stackdriver_logging_config": {
+        "Description": "Configuration options for writing logs to Stackdriver Logging.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "sampling_ratio": {
+                "Description": "Specifies the fraction of operations to write to Stackdriver Logging.\nThis field may contain any value between 0.0 and 1.0, inclusive. 0.0 is the\ndefault and means that no operations are logged.",
+                "Required": true,
+                "Type": "TypeFloat"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

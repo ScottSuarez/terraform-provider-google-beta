@@ -1,0 +1,73 @@
+annotations: TypeMap(TypeString)
+automated_backup_policy:
+    backup_window: TypeString
+    enabled: TypeBool
+    encryption_config:
+        kms_key_name: TypeString
+    labels: TypeMap(TypeString)
+    location: TypeString
+    quantity_based_retention:
+        count: TypeInt
+    time_based_retention:
+        retention_period: TypeString
+    weekly_schedule:
+        days_of_week: TypeList(TypeString)
+        start_times:
+            hours: TypeInt
+            minutes: TypeInt
+            nanos: TypeInt
+            seconds: TypeInt
+backup_source:
+    backup_name: TypeString
+cluster_id: TypeString
+cluster_type: TypeString
+continuous_backup_config:
+    enabled: TypeBool
+    encryption_config:
+        kms_key_name: TypeString
+    recovery_window_days: TypeInt
+continuous_backup_info:
+    earliest_restorable_time: TypeString
+    enabled_time: TypeString
+    encryption_info:
+        encryption_type: TypeString
+        kms_key_versions: TypeList(TypeString)
+    schedule: TypeList(TypeString)
+database_version: TypeString
+deletion_policy: TypeString
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+encryption_config:
+    kms_key_name: TypeString
+encryption_info:
+    encryption_type: TypeString
+    kms_key_versions: TypeList(TypeString)
+etag: TypeString
+initial_user:
+    password: TypeString
+    user: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+migration_source:
+    host_port: TypeString
+    reference_id: TypeString
+    source_type: TypeString
+name: TypeString
+network: TypeString
+network_config:
+    allocated_ip_range: TypeString
+    network: TypeString
+project: TypeString
+reconciling: TypeBool
+restore_backup_source:
+    backup_name: TypeString
+restore_continuous_backup_source:
+    cluster: TypeString
+    point_in_time: TypeString
+secondary_config:
+    primary_cluster_name: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+

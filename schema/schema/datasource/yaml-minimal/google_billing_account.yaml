@@ -1,0 +1,7 @@
+billing_account: TypeString
+display_name: TypeString
+lookup_projects: TypeBool
+name: TypeString
+open: TypeBool
+project_ids: TypeSet(TypeString)
+

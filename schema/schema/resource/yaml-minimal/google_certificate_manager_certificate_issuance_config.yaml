@@ -1,0 +1,16 @@
+certificate_authority_config:
+    certificate_authority_service_config:
+        ca_pool: TypeString
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+key_algorithm: TypeString
+labels: TypeMap(TypeString)
+lifetime: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+rotation_window_percentage: TypeInt
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

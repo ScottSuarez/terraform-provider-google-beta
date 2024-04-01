@@ -1,0 +1,25 @@
+attribute_condition: TypeString
+attribute_mapping: TypeMap(TypeString)
+description: TypeString
+disabled: TypeBool
+display_name: TypeString
+location: TypeString
+name: TypeString
+oidc:
+    client_id: TypeString
+    client_secret:
+        value:
+            plain_text: TypeString
+            thumbprint: TypeString
+    issuer_uri: TypeString
+    jwks_json: TypeString
+    web_sso_config:
+        additional_scopes: TypeList(TypeString)
+        assertion_claims_behavior: TypeString
+        response_type: TypeString
+provider_id: TypeString
+saml:
+    idp_metadata_xml: TypeString
+state: TypeString
+workforce_pool_id: TypeString
+

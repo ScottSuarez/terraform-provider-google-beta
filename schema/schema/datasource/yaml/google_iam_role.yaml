@@ -1,0 +1,13 @@
+included_permissions:
+    Type: TypeList
+    Computed: "true"
+name:
+    Type: TypeString
+    Required: "true"
+stage:
+    Type: TypeString
+    Computed: "true"
+title:
+    Type: TypeString
+    Computed: "true"
+

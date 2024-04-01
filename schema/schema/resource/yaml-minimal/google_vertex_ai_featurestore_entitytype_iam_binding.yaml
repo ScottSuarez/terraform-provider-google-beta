@@ -1,0 +1,10 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+entitytype: TypeString
+etag: TypeString
+featurestore: TypeString
+members: TypeSet(TypeString)
+role: TypeString
+

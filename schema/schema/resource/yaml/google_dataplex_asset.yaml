@@ -1,0 +1,221 @@
+create_time:
+    Type: TypeString
+    Description: Output only. The time when the asset was created.
+    Computed: "true"
+dataplex_zone:
+    Type: TypeString
+    Description: The zone for the resource
+    Required: "true"
+description:
+    Type: TypeString
+    Description: Optional. Description of the asset.
+    Optional: "true"
+discovery_spec:
+    Type: TypeList
+    Description: Required. Specification of the discovery feature applied to data referenced by this asset. When this spec is left unset, the asset will use the spec set on the parent zone.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        csv_options:
+            Type: TypeList
+            Description: Optional. Configuration for CSV data.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                delimiter:
+                    Type: TypeString
+                    Description: Optional. The delimiter being used to separate values. This defaults to ','.
+                    Optional: "true"
+                disable_type_inference:
+                    Type: TypeBool
+                    Description: Optional. Whether to disable the inference of data type for CSV data. If true, all columns will be registered as strings.
+                    Optional: "true"
+                encoding:
+                    Type: TypeString
+                    Description: Optional. The character encoding of the data. The default is UTF-8.
+                    Optional: "true"
+                header_rows:
+                    Type: TypeInt
+                    Description: Optional. The number of rows to interpret as header rows that should be skipped when reading data rows.
+                    Optional: "true"
+        enabled:
+            Type: TypeBool
+            Description: Required. Whether discovery is enabled.
+            Required: "true"
+        exclude_patterns:
+            Type: TypeList
+            Description: Optional. The list of patterns to apply for selecting data to exclude during discovery. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.
+            Optional: "true"
+        include_patterns:
+            Type: TypeList
+            Description: Optional. The list of patterns to apply for selecting data to include during discovery if only a subset of the data should considered. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.
+            Optional: "true"
+        json_options:
+            Type: TypeList
+            Description: Optional. Configuration for Json data.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disable_type_inference:
+                    Type: TypeBool
+                    Description: Optional. Whether to disable the inference of data type for Json data. If true, all columns will be registered as their primitive types (strings, number or boolean).
+                    Optional: "true"
+                encoding:
+                    Type: TypeString
+                    Description: Optional. The character encoding of the data. The default is UTF-8.
+                    Optional: "true"
+        schedule:
+            Type: TypeString
+            Description: 'Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running discovery periodically. Successive discovery runs must be scheduled at least 60 minutes apart. The default value is to run discovery every 60 minutes. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "CRON_TZ=${IANA_TIME_ZONE}" or TZ=${IANA_TIME_ZONE}". The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, "CRON_TZ=America/New_York 1 * * * *", or "TZ=America/New_York 1 * * * *".'
+            Optional: "true"
+discovery_status:
+    Type: TypeList
+    Description: Output only. Status of the discovery feature applied to data referenced by this asset.
+    Computed: "true"
+    Properties:
+        last_run_duration:
+            Type: TypeString
+            Description: The duration of the last discovery run.
+            Computed: "true"
+        last_run_time:
+            Type: TypeString
+            Description: The start time of the last discovery run.
+            Computed: "true"
+        message:
+            Type: TypeString
+            Description: Additional information about the current state.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: 'The current status of the discovery feature. Possible values: STATE_UNSPECIFIED, SCHEDULED, IN_PROGRESS, PAUSED, DISABLED'
+            Computed: "true"
+        stats:
+            Type: TypeList
+            Description: Data Stats of the asset reported by discovery.
+            Computed: "true"
+            Properties:
+                data_items:
+                    Type: TypeInt
+                    Description: The count of data items within the referenced resource.
+                    Computed: "true"
+                data_size:
+                    Type: TypeInt
+                    Description: The number of stored data bytes within the referenced resource.
+                    Computed: "true"
+                filesets:
+                    Type: TypeInt
+                    Description: The count of fileset entities within the referenced resource.
+                    Computed: "true"
+                tables:
+                    Type: TypeInt
+                    Description: The count of table entities within the referenced resource.
+                    Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the status.
+            Computed: "true"
+display_name:
+    Type: TypeString
+    Description: Optional. User friendly display name.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional. User defined labels for the asset.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+lake:
+    Type: TypeString
+    Description: The lake for the resource
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The name of the asset.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+resource_spec:
+    Type: TypeList
+    Description: Required. Immutable. Specification of the resource that is referenced by this asset.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        name:
+            Type: TypeString
+            Description: 'Immutable. Relative name of the cloud resource that contains the data that is being managed within a lake. For example: `projects/{project_number}/buckets/{bucket_id}` `projects/{project_number}/datasets/{dataset_id}`'
+            Optional: "true"
+        read_access_mode:
+            Type: TypeString
+            Description: 'Optional. Determines how read permissions are handled for each asset and their associated tables. Only available to storage buckets assets. Possible values: DIRECT, MANAGED'
+            Computed: "true"
+            Optional: "true"
+        type:
+            Type: TypeString
+            Description: 'Required. Immutable. Type of resource. Possible values: STORAGE_BUCKET, BIGQUERY_DATASET'
+            Required: "true"
+resource_status:
+    Type: TypeList
+    Description: Output only. Status of the resource referenced by this asset.
+    Computed: "true"
+    Properties:
+        message:
+            Type: TypeString
+            Description: Additional information about the current state.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: 'The current state of the managed resource. Possible values: STATE_UNSPECIFIED, READY, ERROR'
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the status.
+            Computed: "true"
+security_status:
+    Type: TypeList
+    Description: Output only. Status of the security policy applied to resource referenced by this asset.
+    Computed: "true"
+    Properties:
+        message:
+            Type: TypeString
+            Description: Additional information about the current state.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: 'The current state of the security policy applied to the attached resource. Possible values: STATE_UNSPECIFIED, READY, APPLYING, ERROR'
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Description: Last update time of the status.
+            Computed: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. Current state of the asset. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: Output only. System generated globally unique ID for the asset. This ID will be different if the asset is deleted and re-created with the same name.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The time when the asset was last updated.
+    Computed: "true"
+

@@ -1,0 +1,24 @@
+allow_open: TypeBool
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+mtls_policy:
+    client_validation_ca:
+        certificate_provider_instance:
+            plugin_instance: TypeString
+        grpc_endpoint:
+            target_uri: TypeString
+    client_validation_mode: TypeString
+    client_validation_trust_config: TypeString
+name: TypeString
+project: TypeString
+server_certificate:
+    certificate_provider_instance:
+        plugin_instance: TypeString
+    grpc_endpoint:
+        target_uri: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

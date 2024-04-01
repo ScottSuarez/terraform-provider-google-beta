@@ -1,0 +1,13 @@
+create_time: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_spec:
+    kms_key_name: TypeString
+labels: TypeMap(TypeString)
+metadata_schema_uri: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

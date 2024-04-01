@@ -1,0 +1,123 @@
+create_time:
+    Type: TypeString
+    Description: Output only. The time the spoke was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of the spoke.
+    Optional: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+hub:
+    Type: TypeString
+    Description: Immutable. The URI of the hub that this spoke is attached to.
+    Required: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Optional labels in key:value format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field `effective_labels` for all of the labels present on the resource.
+    Optional: "true"
+linked_interconnect_attachments:
+    Type: TypeList
+    Description: A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes.
+    Optional: "true"
+    ConflictsWith: linked_vpn_tunnels, linked_router_appliance_instances, linked_vpc_network
+    MaxItems: "1"
+    Properties:
+        site_to_site_data_transfer:
+            Type: TypeBool
+            Description: A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.
+            Required: "true"
+        uris:
+            Type: TypeList
+            Description: The URIs of linked interconnect attachment resources
+            Required: "true"
+linked_router_appliance_instances:
+    Type: TypeList
+    Description: The URIs of linked Router appliance resources
+    Optional: "true"
+    ConflictsWith: linked_vpn_tunnels, linked_interconnect_attachments, linked_vpc_network
+    MaxItems: "1"
+    Properties:
+        instances:
+            Type: TypeList
+            Description: The list of router appliance instances
+            Required: "true"
+            Properties:
+                ip_address:
+                    Type: TypeString
+                    Description: The IP address on the VM to use for peering.
+                    Optional: "true"
+                virtual_machine:
+                    Type: TypeString
+                    Description: The URI of the virtual machine resource
+                    Optional: "true"
+        site_to_site_data_transfer:
+            Type: TypeBool
+            Description: A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.
+            Required: "true"
+linked_vpc_network:
+    Type: TypeList
+    Description: VPC network that is associated with the spoke.
+    Optional: "true"
+    ConflictsWith: linked_vpn_tunnels, linked_interconnect_attachments, linked_router_appliance_instances
+    MaxItems: "1"
+    Properties:
+        exclude_export_ranges:
+            Type: TypeList
+            Description: IP ranges encompassing the subnets to be excluded from peering.
+            Optional: "true"
+        uri:
+            Type: TypeString
+            Description: The URI of the VPC network resource.
+            Required: "true"
+linked_vpn_tunnels:
+    Type: TypeList
+    Description: The URIs of linked VPN tunnel resources
+    Optional: "true"
+    ConflictsWith: linked_interconnect_attachments, linked_router_appliance_instances, linked_vpc_network
+    MaxItems: "1"
+    Properties:
+        site_to_site_data_transfer:
+            Type: TypeBool
+            Description: A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.
+            Required: "true"
+        uris:
+            Type: TypeList
+            Description: The URIs of linked VPN tunnel resources.
+            Required: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Immutable. The name of the spoke. Spoke names must be unique.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Description: 'Output only. The current lifecycle state of this spoke. Possible values: STATE_UNSPECIFIED, CREATING, ACTIVE, DELETING'
+    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+unique_id:
+    Type: TypeString
+    Description: Output only. The Google-generated UUID for the spoke. This value is unique across all spoke resources. If a spoke is deleted and another with the same name is created, the new spoke is assigned a different unique_id.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. The time the spoke was last updated.
+    Computed: "true"
+

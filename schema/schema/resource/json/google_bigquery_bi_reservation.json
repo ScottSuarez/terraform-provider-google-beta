@@ -1,0 +1,49 @@
+{
+    "location": {
+        "Description": "LOCATION_DESCRIPTION",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the singleton BI reservation. Reservation names have the form 'projects/{projectId}/locations/{locationId}/biReservation'.",
+        "Type": "TypeString"
+    },
+    "preferred_tables": {
+        "Description": "Preferred tables to use BI capacity for.",
+        "Optional": true,
+        "Properties": {
+            "dataset_id": {
+                "Description": "The ID of the dataset in the above project.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "project_id": {
+                "Description": "The assigned project ID of the project.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "table_id": {
+                "Description": "The ID of the table in the above dataset.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "size": {
+        "Description": "Size of a reservation, in bytes.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The last update timestamp of a reservation.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

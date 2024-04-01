@@ -1,0 +1,10 @@
+dicom_store_id:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+

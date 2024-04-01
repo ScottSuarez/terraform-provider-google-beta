@@ -1,0 +1,40 @@
+{
+    "custom_support_level": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "full_resource_name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "permissions": {
+        "Computed": true,
+        "Properties": {
+            "api_disabled": {
+                "Computed": true,
+                "Type": "TypeBool"
+            },
+            "custom_support_level": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "stage": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "title": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "stages": {
+        "Optional": true,
+        "Type": "TypeList"
+    }
+}

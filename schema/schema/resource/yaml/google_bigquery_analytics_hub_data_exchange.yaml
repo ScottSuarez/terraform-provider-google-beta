@@ -1,0 +1,43 @@
+data_exchange_id:
+    Type: TypeString
+    Description: The ID of the data exchange. Must contain only Unicode letters, numbers (0-9), underscores (_). Should not use characters that require URL-escaping, or characters outside of ASCII, spaces.
+    Required: "true"
+description:
+    Type: TypeString
+    Description: Description of the data exchange.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: Human-readable display name of the data exchange. The display name must contain only Unicode letters, numbers (0-9), underscores (_), dashes (-), spaces ( ), and must not start or end with spaces.
+    Required: "true"
+documentation:
+    Type: TypeString
+    Description: Documentation describing the data exchange.
+    Optional: "true"
+icon:
+    Type: TypeString
+    Description: Base64 encoded image representing the data exchange.
+    Optional: "true"
+listing_count:
+    Type: TypeInt
+    Description: Number of listings contained in the data exchange.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The name of the location this data exchange.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name of the data exchange, for example:
+        "projects/myproject/locations/US/dataExchanges/123"
+    Computed: "true"
+primary_contact:
+    Type: TypeString
+    Description: Email or URL of the primary point of contact of the data exchange.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

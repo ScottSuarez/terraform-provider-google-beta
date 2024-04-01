@@ -1,0 +1,77 @@
+{
+    "app_profile_id": {
+        "Description": "The unique name of the app profile in the form '[_a-zA-Z0-9][-_.a-zA-Z0-9]*'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Long form description of the use case for this app profile.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "ignore_warnings": {
+        "Description": "If true, ignore safety checks when deleting/updating the app profile.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "instance": {
+        "Description": "The name of the instance to create the app profile within.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "multi_cluster_routing_cluster_ids": {
+        "ConflictsWith": "single_cluster_routing",
+        "Description": "The set of clusters to route to. The order is ignored; clusters will be tried in order of distance. If left empty, all clusters are eligible.",
+        "Optional": true,
+        "Type": "TypeList"
+    },
+    "multi_cluster_routing_use_any": {
+        "Description": "If true, read/write requests are routed to the nearest cluster in the instance, and will fail over to the nearest cluster that is available\nin the event of transient errors or delays. Clusters in a region are considered equidistant. Choosing this option sacrifices read-your-writes\nconsistency to improve availability.",
+        "ExactlyOneOf": "single_cluster_routing, multi_cluster_routing_use_any",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique name of the requested app profile. Values are of the form 'projects/\u003cproject\u003e/instances/\u003cinstance\u003e/appProfiles/\u003cappProfileId\u003e'.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "single_cluster_routing": {
+        "Description": "Use a single-cluster routing policy.",
+        "ExactlyOneOf": "single_cluster_routing, multi_cluster_routing_use_any",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_transactional_writes": {
+                "Description": "If true, CheckAndMutateRow and ReadModifyWriteRow requests are allowed by this app profile.\nIt is unsafe to send these requests to the same table/row/column in multiple clusters.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "cluster_id": {
+                "Description": "The cluster to which read/write requests should be routed.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "standard_isolation": {
+        "Computed": true,
+        "Description": "The standard options used for isolating this app profile's traffic from other use cases.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "priority": {
+                "Description": "The priority of requests sent using this app profile. Possible values: [\"PRIORITY_LOW\", \"PRIORITY_MEDIUM\", \"PRIORITY_HIGH\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

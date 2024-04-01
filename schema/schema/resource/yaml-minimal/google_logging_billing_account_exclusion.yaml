@@ -1,0 +1,6 @@
+billing_account: TypeString
+description: TypeString
+disabled: TypeBool
+filter: TypeString
+name: TypeString
+

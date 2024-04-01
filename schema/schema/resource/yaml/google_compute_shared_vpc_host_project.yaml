@@ -1,0 +1,5 @@
+project:
+    Type: TypeString
+    Description: The ID of the project that will serve as a Shared VPC host project
+    Required: "true"
+

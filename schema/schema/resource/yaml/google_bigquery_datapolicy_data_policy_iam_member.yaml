@@ -1,0 +1,35 @@
+condition:
+    Type: TypeList
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        description:
+            Type: TypeString
+            Optional: "true"
+        expression:
+            Type: TypeString
+            Required: "true"
+        title:
+            Type: TypeString
+            Required: "true"
+data_policy_id:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+location:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+member:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+role:
+    Type: TypeString
+    Required: "true"
+

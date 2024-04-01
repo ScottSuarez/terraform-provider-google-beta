@@ -1,0 +1,19 @@
+network_settings:
+    Type: TypeList
+    Description: Ingress settings for this service. Will apply to all versions.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        ingress_traffic_allowed:
+            Type: TypeString
+            Description: 'The ingress settings for version or service. Default value: "INGRESS_TRAFFIC_ALLOWED_UNSPECIFIED" Possible values: ["INGRESS_TRAFFIC_ALLOWED_UNSPECIFIED", "INGRESS_TRAFFIC_ALLOWED_ALL", "INGRESS_TRAFFIC_ALLOWED_INTERNAL_ONLY", "INGRESS_TRAFFIC_ALLOWED_INTERNAL_AND_LB"]'
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+service:
+    Type: TypeString
+    Description: The name of the service these settings apply to.
+    Required: "true"
+

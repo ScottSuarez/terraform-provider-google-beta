@@ -1,0 +1,33 @@
+annotations: TypeMap(TypeString)
+availability_type: TypeString
+client_connection_config:
+    require_connectors: TypeBool
+    ssl_config:
+        ssl_mode: TypeString
+cluster: TypeString
+create_time: TypeString
+database_flags: TypeMap(TypeString)
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+effective_labels: TypeMap(TypeString)
+gce_zone: TypeString
+instance_id: TypeString
+instance_type: TypeString
+ip_address: TypeString
+labels: TypeMap(TypeString)
+machine_config:
+    cpu_count: TypeInt
+name: TypeString
+query_insights_config:
+    query_plans_per_minute: TypeInt
+    query_string_length: TypeInt
+    record_application_tags: TypeBool
+    record_client_address: TypeBool
+read_pool_config:
+    node_count: TypeInt
+reconciling: TypeBool
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+update_time: TypeString
+

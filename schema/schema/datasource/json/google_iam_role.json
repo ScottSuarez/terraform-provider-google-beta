@@ -1,0 +1,18 @@
+{
+    "included_permissions": {
+        "Computed": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "stage": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "title": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

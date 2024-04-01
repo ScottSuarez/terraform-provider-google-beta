@@ -1,0 +1,87 @@
+{
+    "annotations": {
+        "Description": "Client-specified annotations. This is distinct from labels.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Time when this resource was created.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "Human-readable name for this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "env": {
+        "Description": "'Client-specified environment variables passed to the workstation container's entrypoint.'",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "host": {
+        "Computed": true,
+        "Description": "Host to which clients can send HTTPS traffic that will be received by the workstation.\nAuthorized traffic will be received to the workstation as HTTP on port 80.\nTo send traffic to a different port, clients may prefix the host with the destination port in the format \"{port}-{host}\".",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Client-specified labels that are applied to the resource and that are also propagated to the underlying Compute Engine resources.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location where the workstation parent resources reside.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "Full name of this resource.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Current state of the workstation.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "A system-assigned unique identified for this resource.",
+        "Type": "TypeString"
+    },
+    "workstation_cluster_id": {
+        "Description": "The ID of the parent workstation cluster.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "workstation_config_id": {
+        "Description": "The ID of the parent workstation cluster config.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "workstation_id": {
+        "Description": "ID to use for the workstation.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

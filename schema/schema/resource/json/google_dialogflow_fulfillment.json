@@ -1,0 +1,62 @@
+{
+    "display_name": {
+        "Description": "The human-readable name of the fulfillment, unique within the agent.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "enabled": {
+        "Description": "Whether fulfillment is enabled.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "features": {
+        "Description": "The field defines whether the fulfillment is enabled for certain features.",
+        "Optional": true,
+        "Properties": {
+            "type": {
+                "Description": "The type of the feature that enabled for fulfillment.\n* SMALLTALK: Fulfillment is enabled for SmallTalk. Possible values: [\"SMALLTALK\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "generic_web_service": {
+        "Description": "Represents configuration for a generic web service. Dialogflow supports two mechanisms for authentications: - Basic authentication with username and password. - Authentication with additional authentication headers.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "password": {
+                "Description": "The password for HTTP Basic authentication.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "request_headers": {
+                "Description": "The HTTP request headers to send together with fulfillment requests.",
+                "Optional": true,
+                "Type": "TypeMap"
+            },
+            "uri": {
+                "Description": "The fulfillment URI for receiving POST requests. It must use https protocol.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "username": {
+                "Description": "The user name for HTTP Basic authentication.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique identifier of the fulfillment.\nFormat: projects/\u003cProject ID\u003e/agent/fulfillment - projects/\u003cProject ID\u003e/locations/\u003cLocation ID\u003e/agent/fulfillment",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,11 @@
+basic_service:
+    service_labels: TypeMap(TypeString)
+    service_type: TypeString
+display_name: TypeString
+name: TypeString
+project: TypeString
+service_id: TypeString
+telemetry:
+    resource_name: TypeString
+user_labels: TypeMap(TypeString)
+

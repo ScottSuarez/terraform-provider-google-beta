@@ -1,0 +1,127 @@
+additional_experiments:
+    Type: TypeSet
+    Description: List of experiments that should be used by the job. An example value is ["enable_stackdriver_agent_metrics"].
+    Computed: "true"
+    Optional: "true"
+autoscaling_algorithm:
+    Type: TypeString
+    Description: The algorithm to use for autoscaling
+    Computed: "true"
+    Optional: "true"
+container_spec_gcs_path:
+    Type: TypeString
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+enable_streaming_engine:
+    Type: TypeBool
+    Description: Indicates if the job should use the streaming engine feature.
+    Optional: "true"
+ip_configuration:
+    Type: TypeString
+    Description: The configuration for VM IPs. Options are "WORKER_IP_PUBLIC" or "WORKER_IP_PRIVATE".
+    Optional: "true"
+job_id:
+    Type: TypeString
+    Computed: "true"
+kms_key_name:
+    Type: TypeString
+    Description: 'The name for the Cloud KMS key for the job. Key format is: projects/PROJECT_ID/locations/LOCATION/keyRings/KEY_RING/cryptoKeys/KEY'
+    Computed: "true"
+    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        User labels to be specified for the job. Keys and values should follow the restrictions specified in the labeling restrictions page. NOTE: This field is non-authoritative, and will only manage the labels present in your configuration.
+        				Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+launcher_machine_type:
+    Type: TypeString
+    Description: The machine type to use for launching the job. The default is n1-standard-1.
+    Computed: "true"
+    Optional: "true"
+machine_type:
+    Type: TypeString
+    Description: The machine type to use for the job.
+    Computed: "true"
+    Optional: "true"
+max_workers:
+    Type: TypeInt
+    Description: The maximum number of Google Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Required: "true"
+network:
+    Type: TypeString
+    Description: The network to which VMs will be assigned. If it is not provided, "default" will be used.
+    Computed: "true"
+    Optional: "true"
+num_workers:
+    Type: TypeInt
+    Description: The initial number of Google Compute Engine instances for the job.
+    Computed: "true"
+    Optional: "true"
+on_delete:
+    Type: TypeString
+    Optional: "true"
+parameters:
+    Type: TypeMap
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The region in which the created job should run.
+    Computed: "true"
+    Optional: "true"
+sdk_container_image:
+    Type: TypeString
+    Description: Docker registry location of container image to use for the 'worker harness. Default is the container for the version of the SDK. Note this field is only valid for portable pipelines.
+    Computed: "true"
+    Optional: "true"
+service_account_email:
+    Type: TypeString
+    Description: The Service Account email used to create the job.
+    Computed: "true"
+    Optional: "true"
+skip_wait_on_job_termination:
+    Type: TypeBool
+    Description: 'If true, treat DRAINING and CANCELLING as terminal job states and do not wait for further changes before removing from terraform state and moving on. WARNING: this will lead to job name conflicts if you do not ensure that the job names are different, e.g. by embedding a release ID or by using a random_id.'
+    Optional: "true"
+staging_location:
+    Type: TypeString
+    Description: The Cloud Storage path to use for staging files. Must be a valid Cloud Storage URL, beginning with gs://.
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeString
+    Computed: "true"
+subnetwork:
+    Type: TypeString
+    Description: The subnetwork to which VMs will be assigned. Should be of the form "regions/REGION/subnetworks/SUBNETWORK".
+    Computed: "true"
+    Optional: "true"
+temp_location:
+    Type: TypeString
+    Description: The Cloud Storage path to use for temporary files. Must be a valid Cloud Storage URL, beginning with gs://.
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: The combination of labels configured directly on the resource and default labels configured on the provider.
+    Computed: "true"
+transform_name_mapping:
+    Type: TypeMap
+    Description: Only applicable when updating a pipeline. Map of transform name prefixes of the job to be replaced with the corresponding name prefixes of the new job.
+    Optional: "true"
+type:
+    Type: TypeString
+    Description: The type of this job, selected from the JobType enum.
+    Computed: "true"
+

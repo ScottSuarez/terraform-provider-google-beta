@@ -1,0 +1,12 @@
+name:
+    Type: TypeString
+    Description: Name of the Location resource.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+

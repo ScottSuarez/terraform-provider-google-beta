@@ -1,0 +1,30 @@
+{
+    "fingerprint": {
+        "Computed": true,
+        "Description": "The fingerprint used for optimistic locking of this resource.  Used\ninternally during updates.",
+        "Type": "TypeString"
+    },
+    "metadata": {
+        "Description": "The metadata key/value pairs assigned to all the instances in the corresponding scope.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "items": {
+                "Description": "A metadata key/value items map. The total size of all keys and values must be less than 512KB",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Description": "A reference to the zone where the machine resides.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

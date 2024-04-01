@@ -1,0 +1,21 @@
+basic_algorithm:
+    cooldown_period: TypeString
+    yarn_config:
+        graceful_decommission_timeout: TypeString
+        scale_down_factor: TypeFloat
+        scale_down_min_worker_fraction: TypeFloat
+        scale_up_factor: TypeFloat
+        scale_up_min_worker_fraction: TypeFloat
+location: TypeString
+name: TypeString
+policy_id: TypeString
+project: TypeString
+secondary_worker_config:
+    max_instances: TypeInt
+    min_instances: TypeInt
+    weight: TypeInt
+worker_config:
+    max_instances: TypeInt
+    min_instances: TypeInt
+    weight: TypeInt
+

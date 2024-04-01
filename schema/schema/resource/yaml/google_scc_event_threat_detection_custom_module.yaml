@@ -1,0 +1,41 @@
+config:
+    Type: TypeString
+    Description: |-
+        Config for the module. For the resident module, its config value is defined at this level.
+        For the inherited module, its config value is inherited from the ancestor module.
+    Required: "true"
+display_name:
+    Type: TypeString
+    Description: The human readable name to be displayed for the module.
+    Optional: "true"
+enablement_state:
+    Type: TypeString
+    Description: 'The state of enablement for the module at the given level of the hierarchy. Possible values: ["ENABLED", "DISABLED"]'
+    Required: "true"
+last_editor:
+    Type: TypeString
+    Description: The editor that last updated the custom module
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name of the Event Threat Detection custom module.
+        Its format is "organizations/{organization}/eventThreatDetectionSettings/customModules/{module}".
+    Computed: "true"
+organization:
+    Type: TypeString
+    Description: Numerical ID of the parent organization.
+    Required: "true"
+type:
+    Type: TypeString
+    Description: Immutable. Type for the module. e.g. CONFIGURABLE_BAD_IP.
+    Required: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time at which the custom module was last updated.
+
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and
+        up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

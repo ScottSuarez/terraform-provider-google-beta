@@ -1,0 +1,852 @@
+{
+    "annotations": {
+        "Computed": true,
+        "Description": "Unstructured key value map that may be set by external tools to store and arbitrary metadata. They are not queryable and should be preserved when modifying objects.\n\nCloud Run API v2 does not support annotations with 'run.googleapis.com', 'cloud.googleapis.com', 'serving.knative.dev', or 'autoscaling.knative.dev' namespaces, and they will be rejected in new resources.\nAll system annotations in v1 now have a corresponding field in v2 Service.\n\nThis field follows Kubernetes annotations' namespacing, limits, and rules.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field 'effective_annotations' for all of the annotations present on the resource.",
+        "Type": "TypeMap"
+    },
+    "binary_authorization": {
+        "Computed": true,
+        "Description": "Settings for the Binary Authorization feature.",
+        "Properties": {
+            "breakglass_justification": {
+                "Computed": true,
+                "Description": "If present, indicates to use Breakglass using this justification. If useDefault is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass",
+                "Type": "TypeString"
+            },
+            "use_default": {
+                "Computed": true,
+                "Description": "If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "client": {
+        "Computed": true,
+        "Description": "Arbitrary identifier for the API client.",
+        "Type": "TypeString"
+    },
+    "client_version": {
+        "Computed": true,
+        "Description": "Arbitrary version identifier for the API client.",
+        "Type": "TypeString"
+    },
+    "conditions": {
+        "Computed": true,
+        "Description": "The Conditions of all other associated sub-resources. They contain additional diagnostics information in case the Service does not reach its Serving state. See comments in reconciling for additional information on reconciliation process in Cloud Run.",
+        "Properties": {
+            "execution_reason": {
+                "Computed": true,
+                "Description": "A reason for the execution condition.",
+                "Type": "TypeString"
+            },
+            "last_transition_time": {
+                "Computed": true,
+                "Description": "Last time the condition transitioned from one status to another.\n\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            },
+            "message": {
+                "Computed": true,
+                "Description": "Human readable message indicating details about the current status.",
+                "Type": "TypeString"
+            },
+            "reason": {
+                "Computed": true,
+                "Description": "A common (service-level) reason for this condition.",
+                "Type": "TypeString"
+            },
+            "revision_reason": {
+                "Computed": true,
+                "Description": "A reason for the revision condition.",
+                "Type": "TypeString"
+            },
+            "severity": {
+                "Computed": true,
+                "Description": "How to interpret failures of this condition, one of Error, Warning, Info",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "State of the condition.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "type is used to communicate the status of the reconciliation process. See also: https://github.com/knative/serving/blob/main/docs/spec/errors.md#error-conditions-and-reporting Types common to all resources include: * \"Ready\": True when the Resource is ready.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "The creation time.",
+        "Type": "TypeString"
+    },
+    "creator": {
+        "Computed": true,
+        "Description": "Email address of the authenticated creator.",
+        "Type": "TypeString"
+    },
+    "custom_audiences": {
+        "Computed": true,
+        "Description": "One or more custom audiences that you want this service to support. Specify each custom audience as the full URL in a string. The custom audiences are encoded in the token and used to authenticate requests.\nFor more information, see https://cloud.google.com/run/docs/configuring/custom-audiences.",
+        "Type": "TypeList"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "The deletion time.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Computed": true,
+        "Description": "User-provided description of the Service. This field currently has a 512-character limit.",
+        "Type": "TypeString"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.",
+        "Type": "TypeString"
+    },
+    "expire_time": {
+        "Computed": true,
+        "Description": "For a deleted resource, the time after which it will be permamently deleted.",
+        "Type": "TypeString"
+    },
+    "generation": {
+        "Computed": true,
+        "Description": "A number that monotonically increases every time the user modifies the desired state. Please note that unlike v1, this is an int64 value. As with most Google APIs, its JSON representation will be a string instead of an integer.",
+        "Type": "TypeString"
+    },
+    "ingress": {
+        "Computed": true,
+        "Description": "Provides the ingress settings for this Service. On output, returns the currently observed ingress settings, or INGRESS_TRAFFIC_UNSPECIFIED if no revision is active. Possible values: [\"INGRESS_TRAFFIC_ALL\", \"INGRESS_TRAFFIC_INTERNAL_ONLY\", \"INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER\"]",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google's billing system, so they can be used to filter, or break down billing charges by team, component,\nenvironment, state, etc. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels.\n\nCloud Run API v2 does not support labels with  'run.googleapis.com', 'cloud.googleapis.com', 'serving.knative.dev', or 'autoscaling.knative.dev' namespaces, and they will be rejected.\nAll system labels in v1 now have a corresponding field in v2 Service.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Type": "TypeMap"
+    },
+    "last_modifier": {
+        "Computed": true,
+        "Description": "Email address of the last authenticated modifier.",
+        "Type": "TypeString"
+    },
+    "latest_created_revision": {
+        "Computed": true,
+        "Description": "Name of the last created revision. See comments in reconciling for additional information on reconciliation process in Cloud Run.",
+        "Type": "TypeString"
+    },
+    "latest_ready_revision": {
+        "Computed": true,
+        "Description": "Name of the latest revision that is serving traffic. See comments in reconciling for additional information on reconciliation process in Cloud Run.",
+        "Type": "TypeString"
+    },
+    "launch_stage": {
+        "Computed": true,
+        "Description": "The launch stage as defined by [Google Cloud Platform Launch Stages](https://cloud.google.com/products#product-launch-stages). Cloud Run supports ALPHA, BETA, and GA.\nIf no value is specified, GA is assumed. Set the launch stage to a preview stage on input to allow use of preview features in that stage. On read (or output), describes whether the resource uses preview features.\n\nFor example, if ALPHA is provided as input, but only BETA and GA-level features are used, this field will be BETA on output. Possible values: [\"UNIMPLEMENTED\", \"PRELAUNCH\", \"EARLY_ACCESS\", \"ALPHA\", \"BETA\", \"GA\", \"DEPRECATED\"]",
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the cloud run service",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the Service.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "observed_generation": {
+        "Computed": true,
+        "Description": "The generation of this Service currently serving traffic. See comments in reconciling for additional information on reconciliation process in Cloud Run. Please note that unlike v1, this is an int64 value. As with most Google APIs, its JSON representation will be a string instead of an integer.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "Returns true if the Service is currently being acted upon by the system to bring it into the desired state.\n\nWhen a new Service is created, or an existing one is updated, Cloud Run will asynchronously perform all necessary steps to bring the Service to the desired serving state. This process is called reconciliation. While reconciliation is in process, observedGeneration, latest_ready_revison, trafficStatuses, and uri will have transient values that might mismatch the intended state: Once reconciliation is over (and this field is false), there are two possible outcomes: reconciliation succeeded and the serving state matches the Service, or there was an error, and reconciliation failed. This state can be found in terminalCondition.state.\n\nIf reconciliation succeeded, the following fields will match: traffic and trafficStatuses, observedGeneration and generation, latestReadyRevision and latestCreatedRevision.\n\nIf reconciliation failed, trafficStatuses, observedGeneration, and latestReadyRevision will have the state of the last serving revision, or empty for newly created Services. Additional information on the failure can be found in terminalCondition and conditions.",
+        "Type": "TypeBool"
+    },
+    "template": {
+        "Computed": true,
+        "Description": "The template used to create revisions for this Service.",
+        "Properties": {
+            "annotations": {
+                "Computed": true,
+                "Description": "Unstructured key value map that may be set by external tools to store and arbitrary metadata. They are not queryable and should be preserved when modifying objects.\n\nCloud Run API v2 does not support annotations with 'run.googleapis.com', 'cloud.googleapis.com', 'serving.knative.dev', or 'autoscaling.knative.dev' namespaces, and they will be rejected.\nAll system annotations in v1 now have a corresponding field in v2 RevisionTemplate.\n\nThis field follows Kubernetes annotations' namespacing, limits, and rules.",
+                "Type": "TypeMap"
+            },
+            "containers": {
+                "Computed": true,
+                "Description": "Holds the containers that define the unit of execution for this Service.",
+                "Properties": {
+                    "args": {
+                        "Computed": true,
+                        "Description": "Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell",
+                        "Type": "TypeList"
+                    },
+                    "command": {
+                        "Computed": true,
+                        "Description": "Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell",
+                        "Type": "TypeList"
+                    },
+                    "depends_on": {
+                        "Computed": true,
+                        "Description": "Containers which should be started before this container. If specified the container will wait to start until all containers with the listed names are healthy.",
+                        "Type": "TypeList"
+                    },
+                    "env": {
+                        "Computed": true,
+                        "Description": "List of environment variables to set in the container.",
+                        "Properties": {
+                            "name": {
+                                "Computed": true,
+                                "Description": "Name of the environment variable. Must be a C_IDENTIFIER, and mnay not exceed 32768 characters.",
+                                "Type": "TypeString"
+                            },
+                            "value": {
+                                "Computed": true,
+                                "Description": "Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to \"\", and the maximum length is 32768 bytes",
+                                "Type": "TypeString"
+                            },
+                            "value_source": {
+                                "Computed": true,
+                                "Description": "Source for the environment variable's value.",
+                                "Properties": {
+                                    "secret_key_ref": {
+                                        "Computed": true,
+                                        "Description": "Selects a secret and a specific version from Cloud Secret Manager.",
+                                        "Properties": {
+                                            "secret": {
+                                                "Computed": true,
+                                                "Description": "The name of the secret in Cloud Secret Manager. Format: {secretName} if the secret is in the same project. projects/{project}/secrets/{secretName} if the secret is in a different project.",
+                                                "Type": "TypeString"
+                                            },
+                                            "version": {
+                                                "Computed": true,
+                                                "Description": "The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version.",
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "image": {
+                        "Computed": true,
+                        "Description": "URL of the Container image in Google Container Registry or Google Artifact Registry. More info: https://kubernetes.io/docs/concepts/containers/images",
+                        "Type": "TypeString"
+                    },
+                    "liveness_probe": {
+                        "Computed": true,
+                        "Description": "Periodic probe of container liveness. Container will be restarted if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                        "Properties": {
+                            "failure_threshold": {
+                                "Computed": true,
+                                "Description": "Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
+                                "Type": "TypeInt"
+                            },
+                            "grpc": {
+                                "Computed": true,
+                                "Description": "GRPC specifies an action involving a GRPC port.",
+                                "Properties": {
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Number must be in the range 1 to 65535.\nIf not specified, defaults to the same value as container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    },
+                                    "service": {
+                                        "Computed": true,
+                                        "Description": "The name of the service to place in the gRPC HealthCheckRequest\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\nIf this is not specified, the default behavior is defined by gRPC.",
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "http_get": {
+                                "Computed": true,
+                                "Description": "HTTPGet specifies the http request to perform.",
+                                "Properties": {
+                                    "http_headers": {
+                                        "Computed": true,
+                                        "Description": "Custom headers to set in the request. HTTP allows repeated headers.",
+                                        "Properties": {
+                                            "name": {
+                                                "Computed": true,
+                                                "Description": "The header field name",
+                                                "Type": "TypeString"
+                                            },
+                                            "value": {
+                                                "Computed": true,
+                                                "Description": "The header field value",
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "path": {
+                                        "Computed": true,
+                                        "Description": "Path to access on the HTTP server. Defaults to '/'.",
+                                        "Type": "TypeString"
+                                    },
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Number must be in the range 1 to 65535.\nIf not specified, defaults to the same value as container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "initial_delay_seconds": {
+                                "Computed": true,
+                                "Description": "Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                                "Type": "TypeInt"
+                            },
+                            "period_seconds": {
+                                "Computed": true,
+                                "Description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeoutSeconds",
+                                "Type": "TypeInt"
+                            },
+                            "tcp_socket": {
+                                "Computed": true,
+                                "Description": "TCPSocketAction describes an action based on opening a socket",
+                                "Properties": {
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Must be in the range 1 to 65535.\nIf not specified, defaults to the exposed port of the container, which\nis the value of container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "timeout_seconds": {
+                                "Computed": true,
+                                "Description": "Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than periodSeconds. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "name": {
+                        "Computed": true,
+                        "Description": "Name of the container specified as a DNS_LABEL.",
+                        "Type": "TypeString"
+                    },
+                    "ports": {
+                        "Computed": true,
+                        "Description": "List of ports to expose from the container. Only a single port can be specified. The specified ports must be listening on all interfaces (0.0.0.0) within the container to be accessible.\n\nIf omitted, a port number will be chosen and passed to the container through the PORT environment variable for the container to listen on",
+                        "Properties": {
+                            "container_port": {
+                                "Computed": true,
+                                "Description": "Port number the container listens on. This must be a valid TCP port number, 0 \u003c containerPort \u003c 65536.",
+                                "Type": "TypeInt"
+                            },
+                            "name": {
+                                "Computed": true,
+                                "Description": "If specified, used to specify which protocol to use. Allowed values are \"http1\" and \"h2c\".",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "resources": {
+                        "Computed": true,
+                        "Description": "Compute Resource requirements by this container. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources",
+                        "Properties": {
+                            "cpu_idle": {
+                                "Computed": true,
+                                "Description": "Determines whether CPU should be throttled or not outside of requests.",
+                                "Type": "TypeBool"
+                            },
+                            "limits": {
+                                "Computed": true,
+                                "Description": "Only memory and CPU are supported. Use key 'cpu' for CPU limit and 'memory' for memory limit. Note: The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. The values of the map is string form of the 'quantity' k8s type: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go",
+                                "Type": "TypeMap"
+                            },
+                            "startup_cpu_boost": {
+                                "Computed": true,
+                                "Description": "Determines whether CPU should be boosted on startup of a new container instance above the requested CPU threshold, this can help reduce cold-start latency.",
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "startup_probe": {
+                        "Computed": true,
+                        "Description": "Startup probe of application within the container. All other probes are disabled if a startup probe is provided, until it succeeds. Container will not be added to service endpoints if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                        "Properties": {
+                            "failure_threshold": {
+                                "Computed": true,
+                                "Description": "Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
+                                "Type": "TypeInt"
+                            },
+                            "grpc": {
+                                "Computed": true,
+                                "Description": "GRPC specifies an action involving a GRPC port.",
+                                "Properties": {
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Number must be in the range 1 to 65535.\nIf not specified, defaults to the same value as container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    },
+                                    "service": {
+                                        "Computed": true,
+                                        "Description": "The name of the service to place in the gRPC HealthCheckRequest\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\nIf this is not specified, the default behavior is defined by gRPC.",
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "http_get": {
+                                "Computed": true,
+                                "Description": "HTTPGet specifies the http request to perform. Exactly one of HTTPGet or TCPSocket must be specified.",
+                                "Properties": {
+                                    "http_headers": {
+                                        "Computed": true,
+                                        "Description": "Custom headers to set in the request. HTTP allows repeated headers.",
+                                        "Properties": {
+                                            "name": {
+                                                "Computed": true,
+                                                "Description": "The header field name",
+                                                "Type": "TypeString"
+                                            },
+                                            "value": {
+                                                "Computed": true,
+                                                "Description": "The header field value",
+                                                "Type": "TypeString"
+                                            }
+                                        },
+                                        "Type": "TypeList"
+                                    },
+                                    "path": {
+                                        "Computed": true,
+                                        "Description": "Path to access on the HTTP server. Defaults to '/'.",
+                                        "Type": "TypeString"
+                                    },
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Must be in the range 1 to 65535.\nIf not specified, defaults to the same value as container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "initial_delay_seconds": {
+                                "Computed": true,
+                                "Description": "Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                                "Type": "TypeInt"
+                            },
+                            "period_seconds": {
+                                "Computed": true,
+                                "Description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeoutSeconds",
+                                "Type": "TypeInt"
+                            },
+                            "tcp_socket": {
+                                "Computed": true,
+                                "Description": "TCPSocket specifies an action involving a TCP port. Exactly one of HTTPGet or TCPSocket must be specified.",
+                                "Properties": {
+                                    "port": {
+                                        "Computed": true,
+                                        "Description": "Port number to access on the container. Must be in the range 1 to 65535.\nIf not specified, defaults to the same value as container.ports[0].containerPort.",
+                                        "Type": "TypeInt"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "timeout_seconds": {
+                                "Computed": true,
+                                "Description": "Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than periodSeconds. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                                "Type": "TypeInt"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "volume_mounts": {
+                        "Computed": true,
+                        "Description": "Volume to mount into the container's filesystem.",
+                        "Properties": {
+                            "mount_path": {
+                                "Computed": true,
+                                "Description": "Path within the container at which the volume should be mounted. Must not contain ':'. For Cloud SQL volumes, it can be left empty, or must otherwise be /cloudsql. All instances defined in the Volume will be available as /cloudsql/[instance]. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run",
+                                "Type": "TypeString"
+                            },
+                            "name": {
+                                "Computed": true,
+                                "Description": "This must match the Name of a Volume.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "working_dir": {
+                        "Computed": true,
+                        "Description": "Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "encryption_key": {
+                "Computed": true,
+                "Description": "A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek",
+                "Type": "TypeString"
+            },
+            "execution_environment": {
+                "Computed": true,
+                "Description": "The sandbox environment to host this Revision. Possible values: [\"EXECUTION_ENVIRONMENT_GEN1\", \"EXECUTION_ENVIRONMENT_GEN2\"]",
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google's billing system, so they can be used to filter, or break down billing charges by team, component, environment, state, etc.\nFor more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels.\n\nCloud Run API v2 does not support labels with 'run.googleapis.com', 'cloud.googleapis.com', 'serving.knative.dev', or 'autoscaling.knative.dev' namespaces, and they will be rejected.\nAll system labels in v1 now have a corresponding field in v2 RevisionTemplate.",
+                "Type": "TypeMap"
+            },
+            "max_instance_request_concurrency": {
+                "Computed": true,
+                "Description": "Sets the maximum number of requests that each serving instance can receive.",
+                "Type": "TypeInt"
+            },
+            "revision": {
+                "Computed": true,
+                "Description": "The unique name for the revision. If this field is omitted, it will be automatically generated based on the Service name.",
+                "Type": "TypeString"
+            },
+            "scaling": {
+                "Computed": true,
+                "Description": "Scaling settings for this Revision.",
+                "Properties": {
+                    "max_instance_count": {
+                        "Computed": true,
+                        "Description": "Maximum number of serving instances that this resource should have.",
+                        "Type": "TypeInt"
+                    },
+                    "min_instance_count": {
+                        "Computed": true,
+                        "Description": "Minimum number of serving instances that this resource should have.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "service_account": {
+                "Computed": true,
+                "Description": "Email address of the IAM service account associated with the revision of the service. The service account represents the identity of the running revision, and determines what permissions the revision has. If not provided, the revision will use the project's default service account.",
+                "Type": "TypeString"
+            },
+            "session_affinity": {
+                "Computed": true,
+                "Description": "Enables session affinity. For more information, go to https://cloud.google.com/run/docs/configuring/session-affinity",
+                "Type": "TypeBool"
+            },
+            "timeout": {
+                "Computed": true,
+                "Description": "Max allowed time for an instance to respond to a request.\n\nA duration in seconds with up to nine fractional digits, ending with 's'. Example: \"3.5s\".",
+                "Type": "TypeString"
+            },
+            "volumes": {
+                "Computed": true,
+                "Description": "A list of Volumes to make available to containers.",
+                "Properties": {
+                    "cloud_sql_instance": {
+                        "Computed": true,
+                        "Description": "For Cloud SQL volumes, contains the specific instances that should be mounted. Visit https://cloud.google.com/sql/docs/mysql/connect-run for more information on how to connect Cloud SQL and Cloud Run.",
+                        "Properties": {
+                            "instances": {
+                                "Computed": true,
+                                "Description": "The Cloud SQL instance connection names, as can be found in https://console.cloud.google.com/sql/instances. Visit https://cloud.google.com/sql/docs/mysql/connect-run for more information on how to connect Cloud SQL and Cloud Run. Format: {project}:{location}:{instance}",
+                                "Type": "TypeSet"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "empty_dir": {
+                        "Computed": true,
+                        "Description": "Ephemeral storage used as a shared volume.",
+                        "Properties": {
+                            "medium": {
+                                "Computed": true,
+                                "Description": "The different types of medium supported for EmptyDir. Default value: \"MEMORY\" Possible values: [\"MEMORY\"]",
+                                "Type": "TypeString"
+                            },
+                            "size_limit": {
+                                "Computed": true,
+                                "Description": "Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "gcs": {
+                        "Computed": true,
+                        "Description": "Represents a GCS Bucket mounted as a volume.",
+                        "Properties": {
+                            "bucket": {
+                                "Computed": true,
+                                "Description": "GCS Bucket name",
+                                "Type": "TypeString"
+                            },
+                            "read_only": {
+                                "Computed": true,
+                                "Description": "If true, mount the GCS bucket as read-only",
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "name": {
+                        "Computed": true,
+                        "Description": "Volume's name.",
+                        "Type": "TypeString"
+                    },
+                    "nfs": {
+                        "Computed": true,
+                        "Description": "Represents an NFS mount.",
+                        "Properties": {
+                            "path": {
+                                "Computed": true,
+                                "Description": "Path that is exported by the NFS server.",
+                                "Type": "TypeString"
+                            },
+                            "read_only": {
+                                "Computed": true,
+                                "Description": "If true, mount the NFS volume as read only",
+                                "Type": "TypeBool"
+                            },
+                            "server": {
+                                "Computed": true,
+                                "Description": "Hostname or IP address of the NFS server",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "secret": {
+                        "Computed": true,
+                        "Description": "Secret represents a secret that should populate this volume. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret",
+                        "Properties": {
+                            "default_mode": {
+                                "Computed": true,
+                                "Description": "Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting.",
+                                "Type": "TypeInt"
+                            },
+                            "items": {
+                                "Computed": true,
+                                "Description": "If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.",
+                                "Properties": {
+                                    "mode": {
+                                        "Computed": true,
+                                        "Description": "Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume's default mode will be used.",
+                                        "Type": "TypeInt"
+                                    },
+                                    "path": {
+                                        "Computed": true,
+                                        "Description": "The relative path of the secret in the container.",
+                                        "Type": "TypeString"
+                                    },
+                                    "version": {
+                                        "Computed": true,
+                                        "Description": "The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version",
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "secret": {
+                                "Computed": true,
+                                "Description": "The name of the secret in Cloud Secret Manager. Format: {secret} if the secret is in the same project. projects/{project}/secrets/{secret} if the secret is in a different project.",
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "vpc_access": {
+                "Computed": true,
+                "Description": "VPC Access configuration to use for this Task. For more information, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.",
+                "Properties": {
+                    "connector": {
+                        "Computed": true,
+                        "Description": "VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number.",
+                        "Type": "TypeString"
+                    },
+                    "egress": {
+                        "Computed": true,
+                        "Description": "Traffic VPC egress settings. Possible values: [\"ALL_TRAFFIC\", \"PRIVATE_RANGES_ONLY\"]",
+                        "Type": "TypeString"
+                    },
+                    "network_interfaces": {
+                        "Computed": true,
+                        "Description": "Direct VPC egress settings. Currently only single network interface is supported.",
+                        "Properties": {
+                            "network": {
+                                "Computed": true,
+                                "Description": "The VPC network that the Cloud Run resource will be able to send traffic to. At least one of network or subnetwork must be specified. If both\nnetwork and subnetwork are specified, the given VPC subnetwork must belong to the given VPC network. If network is not specified, it will be\nlooked up from the subnetwork.",
+                                "Type": "TypeString"
+                            },
+                            "subnetwork": {
+                                "Computed": true,
+                                "Description": "The VPC subnetwork that the Cloud Run resource will get IPs from. At least one of network or subnetwork must be specified. If both\nnetwork and subnetwork are specified, the given VPC subnetwork must belong to the given VPC network. If subnetwork is not specified, the\nsubnetwork with the same name with the network will be used.",
+                                "Type": "TypeString"
+                            },
+                            "tags": {
+                                "Computed": true,
+                                "Description": "Network tags applied to this Cloud Run service.",
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terminal_condition": {
+        "Computed": true,
+        "Description": "The Condition of this Service, containing its readiness status, and detailed error information in case it did not reach a serving state. See comments in reconciling for additional information on reconciliation process in Cloud Run.",
+        "Properties": {
+            "execution_reason": {
+                "Computed": true,
+                "Description": "A reason for the execution condition.",
+                "Type": "TypeString"
+            },
+            "last_transition_time": {
+                "Computed": true,
+                "Description": "Last time the condition transitioned from one status to another.",
+                "Type": "TypeString"
+            },
+            "message": {
+                "Computed": true,
+                "Description": "Human readable message indicating details about the current status.",
+                "Type": "TypeString"
+            },
+            "reason": {
+                "Computed": true,
+                "Description": "A common (service-level) reason for this condition.",
+                "Type": "TypeString"
+            },
+            "revision_reason": {
+                "Computed": true,
+                "Description": "A reason for the revision condition.",
+                "Type": "TypeString"
+            },
+            "severity": {
+                "Computed": true,
+                "Description": "How to interpret failures of this condition, one of Error, Warning, Info",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "State of the condition.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "type is used to communicate the status of the reconciliation process. See also: https://github.com/knative/serving/blob/main/docs/spec/errors.md#error-conditions-and-reporting Types common to all resources include: * \"Ready\": True when the Resource is ready.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "traffic": {
+        "Computed": true,
+        "Description": "Specifies how to distribute traffic over a collection of Revisions belonging to the Service. If traffic is empty or not provided, defaults to 100% traffic to the latest Ready Revision.",
+        "Properties": {
+            "percent": {
+                "Computed": true,
+                "Description": "Specifies percent of the traffic to this Revision. This defaults to zero if unspecified.",
+                "Type": "TypeInt"
+            },
+            "revision": {
+                "Computed": true,
+                "Description": "Revision to which to send this portion of traffic, if traffic allocation is by revision.",
+                "Type": "TypeString"
+            },
+            "tag": {
+                "Computed": true,
+                "Description": "Indicates a string to be part of the URI to exclusively reference this target.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The allocation type for this traffic target. Possible values: [\"TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST\", \"TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION\"]",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "traffic_statuses": {
+        "Computed": true,
+        "Description": "Detailed status information for corresponding traffic targets. See comments in reconciling for additional information on reconciliation process in Cloud Run.",
+        "Properties": {
+            "percent": {
+                "Computed": true,
+                "Description": "Specifies percent of the traffic to this Revision.",
+                "Type": "TypeInt"
+            },
+            "revision": {
+                "Computed": true,
+                "Description": "Revision to which this traffic is sent.",
+                "Type": "TypeString"
+            },
+            "tag": {
+                "Computed": true,
+                "Description": "Indicates the string used in the URI to exclusively reference this target.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Computed": true,
+                "Description": "The allocation type for this traffic target.",
+                "Type": "TypeString"
+            },
+            "uri": {
+                "Computed": true,
+                "Description": "Displays the target URI.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Server assigned unique identifier for the trigger. The value is a UUID4 string and guaranteed to remain unchanged until the resource is deleted.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The last-modified time.",
+        "Type": "TypeString"
+    },
+    "uri": {
+        "Computed": true,
+        "Description": "The main URI in which this Service is serving traffic.",
+        "Type": "TypeString"
+    }
+}

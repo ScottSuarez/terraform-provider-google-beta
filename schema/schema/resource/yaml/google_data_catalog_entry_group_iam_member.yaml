@@ -1,0 +1,35 @@
+condition:
+    Type: TypeList
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        description:
+            Type: TypeString
+            Optional: "true"
+        expression:
+            Type: TypeString
+            Required: "true"
+        title:
+            Type: TypeString
+            Required: "true"
+entry_group:
+    Type: TypeString
+    Required: "true"
+etag:
+    Type: TypeString
+    Computed: "true"
+member:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+role:
+    Type: TypeString
+    Required: "true"
+

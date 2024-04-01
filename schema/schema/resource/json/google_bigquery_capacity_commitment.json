@@ -1,0 +1,62 @@
+{
+    "capacity_commitment_id": {
+        "Description": "The optional capacity commitment ID. Capacity commitment name will be generated automatically if this field is\nempty. This field must only contain lower case alphanumeric characters or dashes. The first and last character\ncannot be a dash. Max length is 64 characters. NOTE: this ID won't be kept if the capacity commitment is split\nor merged.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "commitment_end_time": {
+        "Computed": true,
+        "Description": "The start of the current commitment period. It is applicable only for ACTIVE capacity commitments.",
+        "Type": "TypeString"
+    },
+    "commitment_start_time": {
+        "Computed": true,
+        "Description": "The start of the current commitment period. It is applicable only for ACTIVE capacity commitments.",
+        "Type": "TypeString"
+    },
+    "edition": {
+        "Description": "The edition type. Valid values are STANDARD, ENTERPRISE, ENTERPRISE_PLUS",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enforce_single_admin_project_per_org": {
+        "Description": "If true, fail the request if another project in the organization has a capacity commitment.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The geographic location where the transfer config should reside.\nExamples: US, EU, asia-northeast1. The default value is US.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the capacity commitment, e.g., projects/myproject/locations/US/capacityCommitments/123",
+        "Type": "TypeString"
+    },
+    "plan": {
+        "Description": "Capacity commitment plan. Valid values are at https://cloud.google.com/bigquery/docs/reference/reservations/rpc/google.cloud.bigquery.reservation.v1#commitmentplan",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "renewal_plan": {
+        "Description": "The plan this capacity commitment is converted to after commitmentEndTime passes. Once the plan is changed, committed period is extended according to commitment plan. Only applicable for some commitment plans.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "slot_count": {
+        "Description": "Number of slots in this commitment.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the commitment",
+        "Type": "TypeString"
+    }
+}

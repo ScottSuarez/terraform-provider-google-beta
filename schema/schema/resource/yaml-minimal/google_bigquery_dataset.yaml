@@ -1,0 +1,45 @@
+access:
+    dataset:
+        dataset:
+            dataset_id: TypeString
+            project_id: TypeString
+        target_types: TypeList(TypeString)
+    domain: TypeString
+    group_by_email: TypeString
+    iam_member: TypeString
+    role: TypeString
+    routine:
+        dataset_id: TypeString
+        project_id: TypeString
+        routine_id: TypeString
+    special_group: TypeString
+    user_by_email: TypeString
+    view:
+        dataset_id: TypeString
+        project_id: TypeString
+        table_id: TypeString
+creation_time: TypeInt
+dataset_id: TypeString
+default_collation: TypeString
+default_encryption_configuration:
+    kms_key_name: TypeString
+default_partition_expiration_ms: TypeInt
+default_table_expiration_ms: TypeInt
+delete_contents_on_destroy: TypeBool
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+external_dataset_reference:
+    connection: TypeString
+    external_source: TypeString
+friendly_name: TypeString
+is_case_insensitive: TypeBool
+labels: TypeMap(TypeString)
+last_modified_time: TypeInt
+location: TypeString
+max_time_travel_hours: TypeString
+project: TypeString
+self_link: TypeString
+storage_billing_model: TypeString
+terraform_labels: TypeMap(TypeString)
+

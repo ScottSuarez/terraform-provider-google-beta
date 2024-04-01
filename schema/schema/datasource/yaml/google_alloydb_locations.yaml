@@ -1,0 +1,34 @@
+locations:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        display_name:
+            Type: TypeString
+            Description: The friendly name for this location, typically a nearby city name. For example, "Tokyo".
+            Computed: "true"
+            Optional: "true"
+        labels:
+            Type: TypeMap
+            Description: 'Cross-service attributes for the location. For example {"cloud.googleapis.com/region": "us-east1"}'
+            Computed: "true"
+            Optional: "true"
+        location_id:
+            Type: TypeString
+            Description: 'The canonical id for this location. For example: "us-east1".'
+            Computed: "true"
+            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: Service-specific metadata. For example the available capacity at the given location.
+            Computed: "true"
+            Optional: "true"
+        name:
+            Type: TypeString
+            Description: 'Resource name for the location, which may vary between implementations. For example: "projects/example-project/locations/us-east1'
+            Computed: "true"
+            Optional: "true"
+project:
+    Type: TypeString
+    Description: Project ID of the project.
+    Optional: "true"
+

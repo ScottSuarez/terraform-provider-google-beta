@@ -1,0 +1,151 @@
+baseline: TypeBool
+deleted: TypeBool
+description: TypeString
+etag: TypeString
+instance_filter:
+    all: TypeBool
+    exclusion_labels:
+        labels: TypeMap(TypeString)
+    inclusion_labels:
+        labels: TypeMap(TypeString)
+    inventories:
+        os_short_name: TypeString
+        os_version: TypeString
+location: TypeString
+name: TypeString
+os_policies:
+    allow_no_resource_group_match: TypeBool
+    description: TypeString
+    id: TypeString
+    mode: TypeString
+    resource_groups:
+        inventory_filters:
+            os_short_name: TypeString
+            os_version: TypeString
+        resources:
+            exec:
+                enforce:
+                    args: TypeList(TypeString)
+                    file:
+                        allow_insecure: TypeBool
+                        gcs:
+                            bucket: TypeString
+                            generation: TypeInt
+                            object: TypeString
+                        local_path: TypeString
+                        remote:
+                            sha256_checksum: TypeString
+                            uri: TypeString
+                    interpreter: TypeString
+                    output_file_path: TypeString
+                    script: TypeString
+                validate:
+                    args: TypeList(TypeString)
+                    file:
+                        allow_insecure: TypeBool
+                        gcs:
+                            bucket: TypeString
+                            generation: TypeInt
+                            object: TypeString
+                        local_path: TypeString
+                        remote:
+                            sha256_checksum: TypeString
+                            uri: TypeString
+                    interpreter: TypeString
+                    output_file_path: TypeString
+                    script: TypeString
+            file:
+                content: TypeString
+                file:
+                    allow_insecure: TypeBool
+                    gcs:
+                        bucket: TypeString
+                        generation: TypeInt
+                        object: TypeString
+                    local_path: TypeString
+                    remote:
+                        sha256_checksum: TypeString
+                        uri: TypeString
+                path: TypeString
+                permissions: TypeString
+                state: TypeString
+            id: TypeString
+            pkg:
+                apt:
+                    name: TypeString
+                deb:
+                    pull_deps: TypeBool
+                    source:
+                        allow_insecure: TypeBool
+                        gcs:
+                            bucket: TypeString
+                            generation: TypeInt
+                            object: TypeString
+                        local_path: TypeString
+                        remote:
+                            sha256_checksum: TypeString
+                            uri: TypeString
+                desired_state: TypeString
+                googet:
+                    name: TypeString
+                msi:
+                    properties: TypeList(TypeString)
+                    source:
+                        allow_insecure: TypeBool
+                        gcs:
+                            bucket: TypeString
+                            generation: TypeInt
+                            object: TypeString
+                        local_path: TypeString
+                        remote:
+                            sha256_checksum: TypeString
+                            uri: TypeString
+                rpm:
+                    pull_deps: TypeBool
+                    source:
+                        allow_insecure: TypeBool
+                        gcs:
+                            bucket: TypeString
+                            generation: TypeInt
+                            object: TypeString
+                        local_path: TypeString
+                        remote:
+                            sha256_checksum: TypeString
+                            uri: TypeString
+                yum:
+                    name: TypeString
+                zypper:
+                    name: TypeString
+            repository:
+                apt:
+                    archive_type: TypeString
+                    components: TypeList(TypeString)
+                    distribution: TypeString
+                    gpg_key: TypeString
+                    uri: TypeString
+                goo:
+                    name: TypeString
+                    url: TypeString
+                yum:
+                    base_url: TypeString
+                    display_name: TypeString
+                    gpg_keys: TypeList(TypeString)
+                    id: TypeString
+                zypper:
+                    base_url: TypeString
+                    display_name: TypeString
+                    gpg_keys: TypeList(TypeString)
+                    id: TypeString
+project: TypeString
+reconciling: TypeBool
+revision_create_time: TypeString
+revision_id: TypeString
+rollout:
+    disruption_budget:
+        fixed: TypeInt
+        percent: TypeInt
+    min_wait_duration: TypeString
+rollout_state: TypeString
+skip_await_rollout: TypeBool
+uid: TypeString
+

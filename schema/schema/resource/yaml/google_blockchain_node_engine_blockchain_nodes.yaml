@@ -1,0 +1,137 @@
+blockchain_node_id:
+    Type: TypeString
+    Description: ID of the requesting object.
+    Required: "true"
+blockchain_type:
+    Type: TypeString
+    Description: 'User-provided key-value pairs Possible values: ["ETHEREUM"]'
+    Optional: "true"
+connection_info:
+    Type: TypeList
+    Description: The connection information through which to interact with a blockchain node.
+    Computed: "true"
+    Properties:
+        endpoint_info:
+            Type: TypeList
+            Description: The endpoint information through which to interact with a blockchain node.
+            Computed: "true"
+            Properties:
+                json_rpc_api_endpoint:
+                    Type: TypeString
+                    Description: The assigned URL for the node JSON-RPC API endpoint.
+                    Computed: "true"
+                websockets_api_endpoint:
+                    Type: TypeString
+                    Description: The assigned URL for the node WebSockets API endpoint.
+                    Computed: "true"
+        service_attachment:
+            Type: TypeString
+            Description: 'A service attachment that exposes a node, and has the following format: projects/{project}/regions/{region}/serviceAttachments/{service_attachment_name}'
+            Computed: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp at which the blockchain node was first created.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+ethereum_details:
+    Type: TypeList
+    Description: User-provided key-value pairs
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_endpoints:
+            Type: TypeList
+            Description: User-provided key-value pairs
+            Computed: "true"
+            Properties:
+                beacon_api_endpoint:
+                    Type: TypeString
+                    Description: The assigned URL for the node's Beacon API endpoint.
+                    Computed: "true"
+                beacon_prometheus_metrics_api_endpoint:
+                    Type: TypeString
+                    Description: The assigned URL for the node's Beacon Prometheus metrics endpoint.
+                    Computed: "true"
+                execution_client_prometheus_metrics_api_endpoint:
+                    Type: TypeString
+                    Description: The assigned URL for the node's execution client's Prometheus metrics endpoint.
+                    Computed: "true"
+        api_enable_admin:
+            Type: TypeBool
+            Description: Enables JSON-RPC access to functions in the admin namespace. Defaults to false.
+            Optional: "true"
+        api_enable_debug:
+            Type: TypeBool
+            Description: Enables JSON-RPC access to functions in the debug namespace. Defaults to false.
+            Optional: "true"
+        consensus_client:
+            Type: TypeString
+            Description: 'The consensus client Possible values: ["CONSENSUS_CLIENT_UNSPECIFIED", "LIGHTHOUSE"]'
+            Optional: "true"
+        execution_client:
+            Type: TypeString
+            Description: 'The execution client Possible values: ["EXECUTION_CLIENT_UNSPECIFIED", "GETH", "ERIGON"]'
+            Optional: "true"
+        geth_details:
+            Type: TypeList
+            Description: User-provided key-value pairs
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                garbage_collection_mode:
+                    Type: TypeString
+                    Description: 'Blockchain garbage collection modes. Only applicable when NodeType is FULL or ARCHIVE. Possible values: ["FULL", "ARCHIVE"]'
+                    Optional: "true"
+        network:
+            Type: TypeString
+            Description: 'The Ethereum environment being accessed. Possible values: ["MAINNET", "TESTNET_GOERLI_PRATER", "TESTNET_SEPOLIA"]'
+            Optional: "true"
+        node_type:
+            Type: TypeString
+            Description: 'The type of Ethereum node. Possible values: ["LIGHT", "FULL", "ARCHIVE"]'
+            Optional: "true"
+        validator_config:
+            Type: TypeList
+            Description: Configuration for validator-related parameters on the beacon client, and for any managed validator client.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                mev_relay_urls:
+                    Type: TypeList
+                    Description: URLs for MEV-relay services to use for block building. When set, a managed MEV-boost service is configured on the beacon client.
+                    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        User-provided key-value pairs
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Location of Blockchain Node being created.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The fully qualified name of the blockchain node. e.g. projects/my-project/locations/us-central1/blockchainNodes/my-node.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp at which the blockchain node was last updated.
+    Computed: "true"
+

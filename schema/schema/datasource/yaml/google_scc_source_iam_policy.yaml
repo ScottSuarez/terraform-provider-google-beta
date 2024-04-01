@@ -1,0 +1,13 @@
+etag:
+    Type: TypeString
+    Computed: "true"
+organization:
+    Type: TypeString
+    Required: "true"
+policy_data:
+    Type: TypeString
+    Computed: "true"
+source:
+    Type: TypeString
+    Required: "true"
+

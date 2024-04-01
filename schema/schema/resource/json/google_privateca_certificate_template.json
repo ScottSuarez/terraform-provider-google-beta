@@ -1,0 +1,303 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time at which this CertificateTemplate was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Optional. A human-readable description of scenarios this template is intended for.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "identity_constraints": {
+        "Description": "Optional. Describes constraints on identities that may be appear in Certificates issued using this template. If this is omitted, then this template will not add restrictions on a certificate's identity.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "allow_subject_alt_names_passthrough": {
+                "Description": "Required. If this is true, the SubjectAltNames extension may be copied from a certificate request into the signed certificate. Otherwise, the requested SubjectAltNames will be discarded.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "allow_subject_passthrough": {
+                "Description": "Required. If this is true, the Subject field may be copied from a certificate request into the signed certificate. Otherwise, the requested Subject will be discarded.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "cel_expression": {
+                "Description": "Optional. A CEL expression that may be used to validate the resolved X.509 Subject and/or Subject Alternative Name before a certificate is signed. To see the full allowed syntax and some examples, see https://cloud.google.com/certificate-authority-service/docs/using-cel",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "description": {
+                        "Description": "Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "expression": {
+                        "Description": "Textual representation of an expression in Common Expression Language syntax.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "location": {
+                        "Description": "Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "title": {
+                        "Description": "Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "labels": {
+        "Description": "Optional. Labels with user-defined metadata.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The resource name for this CertificateTemplate in the format `projects/*/locations/*/certificateTemplates/*`.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "passthrough_extensions": {
+        "Description": "Optional. Describes the set of X.509 extensions that may appear in a Certificate issued using this CertificateTemplate. If a certificate request sets extensions that don't appear in the passthrough_extensions, those extensions will be dropped. If the issuing CaPool's IssuancePolicy defines baseline_values that don't appear here, the certificate issuance request will fail. If this is omitted, then this template will not add restrictions on a certificate's X.509 extensions. These constraints do not apply to X.509 extensions set in this CertificateTemplate's predefined_values.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_extensions": {
+                "Description": "Optional. A set of ObjectIds identifying custom X.509 extensions. Will be combined with known_extensions to determine the full set of X.509 extensions.",
+                "Optional": true,
+                "Properties": {
+                    "object_id_path": {
+                        "Description": "Required. The parts of an OID path. The most significant parts of the path come first.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "known_extensions": {
+                "Description": "Optional. A set of named X.509 extensions. Will be combined with additional_extensions to determine the full set of X.509 extensions.",
+                "Optional": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "predefined_values": {
+        "Description": "Optional. A set of X.509 values that will be applied to all issued certificates that use this template. If the certificate request includes conflicting values for the same properties, they will be overwritten by the values defined here. If the issuing CaPool's IssuancePolicy defines conflicting baseline_values for the same properties, the certificate issuance request will fail.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "additional_extensions": {
+                "Description": "Optional. Describes custom X.509 extensions.",
+                "Optional": true,
+                "Properties": {
+                    "critical": {
+                        "Description": "Optional. Indicates whether or not this extension is critical (i.e., if the client does not know how to handle this extension, the client should consider this to be an error).",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "object_id": {
+                        "Description": "Required. The OID for this X.509 extension.",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "object_id_path": {
+                                "Description": "Required. The parts of an OID path. The most significant parts of the path come first.",
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "value": {
+                        "Description": "Required. The value of this X.509 extension.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "aia_ocsp_servers": {
+                "Description": "Optional. Describes Online Certificate Status Protocol (OCSP) endpoint addresses that appear in the \"Authority Information Access\" extension in the certificate.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "ca_options": {
+                "Description": "Optional. Describes options in this X509Parameters that are relevant in a CA certificate.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "is_ca": {
+                        "Description": "Optional. Refers to the \"CA\" X.509 extension, which is a boolean value. When this value is missing, the extension will be omitted from the CA certificate.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "max_issuer_path_length": {
+                        "Description": "Optional. Refers to the path length restriction X.509 extension. For a CA certificate, this value describes the depth of subordinate CA certificates that are allowed. If this value is less than 0, the request will fail. If this value is missing, the max path length will be omitted from the CA certificate.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "key_usage": {
+                "Description": "Optional. Indicates the intended use for keys that correspond to a certificate.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "base_key_usage": {
+                        "Description": "Describes high-level ways in which a key may be used.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "cert_sign": {
+                                "Description": "The key may be used to sign certificates.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "content_commitment": {
+                                "Description": "The key may be used for cryptographic commitments. Note that this may also be referred to as \"non-repudiation\".",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "crl_sign": {
+                                "Description": "The key may be used sign certificate revocation lists.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "data_encipherment": {
+                                "Description": "The key may be used to encipher data.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "decipher_only": {
+                                "Description": "The key may be used to decipher only.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "digital_signature": {
+                                "Description": "The key may be used for digital signatures.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "encipher_only": {
+                                "Description": "The key may be used to encipher only.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "key_agreement": {
+                                "Description": "The key may be used in a key agreement protocol.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "key_encipherment": {
+                                "Description": "The key may be used to encipher other keys.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "extended_key_usage": {
+                        "Description": "Detailed scenarios in which a key may be used.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "client_auth": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.2. Officially described as \"TLS WWW client authentication\", though regularly used for non-WWW TLS.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "code_signing": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.3. Officially described as \"Signing of downloadable executable code client authentication\".",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "email_protection": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.4. Officially described as \"Email protection\".",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "ocsp_signing": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.9. Officially described as \"Signing OCSP responses\".",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "server_auth": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.1. Officially described as \"TLS WWW server authentication\", though regularly used for non-WWW TLS.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            },
+                            "time_stamping": {
+                                "Description": "Corresponds to OID 1.3.6.1.5.5.7.3.8. Officially described as \"Binding the hash of an object to a time\".",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "unknown_extended_key_usages": {
+                        "Description": "Used to describe extended key usages that are not listed in the KeyUsage.ExtendedKeyUsageOptions message.",
+                        "Optional": true,
+                        "Properties": {
+                            "object_id_path": {
+                                "Description": "Required. The parts of an OID path. The most significant parts of the path come first.",
+                                "Required": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "policy_ids": {
+                "Description": "Optional. Describes the X.509 certificate policy object identifiers, per https://tools.ietf.org/html/rfc5280#section-4.2.1.4.",
+                "Optional": true,
+                "Properties": {
+                    "object_id_path": {
+                        "Description": "Required. The parts of an OID path. The most significant parts of the path come first.",
+                        "Required": true,
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The time at which this CertificateTemplate was updated.",
+        "Type": "TypeString"
+    }
+}

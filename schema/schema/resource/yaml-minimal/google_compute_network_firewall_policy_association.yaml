@@ -1,0 +1,6 @@
+attachment_target: TypeString
+firewall_policy: TypeString
+name: TypeString
+project: TypeString
+short_name: TypeString
+

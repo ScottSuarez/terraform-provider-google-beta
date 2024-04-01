@@ -1,0 +1,61 @@
+{
+    "location": {
+        "Description": "The location for the management server (management console)",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "management_uri": {
+        "Computed": true,
+        "Description": "The management console URI",
+        "Properties": {
+            "api": {
+                "Computed": true,
+                "Description": "The management console api endpoint.",
+                "Type": "TypeString"
+            },
+            "web_ui": {
+                "Computed": true,
+                "Description": "The management console webUi.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of management server (management console)",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "networks": {
+        "Description": "Network details to create management server (management console).",
+        "Properties": {
+            "network": {
+                "Description": "Network with format 'projects/{{project_id}}/global/networks/{{network_id}}'",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "peering_mode": {
+                "Description": "Type of Network peeringMode Default value: \"PRIVATE_SERVICE_ACCESS\" Possible values: [\"PRIVATE_SERVICE_ACCESS\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "oauth2_client_id": {
+        "Computed": true,
+        "Description": "The oauth2ClientId of management console.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type of management server (management console). Default value: \"BACKUP_RESTORE\" Possible values: [\"BACKUP_RESTORE\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

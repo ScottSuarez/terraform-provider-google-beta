@@ -1,0 +1,12 @@
+backup_pool: TypeString
+description: TypeString
+failover_ratio: TypeFloat
+health_checks: TypeList(TypeString)
+instances: TypeSet(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+security_policy: TypeString
+self_link: TypeString
+session_affinity: TypeString
+

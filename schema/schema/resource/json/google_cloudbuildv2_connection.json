@@ -1,0 +1,243 @@
+{
+    "annotations": {
+        "Description": "Allows clients to store small amounts of arbitrary data.\n\n**Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.\nPlease refer to the field `effective_annotations` for all of the annotations present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. Server assigned timestamp for when the connection was created.",
+        "Type": "TypeString"
+    },
+    "disabled": {
+        "Description": "If disabled is set to true, functionality is disabled for this connection. Repository based API methods and webhooks processing for repositories in this connection will be disabled.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "effective_annotations": {
+        "Computed": true,
+        "Description": "All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "github_config": {
+        "ConflictsWith": "github_enterprise_config, gitlab_config",
+        "Description": "Configuration for connections to github.com.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "app_installation_id": {
+                "Description": "GitHub App installation id.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "authorizer_credential": {
+                "Description": "OAuth credential of the account that authorized the Cloud Build GitHub App. It is recommended to use a robot account instead of a human user account. The OAuth token must be tied to the Cloud Build GitHub App.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "oauth_token_secret_version": {
+                        "Description": "A SecretManager resource containing the OAuth token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Computed": true,
+                        "Description": "Output only. The username associated to this token.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "github_enterprise_config": {
+        "ConflictsWith": "github_config, gitlab_config",
+        "Description": "Configuration for connections to an instance of GitHub Enterprise.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "app_id": {
+                "Description": "Id of the GitHub App created from the manifest.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "app_installation_id": {
+                "Description": "ID of the installation of the GitHub App.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "app_slug": {
+                "Description": "The URL-friendly name of the GitHub App.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "host_uri": {
+                "Description": "Required. The URI of the GitHub Enterprise host this connection is for.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "private_key_secret_version": {
+                "Description": "SecretManager resource containing the private key of the GitHub App, formatted as `projects/*/secrets/*/versions/*`.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "service_directory_config": {
+                "Description": "Configuration for using Service Directory to privately connect to a GitHub Enterprise server. This should only be set if the GitHub Enterprise server is hosted on-premises and not reachable by public internet. If this field is left empty, calls to the GitHub Enterprise server will be made over the public internet.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "service": {
+                        "Description": "Required. The Service Directory service name. Format: projects/{project}/locations/{location}/namespaces/{namespace}/services/{service}.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ssl_ca": {
+                "Description": "SSL certificate to use for requests to GitHub Enterprise.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "webhook_secret_secret_version": {
+                "Description": "SecretManager resource containing the webhook secret of the GitHub App, formatted as `projects/*/secrets/*/versions/*`.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "gitlab_config": {
+        "ConflictsWith": "github_config, github_enterprise_config",
+        "Description": "Configuration for connections to gitlab.com or an instance of GitLab Enterprise.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "authorizer_credential": {
+                "Description": "Required. A GitLab personal access token with the `api` scope access.",
+                "MaxItems": 1,
+                "Properties": {
+                    "user_token_secret_version": {
+                        "Description": "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Computed": true,
+                        "Description": "Output only. The username associated to this token.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "host_uri": {
+                "Computed": true,
+                "Description": "The URI of the GitLab Enterprise host this connection is for. If not specified, the default value is https://gitlab.com.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "read_authorizer_credential": {
+                "Description": "Required. A GitLab personal access token with the minimum `read_api` scope access.",
+                "MaxItems": 1,
+                "Properties": {
+                    "user_token_secret_version": {
+                        "Description": "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Computed": true,
+                        "Description": "Output only. The username associated to this token.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "server_version": {
+                "Computed": true,
+                "Description": "Output only. Version of the GitLab Enterprise server running on the `host_uri`.",
+                "Type": "TypeString"
+            },
+            "service_directory_config": {
+                "Description": "Configuration for using Service Directory to privately connect to a GitLab Enterprise server. This should only be set if the GitLab Enterprise server is hosted on-premises and not reachable by public internet. If this field is left empty, calls to the GitLab Enterprise server will be made over the public internet.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "service": {
+                        "Description": "Required. The Service Directory service name. Format: projects/{project}/locations/{location}/namespaces/{namespace}/services/{service}.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "ssl_ca": {
+                "Description": "SSL certificate to use for requests to GitLab Enterprise.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "webhook_secret_secret_version": {
+                "Description": "Required. Immutable. SecretManager resource containing the webhook secret of a GitLab Enterprise project, formatted as `projects/*/secrets/*/versions/*`.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "installation_state": {
+        "Computed": true,
+        "Description": "Output only. Installation state of the Connection.",
+        "Properties": {
+            "action_uri": {
+                "Computed": true,
+                "Description": "Output only. Link to follow for next action. Empty string if the installation is already complete.",
+                "Type": "TypeString"
+            },
+            "message": {
+                "Computed": true,
+                "Description": "Output only. Message of what the user should do next to continue the installation. Empty string if the installation is already complete.",
+                "Type": "TypeString"
+            },
+            "stage": {
+                "Computed": true,
+                "Description": "Output only. Current step of the installation process. Possible values: STAGE_UNSPECIFIED, PENDING_CREATE_APP, PENDING_USER_OAUTH, PENDING_INSTALL_APP, COMPLETE",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Immutable. The resource name of the connection, in the format `projects/{project}/locations/{location}/connections/{connection_id}`.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "reconciling": {
+        "Computed": true,
+        "Description": "Output only. Set to true when the connection is being set up or updated in the background.",
+        "Type": "TypeBool"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. Server assigned timestamp for when the connection was updated.",
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,9 @@
+change_stream_retention: TypeString
+column_family:
+    family: TypeString
+deletion_protection: TypeString
+instance_name: TypeString
+name: TypeString
+project: TypeString
+split_keys: TypeList(TypeString)
+

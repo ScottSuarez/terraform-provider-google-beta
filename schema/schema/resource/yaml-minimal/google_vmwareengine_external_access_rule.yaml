@@ -1,0 +1,19 @@
+action: TypeString
+create_time: TypeString
+description: TypeString
+destination_ip_ranges:
+    external_address: TypeString
+    ip_address_range: TypeString
+destination_ports: TypeList(TypeString)
+ip_protocol: TypeString
+name: TypeString
+parent: TypeString
+priority: TypeInt
+source_ip_ranges:
+    ip_address: TypeString
+    ip_address_range: TypeString
+source_ports: TypeList(TypeString)
+state: TypeString
+uid: TypeString
+update_time: TypeString
+

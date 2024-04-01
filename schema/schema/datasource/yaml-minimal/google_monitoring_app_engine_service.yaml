@@ -1,0 +1,9 @@
+display_name: TypeString
+module_id: TypeString
+name: TypeString
+project: TypeString
+service_id: TypeString
+telemetry:
+    resource_name: TypeString
+user_labels: TypeMap(TypeString)
+

@@ -1,0 +1,146 @@
+{
+    "app_engine": {
+        "ConflictsWith": "cloud_run, cloud_function, serverless_deployment",
+        "Description": "This field is only used for SERVERLESS NEGs.\n\nOnly one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "service": {
+                "Description": "Optional serving service.\nThe service name must be 1-63 characters long, and comply with RFC1035.\nExample value: \"default\", \"my-service\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "url_mask": {
+                "Description": "A template to parse service and version fields from a request URL.\nURL mask allows for routing to multiple App Engine services without\nhaving to create multiple Network Endpoint Groups and backend services.\n\nFor example, the request URLs \"foo1-dot-appname.appspot.com/v1\" and\n\"foo1-dot-appname.appspot.com/v2\" can be backed by the same Serverless NEG with\nURL mask \"-dot-appname.appspot.com/\". The URL mask will parse\nthem to { service = \"foo1\", version = \"v1\" } and { service = \"foo1\", version = \"v2\" } respectively.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "Optional serving version.\nThe version must be 1-63 characters long, and comply with RFC1035.\nExample value: \"v1\", \"v2\".",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cloud_function": {
+        "ConflictsWith": "cloud_run, app_engine, serverless_deployment",
+        "Description": "This field is only used for SERVERLESS NEGs.\n\nOnly one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "function": {
+                "AtLeastOneOf": "cloud_function.0.function, cloud_function.0.url_mask",
+                "Description": "A user-defined name of the Cloud Function.\nThe function name is case-sensitive and must be 1-63 characters long.\nExample value: \"func1\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "url_mask": {
+                "AtLeastOneOf": "cloud_function.0.function, cloud_function.0.url_mask",
+                "Description": "A template to parse function field from a request URL. URL mask allows\nfor routing to multiple Cloud Functions without having to create\nmultiple Network Endpoint Groups and backend services.\n\nFor example, request URLs \"mydomain.com/function1\" and \"mydomain.com/function2\"\ncan be backed by the same Serverless NEG with URL mask \"/\". The URL mask\nwill parse them to { function = \"function1\" } and { function = \"function2\" } respectively.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cloud_run": {
+        "ConflictsWith": "cloud_function, app_engine, serverless_deployment",
+        "Description": "This field is only used for SERVERLESS NEGs.\n\nOnly one of cloud_run, app_engine, cloud_function or serverless_deployment may be set.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "service": {
+                "AtLeastOneOf": "cloud_run.0.service, cloud_run.0.url_mask",
+                "Description": "Cloud Run service is the main resource of Cloud Run.\nThe service must be 1-63 characters long, and comply with RFC1035.\nExample value: \"run-service\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "tag": {
+                "Description": "Cloud Run tag represents the \"named-revision\" to provide\nadditional fine-grained traffic routing information.\nThe tag must be 1-63 characters long, and comply with RFC1035.\nExample value: \"revision-0010\".",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "url_mask": {
+                "AtLeastOneOf": "cloud_run.0.service, cloud_run.0.url_mask",
+                "Description": "A template to parse service and tag fields from a request URL.\nURL mask allows for routing to multiple Run services without having\nto create multiple network endpoint groups and backend services.\n\nFor example, request URLs \"foo1.domain.com/bar1\" and \"foo1.domain.com/bar2\"\nan be backed by the same Serverless Network Endpoint Group (NEG) with\nURL mask \".domain.com/\". The URL mask will parse them to { service=\"bar1\", tag=\"foo1\" }\nand { service=\"bar2\", tag=\"foo2\" } respectively.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "description": {
+        "Description": "An optional description of this resource. Provide this property when\nyou create the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource; provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "This field is only used for PSC and INTERNET NEGs.\n\nThe URL of the network to which all network endpoints in the NEG belong. Uses\n\"default\" project network if unspecified.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "network_endpoint_type": {
+        "Description": "Type of network endpoints in this network endpoint group. Defaults to SERVERLESS. Default value: \"SERVERLESS\" Possible values: [\"SERVERLESS\", \"PRIVATE_SERVICE_CONNECT\", \"INTERNET_IP_PORT\", \"INTERNET_FQDN_PORT\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "psc_target_service": {
+        "Description": "This field is only used for PSC and INTERNET NEGs.\n\nThe target service url used to set up private service connection to\na Google API or a PSC Producer Service Attachment.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "A reference to the region where the regional NEGs reside.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "serverless_deployment": {
+        "ConflictsWith": "cloud_run, cloud_function, app_engine",
+        "Description": "This field is only used for SERVERLESS NEGs.\n\nOnly one of cloudRun, appEngine, cloudFunction or serverlessDeployment may be set.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "platform": {
+                "Description": "The platform of the NEG backend target(s). Possible values:\nAPI Gateway: apigateway.googleapis.com",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "resource": {
+                "Description": "The user-defined name of the workload/instance. This value must be provided explicitly or in the urlMask.\nThe resource identified by this value is platform-specific and is as follows: API Gateway: The gateway ID, App Engine: The service name,\nCloud Functions: The function name, Cloud Run: The service name",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "url_mask": {
+                "Description": "A template to parse platform-specific fields from a request URL. URL mask allows for routing to multiple resources\non the same serverless platform without having to create multiple Network Endpoint Groups and backend resources.\nThe fields parsed by this template are platform-specific and are as follows: API Gateway: The gateway ID,\nApp Engine: The service and version, Cloud Functions: The function name, Cloud Run: The service and tag",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "version": {
+                "Description": "The optional resource version. The version identified by this value is platform-specific and is follows:\nAPI Gateway: Unused, App Engine: The service version, Cloud Functions: Unused, Cloud Run: The service tag",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "subnetwork": {
+        "Description": "This field is only used for PSC NEGs.\n\nOptional URL of the subnetwork to which all network endpoints in the NEG belong.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

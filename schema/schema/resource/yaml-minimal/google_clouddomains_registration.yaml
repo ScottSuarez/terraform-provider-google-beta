@@ -1,0 +1,73 @@
+contact_notices: TypeList(TypeString)
+contact_settings:
+    admin_contact:
+        email: TypeString
+        fax_number: TypeString
+        phone_number: TypeString
+        postal_address:
+            address_lines: TypeList(TypeString)
+            administrative_area: TypeString
+            locality: TypeString
+            organization: TypeString
+            postal_code: TypeString
+            recipients: TypeList(TypeString)
+            region_code: TypeString
+    privacy: TypeString
+    registrant_contact:
+        email: TypeString
+        fax_number: TypeString
+        phone_number: TypeString
+        postal_address:
+            address_lines: TypeList(TypeString)
+            administrative_area: TypeString
+            locality: TypeString
+            organization: TypeString
+            postal_code: TypeString
+            recipients: TypeList(TypeString)
+            region_code: TypeString
+    technical_contact:
+        email: TypeString
+        fax_number: TypeString
+        phone_number: TypeString
+        postal_address:
+            address_lines: TypeList(TypeString)
+            administrative_area: TypeString
+            locality: TypeString
+            organization: TypeString
+            postal_code: TypeString
+            recipients: TypeList(TypeString)
+            region_code: TypeString
+create_time: TypeString
+dns_settings:
+    custom_dns:
+        ds_records:
+            algorithm: TypeString
+            digest: TypeString
+            digest_type: TypeString
+            key_tag: TypeInt
+        name_servers: TypeList(TypeString)
+    glue_records:
+        host_name: TypeString
+        ipv4_addresses: TypeList(TypeString)
+        ipv6_addresses: TypeList(TypeString)
+domain_name: TypeString
+domain_notices: TypeList(TypeString)
+effective_labels: TypeMap(TypeString)
+expire_time: TypeString
+issues: TypeList(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+management_settings:
+    preferred_renewal_method: TypeString
+    renewal_method: TypeString
+    transfer_lock_state: TypeString
+name: TypeString
+project: TypeString
+register_failure_reason: TypeString
+state: TypeString
+supported_privacy: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+yearly_price:
+    currency_code: TypeString
+    units: TypeString
+

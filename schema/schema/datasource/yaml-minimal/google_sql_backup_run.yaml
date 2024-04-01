@@ -1,0 +1,8 @@
+backup_id: TypeInt
+instance: TypeString
+location: TypeString
+most_recent: TypeBool
+project: TypeString
+start_time: TypeString
+status: TypeString
+

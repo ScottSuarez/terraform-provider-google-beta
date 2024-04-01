@@ -1,0 +1,7 @@
+create_time: TypeString
+name: TypeString
+parent: TypeString
+scopes: TypeList(TypeString)
+title: TypeString
+update_time: TypeString
+

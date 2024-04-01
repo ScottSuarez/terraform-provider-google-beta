@@ -1,0 +1,52 @@
+{
+    "crypto_key_name": {
+        "Description": "Resource name of the KMS key to use. Only regional keys are supported. Format: 'projects/{{project}}/locations/{{location}}/keyRings/{{key_ring}}/cryptoKeys/{{key}}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Description for the CMEK policy.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "instructions": {
+        "Computed": true,
+        "Description": "Access to the key needs to be granted. The instructions contain gcloud commands to run to grant access.\n\nTo make the policy work, a CMEK policy check is required, which verifies key access.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Labels as key value pairs. Example: '{ \"owner\": \"Bob\", \"department\": \"finance\", \"purpose\": \"testing\" }'.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "Name of the policy location. CMEK policies apply to the whole region.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the CMEK policy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service_account": {
+        "Computed": true,
+        "Description": "The Service account which needs to have access to the  provided KMS key.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    }
+}

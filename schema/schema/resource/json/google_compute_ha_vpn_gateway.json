@@ -1,0 +1,60 @@
+{
+    "description": {
+        "Description": "An optional description of this resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035.  Specifically, the name must be 1-63 characters long and\nmatch the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means\nthe first character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "The network this VPN gateway is accepting traffic for.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "The region this gateway should sit in.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "stack_type": {
+        "Description": "The stack type for this VPN gateway to identify the IP protocols that are enabled.\nIf not specified, IPV4_ONLY will be used. Default value: \"IPV4_ONLY\" Possible values: [\"IPV4_ONLY\", \"IPV4_IPV6\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "vpn_interfaces": {
+        "Computed": true,
+        "Description": "A list of interfaces on this VPN gateway.",
+        "Optional": true,
+        "Properties": {
+            "id": {
+                "Description": "The numeric ID of this VPN gateway interface.",
+                "Optional": true,
+                "Type": "TypeInt"
+            },
+            "interconnect_attachment": {
+                "Description": "URL of the interconnect attachment resource. When the value\nof this field is present, the VPN Gateway will be used for\nIPsec-encrypted Cloud Interconnect; all Egress or Ingress\ntraffic for this VPN Gateway interface will go through the\nspecified interconnect attachment resource.\n\nNot currently available publicly.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "ip_address": {
+                "Computed": true,
+                "Description": "The external IP address for this VPN gateway interface.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

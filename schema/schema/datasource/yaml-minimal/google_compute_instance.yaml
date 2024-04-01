@@ -1,0 +1,128 @@
+advanced_machine_features:
+    enable_nested_virtualization: TypeBool
+    threads_per_core: TypeInt
+    visible_core_count: TypeInt
+allow_stopping_for_update: TypeBool
+attached_disk:
+    device_name: TypeString
+    disk_encryption_key_raw: TypeString
+    disk_encryption_key_sha256: TypeString
+    kms_key_self_link: TypeString
+    mode: TypeString
+    source: TypeString
+boot_disk:
+    auto_delete: TypeBool
+    device_name: TypeString
+    disk_encryption_key_raw: TypeString
+    disk_encryption_key_sha256: TypeString
+    initialize_params:
+        enable_confidential_compute: TypeBool
+        image: TypeString
+        labels: unknown
+        provisioned_iops: TypeInt
+        provisioned_throughput: TypeInt
+        resource_manager_tags: unknown
+        size: TypeInt
+        type: TypeString
+    kms_key_self_link: TypeString
+    mode: TypeString
+    source: TypeString
+can_ip_forward: TypeBool
+confidential_instance_config:
+    confidential_instance_type: TypeString
+    enable_confidential_compute: TypeBool
+cpu_platform: TypeString
+current_status: TypeString
+deletion_protection: TypeBool
+description: TypeString
+desired_status: TypeString
+effective_labels: TypeMap(TypeString)
+enable_display: TypeBool
+guest_accelerator:
+    count: TypeInt
+    type: TypeString
+hostname: TypeString
+instance_id: TypeString
+label_fingerprint: TypeString
+labels: TypeMap(TypeString)
+machine_type: TypeString
+metadata: TypeMap(TypeString)
+metadata_fingerprint: TypeString
+metadata_startup_script: TypeString
+min_cpu_platform: TypeString
+name: TypeString
+network_interface:
+    access_config:
+        nat_ip: TypeString
+        network_tier: TypeString
+        public_ptr_domain_name: TypeString
+        security_policy: TypeString
+    alias_ip_range:
+        ip_cidr_range: TypeString
+        subnetwork_range_name: TypeString
+    internal_ipv6_prefix_length: TypeInt
+    ipv6_access_config:
+        external_ipv6: TypeString
+        external_ipv6_prefix_length: TypeString
+        name: TypeString
+        network_tier: TypeString
+        public_ptr_domain_name: TypeString
+        security_policy: TypeString
+    ipv6_access_type: TypeString
+    ipv6_address: TypeString
+    name: TypeString
+    network: TypeString
+    network_attachment: TypeString
+    network_ip: TypeString
+    nic_type: TypeString
+    queue_count: TypeInt
+    security_policy: TypeString
+    stack_type: TypeString
+    subnetwork: TypeString
+    subnetwork_project: TypeString
+network_performance_config:
+    total_egress_bandwidth_tier: TypeString
+params:
+    resource_manager_tags: unknown
+project: TypeString
+reservation_affinity:
+    specific_reservation:
+        key: TypeString
+        values: TypeList(TypeString)
+    type: TypeString
+resource_policies: TypeList(TypeString)
+scheduling:
+    automatic_restart: TypeBool
+    instance_termination_action: TypeString
+    local_ssd_recovery_timeout:
+        nanos: TypeInt
+        seconds: TypeInt
+    maintenance_interval: TypeString
+    max_run_duration:
+        nanos: TypeInt
+        seconds: TypeInt
+    min_node_cpus: TypeInt
+    node_affinities:
+        key: TypeString
+        operator: TypeString
+        values: TypeSet(TypeString)
+    on_host_maintenance: TypeString
+    preemptible: TypeBool
+    provisioning_model: TypeString
+scratch_disk:
+    device_name: TypeString
+    interface: TypeString
+    size: TypeInt
+self_link: TypeString
+service_account:
+    email: TypeString
+    scopes: TypeSet(TypeString)
+shielded_instance_config:
+    enable_integrity_monitoring: TypeBool
+    enable_secure_boot: TypeBool
+    enable_vtpm: TypeBool
+tags: TypeSet(TypeString)
+tags_fingerprint: TypeString
+terraform_labels: TypeMap(TypeString)
+zone: TypeString
+

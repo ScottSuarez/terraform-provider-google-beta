@@ -1,0 +1,10 @@
+display_name:
+    Type: TypeString
+    Required: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+parent:
+    Type: TypeString
+    Required: "true"
+

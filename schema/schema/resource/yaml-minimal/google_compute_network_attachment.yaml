@@ -1,0 +1,22 @@
+connection_endpoints:
+    ip_address: TypeString
+    project_id_or_num: TypeString
+    secondary_ip_cidr_ranges: TypeString
+    status: TypeString
+    subnetwork: TypeString
+connection_preference: TypeString
+creation_timestamp: TypeString
+description: TypeString
+fingerprint: TypeString
+id: TypeString
+kind: TypeString
+name: TypeString
+network: TypeString
+producer_accept_lists: TypeList(TypeString)
+producer_reject_lists: TypeList(TypeString)
+project: TypeString
+region: TypeString
+self_link: TypeString
+self_link_with_id: TypeString
+subnetworks: TypeList(TypeString)
+

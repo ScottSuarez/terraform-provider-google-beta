@@ -41,7 +41,7 @@ func main() {
 
 	fl := filelogger.NewFileLogger("schema")
 
-	for name, r := range provider.GENERATED_RESOURCES {
+	for name, r := range provider.ResourceMap() {
 		yamlSchema := createMinimalResourceSchema(r.Schema, "resource", name)
 		fl.LogData("resource", name+".yaml", yamlSchema)
 
@@ -49,7 +49,7 @@ func main() {
 		fl.LogData("resource", name+".json", jsonSchema)
 	}
 
-	for name, r := range provider.GENERATED_DATASOURCES {
+	for name, r := range provider.DatasourceMap() {
 		yamlSchema := createMinimalResourceSchema(r.Schema, "datasource", name)
 		fl.LogData("datasource", name+".yaml", yamlSchema)
 

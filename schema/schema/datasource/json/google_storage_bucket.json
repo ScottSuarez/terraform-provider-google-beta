@@ -1,0 +1,304 @@
+{
+    "autoclass": {
+        "Computed": true,
+        "Description": "The bucket's autoclass configuration.",
+        "Properties": {
+            "enabled": {
+                "Computed": true,
+                "Description": "While set to true, autoclass automatically transitions objects in your bucket to appropriate storage classes based on each object's access pattern.",
+                "Type": "TypeBool"
+            },
+            "terminal_storage_class": {
+                "Computed": true,
+                "Description": "The storage class that objects in the bucket eventually transition to if they are not read for a certain length of time. Supported values include: NEARLINE, ARCHIVE.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cors": {
+        "Computed": true,
+        "Description": "The bucket's Cross-Origin Resource Sharing (CORS) configuration.",
+        "Properties": {
+            "max_age_seconds": {
+                "Computed": true,
+                "Description": "The value, in seconds, to return in the Access-Control-Max-Age header used in preflight responses.",
+                "Type": "TypeInt"
+            },
+            "method": {
+                "Computed": true,
+                "Description": "The list of HTTP methods on which to include CORS response headers, (GET, OPTIONS, POST, etc) Note: \"*\" is permitted in the list of methods, and means \"any method\".",
+                "Type": "TypeList"
+            },
+            "origin": {
+                "Computed": true,
+                "Description": "The list of Origins eligible to receive CORS response headers. Note: \"*\" is permitted in the list of origins, and means \"any Origin\".",
+                "Type": "TypeList"
+            },
+            "response_header": {
+                "Computed": true,
+                "Description": "The list of HTTP headers other than the simple response headers to give permission for the user-agent to share across domains.",
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "custom_placement_config": {
+        "Computed": true,
+        "Description": "The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty.",
+        "Properties": {
+            "data_locations": {
+                "Computed": true,
+                "Description": "The list of individual regions that comprise a dual-region bucket. See the docs for a list of acceptable regions. Note: If any of the data_locations changes, it will recreate the bucket.",
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "default_event_based_hold": {
+        "Computed": true,
+        "Description": "Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.",
+        "Type": "TypeBool"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "enable_object_retention": {
+        "Computed": true,
+        "Description": "Enables each object in the bucket to have its own retention policy, which prevents deletion until stored for a specific length of time.",
+        "Type": "TypeBool"
+    },
+    "encryption": {
+        "Computed": true,
+        "Description": "The bucket's encryption configuration.",
+        "Properties": {
+            "default_kms_key_name": {
+                "Computed": true,
+                "Description": "A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified. You must pay attention to whether the crypto key is available in the location that this bucket is created in. See the docs for more details.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "force_destroy": {
+        "Computed": true,
+        "Description": "When deleting a bucket, this boolean option will delete all contained objects. If you try to delete a bucket that contains objects, Terraform will fail that run.",
+        "Type": "TypeBool"
+    },
+    "labels": {
+        "Computed": true,
+        "Description": "A set of key/value label pairs to assign to the bucket.",
+        "Type": "TypeMap"
+    },
+    "lifecycle_rule": {
+        "Computed": true,
+        "Description": "The bucket's Lifecycle Rules configuration.",
+        "Properties": {
+            "action": {
+                "Computed": true,
+                "Description": "The Lifecycle Rule's action configuration. A single block of this type is supported.",
+                "Properties": {
+                    "storage_class": {
+                        "Computed": true,
+                        "Description": "The target Storage Class of objects affected by this Lifecycle Rule. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.",
+                        "Type": "TypeString"
+                    },
+                    "type": {
+                        "Computed": true,
+                        "Description": "The type of the action of this Lifecycle Rule. Supported values include: Delete, SetStorageClass and AbortIncompleteMultipartUpload.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            },
+            "condition": {
+                "Computed": true,
+                "Description": "The Lifecycle Rule's condition configuration.",
+                "Properties": {
+                    "age": {
+                        "Computed": true,
+                        "Description": "Minimum age of an object in days to satisfy this condition.",
+                        "Type": "TypeInt"
+                    },
+                    "created_before": {
+                        "Computed": true,
+                        "Description": "Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.",
+                        "Type": "TypeString"
+                    },
+                    "custom_time_before": {
+                        "Computed": true,
+                        "Description": "Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.",
+                        "Type": "TypeString"
+                    },
+                    "days_since_custom_time": {
+                        "Computed": true,
+                        "Description": "Number of days elapsed since the user-specified timestamp set on an object.",
+                        "Type": "TypeInt"
+                    },
+                    "days_since_noncurrent_time": {
+                        "Computed": true,
+                        "Description": "Number of days elapsed since the noncurrent timestamp of an object. This\n\t\t\t\t\t\t\t\t\t\tcondition is relevant only for versioned objects.",
+                        "Type": "TypeInt"
+                    },
+                    "matches_prefix": {
+                        "Computed": true,
+                        "Description": "One or more matching name prefixes to satisfy this condition.",
+                        "Type": "TypeList"
+                    },
+                    "matches_storage_class": {
+                        "Computed": true,
+                        "Description": "Storage Class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE, STANDARD, DURABLE_REDUCED_AVAILABILITY.",
+                        "Type": "TypeList"
+                    },
+                    "matches_suffix": {
+                        "Computed": true,
+                        "Description": "One or more matching name suffixes to satisfy this condition.",
+                        "Type": "TypeList"
+                    },
+                    "no_age": {
+                        "Computed": true,
+                        "Description": "While set true, age value will be omitted.Required to set true when age is unset in the config file.",
+                        "Type": "TypeBool"
+                    },
+                    "noncurrent_time_before": {
+                        "Computed": true,
+                        "Description": "Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.",
+                        "Type": "TypeString"
+                    },
+                    "num_newer_versions": {
+                        "Computed": true,
+                        "Description": "Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.",
+                        "Type": "TypeInt"
+                    },
+                    "with_state": {
+                        "Computed": true,
+                        "Description": "Match to live and/or archived objects. Unversioned buckets have only live objects. Supported values include: \"LIVE\", \"ARCHIVED\", \"ANY\".",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeSet"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Computed": true,
+        "Description": "The Google Cloud Storage location",
+        "Type": "TypeString"
+    },
+    "logging": {
+        "Computed": true,
+        "Description": "The bucket's Access \u0026 Storage Logs configuration.",
+        "Properties": {
+            "log_bucket": {
+                "Computed": true,
+                "Description": "The bucket that will receive log objects.",
+                "Type": "TypeString"
+            },
+            "log_object_prefix": {
+                "Computed": true,
+                "Description": "The object prefix for log objects. If it's not provided, by default Google Cloud Storage sets this to this bucket's name.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "The name of the bucket.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project in which the resource belongs. If it is not provided, the provider project is used.",
+        "Type": "TypeString"
+    },
+    "public_access_prevention": {
+        "Computed": true,
+        "Description": "Prevents public access to a bucket.",
+        "Type": "TypeString"
+    },
+    "requester_pays": {
+        "Computed": true,
+        "Description": "Enables Requester Pays on a storage bucket.",
+        "Type": "TypeBool"
+    },
+    "retention_policy": {
+        "Computed": true,
+        "Description": "Configuration of the bucket's data retention policy for how long objects in the bucket should be retained.",
+        "Properties": {
+            "is_locked": {
+                "Computed": true,
+                "Description": "If set to true, the bucket will be locked and permanently restrict edits to the bucket's retention policy.  Caution: Locking a bucket is an irreversible action.",
+                "Type": "TypeBool"
+            },
+            "retention_period": {
+                "Computed": true,
+                "Description": "The period of time, in seconds, that objects in the bucket must be retained and cannot be deleted, overwritten, or archived. The value must be less than 3,155,760,000 seconds.",
+                "Type": "TypeInt"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "rpo": {
+        "Computed": true,
+        "Description": "Specifies the RPO setting of bucket. If set 'ASYNC_TURBO', The Turbo Replication will be enabled for the dual-region bucket. Value 'DEFAULT' will set RPO setting to default. Turbo Replication is only for buckets in dual-regions.See the docs for more details.",
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Description": "The URI of the created resource.",
+        "Type": "TypeString"
+    },
+    "storage_class": {
+        "Computed": true,
+        "Description": "The Storage Class of the new bucket. Supported values include: STANDARD, MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uniform_bucket_level_access": {
+        "Computed": true,
+        "Description": "Enables uniform bucket-level access on a bucket.",
+        "Type": "TypeBool"
+    },
+    "url": {
+        "Computed": true,
+        "Description": "The base URL of the bucket, in the format gs://\u003cbucket-name\u003e.",
+        "Type": "TypeString"
+    },
+    "versioning": {
+        "Computed": true,
+        "Description": "The bucket's Versioning configuration.",
+        "Properties": {
+            "enabled": {
+                "Computed": true,
+                "Description": "While set to true, versioning is fully enabled for this bucket.",
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "website": {
+        "Computed": true,
+        "Description": "Configuration if the bucket acts as a website.",
+        "Properties": {
+            "main_page_suffix": {
+                "Computed": true,
+                "Description": "Behaves as the bucket's directory index where missing objects are treated as potential directories.",
+                "Type": "TypeString"
+            },
+            "not_found_page": {
+                "Computed": true,
+                "Description": "The custom object to return when a requested resource is not found.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

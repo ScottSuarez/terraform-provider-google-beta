@@ -1,0 +1,137 @@
+database_version: TypeString
+instances:
+    available_maintenance_versions: TypeList(TypeString)
+    clone:
+        allocated_ip_range: TypeString
+        database_names: TypeList(TypeString)
+        point_in_time: TypeString
+        preferred_zone: TypeString
+        source_instance_name: TypeString
+    connection_name: TypeString
+    database_version: TypeString
+    deletion_protection: TypeBool
+    dns_name: TypeString
+    encryption_key_name: TypeString
+    first_ip_address: TypeString
+    instance_type: TypeString
+    ip_address:
+        ip_address: TypeString
+        time_to_retire: TypeString
+        type: TypeString
+    maintenance_version: TypeString
+    master_instance_name: TypeString
+    name: TypeString
+    private_ip_address: TypeString
+    project: TypeString
+    psc_service_attachment_link: TypeString
+    public_ip_address: TypeString
+    region: TypeString
+    replica_configuration:
+        ca_certificate: TypeString
+        client_certificate: TypeString
+        client_key: TypeString
+        connect_retry_interval: TypeInt
+        dump_file_path: TypeString
+        failover_target: TypeBool
+        master_heartbeat_period: TypeInt
+        password: TypeString
+        ssl_cipher: TypeString
+        username: TypeString
+        verify_server_certificate: TypeBool
+    restore_backup_context:
+        backup_run_id: TypeInt
+        instance_id: TypeString
+        project: TypeString
+    root_password: TypeString
+    self_link: TypeString
+    server_ca_cert:
+        cert: TypeString
+        common_name: TypeString
+        create_time: TypeString
+        expiration_time: TypeString
+        sha1_fingerprint: TypeString
+    service_account_email_address: TypeString
+    settings:
+        activation_policy: TypeString
+        active_directory_config:
+            domain: TypeString
+        advanced_machine_features:
+            threads_per_core: TypeInt
+        availability_type: TypeString
+        backup_configuration:
+            backup_retention_settings:
+                retained_backups: TypeInt
+                retention_unit: TypeString
+            binary_log_enabled: TypeBool
+            enabled: TypeBool
+            location: TypeString
+            point_in_time_recovery_enabled: TypeBool
+            start_time: TypeString
+            transaction_log_retention_days: TypeInt
+        collation: TypeString
+        connector_enforcement: TypeString
+        data_cache_config:
+            data_cache_enabled: TypeBool
+        database_flags:
+            name: TypeString
+            value: TypeString
+        deletion_protection_enabled: TypeBool
+        deny_maintenance_period:
+            end_date: TypeString
+            start_date: TypeString
+            time: TypeString
+        disk_autoresize: TypeBool
+        disk_autoresize_limit: TypeInt
+        disk_size: TypeInt
+        disk_type: TypeString
+        edition: TypeString
+        insights_config:
+            query_insights_enabled: TypeBool
+            query_plans_per_minute: TypeInt
+            query_string_length: TypeInt
+            record_application_tags: TypeBool
+            record_client_address: TypeBool
+        ip_configuration:
+            allocated_ip_range: TypeString
+            authorized_networks:
+                expiration_time: TypeString
+                name: TypeString
+                value: TypeString
+            enable_private_path_for_google_cloud_services: TypeBool
+            ipv4_enabled: TypeBool
+            private_network: TypeString
+            psc_config:
+                allowed_consumer_projects: TypeSet(TypeString)
+                psc_enabled: TypeBool
+            require_ssl: TypeBool
+            ssl_mode: TypeString
+        location_preference:
+            follow_gae_application: TypeString
+            secondary_zone: TypeString
+            zone: TypeString
+        maintenance_window:
+            day: TypeInt
+            hour: TypeInt
+            update_track: TypeString
+        password_validation_policy:
+            complexity: TypeString
+            disallow_username_substring: TypeBool
+            enable_password_policy: TypeBool
+            min_length: TypeInt
+            password_change_interval: TypeString
+            reuse_interval: TypeInt
+        pricing_plan: TypeString
+        sql_server_audit_config:
+            bucket: TypeString
+            retention_interval: TypeString
+            upload_interval: TypeString
+        tier: TypeString
+        time_zone: TypeString
+        user_labels: TypeMap(TypeString)
+        version: TypeInt
+project: TypeString
+region: TypeString
+state: TypeString
+tier: TypeString
+zone: TypeString
+

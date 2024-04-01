@@ -1,0 +1,440 @@
+create_time:
+    Type: TypeString
+    Description: Output only. When the Feature resource was created.
+    Computed: "true"
+delete_time:
+    Type: TypeString
+    Description: Output only. When the Feature resource was deleted.
+    Computed: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+fleet_default_member_config:
+    Type: TypeList
+    Description: Optional. Fleet Default Membership Configuration.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        configmanagement:
+            Type: TypeList
+            Description: Config Management spec
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                config_sync:
+                    Type: TypeList
+                    Description: ConfigSync configuration for the cluster
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        git:
+                            Type: TypeList
+                            Description: Git repo configuration for the cluster
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                gcp_service_account_email:
+                                    Type: TypeString
+                                    Description: The Google Cloud Service Account Email used for auth when secretType is gcpServiceAccount
+                                    Optional: "true"
+                                https_proxy:
+                                    Type: TypeString
+                                    Description: URL for the HTTPS Proxy to be used when communicating with the Git repo
+                                    Optional: "true"
+                                policy_dir:
+                                    Type: TypeString
+                                    Description: The path within the Git repository that represents the top level of the repo to sync
+                                    Optional: "true"
+                                secret_type:
+                                    Type: TypeString
+                                    Description: Type of secret configured for access to the Git repo
+                                    Required: "true"
+                                sync_branch:
+                                    Type: TypeString
+                                    Description: 'The branch of the repository to sync from. Default: master'
+                                    Optional: "true"
+                                sync_repo:
+                                    Type: TypeString
+                                    Description: The URL of the Git repository to use as the source of truth
+                                    Optional: "true"
+                                sync_rev:
+                                    Type: TypeString
+                                    Description: Git revision (tag or hash) to check out. Default HEAD
+                                    Optional: "true"
+                                sync_wait_secs:
+                                    Type: TypeString
+                                    Description: 'Period in seconds between consecutive syncs. Default: 15'
+                                    Optional: "true"
+                        oci:
+                            Type: TypeList
+                            Description: OCI repo configuration for the cluster
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                gcp_service_account_email:
+                                    Type: TypeString
+                                    Description: The Google Cloud Service Account Email used for auth when secretType is gcpServiceAccount
+                                    Optional: "true"
+                                policy_dir:
+                                    Type: TypeString
+                                    Description: 'The absolute path of the directory that contains the local resources. Default: the root directory of the image'
+                                    Optional: "true"
+                                secret_type:
+                                    Type: TypeString
+                                    Description: Type of secret configured for access to the Git repo
+                                    Required: "true"
+                                sync_repo:
+                                    Type: TypeString
+                                    Description: The OCI image repository URL for the package to sync from
+                                    Optional: "true"
+                                sync_wait_secs:
+                                    Type: TypeString
+                                    Description: 'Period in seconds between consecutive syncs. Default: 15'
+                                    Optional: "true"
+                                version:
+                                    Type: TypeString
+                                    Description: Version of ACM installed
+                                    Optional: "true"
+                        source_format:
+                            Type: TypeString
+                            Description: Specifies whether the Config Sync Repo is in hierarchical or unstructured mode
+                            Optional: "true"
+                version:
+                    Type: TypeString
+                    Description: Version of ACM installed
+                    Optional: "true"
+        mesh:
+            Type: TypeList
+            Description: Service Mesh spec
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                management:
+                    Type: TypeString
+                    Description: 'Whether to automatically manage Service Mesh Possible values: ["MANAGEMENT_UNSPECIFIED", "MANAGEMENT_AUTOMATIC", "MANAGEMENT_MANUAL"]'
+                    Required: "true"
+        policycontroller:
+            Type: TypeList
+            Description: Policy Controller spec
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                policy_controller_hub_config:
+                    Type: TypeList
+                    Description: Configuration of Policy Controller
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        audit_interval_seconds:
+                            Type: TypeInt
+                            Description: Interval for Policy Controller Audit scans (in seconds). When set to 0, this disables audit functionality altogether.
+                            Optional: "true"
+                        constraint_violation_limit:
+                            Type: TypeInt
+                            Description: The maximum number of audit violations to be stored in a constraint. If not set, the internal default of 20 will be used.
+                            Optional: "true"
+                        deployment_configs:
+                            Type: TypeSet
+                            Description: Map of deployment configs to deployments ("admission", "audit", "mutation").
+                            Computed: "true"
+                            Optional: "true"
+                            Properties:
+                                component:
+                                    Type: TypeString
+                                    Required: "true"
+                                container_resources:
+                                    Type: TypeList
+                                    Description: Container resource requirements.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        limits:
+                                            Type: TypeList
+                                            Description: Limits describes the maximum amount of compute resources allowed for use by the running container.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                cpu:
+                                                    Type: TypeString
+                                                    Description: CPU requirement expressed in Kubernetes resource units.
+                                                    Optional: "true"
+                                                memory:
+                                                    Type: TypeString
+                                                    Description: Memory requirement expressed in Kubernetes resource units.
+                                                    Optional: "true"
+                                        requests:
+                                            Type: TypeList
+                                            Description: Requests describes the amount of compute resources reserved for the container by the kube-scheduler.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                cpu:
+                                                    Type: TypeString
+                                                    Description: CPU requirement expressed in Kubernetes resource units.
+                                                    Optional: "true"
+                                                memory:
+                                                    Type: TypeString
+                                                    Description: Memory requirement expressed in Kubernetes resource units.
+                                                    Optional: "true"
+                                pod_affinity:
+                                    Type: TypeString
+                                    Description: 'Pod affinity configuration. Possible values: ["AFFINITY_UNSPECIFIED", "NO_AFFINITY", "ANTI_AFFINITY"]'
+                                    Computed: "true"
+                                    Optional: "true"
+                                pod_toleration:
+                                    Type: TypeList
+                                    Description: Pod tolerations of node taints.
+                                    Optional: "true"
+                                    Properties:
+                                        effect:
+                                            Type: TypeString
+                                            Description: Matches a taint effect.
+                                            Optional: "true"
+                                        key:
+                                            Type: TypeString
+                                            Description: Matches a taint key (not necessarily unique).
+                                            Optional: "true"
+                                        operator:
+                                            Type: TypeString
+                                            Description: Matches a taint operator.
+                                            Optional: "true"
+                                        value:
+                                            Type: TypeString
+                                            Description: Matches a taint value.
+                                            Optional: "true"
+                                replica_count:
+                                    Type: TypeInt
+                                    Description: Pod replica count.
+                                    Computed: "true"
+                                    Optional: "true"
+                        exemptable_namespaces:
+                            Type: TypeList
+                            Description: The set of namespaces that are excluded from Policy Controller checks. Namespaces do not need to currently exist on the cluster.
+                            Optional: "true"
+                        install_spec:
+                            Type: TypeString
+                            Description: 'Configures the mode of the Policy Controller installation Possible values: ["INSTALL_SPEC_UNSPECIFIED", "INSTALL_SPEC_NOT_INSTALLED", "INSTALL_SPEC_ENABLED", "INSTALL_SPEC_SUSPENDED", "INSTALL_SPEC_DETACHED"]'
+                            Required: "true"
+                        log_denies_enabled:
+                            Type: TypeBool
+                            Description: Logs all denies and dry run failures.
+                            Optional: "true"
+                        monitoring:
+                            Type: TypeList
+                            Description: Monitoring specifies the configuration of monitoring Policy Controller.
+                            Computed: "true"
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                backends:
+                                    Type: TypeList
+                                    Description: 'Specifies the list of backends Policy Controller will export to. An empty list would effectively disable metrics export. Possible values: ["MONITORING_BACKEND_UNSPECIFIED", "PROMETHEUS", "CLOUD_MONITORING"]'
+                                    Computed: "true"
+                                    Optional: "true"
+                        mutation_enabled:
+                            Type: TypeBool
+                            Description: Enables the ability to mutate resources using Policy Controller.
+                            Optional: "true"
+                        policy_content:
+                            Type: TypeList
+                            Description: Specifies the desired policy content on the cluster.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                bundles:
+                                    Type: TypeSet
+                                    Description: Configures which bundles to install and their corresponding install specs.
+                                    Optional: "true"
+                                    Properties:
+                                        bundle:
+                                            Type: TypeString
+                                            Required: "true"
+                                        exempted_namespaces:
+                                            Type: TypeList
+                                            Description: The set of namespaces to be exempted from the bundle.
+                                            Optional: "true"
+                                template_library:
+                                    Type: TypeList
+                                    Description: Configures the installation of the Template Library.
+                                    Computed: "true"
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        installation:
+                                            Type: TypeString
+                                            Description: 'Configures the manner in which the template library is installed on the cluster. Possible values: ["INSTALATION_UNSPECIFIED", "NOT_INSTALLED", "ALL"]'
+                                            Optional: "true"
+                        referential_rules_enabled:
+                            Type: TypeBool
+                            Description: Enables the ability to use Constraint Templates that reference to objects other than the object currently being evaluated.
+                            Optional: "true"
+                version:
+                    Type: TypeString
+                    Description: Configures the version of Policy Controller
+                    Computed: "true"
+                    Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        GCP labels for this Feature.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The full, unique name of this Feature resource
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+resource_state:
+    Type: TypeList
+    Description: State of the Feature resource itself.
+    Computed: "true"
+    Properties:
+        has_resources:
+            Type: TypeBool
+            Description: Whether this Feature has outstanding resources that need to be cleaned up before it can be disabled.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: The current state of the Feature resource in the Hub API.
+            Computed: "true"
+spec:
+    Type: TypeList
+    Description: Optional. Hub-wide Feature configuration. If this Feature does not support any Hub-wide configuration, this field may be unused.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        clusterupgrade:
+            Type: TypeList
+            Description: Clusterupgrade feature spec.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                gke_upgrade_overrides:
+                    Type: TypeList
+                    Description: Configuration overrides for individual upgrades.
+                    Optional: "true"
+                    Properties:
+                        post_conditions:
+                            Type: TypeList
+                            Description: Post conditions to override for the specified upgrade.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                soaking:
+                                    Type: TypeString
+                                    Description: Amount of time to "soak" after a rollout has been finished before marking it COMPLETE. Cannot exceed 30 days.
+                                    Required: "true"
+                        upgrade:
+                            Type: TypeList
+                            Description: Which upgrade to override.
+                            Required: "true"
+                            MaxItems: "1"
+                            Properties:
+                                name:
+                                    Type: TypeString
+                                    Description: Name of the upgrade, e.g., "k8s_control_plane". It should be a valid upgrade name. It must not exceet 99 characters.
+                                    Required: "true"
+                                version:
+                                    Type: TypeString
+                                    Description: Version of the upgrade, e.g., "1.22.1-gke.100". It should be a valid version. It must not exceet 99 characters.
+                                    Required: "true"
+                post_conditions:
+                    Type: TypeList
+                    Description: Post conditions to override for the specified upgrade.
+                    Computed: "true"
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        soaking:
+                            Type: TypeString
+                            Description: Amount of time to "soak" after a rollout has been finished before marking it COMPLETE. Cannot exceed 30 days.
+                            Required: "true"
+                upstream_fleets:
+                    Type: TypeList
+                    Description: Specified if other fleet should be considered as a source of upgrades. Currently, at most one upstream fleet is allowed. The fleet name should be either fleet project number or id.
+                    Required: "true"
+        fleetobservability:
+            Type: TypeList
+            Description: Fleet Observability feature spec.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                logging_config:
+                    Type: TypeList
+                    Description: Specified if fleet logging feature is enabled for the entire fleet. If UNSPECIFIED, fleet logging feature is disabled for the entire fleet.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        default_config:
+                            Type: TypeList
+                            Description: Specified if applying the default routing config to logs not specified in other configs.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                mode:
+                                    Type: TypeString
+                                    Description: 'Specified if fleet logging feature is enabled. Possible values: ["MODE_UNSPECIFIED", "COPY", "MOVE"]'
+                                    Optional: "true"
+                        fleet_scope_logs_config:
+                            Type: TypeList
+                            Description: Specified if applying the routing config to all logs for all fleet scopes.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                mode:
+                                    Type: TypeString
+                                    Description: 'Specified if fleet logging feature is enabled. Possible values: ["MODE_UNSPECIFIED", "COPY", "MOVE"]'
+                                    Optional: "true"
+        multiclusteringress:
+            Type: TypeList
+            Description: Multicluster Ingress-specific spec.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                config_membership:
+                    Type: TypeString
+                    Description: 'Fully-qualified Membership name which hosts the MultiClusterIngress CRD. Example: ''projects/foo-proj/locations/global/memberships/bar'''
+                    Required: "true"
+state:
+    Type: TypeList
+    Description: Output only. The Hub-wide Feature state
+    Computed: "true"
+    Properties:
+        state:
+            Type: TypeList
+            Description: Output only. The "running state" of the Feature in this Hub.
+            Computed: "true"
+            Properties:
+                code:
+                    Type: TypeString
+                    Description: The high-level, machine-readable status of this Feature.
+                    Computed: "true"
+                description:
+                    Type: TypeString
+                    Description: A human-readable description of the current status.
+                    Computed: "true"
+                update_time:
+                    Type: TypeString
+                    Description: 'The time this status and any related Feature-specific details were updated. A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z"'
+                    Computed: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Output only. When the Feature resource was last updated.
+    Computed: "true"
+

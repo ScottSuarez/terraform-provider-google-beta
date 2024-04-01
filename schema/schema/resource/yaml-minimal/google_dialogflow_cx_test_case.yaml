@@ -1,0 +1,71 @@
+creation_time: TypeString
+display_name: TypeString
+last_test_result:
+    conversation_turns:
+        user_input:
+            enable_sentiment_analysis: TypeBool
+            injected_parameters: TypeString
+            input:
+                dtmf:
+                    digits: TypeString
+                    finish_digit: TypeString
+                event:
+                    event: TypeString
+                language_code: TypeString
+                text:
+                    text: TypeString
+            is_webhook_enabled: TypeBool
+        virtual_agent_output:
+            current_page:
+                display_name: TypeString
+                name: TypeString
+            differences:
+                description: TypeString
+                type: TypeString
+            session_parameters: TypeString
+            status:
+                code: TypeInt
+                details: TypeString
+                message: TypeString
+            text_responses:
+                text: TypeList(TypeString)
+            triggered_intent:
+                display_name: TypeString
+                name: TypeString
+    environment: TypeString
+    name: TypeString
+    test_result: TypeString
+    test_time: TypeString
+name: TypeString
+notes: TypeString
+parent: TypeString
+tags: TypeList(TypeString)
+test_case_conversation_turns:
+    user_input:
+        enable_sentiment_analysis: TypeBool
+        injected_parameters: TypeString
+        input:
+            dtmf:
+                digits: TypeString
+                finish_digit: TypeString
+            event:
+                event: TypeString
+            language_code: TypeString
+            text:
+                text: TypeString
+        is_webhook_enabled: TypeBool
+    virtual_agent_output:
+        current_page:
+            display_name: TypeString
+            name: TypeString
+        session_parameters: TypeString
+        text_responses:
+            text: TypeList(TypeString)
+        triggered_intent:
+            display_name: TypeString
+            name: TypeString
+test_config:
+    flow: TypeString
+    page: TypeString
+    tracking_parameters: TypeList(TypeString)
+

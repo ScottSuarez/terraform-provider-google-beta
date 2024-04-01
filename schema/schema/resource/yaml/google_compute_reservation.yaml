@@ -1,0 +1,140 @@
+commitment:
+    Type: TypeString
+    Description: |-
+        Full or partial URL to a parent commitment. This field displays for
+        reservations that are tied to a commitment.
+    Computed: "true"
+creation_timestamp:
+    Type: TypeString
+    Description: Creation timestamp in RFC3339 text format.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An optional description of this resource.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        Name of the resource. Provided by the client when the resource is
+        created. The name must be 1-63 characters long, and comply with
+        RFC1035. Specifically, the name must be 1-63 characters long and match
+        the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
+        first character must be a lowercase letter, and all following
+        characters must be a dash, lowercase letter, or digit, except the last
+        character, which cannot be a dash.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+share_settings:
+    Type: TypeList
+    Description: The share setting for reservations.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        project_map:
+            Type: TypeSet
+            Description: A map of project number and project config. This is only valid when shareType's value is SPECIFIC_PROJECTS.
+            Optional: "true"
+            Properties:
+                id:
+                    Type: TypeString
+                    Required: "true"
+                project_id:
+                    Type: TypeString
+                    Description: The project id/number, should be same as the key of this project config in the project map.
+                    Optional: "true"
+        share_type:
+            Type: TypeString
+            Description: 'Type of sharing for this shared-reservation Possible values: ["LOCAL", "SPECIFIC_PROJECTS"]'
+            Computed: "true"
+            Optional: "true"
+specific_reservation:
+    Type: TypeList
+    Description: Reservation for instances with specific machine shapes.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        count:
+            Type: TypeInt
+            Description: The number of resources that are allocated.
+            Required: "true"
+        in_use_count:
+            Type: TypeInt
+            Description: How many instances are in use.
+            Computed: "true"
+        instance_properties:
+            Type: TypeList
+            Description: The instance properties for the reservation.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                guest_accelerators:
+                    Type: TypeList
+                    Description: Guest accelerator type and count.
+                    Optional: "true"
+                    Properties:
+                        accelerator_count:
+                            Type: TypeInt
+                            Description: |-
+                                The number of the guest accelerator cards exposed to
+                                this instance.
+                            Required: "true"
+                        accelerator_type:
+                            Type: TypeString
+                            Description: |-
+                                The full or partial URL of the accelerator type to
+                                attach to this instance. For example:
+                                'projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100'
+
+                                If you are creating an instance template, specify only the accelerator name.
+                            Required: "true"
+                local_ssds:
+                    Type: TypeList
+                    Description: |-
+                        The amount of local ssd to reserve with each instance. This
+                        reserves disks of type 'local-ssd'.
+                    Optional: "true"
+                    Properties:
+                        disk_size_gb:
+                            Type: TypeInt
+                            Description: The size of the disk in base-2 GB.
+                            Required: "true"
+                        interface:
+                            Type: TypeString
+                            Description: 'The disk interface to use for attaching this disk. Default value: "SCSI" Possible values: ["SCSI", "NVME"]'
+                            Optional: "true"
+                machine_type:
+                    Type: TypeString
+                    Description: The name of the machine type to reserve.
+                    Required: "true"
+                min_cpu_platform:
+                    Type: TypeString
+                    Description: |-
+                        The minimum CPU platform for the reservation. For example,
+                        '"Intel Skylake"'. See
+                        the CPU platform availability reference](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones)
+                        for information on available CPU platforms.
+                    Computed: "true"
+                    Optional: "true"
+specific_reservation_required:
+    Type: TypeBool
+    Description: |-
+        When set to true, only VMs that target this reservation by name can
+        consume this reservation. Otherwise, it can be consumed by VMs with
+        affinity for any reservation. Defaults to false.
+    Optional: "true"
+status:
+    Type: TypeString
+    Description: The status of the reservation.
+    Computed: "true"
+zone:
+    Type: TypeString
+    Description: The zone where the reservation is made.
+    Required: "true"
+

@@ -1,0 +1,633 @@
+autoscaling:
+    Type: TypeList
+    Description: Configuration required by cluster autoscaler to adjust the size of the node pool to the current cluster usage.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        location_policy:
+            Type: TypeString
+            Description: Location policy specifies the algorithm used when scaling-up the node pool. "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduces preemption risk for Spot VMs.
+            Computed: "true"
+            Optional: "true"
+        max_node_count:
+            Type: TypeInt
+            Description: Maximum number of nodes per zone in the node pool. Must be >= min_node_count. Cannot be used with total limits.
+            Optional: "true"
+        min_node_count:
+            Type: TypeInt
+            Description: Minimum number of nodes per zone in the node pool. Must be >=0 and <= max_node_count. Cannot be used with total limits.
+            Optional: "true"
+        total_max_node_count:
+            Type: TypeInt
+            Description: Maximum number of all nodes in the node pool. Must be >= total_min_node_count. Cannot be used with per zone limits.
+            Optional: "true"
+        total_min_node_count:
+            Type: TypeInt
+            Description: Minimum number of all nodes in the node pool. Must be >=0 and <= total_max_node_count. Cannot be used with per zone limits.
+            Optional: "true"
+cluster:
+    Type: TypeString
+    Description: The cluster to create the node pool for. Cluster must be present in location provided for zonal clusters.
+    Required: "true"
+initial_node_count:
+    Type: TypeInt
+    Description: The initial number of nodes for the pool. In regional or multi-zonal clusters, this is the number of nodes per zone. Changing this will force recreation of the resource.
+    Computed: "true"
+    Optional: "true"
+instance_group_urls:
+    Type: TypeList
+    Description: The resource URLs of the managed instance groups associated with this node pool.
+    Computed: "true"
+location:
+    Type: TypeString
+    Description: The location (region or zone) of the cluster.
+    Computed: "true"
+    Optional: "true"
+managed_instance_group_urls:
+    Type: TypeList
+    Description: List of instance group URLs which have been assigned to this node pool.
+    Computed: "true"
+management:
+    Type: TypeList
+    Description: Node management configuration, wherein auto-repair and auto-upgrade is configured.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        auto_repair:
+            Type: TypeBool
+            Description: Whether the nodes will be automatically repaired. Enabled by default.
+            Optional: "true"
+        auto_upgrade:
+            Type: TypeBool
+            Description: Whether the nodes will be automatically upgraded. Enabled by default.
+            Optional: "true"
+max_pods_per_node:
+    Type: TypeInt
+    Description: The maximum number of pods per node in this node pool. Note that this does not work on node pools which are "route-based" - that is, node pools belonging to clusters that do not have IP Aliasing enabled.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: The name of the node pool. If left blank, Terraform will auto-generate a unique name.
+    Computed: "true"
+    Optional: "true"
+name_prefix:
+    Type: TypeString
+    Description: Creates a unique name for the node pool beginning with the specified prefix. Conflicts with name.
+    Computed: "true"
+    Optional: "true"
+network_config:
+    Type: TypeList
+    Description: Networking configuration for this NodePool. If specified, it overrides the cluster-level defaults.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_node_network_configs:
+            Type: TypeList
+            Description: We specify the additional node networks for this node pool using this list. Each node network corresponds to an additional interface
+            Optional: "true"
+            Properties:
+                network:
+                    Type: TypeString
+                    Description: Name of the VPC where the additional interface belongs.
+                    Optional: "true"
+                subnetwork:
+                    Type: TypeString
+                    Description: Name of the subnetwork where the additional interface belongs.
+                    Optional: "true"
+        additional_pod_network_configs:
+            Type: TypeList
+            Description: We specify the additional pod networks for this node pool using this list. Each pod network corresponds to an additional alias IP range for the node
+            Optional: "true"
+            Properties:
+                max_pods_per_node:
+                    Type: TypeInt
+                    Description: The maximum number of pods per node which use this pod network.
+                    Computed: "true"
+                    Optional: "true"
+                secondary_pod_range:
+                    Type: TypeString
+                    Description: The name of the secondary range on the subnet which provides IP address for this pod range.
+                    Optional: "true"
+                subnetwork:
+                    Type: TypeString
+                    Description: Name of the subnetwork where the additional pod network belongs.
+                    Optional: "true"
+        create_pod_range:
+            Type: TypeBool
+            Description: Whether to create a new range for pod IPs in this node pool. Defaults are provided for pod_range and pod_ipv4_cidr_block if they are not specified.
+            Optional: "true"
+        enable_private_nodes:
+            Type: TypeBool
+            Description: Whether nodes have internal IP addresses only.
+            Computed: "true"
+            Optional: "true"
+        network_performance_config:
+            Type: TypeList
+            Description: Network bandwidth tier configuration.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                total_egress_bandwidth_tier:
+                    Type: TypeString
+                    Description: Specifies the total network bandwidth tier for the NodePool.
+                    Required: "true"
+        pod_cidr_overprovision_config:
+            Type: TypeList
+            Description: Configuration for node-pool level pod cidr overprovision. If not set, the cluster level setting will be inherited
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                disabled:
+                    Type: TypeBool
+                    Required: "true"
+        pod_ipv4_cidr_block:
+            Type: TypeString
+            Description: The IP address range for pod IPs in this node pool. Only applicable if create_pod_range is true. Set to blank to have a range chosen with the default size. Set to /netmask (e.g. /14) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) to pick a specific range to use.
+            Computed: "true"
+            Optional: "true"
+        pod_range:
+            Type: TypeString
+            Description: The ID of the secondary range for pod IPs. If create_pod_range is true, this ID is used for the new range. If create_pod_range is false, uses an existing secondary range with this ID.
+            Computed: "true"
+            Optional: "true"
+node_config:
+    Type: TypeList
+    Description: The configuration of the nodepool
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        advanced_machine_features:
+            Type: TypeList
+            Description: Specifies options for controlling advanced machine features.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                threads_per_core:
+                    Type: TypeInt
+                    Description: The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
+                    Required: "true"
+        boot_disk_kms_key:
+            Type: TypeString
+            Description: The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool.
+            Optional: "true"
+        confidential_nodes:
+            Type: TypeList
+            Description: 'Configuration for the confidential nodes feature, which makes nodes run on confidential VMs. Warning: This configuration can''t be changed (or added/removed) after pool creation without deleting and recreating the entire pool.'
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether Confidential Nodes feature is enabled for all nodes in this pool.
+                    Required: "true"
+        disk_size_gb:
+            Type: TypeInt
+            Description: Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+            Computed: "true"
+            Optional: "true"
+        disk_type:
+            Type: TypeString
+            Description: Type of the disk attached to each node. Such as pd-standard, pd-balanced or pd-ssd
+            Computed: "true"
+            Optional: "true"
+        effective_taints:
+            Type: TypeList
+            Description: List of kubernetes taints applied to each node.
+            Computed: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: Effect for taint.
+                    Computed: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for taint.
+                    Computed: "true"
+                value:
+                    Type: TypeString
+                    Description: Value for taint.
+                    Computed: "true"
+        enable_confidential_storage:
+            Type: TypeBool
+            Description: If enabled boot disks are configured with confidential mode.
+            Optional: "true"
+        ephemeral_storage_config:
+            Type: TypeList
+            Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                    Required: "true"
+        ephemeral_storage_local_ssd_config:
+            Type: TypeList
+            Description: Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD must be 375 or 3000 GB in size, and all local SSDs must share the same size.
+                    Required: "true"
+        fast_socket:
+            Type: TypeList
+            Description: Enable or disable NCCL Fast Socket in the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not NCCL Fast Socket is enabled
+                    Required: "true"
+        gcfs_config:
+            Type: TypeList
+            Description: GCFS configuration for this node.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not GCFS is enabled
+                    Required: "true"
+        guest_accelerator:
+            Type: TypeList
+            Description: List of the type and count of accelerator cards attached to the instance.
+            Computed: "true"
+            Optional: "true"
+            Properties:
+                count:
+                    Type: TypeInt
+                    Description: The number of the accelerator cards exposed to an instance.
+                    Required: "true"
+                gpu_driver_installation_config:
+                    Type: TypeList
+                    Description: Configuration for auto installation of GPU driver.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gpu_driver_version:
+                            Type: TypeString
+                            Description: Mode for how the GPU driver is installed.
+                            Required: "true"
+                gpu_partition_size:
+                    Type: TypeString
+                    Description: Size of partitions to create on the GPU. Valid values are described in the NVIDIA mig user guide (https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#partitioning)
+                    Optional: "true"
+                gpu_sharing_config:
+                    Type: TypeList
+                    Description: Configuration for GPU sharing.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        gpu_sharing_strategy:
+                            Type: TypeString
+                            Description: The type of GPU sharing strategy to enable on the GPU node. Possible values are described in the API package (https://pkg.go.dev/google.golang.org/api/container/v1#GPUSharingConfig)
+                            Required: "true"
+                        max_shared_clients_per_gpu:
+                            Type: TypeInt
+                            Description: The maximum number of containers that can share a GPU.
+                            Required: "true"
+                type:
+                    Type: TypeString
+                    Description: The accelerator type resource name.
+                    Required: "true"
+        gvnic:
+            Type: TypeList
+            Description: Enable or disable gvnic in the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enabled:
+                    Type: TypeBool
+                    Description: Whether or not gvnic is enabled
+                    Required: "true"
+        host_maintenance_policy:
+            Type: TypeList
+            Description: The maintenance policy for the hosts on which the GKE VMs run on.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                maintenance_interval:
+                    Type: TypeString
+                    Description: .
+                    Required: "true"
+        image_type:
+            Type: TypeString
+            Description: The image type to use for this node. Note that for a given image type, the latest version of it will be used.
+            Computed: "true"
+            Optional: "true"
+        kubelet_config:
+            Type: TypeList
+            Description: Node kubelet configs.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cpu_cfs_quota:
+                    Type: TypeBool
+                    Description: Enable CPU CFS quota enforcement for containers that specify CPU limits.
+                    Optional: "true"
+                cpu_cfs_quota_period:
+                    Type: TypeString
+                    Description: Set the CPU CFS quota period value 'cpu.cfs_period_us'.
+                    Optional: "true"
+                cpu_manager_policy:
+                    Type: TypeString
+                    Description: Control the CPU management policy on the node.
+                    Required: "true"
+                pod_pids_limit:
+                    Type: TypeInt
+                    Description: Controls the maximum number of processes allowed to run in a pod.
+                    Optional: "true"
+        labels:
+            Type: TypeMap
+            Description: The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node.
+            Computed: "true"
+            Optional: "true"
+        linux_node_config:
+            Type: TypeList
+            Description: Parameters that can be configured on Linux nodes.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cgroup_mode:
+                    Type: TypeString
+                    Description: cgroupMode specifies the cgroup mode to be used on the node.
+                    Computed: "true"
+                    Optional: "true"
+                sysctls:
+                    Type: TypeMap
+                    Description: The Linux kernel parameters to be applied to the nodes and all pods running on the nodes.
+                    Optional: "true"
+        local_nvme_ssd_block_config:
+            Type: TypeList
+            Description: Parameters for raw-block local NVMe SSDs.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                local_ssd_count:
+                    Type: TypeInt
+                    Description: Number of raw-block local NVMe SSD disks to be attached to the node. Each local SSD is 375 GB in size.
+                    Required: "true"
+        local_ssd_count:
+            Type: TypeInt
+            Description: The number of local SSD disks to be attached to the node.
+            Computed: "true"
+            Optional: "true"
+        logging_variant:
+            Type: TypeString
+            Description: Type of logging agent that is used as the default value for node pools in the cluster. Valid values include DEFAULT and MAX_THROUGHPUT.
+            Computed: "true"
+            Optional: "true"
+        machine_type:
+            Type: TypeString
+            Description: The name of a Google Compute Engine machine type.
+            Computed: "true"
+            Optional: "true"
+        metadata:
+            Type: TypeMap
+            Description: The metadata key/value pairs assigned to instances in the cluster.
+            Computed: "true"
+            Optional: "true"
+        min_cpu_platform:
+            Type: TypeString
+            Description: Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform.
+            Computed: "true"
+            Optional: "true"
+        node_group:
+            Type: TypeString
+            Description: Setting this field will assign instances of this pool to run on the specified node group. This is useful for running workloads on sole tenant nodes.
+            Optional: "true"
+        oauth_scopes:
+            Type: TypeSet
+            Description: The set of Google API scopes to be made available on all of the node VMs.
+            Computed: "true"
+            Optional: "true"
+        preemptible:
+            Type: TypeBool
+            Description: Whether the nodes are created as preemptible VM instances.
+            Optional: "true"
+        reservation_affinity:
+            Type: TypeList
+            Description: The reservation affinity configuration for the node pool.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                consume_reservation_type:
+                    Type: TypeString
+                    Description: Corresponds to the type of reservation consumption.
+                    Required: "true"
+                key:
+                    Type: TypeString
+                    Description: The label key of a reservation resource.
+                    Optional: "true"
+                values:
+                    Type: TypeSet
+                    Description: The label values of the reservation resource.
+                    Optional: "true"
+        resource_labels:
+            Type: TypeMap
+            Description: The GCE resource labels (a map of key/value pairs) to be applied to the node pool.
+            Optional: "true"
+        sandbox_config:
+            Type: TypeList
+            Description: Sandbox configuration for this node.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                sandbox_type:
+                    Type: TypeString
+                    Description: Type of the sandbox to use for the node (e.g. 'gvisor')
+                    Required: "true"
+        service_account:
+            Type: TypeString
+            Description: The Google Cloud Platform Service Account to be used by the node VMs.
+            Computed: "true"
+            Optional: "true"
+        shielded_instance_config:
+            Type: TypeList
+            Description: Shielded Instance options.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                enable_integrity_monitoring:
+                    Type: TypeBool
+                    Description: Defines whether the instance has integrity monitoring enabled.
+                    Optional: "true"
+                enable_secure_boot:
+                    Type: TypeBool
+                    Description: Defines whether the instance has Secure Boot enabled.
+                    Optional: "true"
+        sole_tenant_config:
+            Type: TypeList
+            Description: Node affinity options for sole tenant node pools.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                node_affinity:
+                    Type: TypeSet
+                    Description: .
+                    Required: "true"
+                    Properties:
+                        key:
+                            Type: TypeString
+                            Description: .
+                            Required: "true"
+                        operator:
+                            Type: TypeString
+                            Description: .
+                            Required: "true"
+                        values:
+                            Type: TypeList
+                            Description: .
+                            Required: "true"
+        spot:
+            Type: TypeBool
+            Description: Whether the nodes are created as spot VM instances.
+            Optional: "true"
+        tags:
+            Type: TypeList
+            Description: The list of instance tags applied to all nodes.
+            Optional: "true"
+        taint:
+            Type: TypeList
+            Description: List of Kubernetes taints to be applied to each node.
+            Optional: "true"
+            Properties:
+                effect:
+                    Type: TypeString
+                    Description: Effect for taint.
+                    Required: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for taint.
+                    Required: "true"
+                value:
+                    Type: TypeString
+                    Description: Value for taint.
+                    Required: "true"
+        workload_metadata_config:
+            Type: TypeList
+            Description: The workload metadata configuration for this node.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                mode:
+                    Type: TypeString
+                    Description: Mode is the configuration for how to expose metadata to workloads running on the node.
+                    Required: "true"
+node_count:
+    Type: TypeInt
+    Description: The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling.
+    Computed: "true"
+    Optional: "true"
+node_locations:
+    Type: TypeSet
+    Description: The list of zones in which the node pool's nodes should be located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If unspecified, the cluster-level node_locations will be used.
+    Computed: "true"
+    Optional: "true"
+operation:
+    Type: TypeString
+    Computed: "true"
+placement_policy:
+    Type: TypeList
+    Description: Specifies the node placement policy
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        policy_name:
+            Type: TypeString
+            Description: If set, refers to the name of a custom resource policy supplied by the user. The resource policy must be in the same project and region as the node pool. If not found, InvalidArgument error is returned.
+            Optional: "true"
+        tpu_topology:
+            Type: TypeString
+            Description: TPU placement topology for pod slice node pool. https://cloud.google.com/tpu/docs/types-topologies#tpu_topologies
+            Optional: "true"
+        type:
+            Type: TypeString
+            Description: Type defines the type of placement policy
+            Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which to create the node pool. If blank, the provider-configured project will be used.
+    Computed: "true"
+    Optional: "true"
+queued_provisioning:
+    Type: TypeList
+    Description: Specifies the configuration of queued provisioning
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Whether nodes in this node pool are obtainable solely through the ProvisioningRequest API
+            Required: "true"
+upgrade_settings:
+    Type: TypeList
+    Description: Specify node upgrade settings to change how many nodes GKE attempts to upgrade at once. The number of nodes upgraded simultaneously is the sum of max_surge and max_unavailable. The maximum number of nodes upgraded simultaneously is limited to 20.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        blue_green_settings:
+            Type: TypeList
+            Description: Settings for BlueGreen node pool upgrade.
+            Computed: "true"
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                node_pool_soak_duration:
+                    Type: TypeString
+                    Description: Time needed after draining entire blue pool. After this period, blue pool will be cleaned up.
+                    Computed: "true"
+                    Optional: "true"
+                standard_rollout_policy:
+                    Type: TypeList
+                    Description: Standard rollout policy is the default policy for blue-green.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        batch_node_count:
+                            Type: TypeInt
+                            Description: Number of blue nodes to drain in a batch.
+                            Computed: "true"
+                            Optional: "true"
+                        batch_percentage:
+                            Type: TypeFloat
+                            Description: Percentage of the blue pool nodes to drain in a batch.
+                            Computed: "true"
+                            Optional: "true"
+                        batch_soak_duration:
+                            Type: TypeString
+                            Description: Soak time after each batch gets drained.
+                            Computed: "true"
+                            Optional: "true"
+        max_surge:
+            Type: TypeInt
+            Description: The number of additional nodes that can be added to the node pool during an upgrade. Increasing max_surge raises the number of nodes that can be upgraded simultaneously. Can be set to 0 or greater.
+            Computed: "true"
+            Optional: "true"
+        max_unavailable:
+            Type: TypeInt
+            Description: The number of nodes that can be simultaneously unavailable during an upgrade. Increasing max_unavailable raises the number of nodes that can be upgraded in parallel. Can be set to 0 or greater.
+            Computed: "true"
+            Optional: "true"
+        strategy:
+            Type: TypeString
+            Description: Update strategy for the given nodepool.
+            Optional: "true"
+version:
+    Type: TypeString
+    Description: The Kubernetes version for the nodes in this pool. Note that if this field and auto_upgrade are both specified, they will fight each other for what the node version should be, so setting both is highly discouraged. While a fuzzy version can be specified, it's recommended that you specify explicit versions as Terraform will see spurious diffs when fuzzy versions are used. See the google_container_engine_versions data source's version_prefix field to approximate fuzzy versions in a Terraform-compatible way.
+    Computed: "true"
+    Optional: "true"
+

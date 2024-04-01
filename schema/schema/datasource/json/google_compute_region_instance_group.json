@@ -1,0 +1,54 @@
+{
+    "instances": {
+        "Computed": true,
+        "Properties": {
+            "instance": {
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "named_ports": {
+                "Computed": true,
+                "Properties": {
+                    "name": {
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "port": {
+                        "Required": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "status": {
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "name": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "size": {
+        "Computed": true,
+        "Type": "TypeInt"
+    }
+}

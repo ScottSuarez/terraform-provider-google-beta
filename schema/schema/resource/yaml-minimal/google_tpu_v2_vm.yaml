@@ -1,0 +1,48 @@
+accelerator_config:
+    topology: TypeString
+    type: TypeString
+accelerator_type: TypeString
+api_version: TypeString
+cidr_block: TypeString
+data_disks:
+    mode: TypeString
+    source_disk: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+health: TypeString
+health_description: TypeString
+labels: TypeMap(TypeString)
+metadata: TypeMap(TypeString)
+multislice_node: TypeBool
+name: TypeString
+network_config:
+    can_ip_forward: TypeBool
+    enable_external_ips: TypeBool
+    network: TypeString
+    subnetwork: TypeString
+network_endpoints:
+    access_config:
+        external_ip: TypeString
+    ip_address: TypeString
+    port: TypeInt
+project: TypeString
+queued_resource: TypeString
+runtime_version: TypeString
+scheduling_config:
+    preemptible: TypeBool
+    reserved: TypeBool
+service_account:
+    email: TypeString
+    scope: TypeList(TypeString)
+shielded_instance_config:
+    enable_secure_boot: TypeBool
+state: TypeString
+symptoms:
+    create_time: TypeString
+    details: TypeString
+    symptom_type: TypeString
+    worker_id: TypeString
+tags: TypeList(TypeString)
+terraform_labels: TypeMap(TypeString)
+zone: TypeString
+

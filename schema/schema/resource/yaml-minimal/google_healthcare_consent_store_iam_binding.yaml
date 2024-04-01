@@ -1,0 +1,10 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+consent_store_id: TypeString
+dataset: TypeString
+etag: TypeString
+members: TypeSet(TypeString)
+role: TypeString
+

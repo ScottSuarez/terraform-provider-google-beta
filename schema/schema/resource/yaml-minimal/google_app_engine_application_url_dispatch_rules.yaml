@@ -1,0 +1,6 @@
+dispatch_rules:
+    domain: TypeString
+    path: TypeString
+    service: TypeString
+project: TypeString
+

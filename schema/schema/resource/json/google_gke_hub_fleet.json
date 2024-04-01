@@ -1,0 +1,95 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The time the fleet was created, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "default_cluster_config": {
+        "Description": "The default cluster configurations to apply across the fleet.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "binary_authorization_config": {
+                "Description": "Enable/Disable binary authorization features for the cluster.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "evaluation_mode": {
+                        "Description": "Mode of operation for binauthz policy evaluation. Possible values: [\"DISABLED\", \"POLICY_BINDINGS\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "policy_bindings": {
+                        "Description": "Binauthz policies that apply to this cluster.",
+                        "Optional": true,
+                        "Properties": {
+                            "name": {
+                                "Description": "The relative resource name of the binauthz platform policy to audit. GKE\nplatform policies have the following format:\n'projects/{project_number}/platforms/gke/policies/{policy_id}'.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "security_posture_config": {
+                "Description": "Enable/Disable Security Posture features for the cluster.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "mode": {
+                        "Description": "Sets which mode to use for Security Posture features. Possible values: [\"DISABLED\", \"BASIC\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "vulnerability_mode": {
+                        "Description": "Sets which mode to use for vulnerability scanning. Possible values: [\"VULNERABILITY_DISABLED\", \"VULNERABILITY_BASIC\", \"VULNERABILITY_ENTERPRISE\"]",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "delete_time": {
+        "Computed": true,
+        "Description": "The time the fleet was deleted, in RFC3339 text format.",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "A user-assigned display name of the Fleet. When present, it must be between 4 to 30 characters.\nAllowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "The state of the fleet resource.",
+        "Properties": {
+            "code": {
+                "Computed": true,
+                "Description": "Describes the state of a Fleet resource.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Google-generated UUID for this resource. This is unique across all\nFleet resources. If a Fleet resource is deleted and another\nresource with the same name is created, it gets a different uid.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The time the fleet was last updated, in RFC3339 text format.",
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,96 @@
+{
+    "action": {
+        "Description": "The action that the external access rule performs. Possible values: [\"ALLOW\", \"DENY\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Creation time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and\nup to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "User-provided description for the external access rule.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "destination_ip_ranges": {
+        "Description": "If destination ranges are specified, the external access rule applies only to\ntraffic that has a destination IP address in these ranges.",
+        "Properties": {
+            "external_address": {
+                "Description": "The name of an 'ExternalAddress' resource.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "ip_address_range": {
+                "Description": "An IP address range in the CIDR format.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "destination_ports": {
+        "Description": "A list of destination ports to which the external access rule applies.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "ip_protocol": {
+        "Description": "The IP protocol to which the external access rule applies.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The ID of the external access rule.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "The resource name of the network policy.\nResource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.\nFor example: projects/my-project/locations/us-west1-a/networkPolicies/my-policy",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "priority": {
+        "Description": "External access rule priority, which determines the external access rule to use when multiple rules apply.",
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "source_ip_ranges": {
+        "Description": "If source ranges are specified, the external access rule applies only to\ntraffic that has a source IP address in these ranges.",
+        "Properties": {
+            "ip_address": {
+                "Description": "A single IP address.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "ip_address_range": {
+                "Description": "An IP address range in the CIDR format.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "source_ports": {
+        "Description": "A list of source ports to which the external access rule applies.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "State of the Cluster.",
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "System-generated unique identifier for the resource.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Last updated time of this resource.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine\nfractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    }
+}

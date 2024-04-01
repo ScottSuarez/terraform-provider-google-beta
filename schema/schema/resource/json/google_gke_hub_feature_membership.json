@@ -1,0 +1,353 @@
+{
+    "configmanagement": {
+        "Description": "Config Management-specific spec.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "binauthz": {
+                "Computed": true,
+                "Description": "**DEPRECATED** Binauthz configuration for the cluster. This field will be ignored and should not be set.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enabled": {
+                        "Description": "Whether binauthz is enabled in this cluster.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "config_sync": {
+                "Description": "Config Sync configuration for the cluster.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "git": {
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "gcp_service_account_email": {
+                                "Description": "The GCP Service Account Email used for auth when secretType is gcpServiceAccount.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "https_proxy": {
+                                "Description": "URL for the HTTPS proxy to be used when communicating with the Git repo.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "policy_dir": {
+                                "Description": "The path within the Git repository that represents the top level of the repo to sync. Default: the root directory of the repository.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "secret_type": {
+                                "Description": "Type of secret configured for access to the Git repo. Must be one of ssh, cookiefile, gcenode, token, gcpserviceaccount or none. The validation of this is case-sensitive.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_branch": {
+                                "Description": "The branch of the repository to sync from. Default: master.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_repo": {
+                                "Description": "The URL of the Git repository to use as the source of truth.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_rev": {
+                                "Description": "Git revision (tag or hash) to check out. Default HEAD.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_wait_secs": {
+                                "Description": "Period in seconds between consecutive syncs. Default: 15.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "metrics_gcp_service_account_email": {
+                        "Description": "The Email of the Google Cloud Service Account (GSA) used for exporting Config Sync metrics to Cloud Monitoring. The GSA should have the Monitoring Metric Writer(roles/monitoring.metricWriter) IAM role. The Kubernetes ServiceAccount `default` in the namespace `config-management-monitoring` should be bound to the GSA.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "oci": {
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "gcp_service_account_email": {
+                                "Description": "The GCP Service Account Email used for auth when secret_type is gcpserviceaccount. ",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "policy_dir": {
+                                "Description": "The absolute path of the directory that contains the local resources. Default: the root directory of the image.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "secret_type": {
+                                "Description": "Type of secret configured for access to the OCI Image. Must be one of gcenode, gcpserviceaccount or none. The validation of this is case-sensitive.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_repo": {
+                                "Description": "The OCI image repository URL for the package to sync from. e.g. LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY_NAME/PACKAGE_NAME.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "sync_wait_secs": {
+                                "Description": "Period in seconds(int64 format) between consecutive syncs. Default: 15.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "prevent_drift": {
+                        "Computed": true,
+                        "Description": "Set to true to enable the Config Sync admission webhook to prevent drifts. If set to `false`, disables the Config Sync admission webhook and does not prevent drifts.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "source_format": {
+                        "Description": "Specifies whether the Config Sync Repo is in \"hierarchical\" or \"unstructured\" mode.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "hierarchy_controller": {
+                "Description": "Hierarchy Controller configuration for the cluster.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "enable_hierarchical_resource_quota": {
+                        "Description": "Whether hierarchical resource quota is enabled in this cluster.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "enable_pod_tree_labels": {
+                        "Description": "Whether pod tree labels are enabled in this cluster.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "enabled": {
+                        "Description": "Whether Hierarchy Controller is enabled in this cluster.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "policy_controller": {
+                "Description": "Policy Controller configuration for the cluster.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "audit_interval_seconds": {
+                        "Description": "Sets the interval for Policy Controller Audit Scans (in seconds). When set to 0, this disables audit functionality altogether.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "enabled": {
+                        "Description": "Enables the installation of Policy Controller. If false, the rest of PolicyController fields take no effect.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "exemptable_namespaces": {
+                        "Description": "The set of namespaces that are excluded from Policy Controller checks. Namespaces do not need to currently exist on the cluster.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "log_denies_enabled": {
+                        "Description": "Logs all denies and dry run failures.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "monitoring": {
+                        "Computed": true,
+                        "Description": "Specifies the backends Policy Controller should export metrics to. For example, to specify metrics should be exported to Cloud Monitoring and Prometheus, specify backends: [\"cloudmonitoring\", \"prometheus\"]. Default: [\"cloudmonitoring\", \"prometheus\"]",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "backends": {
+                                "Computed": true,
+                                "Description": " Specifies the list of backends Policy Controller will export to. Specifying an empty value `[]` disables metrics export.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "mutation_enabled": {
+                        "Description": "Enable or disable mutation in policy controller. If true, mutation CRDs, webhook and controller deployment will be deployed to the cluster.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "referential_rules_enabled": {
+                        "Description": "Enables the ability to use Constraint Templates that reference to objects other than the object currently being evaluated.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "template_library_installed": {
+                        "Description": "Installs the default template library along with Policy Controller.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "version": {
+                "Computed": true,
+                "Description": "Optional. Version of ACM to install. Defaults to the latest version.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "feature": {
+        "Description": "The name of the feature",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location of the feature",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "membership": {
+        "Description": "The name of the membership",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "membership_location": {
+        "Description": "The location of the membership",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "mesh": {
+        "Description": "Manage Mesh Features",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "control_plane": {
+                "Description": "**DEPRECATED** Whether to automatically manage Service Mesh control planes. Possible values: CONTROL_PLANE_MANAGEMENT_UNSPECIFIED, AUTOMATIC, MANUAL",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "management": {
+                "Description": "Whether to automatically manage Service Mesh. Possible values: MANAGEMENT_UNSPECIFIED, MANAGEMENT_AUTOMATIC, MANAGEMENT_MANUAL",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "policycontroller": {
+        "Description": "Policy Controller-specific spec.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "policy_controller_hub_config": {
+                "Description": "Policy Controller configuration for the cluster.",
+                "MaxItems": 1,
+                "Properties": {
+                    "audit_interval_seconds": {
+                        "Description": "Sets the interval for Policy Controller Audit Scans (in seconds). When set to 0, this disables audit functionality altogether.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "constraint_violation_limit": {
+                        "Description": "The maximum number of audit violations to be stored in a constraint. If not set, the internal default of 20 will be used.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "exemptable_namespaces": {
+                        "Description": "The set of namespaces that are excluded from Policy Controller checks. Namespaces do not need to currently exist on the cluster.",
+                        "Optional": true,
+                        "Type": "TypeList"
+                    },
+                    "install_spec": {
+                        "Description": "Configures the mode of the Policy Controller installation. Possible values: INSTALL_SPEC_UNSPECIFIED, INSTALL_SPEC_NOT_INSTALLED, INSTALL_SPEC_ENABLED, INSTALL_SPEC_SUSPENDED, INSTALL_SPEC_DETACHED",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "log_denies_enabled": {
+                        "Description": "Logs all denies and dry run failures.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "monitoring": {
+                        "Computed": true,
+                        "Description": "Specifies the backends Policy Controller should export metrics to. For example, to specify metrics should be exported to Cloud Monitoring and Prometheus, specify backends: [\"cloudmonitoring\", \"prometheus\"]. Default: [\"cloudmonitoring\", \"prometheus\"]",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "backends": {
+                                "Computed": true,
+                                "Description": " Specifies the list of backends Policy Controller will export to. Specifying an empty value `[]` disables metrics export.",
+                                "Optional": true,
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "mutation_enabled": {
+                        "Description": "Enables the ability to mutate resources using Policy Controller.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "policy_content": {
+                        "Computed": true,
+                        "Description": "Specifies the desired policy content on the cluster.",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "template_library": {
+                                "Computed": true,
+                                "Description": "Configures the installation of the Template Library.",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "installation": {
+                                        "Description": "Configures the manner in which the template library is installed on the cluster. Possible values: INSTALLATION_UNSPECIFIED, NOT_INSTALLED, ALL",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "referential_rules_enabled": {
+                        "Description": "Enables the ability to use Constraint Templates that reference to objects other than the object currently being evaluated.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "version": {
+                "Computed": true,
+                "Description": "Optional. Version of Policy Controller to install. Defaults to the latest version.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project of the feature",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

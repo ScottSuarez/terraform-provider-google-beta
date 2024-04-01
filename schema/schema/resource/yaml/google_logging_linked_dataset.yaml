@@ -1,0 +1,57 @@
+bigquery_dataset:
+    Type: TypeList
+    Description: |-
+        The information of a BigQuery Dataset. When a link is created, a BigQuery dataset is created along
+        with it, in the same project as the LogBucket it's linked to. This dataset will also have BigQuery
+        Views corresponding to the LogViews in the bucket.
+    Computed: "true"
+    Optional: "true"
+    Properties:
+        dataset_id:
+            Type: TypeString
+            Description: |-
+                Output only. The full resource name of the BigQuery dataset. The DATASET_ID will match the ID
+                of the link, so the link must match the naming restrictions of BigQuery datasets
+                (alphanumeric characters and underscores only). The dataset will have a resource path of
+                "bigquery.googleapis.com/projects/[PROJECT_ID]/datasets/[DATASET_ID]"
+            Computed: "true"
+bucket:
+    Type: TypeString
+    Description: The bucket to which the linked dataset is attached.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        Output only. The creation timestamp of the link. A timestamp in RFC3339 UTC "Zulu" format,
+        with nanosecond resolution and up to nine fractional digits. Examples: "2014-10-02T15:01:23Z"
+        and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Describes this link. The maximum length of the description is 8000 characters.
+    Optional: "true"
+lifecycle_state:
+    Type: TypeString
+    Description: Output only. The linked dataset lifecycle state.
+    Computed: "true"
+link_id:
+    Type: TypeString
+    Description: The id of the linked dataset.
+    Required: "true"
+location:
+    Type: TypeString
+    Description: The location of the linked dataset.
+    Computed: "true"
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The resource name of the linked dataset. The name can have up to 100 characters. A valid link id
+        (at the end of the link name) must only have alphanumeric characters and underscores within it.
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: The parent of the linked dataset.
+    Computed: "true"
+    Optional: "true"
+

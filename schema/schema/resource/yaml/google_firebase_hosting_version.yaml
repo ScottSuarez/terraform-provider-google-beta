@@ -1,0 +1,88 @@
+config:
+    Type: TypeList
+    Description: The configuration for the behavior of the site. This configuration exists in the 'firebase.json' file.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        redirects:
+            Type: TypeList
+            Description: |-
+                An array of objects (called redirect rules), where each rule specifies a URL pattern that, if matched to the request URL path,
+                triggers Hosting to respond with a redirect to the specified destination path.
+            Optional: "true"
+            Properties:
+                glob:
+                    Type: TypeString
+                    Description: The user-supplied glob to match against the request URL path.
+                    Optional: "true"
+                location:
+                    Type: TypeString
+                    Description: |-
+                        The value to put in the HTTP location header of the response.
+                        The location can contain capture group values from the pattern using a : prefix to identify
+                        the segment and an optional * to capture the rest of the URL. For example:
+
+                        '''hcl
+                        redirects {
+                          glob = "/:capture*"
+                          status_code = 302
+                          location = "https://example.com/foo/:capture"
+                        }
+                        '''
+                    Required: "true"
+                regex:
+                    Type: TypeString
+                    Description: The user-supplied RE2 regular expression to match against the request URL path.
+                    Optional: "true"
+                status_code:
+                    Type: TypeInt
+                    Description: The status HTTP code to return in the response. It must be a valid 3xx status code.
+                    Required: "true"
+        rewrites:
+            Type: TypeList
+            Description: |-
+                An array of objects (called rewrite rules), where each rule specifies a URL pattern that, if matched to the
+                request URL path, triggers Hosting to respond as if the service were given the specified destination URL.
+            Optional: "true"
+            Properties:
+                function:
+                    Type: TypeString
+                    Description: The function to proxy requests to. Must match the exported function name exactly.
+                    Optional: "true"
+                glob:
+                    Type: TypeString
+                    Description: The user-supplied glob to match against the request URL path.
+                    Optional: "true"
+                regex:
+                    Type: TypeString
+                    Description: The user-supplied RE2 regular expression to match against the request URL path.
+                    Optional: "true"
+                run:
+                    Type: TypeList
+                    Description: The request will be forwarded to Cloud Run.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        region:
+                            Type: TypeString
+                            Description: Optional. User-provided region where the Cloud Run service is hosted. Defaults to 'us-central1' if not supplied.
+                            Optional: "true"
+                        service_id:
+                            Type: TypeString
+                            Description: User-defined ID of the Cloud Run service.
+                            Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The fully-qualified resource name for the version, in the format:
+        sites/SITE_ID/versions/VERSION_ID
+    Computed: "true"
+site_id:
+    Type: TypeString
+    Description: Required. The ID of the site in which to create this Version.
+    Required: "true"
+version_id:
+    Type: TypeString
+    Description: The ID for the version as in sites/SITE_ID/versions/VERSION_ID
+    Computed: "true"
+

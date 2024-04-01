@@ -1,0 +1,32 @@
+disable_default_sink:
+    Type: TypeBool
+    Description: If set to true, the _Default sink in newly created projects and folders will created in a disabled state. This can be used to automatically disable log storage if there is already an aggregated sink configured in the hierarchy. The _Default sink can be re-enabled manually if needed.
+    Computed: "true"
+    Optional: "true"
+kms_key_name:
+    Type: TypeString
+    Description: The resource name for the configured Cloud KMS key.
+    Computed: "true"
+    Optional: "true"
+kms_service_account_id:
+    Type: TypeString
+    Description: The service account that will be used by the Log Router to access your Cloud KMS key.
+    Computed: "true"
+logging_service_account_id:
+    Type: TypeString
+    Description: The service account for the given container. Sinks use this service account as their writerIdentity if no custom service account is provided.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The resource name of the settings.
+    Computed: "true"
+organization:
+    Type: TypeString
+    Description: The organization for which to retrieve or configure settings.
+    Required: "true"
+storage_location:
+    Type: TypeString
+    Description: The storage location that Cloud Logging will use to create new resources when a location is needed but not explicitly provided.
+    Computed: "true"
+    Optional: "true"
+

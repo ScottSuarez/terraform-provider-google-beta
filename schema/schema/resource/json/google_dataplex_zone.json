@@ -1,0 +1,185 @@
+{
+    "asset_status": {
+        "Computed": true,
+        "Description": "Output only. Aggregated status of the underlying assets of the zone.",
+        "Properties": {
+            "active_assets": {
+                "Computed": true,
+                "Description": "Number of active assets.",
+                "Type": "TypeInt"
+            },
+            "security_policy_applying_assets": {
+                "Computed": true,
+                "Description": "Number of assets that are in process of updating the security policy on attached resources.",
+                "Type": "TypeInt"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Last update time of the status.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time when the zone was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Optional. Description of the zone.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "discovery_spec": {
+        "Description": "Required. Specification of the discovery feature applied to data in this zone.",
+        "MaxItems": 1,
+        "Properties": {
+            "csv_options": {
+                "Computed": true,
+                "Description": "Optional. Configuration for CSV data.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "delimiter": {
+                        "Description": "Optional. The delimiter being used to separate values. This defaults to ','.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "disable_type_inference": {
+                        "Description": "Optional. Whether to disable the inference of data type for CSV data. If true, all columns will be registered as strings.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encoding": {
+                        "Description": "Optional. The character encoding of the data. The default is UTF-8.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "header_rows": {
+                        "Description": "Optional. The number of rows to interpret as header rows that should be skipped when reading data rows.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "enabled": {
+                "Description": "Required. Whether discovery is enabled.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "exclude_patterns": {
+                "Description": "Optional. The list of patterns to apply for selecting data to exclude during discovery. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "include_patterns": {
+                "Description": "Optional. The list of patterns to apply for selecting data to include during discovery if only a subset of the data should considered. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "json_options": {
+                "Computed": true,
+                "Description": "Optional. Configuration for Json data.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "disable_type_inference": {
+                        "Description": "Optional. Whether to disable the inference of data type for Json data. If true, all columns will be registered as their primitive types (strings, number or boolean).",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encoding": {
+                        "Description": "Optional. The character encoding of the data. The default is UTF-8.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "schedule": {
+                "Computed": true,
+                "Description": "Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running discovery periodically. Successive discovery runs must be scheduled at least 60 minutes apart. The default value is to run discovery every 60 minutes. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: \"CRON_TZ=${IANA_TIME_ZONE}\" or TZ=${IANA_TIME_ZONE}\". The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, \"CRON_TZ=America/New_York 1 * * * *\", or \"TZ=America/New_York 1 * * * *\".",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "Optional. User friendly display name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Optional. User defined labels for the zone.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "lake": {
+        "Description": "The lake for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the zone.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "resource_spec": {
+        "Description": "Required. Immutable. Specification of the resources that are referenced by the assets within this zone.",
+        "MaxItems": 1,
+        "Properties": {
+            "location_type": {
+                "Description": "Required. Immutable. The location type of the resources that are allowed to be attached to the assets within this zone. Possible values: LOCATION_TYPE_UNSPECIFIED, SINGLE_REGION, MULTI_REGION",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. Current state of the zone. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "type": {
+        "Description": "Required. Immutable. The type of the zone. Possible values: TYPE_UNSPECIFIED, RAW, CURATED",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. System generated globally unique ID for the zone. This ID will be different if the zone is deleted and re-created with the same name.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The time when the zone was last updated.",
+        "Type": "TypeString"
+    }
+}

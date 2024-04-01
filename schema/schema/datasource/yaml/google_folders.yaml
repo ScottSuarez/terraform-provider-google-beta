@@ -1,0 +1,32 @@
+folders:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        create_time:
+            Type: TypeString
+            Computed: "true"
+        delete_time:
+            Type: TypeString
+            Computed: "true"
+        display_name:
+            Type: TypeString
+            Computed: "true"
+        etag:
+            Type: TypeString
+            Computed: "true"
+        name:
+            Type: TypeString
+            Computed: "true"
+        parent:
+            Type: TypeString
+            Computed: "true"
+        state:
+            Type: TypeString
+            Computed: "true"
+        update_time:
+            Type: TypeString
+            Computed: "true"
+parent_id:
+    Type: TypeString
+    Required: "true"
+

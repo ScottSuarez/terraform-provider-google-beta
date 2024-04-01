@@ -1,0 +1,221 @@
+bigquery_profile:
+    Type: TypeList
+    Description: BigQuery warehouse profile.
+    Optional: "true"
+    ExactlyOneOf: oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile
+    MaxItems: "1"
+    Properties: {}
+connection_profile_id:
+    Type: TypeString
+    Description: The connection profile identifier.
+    Required: "true"
+display_name:
+    Type: TypeString
+    Description: Display name.
+    Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+forward_ssh_connectivity:
+    Type: TypeList
+    Description: Forward SSH tunnel connectivity.
+    Optional: "true"
+    ConflictsWith: private_connectivity
+    MaxItems: "1"
+    Properties:
+        hostname:
+            Type: TypeString
+            Description: Hostname for the SSH tunnel.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: SSH password.
+            Optional: "true"
+            ConflictsWith: forward_ssh_connectivity.0.private_key
+        port:
+            Type: TypeInt
+            Description: Port for the SSH tunnel.
+            Optional: "true"
+        private_key:
+            Type: TypeString
+            Description: SSH private key.
+            Optional: "true"
+            ConflictsWith: forward_ssh_connectivity.0.password
+        username:
+            Type: TypeString
+            Description: Username for the SSH tunnel.
+            Required: "true"
+gcs_profile:
+    Type: TypeList
+    Description: Cloud Storage bucket profile.
+    Optional: "true"
+    ExactlyOneOf: oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile
+    MaxItems: "1"
+    Properties:
+        bucket:
+            Type: TypeString
+            Description: The Cloud Storage bucket name.
+            Required: "true"
+        root_path:
+            Type: TypeString
+            Description: The root path inside the Cloud Storage bucket.
+            Optional: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Labels.
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The name of the location this connection profile is located in.
+    Required: "true"
+mysql_profile:
+    Type: TypeList
+    Description: MySQL database profile.
+    Optional: "true"
+    ExactlyOneOf: oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile
+    MaxItems: "1"
+    Properties:
+        hostname:
+            Type: TypeString
+            Description: Hostname for the MySQL connection.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: Password for the MySQL connection.
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: Port for the MySQL connection.
+            Optional: "true"
+        ssl_config:
+            Type: TypeList
+            Description: SSL configuration for the MySQL connection.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ca_certificate:
+                    Type: TypeString
+                    Description: |-
+                        PEM-encoded certificate of the CA that signed the source database
+                        server's certificate.
+                    Optional: "true"
+                ca_certificate_set:
+                    Type: TypeBool
+                    Description: Indicates whether the clientKey field is set.
+                    Computed: "true"
+                client_certificate:
+                    Type: TypeString
+                    Description: |-
+                        PEM-encoded certificate that will be used by the replica to
+                        authenticate against the source database server. If this field
+                        is used then the 'clientKey' and the 'caCertificate' fields are
+                        mandatory.
+                    Optional: "true"
+                client_certificate_set:
+                    Type: TypeBool
+                    Description: Indicates whether the clientCertificate field is set.
+                    Computed: "true"
+                client_key:
+                    Type: TypeString
+                    Description: |-
+                        PEM-encoded private key associated with the Client Certificate.
+                        If this field is used then the 'client_certificate' and the
+                        'ca_certificate' fields are mandatory.
+                    Optional: "true"
+                client_key_set:
+                    Type: TypeBool
+                    Description: Indicates whether the clientKey field is set.
+                    Computed: "true"
+        username:
+            Type: TypeString
+            Description: Username for the MySQL connection.
+            Required: "true"
+name:
+    Type: TypeString
+    Description: The resource's name.
+    Computed: "true"
+oracle_profile:
+    Type: TypeList
+    Description: Oracle database profile.
+    Optional: "true"
+    ExactlyOneOf: oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile
+    MaxItems: "1"
+    Properties:
+        connection_attributes:
+            Type: TypeMap
+            Description: Connection string attributes
+            Optional: "true"
+        database_service:
+            Type: TypeString
+            Description: Database for the Oracle connection.
+            Required: "true"
+        hostname:
+            Type: TypeString
+            Description: Hostname for the Oracle connection.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: Password for the Oracle connection.
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: Port for the Oracle connection.
+            Optional: "true"
+        username:
+            Type: TypeString
+            Description: Username for the Oracle connection.
+            Required: "true"
+postgresql_profile:
+    Type: TypeList
+    Description: PostgreSQL database profile.
+    Optional: "true"
+    ExactlyOneOf: oracle_profile, gcs_profile, mysql_profile, bigquery_profile, postgresql_profile
+    MaxItems: "1"
+    Properties:
+        database:
+            Type: TypeString
+            Description: Database for the PostgreSQL connection.
+            Required: "true"
+        hostname:
+            Type: TypeString
+            Description: Hostname for the PostgreSQL connection.
+            Required: "true"
+        password:
+            Type: TypeString
+            Description: Password for the PostgreSQL connection.
+            Required: "true"
+        port:
+            Type: TypeInt
+            Description: Port for the PostgreSQL connection.
+            Optional: "true"
+        username:
+            Type: TypeString
+            Description: Username for the PostgreSQL connection.
+            Required: "true"
+private_connectivity:
+    Type: TypeList
+    Description: Private connectivity.
+    Optional: "true"
+    ConflictsWith: forward_ssh_connectivity
+    MaxItems: "1"
+    Properties:
+        private_connection:
+            Type: TypeString
+            Description: 'A reference to a private connection resource. Format: ''projects/{project}/locations/{location}/privateConnections/{name}'''
+            Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+

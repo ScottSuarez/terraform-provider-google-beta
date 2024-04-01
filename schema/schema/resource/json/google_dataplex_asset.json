@@ -1,0 +1,276 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time when the asset was created.",
+        "Type": "TypeString"
+    },
+    "dataplex_zone": {
+        "Description": "The zone for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Optional. Description of the asset.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "discovery_spec": {
+        "Description": "Required. Specification of the discovery feature applied to data referenced by this asset. When this spec is left unset, the asset will use the spec set on the parent zone.",
+        "MaxItems": 1,
+        "Properties": {
+            "csv_options": {
+                "Computed": true,
+                "Description": "Optional. Configuration for CSV data.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "delimiter": {
+                        "Description": "Optional. The delimiter being used to separate values. This defaults to ','.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "disable_type_inference": {
+                        "Description": "Optional. Whether to disable the inference of data type for CSV data. If true, all columns will be registered as strings.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encoding": {
+                        "Description": "Optional. The character encoding of the data. The default is UTF-8.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "header_rows": {
+                        "Description": "Optional. The number of rows to interpret as header rows that should be skipped when reading data rows.",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "enabled": {
+                "Description": "Required. Whether discovery is enabled.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "exclude_patterns": {
+                "Description": "Optional. The list of patterns to apply for selecting data to exclude during discovery. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "include_patterns": {
+                "Description": "Optional. The list of patterns to apply for selecting data to include during discovery if only a subset of the data should considered. For Cloud Storage bucket assets, these are interpreted as glob patterns used to match object names. For BigQuery dataset assets, these are interpreted as patterns to match table names.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "json_options": {
+                "Computed": true,
+                "Description": "Optional. Configuration for Json data.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "disable_type_inference": {
+                        "Description": "Optional. Whether to disable the inference of data type for Json data. If true, all columns will be registered as their primitive types (strings, number or boolean).",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    },
+                    "encoding": {
+                        "Description": "Optional. The character encoding of the data. The default is UTF-8.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "schedule": {
+                "Description": "Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running discovery periodically. Successive discovery runs must be scheduled at least 60 minutes apart. The default value is to run discovery every 60 minutes. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: \"CRON_TZ=${IANA_TIME_ZONE}\" or TZ=${IANA_TIME_ZONE}\". The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, \"CRON_TZ=America/New_York 1 * * * *\", or \"TZ=America/New_York 1 * * * *\".",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "discovery_status": {
+        "Computed": true,
+        "Description": "Output only. Status of the discovery feature applied to data referenced by this asset.",
+        "Properties": {
+            "last_run_duration": {
+                "Computed": true,
+                "Description": "The duration of the last discovery run.",
+                "Type": "TypeString"
+            },
+            "last_run_time": {
+                "Computed": true,
+                "Description": "The start time of the last discovery run.",
+                "Type": "TypeString"
+            },
+            "message": {
+                "Computed": true,
+                "Description": "Additional information about the current state.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "The current status of the discovery feature. Possible values: STATE_UNSPECIFIED, SCHEDULED, IN_PROGRESS, PAUSED, DISABLED",
+                "Type": "TypeString"
+            },
+            "stats": {
+                "Computed": true,
+                "Description": "Data Stats of the asset reported by discovery.",
+                "Properties": {
+                    "data_items": {
+                        "Computed": true,
+                        "Description": "The count of data items within the referenced resource.",
+                        "Type": "TypeInt"
+                    },
+                    "data_size": {
+                        "Computed": true,
+                        "Description": "The number of stored data bytes within the referenced resource.",
+                        "Type": "TypeInt"
+                    },
+                    "filesets": {
+                        "Computed": true,
+                        "Description": "The count of fileset entities within the referenced resource.",
+                        "Type": "TypeInt"
+                    },
+                    "tables": {
+                        "Computed": true,
+                        "Description": "The count of table entities within the referenced resource.",
+                        "Type": "TypeInt"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Last update time of the status.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "Optional. User friendly display name.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "labels": {
+        "Description": "Optional. User defined labels for the asset.\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "lake": {
+        "Description": "The lake for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the asset.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "resource_spec": {
+        "Description": "Required. Immutable. Specification of the resource that is referenced by this asset.",
+        "MaxItems": 1,
+        "Properties": {
+            "name": {
+                "Description": "Immutable. Relative name of the cloud resource that contains the data that is being managed within a lake. For example: `projects/{project_number}/buckets/{bucket_id}` `projects/{project_number}/datasets/{dataset_id}`",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "read_access_mode": {
+                "Computed": true,
+                "Description": "Optional. Determines how read permissions are handled for each asset and their associated tables. Only available to storage buckets assets. Possible values: DIRECT, MANAGED",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "type": {
+                "Description": "Required. Immutable. Type of resource. Possible values: STORAGE_BUCKET, BIGQUERY_DATASET",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "resource_status": {
+        "Computed": true,
+        "Description": "Output only. Status of the resource referenced by this asset.",
+        "Properties": {
+            "message": {
+                "Computed": true,
+                "Description": "Additional information about the current state.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "The current state of the managed resource. Possible values: STATE_UNSPECIFIED, READY, ERROR",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Last update time of the status.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "security_status": {
+        "Computed": true,
+        "Description": "Output only. Status of the security policy applied to resource referenced by this asset.",
+        "Properties": {
+            "message": {
+                "Computed": true,
+                "Description": "Additional information about the current state.",
+                "Type": "TypeString"
+            },
+            "state": {
+                "Computed": true,
+                "Description": "The current state of the security policy applied to the attached resource. Possible values: STATE_UNSPECIFIED, READY, APPLYING, ERROR",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "Last update time of the status.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. Current state of the asset. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "uid": {
+        "Computed": true,
+        "Description": "Output only. System generated globally unique ID for the asset. This ID will be different if the asset is deleted and re-created with the same name.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The time when the asset was last updated.",
+        "Type": "TypeString"
+    }
+}

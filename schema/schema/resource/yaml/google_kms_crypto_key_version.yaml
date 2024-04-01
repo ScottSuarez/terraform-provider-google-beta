@@ -1,0 +1,75 @@
+algorithm:
+    Type: TypeString
+    Description: The CryptoKeyVersionAlgorithm that this CryptoKeyVersion supports.
+    Computed: "true"
+attestation:
+    Type: TypeList
+    Description: |-
+        Statement that was generated and signed by the HSM at key creation time. Use this statement to verify attributes of the key as stored on the HSM, independently of Google.
+        Only provided for key versions with protectionLevel HSM.
+    Computed: "true"
+    Properties:
+        cert_chains:
+            Type: TypeList
+            Description: The certificate chains needed to validate the attestation
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                cavium_certs:
+                    Type: TypeString
+                    Description: Cavium certificate chain corresponding to the attestation.
+                    Optional: "true"
+                google_card_certs:
+                    Type: TypeString
+                    Description: Google card certificate chain corresponding to the attestation.
+                    Optional: "true"
+                google_partition_certs:
+                    Type: TypeString
+                    Description: Google partition certificate chain corresponding to the attestation.
+                    Optional: "true"
+        content:
+            Type: TypeString
+            Description: The attestation data provided by the HSM when the key operation was performed.
+            Computed: "true"
+        external_protection_level_options:
+            Type: TypeList
+            Description: ExternalProtectionLevelOptions stores a group of additional fields for configuring a CryptoKeyVersion that are specific to the EXTERNAL protection level and EXTERNAL_VPC protection levels.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                ekm_connection_key_path:
+                    Type: TypeString
+                    Description: The path to the external key material on the EKM when using EkmConnection e.g., "v0/my/key". Set this field instead of externalKeyUri when using an EkmConnection.
+                    Optional: "true"
+                external_key_uri:
+                    Type: TypeString
+                    Description: The URI for an external resource that this CryptoKeyVersion represents.
+                    Optional: "true"
+        format:
+            Type: TypeString
+            Description: The format of the attestation data.
+            Computed: "true"
+crypto_key:
+    Type: TypeString
+    Description: |-
+        The name of the cryptoKey associated with the CryptoKeyVersions.
+        Format: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyring}}/cryptoKeys/{{cryptoKey}}''
+    Required: "true"
+generate_time:
+    Type: TypeString
+    Description: The time this CryptoKeyVersion key material was generated
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The resource name for this CryptoKeyVersion.
+    Computed: "true"
+protection_level:
+    Type: TypeString
+    Description: The ProtectionLevel describing how crypto operations are performed with this CryptoKeyVersion.
+    Computed: "true"
+state:
+    Type: TypeString
+    Description: 'The current state of the CryptoKeyVersion. Possible values: ["PENDING_GENERATION", "ENABLED", "DISABLED", "DESTROYED", "DESTROY_SCHEDULED", "PENDING_IMPORT", "IMPORT_FAILED"]'
+    Computed: "true"
+    Optional: "true"
+

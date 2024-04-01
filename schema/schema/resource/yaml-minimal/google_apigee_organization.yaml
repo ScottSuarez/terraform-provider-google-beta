@@ -1,0 +1,19 @@
+analytics_region: TypeString
+apigee_project_id: TypeString
+authorized_network: TypeString
+billing_type: TypeString
+ca_certificate: TypeString
+description: TypeString
+disable_vpc_peering: TypeBool
+display_name: TypeString
+name: TypeString
+project_id: TypeString
+properties:
+    property:
+        name: TypeString
+        value: TypeString
+retention: TypeString
+runtime_database_encryption_key_name: TypeString
+runtime_type: TypeString
+subscription_type: TypeString
+

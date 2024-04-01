@@ -1,0 +1,280 @@
+admin_settings:
+    Type: TypeList
+    Description: Looker instance Admin settings.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        allowed_email_domains:
+            Type: TypeList
+            Description: |-
+                Email domain allowlist for the instance.
+
+                Define the email domains to which your users can deliver Looker (Google Cloud core) content.
+                Updating this list will restart the instance. Updating the allowed email domains from terraform
+                means the value provided will be considered as the entire list and not an amendment to the
+                existing list of allowed email domains.
+            Optional: "true"
+consumer_network:
+    Type: TypeString
+    Description: |-
+        Network name in the consumer project in the format of: projects/{project}/global/networks/{network}
+        Note that the consumer network may be in a different GCP project than the consumer
+        project that is hosting the Looker Instance.
+    Optional: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        The time the instance was created in RFC3339 UTC "Zulu" format,
+        accurate to nanoseconds.
+    Computed: "true"
+deny_maintenance_period:
+    Type: TypeList
+    Description: |-
+        Maintenance denial period for this instance.
+
+        You must allow at least 14 days of maintenance availability
+        between any two deny maintenance periods.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        end_date:
+            Type: TypeList
+            Description: Required. Start date of the deny maintenance period
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                day:
+                    Type: TypeInt
+                    Description: |-
+                        Day of a month. Must be from 1 to 31 and valid for the year and month, or 0
+                        to specify a year by itself or a year and month where the day isn't significant.
+                    Optional: "true"
+                month:
+                    Type: TypeInt
+                    Description: |-
+                        Month of a year. Must be from 1 to 12, or 0 to specify a year without a
+                        month and day.
+                    Optional: "true"
+                year:
+                    Type: TypeInt
+                    Description: |-
+                        Year of the date. Must be from 1 to 9999, or 0 to specify a date without
+                        a year.
+                    Optional: "true"
+        start_date:
+            Type: TypeList
+            Description: Required. Start date of the deny maintenance period
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                day:
+                    Type: TypeInt
+                    Description: |-
+                        Day of a month. Must be from 1 to 31 and valid for the year and month, or 0
+                        to specify a year by itself or a year and month where the day isn't significant.
+                    Optional: "true"
+                month:
+                    Type: TypeInt
+                    Description: |-
+                        Month of a year. Must be from 1 to 12, or 0 to specify a year without a
+                        month and day.
+                    Optional: "true"
+                year:
+                    Type: TypeInt
+                    Description: |-
+                        Year of the date. Must be from 1 to 9999, or 0 to specify a date without
+                        a year.
+                    Optional: "true"
+        time:
+            Type: TypeList
+            Description: Required. Start time of the window in UTC time.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                hours:
+                    Type: TypeInt
+                    Description: Hours of day in 24 hour format. Should be from 0 to 23.
+                    Optional: "true"
+                minutes:
+                    Type: TypeInt
+                    Description: Minutes of hour of day. Must be from 0 to 59.
+                    Optional: "true"
+                nanos:
+                    Type: TypeInt
+                    Description: Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+                    Optional: "true"
+                seconds:
+                    Type: TypeInt
+                    Description: Seconds of minutes of the time. Must normally be from 0 to 59.
+                    Optional: "true"
+egress_public_ip:
+    Type: TypeString
+    Description: Public Egress IP (IPv4).
+    Computed: "true"
+encryption_config:
+    Type: TypeList
+    Description: Looker instance encryption settings.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        kms_key_name:
+            Type: TypeString
+            Description: Name of the customer managed encryption key (CMEK) in KMS.
+            Optional: "true"
+        kms_key_name_version:
+            Type: TypeString
+            Description: Full name and version of the CMEK key currently in use to encrypt Looker data.
+            Computed: "true"
+        kms_key_state:
+            Type: TypeString
+            Description: Status of the customer managed encryption key (CMEK) in KMS.
+            Computed: "true"
+ingress_private_ip:
+    Type: TypeString
+    Description: Private Ingress IP (IPv4).
+    Computed: "true"
+ingress_public_ip:
+    Type: TypeString
+    Description: Public Ingress IP (IPv4).
+    Computed: "true"
+looker_uri:
+    Type: TypeString
+    Description: Looker instance URI which can be used to access the Looker Instance UI.
+    Computed: "true"
+looker_version:
+    Type: TypeString
+    Description: The Looker version that the instance is using.
+    Computed: "true"
+maintenance_window:
+    Type: TypeList
+    Description: |-
+        Maintenance window for an instance.
+
+        Maintenance of your instance takes place once a month, and will require
+        your instance to be restarted during updates, which will temporarily
+        disrupt service.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        day_of_week:
+            Type: TypeString
+            Description: |-
+                Required. Day of the week for this MaintenanceWindow (in UTC).
+
+                - MONDAY: Monday
+                - TUESDAY: Tuesday
+                - WEDNESDAY: Wednesday
+                - THURSDAY: Thursday
+                - FRIDAY: Friday
+                - SATURDAY: Saturday
+                - SUNDAY: Sunday Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+            Required: "true"
+        start_time:
+            Type: TypeList
+            Description: Required. Start time of the window in UTC time.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                hours:
+                    Type: TypeInt
+                    Description: Hours of day in 24 hour format. Should be from 0 to 23.
+                    Optional: "true"
+                minutes:
+                    Type: TypeInt
+                    Description: Minutes of hour of day. Must be from 0 to 59.
+                    Optional: "true"
+                nanos:
+                    Type: TypeInt
+                    Description: Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+                    Optional: "true"
+                seconds:
+                    Type: TypeInt
+                    Description: Seconds of minutes of the time. Must normally be from 0 to 59.
+                    Optional: "true"
+name:
+    Type: TypeString
+    Description: The ID of the instance or a fully qualified identifier for the instance.
+    Required: "true"
+oauth_config:
+    Type: TypeList
+    Description: Looker Instance OAuth login settings.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        client_id:
+            Type: TypeString
+            Description: The client ID for the Oauth config.
+            Required: "true"
+        client_secret:
+            Type: TypeString
+            Description: The client secret for the Oauth config.
+            Required: "true"
+platform_edition:
+    Type: TypeString
+    Description: |-
+        Platform editions for a Looker instance. Each edition maps to a set of instance features, like its size. Must be one of these values:
+        - LOOKER_CORE_TRIAL: trial instance
+        - LOOKER_CORE_STANDARD: pay as you go standard instance
+        - LOOKER_CORE_STANDARD_ANNUAL: subscription standard instance
+        - LOOKER_CORE_ENTERPRISE_ANNUAL: subscription enterprise instance
+        - LOOKER_CORE_EMBED_ANNUAL: subscription embed instance Default value: "LOOKER_CORE_TRIAL" Possible values: ["LOOKER_CORE_TRIAL", "LOOKER_CORE_STANDARD", "LOOKER_CORE_STANDARD_ANNUAL", "LOOKER_CORE_ENTERPRISE_ANNUAL", "LOOKER_CORE_EMBED_ANNUAL"]
+    Optional: "true"
+private_ip_enabled:
+    Type: TypeBool
+    Description: Whether private IP is enabled on the Looker instance.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+public_ip_enabled:
+    Type: TypeBool
+    Description: Whether public IP is enabled on the Looker instance.
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: The name of the Looker region of the instance.
+    Computed: "true"
+    Optional: "true"
+reserved_range:
+    Type: TypeString
+    Description: |-
+        Name of a reserved IP address range within the consumer network, to be used for
+        private service access connection. User may or may not specify this in a request.
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        The time the instance was updated in RFC3339 UTC "Zulu" format,
+        accurate to nanoseconds.
+    Computed: "true"
+user_metadata:
+    Type: TypeList
+    Description: |-
+        Metadata about users for a Looker instance.
+
+        These settings are only available when platform edition LOOKER_CORE_STANDARD is set.
+
+        There are ten Standard and two Developer users included in the cost of the product.
+        You can allocate additional Standard, Viewer, and Developer users for this instance.
+        It is an optional step and can be modified later.
+
+        With the Standard edition of Looker (Google Cloud core), you can provision up to 50
+        total users, distributed across Viewer, Standard, and Developer.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_developer_user_count:
+            Type: TypeInt
+            Description: Number of additional Developer Users to allocate to the Looker Instance.
+            Optional: "true"
+        additional_standard_user_count:
+            Type: TypeInt
+            Description: Number of additional Standard Users to allocate to the Looker Instance.
+            Optional: "true"
+        additional_viewer_user_count:
+            Type: TypeInt
+            Description: Number of additional Viewer Users to allocate to the Looker Instance.
+            Optional: "true"
+

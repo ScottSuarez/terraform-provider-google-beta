@@ -1,0 +1,11 @@
+api_scope: TypeString
+collection: TypeString
+database: TypeString
+fields:
+    array_config: TypeString
+    field_path: TypeString
+    order: TypeString
+name: TypeString
+project: TypeString
+query_scope: TypeString
+

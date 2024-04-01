@@ -1,0 +1,28 @@
+description:
+    Type: TypeString
+    Description: Entry group description, which can consist of several sentences or paragraphs that describe entry group contents.
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: A short name to identify the entry group, for example, "analytics data - jan 2011".
+    Optional: "true"
+entry_group_id:
+    Type: TypeString
+    Description: |-
+        The id of the entry group to create. The id must begin with a letter or underscore,
+        contain only English letters, numbers and underscores, and be at most 64 characters.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: 'The resource name of the entry group in URL format. Example: projects/{project}/locations/{location}/entryGroups/{entryGroupId}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Description: EntryGroup location region.
+    Computed: "true"
+    Optional: "true"
+

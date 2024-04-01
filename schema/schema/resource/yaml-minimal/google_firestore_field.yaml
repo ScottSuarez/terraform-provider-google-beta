@@ -1,0 +1,13 @@
+collection: TypeString
+database: TypeString
+field: TypeString
+index_config:
+    indexes:
+        array_config: TypeString
+        order: TypeString
+        query_scope: TypeString
+name: TypeString
+project: TypeString
+ttl_config:
+    state: TypeString
+

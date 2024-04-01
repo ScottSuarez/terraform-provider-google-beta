@@ -1,0 +1,32 @@
+{
+    "dns_suffix": {
+        "Description": "The DNS domain name suffix of the peered DNS domain.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Name of the peered DNS domain.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "Network in the consumer project to peer with.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The ID of the project that the service account will be created in. Defaults to the provider project configuration.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Description": "The name of the service to create a peered DNS domain for, e.g. servicenetworking.googleapis.com",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

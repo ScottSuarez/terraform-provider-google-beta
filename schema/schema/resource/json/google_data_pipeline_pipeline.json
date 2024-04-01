@@ -1,0 +1,382 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp when the pipeline was initially created. Set by the Data Pipelines service.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "The display name of the pipeline. It can contain only letters ([A-Za-z]), numbers ([0-9]), hyphens (-), and underscores (_).",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "job_count": {
+        "Computed": true,
+        "Description": "Number of jobs.",
+        "Type": "TypeInt"
+    },
+    "last_update_time": {
+        "Computed": true,
+        "Description": "The timestamp when the pipeline was last modified. Set by the Data Pipelines service.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "\"The pipeline name. For example': 'projects/PROJECT_ID/locations/LOCATION_ID/pipelines/PIPELINE_ID.\"\n\"- PROJECT_ID can contain letters ([A-Za-z]), numbers ([0-9]), hyphens (-), colons (:), and periods (.). For more information, see Identifying projects.\"\n\"LOCATION_ID is the canonical ID for the pipeline's location. The list of available locations can be obtained by calling google.cloud.location.Locations.ListLocations. Note that the Data Pipelines service is not available in all regions. It depends on Cloud Scheduler, an App Engine application, so it's only available in App Engine regions.\"\n\"PIPELINE_ID is the ID of the pipeline. Must be unique for the selected project and location.\"",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "pipeline_sources": {
+        "Description": "The sources of the pipeline (for example, Dataplex). The keys and values are set by the corresponding sources during pipeline creation.\nAn object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "A reference to the region",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "schedule_info": {
+        "Description": "Internal scheduling information for a pipeline. If this information is provided, periodic jobs will be created per the schedule. If not, users are responsible for creating jobs externally.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#schedulespec",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "next_job_time": {
+                "Computed": true,
+                "Description": "When the next Scheduler job is going to run.\nA timestamp in RFC3339 UTC \"Zulu\" format, with nanosecond resolution and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\".",
+                "Type": "TypeString"
+            },
+            "schedule": {
+                "Description": "Unix-cron format of the schedule. This information is retrieved from the linked Cloud Scheduler.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "time_zone": {
+                "Description": "Timezone ID. This matches the timezone IDs used by the Cloud Scheduler API. If empty, UTC time is assumed.",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "scheduler_service_account_email": {
+        "Computed": true,
+        "Description": "Optional. A service account email to be used with the Cloud Scheduler job. If not specified, the default compute engine service account will be used.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Description": "The state of the pipeline. When the pipeline is created, the state is set to 'PIPELINE_STATE_ACTIVE' by default. State changes can be requested by setting the state to stopping, paused, or resuming. State cannot be changed through pipelines.patch requests.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#state Possible values: [\"STATE_UNSPECIFIED\", \"STATE_RESUMING\", \"STATE_ACTIVE\", \"STATE_STOPPING\", \"STATE_ARCHIVED\", \"STATE_PAUSED\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "type": {
+        "Description": "The type of the pipeline. This field affects the scheduling of the pipeline and the type of metrics to show for the pipeline.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#pipelinetype Possible values: [\"PIPELINE_TYPE_UNSPECIFIED\", \"PIPELINE_TYPE_BATCH\", \"PIPELINE_TYPE_STREAMING\"]",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "workload": {
+        "Description": "Workload information for creating new jobs.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#workload",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "dataflow_flex_template_request": {
+                "Description": "Template information and additional parameters needed to launch a Dataflow job using the flex launch API.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#launchflextemplaterequest",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "launch_parameter": {
+                        "Description": "Parameter to launch a job from a Flex Template.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#launchflextemplateparameter",
+                        "MaxItems": 1,
+                        "Properties": {
+                            "container_spec_gcs_path": {
+                                "Description": "Cloud Storage path to a file with a JSON-serialized ContainerSpec as content.",
+                                "Optional": true,
+                                "Type": "TypeString"
+                            },
+                            "environment": {
+                                "Description": "The runtime environment for the Flex Template job.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#FlexTemplateRuntimeEnvironment",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "additional_experiments": {
+                                        "Description": "Additional experiment flags for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "additional_user_labels": {
+                                        "Description": "Additional user labels to be specified for the job. Keys and values should follow the restrictions specified in the labeling restrictions page. An object containing a list of key/value pairs.\n'Example: { \"name\": \"wrench\", \"mass\": \"1kg\", \"count\": \"3\" }.'\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                        "Optional": true,
+                                        "Type": "TypeMap"
+                                    },
+                                    "enable_streaming_engine": {
+                                        "Description": "Whether to enable Streaming Engine for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeBool"
+                                    },
+                                    "flexrs_goal": {
+                                        "Description": "Set FlexRS goal for the job. https://cloud.google.com/dataflow/docs/guides/flexrs\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#FlexResourceSchedulingGoal Possible values: [\"FLEXRS_UNSPECIFIED\", \"FLEXRS_SPEED_OPTIMIZED\", \"FLEXRS_COST_OPTIMIZED\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "ip_configuration": {
+                                        "Description": "Configuration for VM IPs.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#WorkerIPAddressConfiguration Possible values: [\"WORKER_IP_UNSPECIFIED\", \"WORKER_IP_PUBLIC\", \"WORKER_IP_PRIVATE\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "kms_key_name": {
+                                        "Description": "'Name for the Cloud KMS key for the job. The key format is: projects//locations//keyRings//cryptoKeys/'",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "machine_type": {
+                                        "Description": "The machine type to use for the job. Defaults to the value from the template if not specified.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "max_workers": {
+                                        "Description": "The maximum number of Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "network": {
+                                        "Description": "Network to which VMs will be assigned. If empty or unspecified, the service will use the network \"default\".",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "num_workers": {
+                                        "Description": "The initial number of Compute Engine instances for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "service_account_email": {
+                                        "Description": "The email address of the service account to run the job as.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "subnetwork": {
+                                        "Description": "Subnetwork to which VMs will be assigned, if desired. You can specify a subnetwork using either a complete URL or an abbreviated path. Expected to be of the form \"https://www.googleapis.com/compute/v1/projects/HOST_PROJECT_ID/regions/REGION/subnetworks/SUBNETWORK\" or \"regions/REGION/subnetworks/SUBNETWORK\". If the subnetwork is located in a Shared VPC network, you must use the complete URL.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "temp_location": {
+                                        "Description": "The Cloud Storage path to use for temporary files. Must be a valid Cloud Storage URL, beginning with gs://.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "worker_region": {
+                                        "Description": "The Compute Engine region (https://cloud.google.com/compute/docs/regions-zones/regions-zones) in which worker processing should occur, e.g. \"us-west1\". Mutually exclusive with workerZone. If neither workerRegion nor workerZone is specified, default to the control plane's region.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "worker_zone": {
+                                        "Description": "The Compute Engine zone (https://cloud.google.com/compute/docs/regions-zones/regions-zones) in which worker processing should occur, e.g. \"us-west1-a\". Mutually exclusive with workerRegion. If neither workerRegion nor workerZone is specified, a zone in the control plane's region is chosen based on available capacity. If both workerZone and zone are set, workerZone takes precedence.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "zone": {
+                                        "Description": "The Compute Engine availability zone for launching worker instances to run your pipeline. In the future, workerZone will take precedence.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "job_name": {
+                                "Description": "The job name to use for the created job. For an update job request, the job name should be the same as the existing running job.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "launch_options": {
+                                "Description": "Launch options for this Flex Template job. This is a common set of options across languages and templates. This should not be used to pass job parameters.\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "parameters": {
+                                "Description": "'The parameters for the Flex Template. Example: {\"numWorkers\":\"5\"}'\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "transform_name_mappings": {
+                                "Description": "'Use this to pass transform name mappings for streaming update jobs. Example: {\"oldTransformName\":\"newTransformName\",...}'\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "update": {
+                                "Description": "Set this to true if you are sending a request to update a running streaming job. When set, the job name should be the same as the running job.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Required": true,
+                        "Type": "TypeList"
+                    },
+                    "location": {
+                        "Description": "The regional endpoint to which to direct the request. For example, us-central1, us-west1.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "project_id": {
+                        "Description": "The ID of the Cloud Platform project that the job belongs to.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "validate_only": {
+                        "Description": "If true, the request is validated but not actually executed. Defaults to false.",
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "dataflow_launch_template_request": {
+                "Description": "Template information and additional parameters needed to launch a Dataflow job using the standard launch API.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#launchtemplaterequest",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "gcs_path": {
+                        "Description": "A Cloud Storage path to the template from which to create the job. Must be a valid Cloud Storage URL, beginning with 'gs://'.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "launch_parameters": {
+                        "Description": "The parameters of the template to launch. This should be part of the body of the POST request.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#launchtemplateparameters",
+                        "MaxItems": 1,
+                        "Optional": true,
+                        "Properties": {
+                            "environment": {
+                                "Description": "The runtime environment for the job.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#RuntimeEnvironment",
+                                "MaxItems": 1,
+                                "Optional": true,
+                                "Properties": {
+                                    "additional_experiments": {
+                                        "Description": "Additional experiment flags for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeList"
+                                    },
+                                    "additional_user_labels": {
+                                        "Description": "Additional user labels to be specified for the job. Keys and values should follow the restrictions specified in the labeling restrictions page. An object containing a list of key/value pairs.\n'Example: { \"name\": \"wrench\", \"mass\": \"1kg\", \"count\": \"3\" }.'\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                        "Optional": true,
+                                        "Type": "TypeMap"
+                                    },
+                                    "bypass_temp_dir_validation": {
+                                        "Description": "Whether to bypass the safety checks for the job's temporary directory. Use with caution.",
+                                        "Optional": true,
+                                        "Type": "TypeBool"
+                                    },
+                                    "enable_streaming_engine": {
+                                        "Description": "Whether to enable Streaming Engine for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeBool"
+                                    },
+                                    "ip_configuration": {
+                                        "Description": "Configuration for VM IPs.\nhttps://cloud.google.com/dataflow/docs/reference/data-pipelines/rest/v1/projects.locations.pipelines#WorkerIPAddressConfiguration Possible values: [\"WORKER_IP_UNSPECIFIED\", \"WORKER_IP_PUBLIC\", \"WORKER_IP_PRIVATE\"]",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "kms_key_name": {
+                                        "Description": "'Name for the Cloud KMS key for the job. The key format is: projects//locations//keyRings//cryptoKeys/'",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "machine_type": {
+                                        "Description": "The machine type to use for the job. Defaults to the value from the template if not specified.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "max_workers": {
+                                        "Description": "The maximum number of Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "network": {
+                                        "Computed": true,
+                                        "Description": "Network to which VMs will be assigned. If empty or unspecified, the service will use the network \"default\".",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "num_workers": {
+                                        "Description": "The initial number of Compute Engine instances for the job.",
+                                        "Optional": true,
+                                        "Type": "TypeInt"
+                                    },
+                                    "service_account_email": {
+                                        "Description": "The email address of the service account to run the job as.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "subnetwork": {
+                                        "Description": "Subnetwork to which VMs will be assigned, if desired. You can specify a subnetwork using either a complete URL or an abbreviated path. Expected to be of the form \"https://www.googleapis.com/compute/v1/projects/HOST_PROJECT_ID/regions/REGION/subnetworks/SUBNETWORK\" or \"regions/REGION/subnetworks/SUBNETWORK\". If the subnetwork is located in a Shared VPC network, you must use the complete URL.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "temp_location": {
+                                        "Description": "The Cloud Storage path to use for temporary files. Must be a valid Cloud Storage URL, beginning with gs://.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "worker_region": {
+                                        "Description": "The Compute Engine region (https://cloud.google.com/compute/docs/regions-zones/regions-zones) in which worker processing should occur, e.g. \"us-west1\". Mutually exclusive with workerZone. If neither workerRegion nor workerZone is specified, default to the control plane's region.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "worker_zone": {
+                                        "Description": "The Compute Engine zone (https://cloud.google.com/compute/docs/regions-zones/regions-zones) in which worker processing should occur, e.g. \"us-west1-a\". Mutually exclusive with workerRegion. If neither workerRegion nor workerZone is specified, a zone in the control plane's region is chosen based on available capacity. If both workerZone and zone are set, workerZone takes precedence.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    },
+                                    "zone": {
+                                        "Description": "The Compute Engine availability zone for launching worker instances to run your pipeline. In the future, workerZone will take precedence.",
+                                        "Optional": true,
+                                        "Type": "TypeString"
+                                    }
+                                },
+                                "Type": "TypeList"
+                            },
+                            "job_name": {
+                                "Description": "The job name to use for the created job.",
+                                "Required": true,
+                                "Type": "TypeString"
+                            },
+                            "parameters": {
+                                "Description": "The runtime parameters to pass to the job.\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "transform_name_mapping": {
+                                "Description": "Map of transform name prefixes of the job to be replaced to the corresponding name prefixes of the new job. Only applicable when updating a pipeline.\n'An object containing a list of \"key\": value pairs. Example: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.'",
+                                "Optional": true,
+                                "Type": "TypeMap"
+                            },
+                            "update": {
+                                "Description": "If set, replace the existing pipeline with the name specified by jobName with this pipeline, preserving state.",
+                                "Optional": true,
+                                "Type": "TypeBool"
+                            }
+                        },
+                        "Type": "TypeList"
+                    },
+                    "location": {
+                        "Description": "The regional endpoint to which to direct the request.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "project_id": {
+                        "Description": "The ID of the Cloud Platform project that the job belongs to.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "validate_only": {
+                        "Optional": true,
+                        "Type": "TypeBool"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

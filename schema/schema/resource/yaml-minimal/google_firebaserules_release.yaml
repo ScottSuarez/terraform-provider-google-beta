@@ -1,0 +1,7 @@
+create_time: TypeString
+disabled: TypeBool
+name: TypeString
+project: TypeString
+ruleset_name: TypeString
+update_time: TypeString
+

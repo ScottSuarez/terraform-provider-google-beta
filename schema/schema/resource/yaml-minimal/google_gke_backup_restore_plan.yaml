@@ -1,0 +1,49 @@
+backup_plan: TypeString
+cluster: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+restore_config:
+    all_namespaces: TypeBool
+    cluster_resource_conflict_policy: TypeString
+    cluster_resource_restore_scope:
+        all_group_kinds: TypeBool
+        excluded_group_kinds:
+            resource_group: TypeString
+            resource_kind: TypeString
+        no_group_kinds: TypeBool
+        selected_group_kinds:
+            resource_group: TypeString
+            resource_kind: TypeString
+    excluded_namespaces:
+        namespaces: TypeList(TypeString)
+    namespaced_resource_restore_mode: TypeString
+    no_namespaces: TypeBool
+    selected_applications:
+        namespaced_names:
+            name: TypeString
+            namespace: TypeString
+    selected_namespaces:
+        namespaces: TypeList(TypeString)
+    transformation_rules:
+        description: TypeString
+        field_actions:
+            from_path: TypeString
+            op: TypeString
+            path: TypeString
+            value: TypeString
+        resource_filter:
+            group_kinds:
+                resource_group: TypeString
+                resource_kind: TypeString
+            json_path: TypeString
+            namespaces: TypeList(TypeString)
+    volume_data_restore_policy: TypeString
+state: TypeString
+state_reason: TypeString
+terraform_labels: TypeMap(TypeString)
+uid: TypeString
+

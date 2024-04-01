@@ -1,0 +1,13 @@
+consumer_accept_list: TypeList(TypeString)
+description: TypeString
+disk_encryption_key_name: TypeString
+display_name: TypeString
+host: TypeString
+ip_range: TypeString
+location: TypeString
+name: TypeString
+org_id: TypeString
+peering_cidr_range: TypeString
+port: TypeString
+service_attachment: TypeString
+

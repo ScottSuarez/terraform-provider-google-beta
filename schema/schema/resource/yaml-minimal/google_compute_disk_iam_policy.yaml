@@ -1,0 +1,6 @@
+etag: TypeString
+name: TypeString
+policy_data: TypeString
+project: TypeString
+zone: TypeString
+

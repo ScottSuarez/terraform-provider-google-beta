@@ -1,0 +1,26 @@
+{
+    "description": {
+        "Description": "A human-readable description.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "disabled": {
+        "Description": "Whether this exclusion rule should be disabled or not. This defaults to false.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "filter": {
+        "Description": "The filter to apply when excluding logs. Only log entries that match the filter are excluded.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the logging exclusion.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "org_id": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

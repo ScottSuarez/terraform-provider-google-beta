@@ -1,0 +1,5 @@
+name: TypeString
+project: TypeString
+region: TypeString
+throughput_capacity: TypeInt
+

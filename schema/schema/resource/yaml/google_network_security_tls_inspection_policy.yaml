@@ -1,0 +1,33 @@
+ca_pool:
+    Type: TypeString
+    Description: A CA pool resource used to issue interception certificates.
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: The timestamp when the resource was created.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: Free-text description of the resource.
+    Optional: "true"
+exclude_public_ca_set:
+    Type: TypeBool
+    Description: If FALSE (the default), use our default set of public CAs in addition to any CAs specified in trustConfig. These public CAs are currently based on the Mozilla Root Program and are subject to change over time. If TRUE, do not accept our default set of public CAs. Only CAs specified in trustConfig will be accepted.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location of the tls inspection policy.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: Short name of the TlsInspectionPolicy resource to be created.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+update_time:
+    Type: TypeString
+    Description: The timestamp when the resource was updated.
+    Computed: "true"
+

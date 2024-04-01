@@ -1,0 +1,19 @@
+image_versions:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        image_version_id:
+            Type: TypeString
+            Computed: "true"
+        supported_python_versions:
+            Type: TypeList
+            Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+region:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

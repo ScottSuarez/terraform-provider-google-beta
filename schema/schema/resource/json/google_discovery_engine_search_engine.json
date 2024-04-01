@@ -1,0 +1,83 @@
+{
+    "collection_id": {
+        "Description": "The collection ID.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "common_config": {
+        "Description": "Common config spec that specifies the metadata of the engine.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "company_name": {
+                "Description": "The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.cd",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "create_time": {
+        "Computed": true,
+        "Description": "Timestamp the Engine was created at.",
+        "Type": "TypeString"
+    },
+    "data_store_ids": {
+        "Description": "The data stores associated with this engine. For SOLUTION_TYPE_SEARCH type of engines, they can only associate with at most one data store.",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "display_name": {
+        "Description": "Required. The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "engine_id": {
+        "Description": "Unique ID to use for Search Engine App.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "industry_vertical": {
+        "Description": "The industry vertical that the engine registers. The restriction of the Engine industry vertical is based on DataStore: If unspecified, default to GENERIC. Vertical on Engine has to match vertical of the DataStore liniked to the engine. Default value: \"GENERIC\" Possible values: [\"GENERIC\", \"MEDIA\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "location": {
+        "Description": "Location.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The unique full resource name of the search engine. Values are of the format\n'projects/{project}/locations/{location}/collections/{collection_id}/engines/{engine_id}'.\nThis field must be a UTF-8 encoded string with a length limit of 1024\ncharacters.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "search_engine_config": {
+        "Description": "Configurations for a Search Engine.",
+        "MaxItems": 1,
+        "Properties": {
+            "search_add_ons": {
+                "Description": "The add-on that this search engine enables. Possible values: [\"SEARCH_ADD_ON_LLM\"]",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "search_tier": {
+                "Description": "The search feature tier of this engine. Defaults to SearchTier.SEARCH_TIER_STANDARD if not specified. Default value: \"SEARCH_TIER_STANDARD\" Possible values: [\"SEARCH_TIER_STANDARD\", \"SEARCH_TIER_ENTERPRISE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Timestamp the Engine was last updated.",
+        "Type": "TypeString"
+    }
+}

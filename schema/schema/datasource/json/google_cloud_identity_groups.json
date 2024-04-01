@@ -1,0 +1,88 @@
+{
+    "groups": {
+        "Computed": true,
+        "Description": "List of Cloud Identity groups.",
+        "Properties": {
+            "additional_group_keys": {
+                "Computed": true,
+                "Description": "Additional group keys associated with the Group",
+                "Properties": {
+                    "id": {
+                        "Computed": true,
+                        "Description": "The ID of the entity.\n\nFor Google-managed entities, the id must be the email address of an existing\ngroup or user.\n\nFor external-identity-mapped entities, the id must be a string conforming\nto the Identity Source's requirements.\n\nMust be unique within a namespace.",
+                        "Type": "TypeString"
+                    },
+                    "namespace": {
+                        "Computed": true,
+                        "Description": "The namespace in which the entity exists.\n\nIf not specified, the EntityKey represents a Google-managed entity\nsuch as a Google user or a Google Group.\n\nIf specified, the EntityKey represents an external-identity-mapped group.\nThe namespace must correspond to an identity source created in Admin Console\nand must be in the form of 'identitysources/{identity_source_id}'.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "create_time": {
+                "Computed": true,
+                "Description": "The time when the Group was created.",
+                "Type": "TypeString"
+            },
+            "description": {
+                "Computed": true,
+                "Description": "An extended description to help users determine the purpose of a Group.\nMust not be longer than 4,096 characters.",
+                "Type": "TypeString"
+            },
+            "display_name": {
+                "Computed": true,
+                "Description": "The display name of the Group.",
+                "Type": "TypeString"
+            },
+            "group_key": {
+                "Computed": true,
+                "Description": "EntityKey of the Group.",
+                "Properties": {
+                    "id": {
+                        "Computed": true,
+                        "Description": "The ID of the entity.\n\nFor Google-managed entities, the id must be the email address of an existing\ngroup or user.\n\nFor external-identity-mapped entities, the id must be a string conforming\nto the Identity Source's requirements.\n\nMust be unique within a namespace.",
+                        "Type": "TypeString"
+                    },
+                    "namespace": {
+                        "Computed": true,
+                        "Description": "The namespace in which the entity exists.\n\nIf not specified, the EntityKey represents a Google-managed entity\nsuch as a Google user or a Google Group.\n\nIf specified, the EntityKey represents an external-identity-mapped group.\nThe namespace must correspond to an identity source created in Admin Console\nand must be in the form of 'identitysources/{identity_source_id}'.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "initial_group_config": {
+                "Computed": true,
+                "Description": "The initial configuration options for creating a Group.\n\nSee the\n[API reference](https://cloud.google.com/identity/docs/reference/rest/v1beta1/groups/create#initialgroupconfig)\nfor possible values. Default value: \"EMPTY\" Possible values: [\"INITIAL_GROUP_CONFIG_UNSPECIFIED\", \"WITH_INITIAL_OWNER\", \"EMPTY\"]",
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "One or more label entries that apply to the Group. Currently supported labels contain a key with an empty value.\n\nGoogle Groups are the default type of group and have a label with a key of cloudidentity.googleapis.com/groups.discussion_forum and an empty value.\n\nExisting Google Groups can have an additional label with a key of cloudidentity.googleapis.com/groups.security and an empty value added to them. This is an immutable change and the security label cannot be removed once added.\n\nDynamic groups have a label with a key of cloudidentity.googleapis.com/groups.dynamic.\n\nIdentity-mapped groups for Cloud Search have a label with a key of system/groups/external and an empty value.",
+                "Type": "TypeMap"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "Resource name of the Group in the format: groups/{group_id}, where group_id\nis the unique ID assigned to the Group.",
+                "Type": "TypeString"
+            },
+            "parent": {
+                "Computed": true,
+                "Description": "The resource name of the entity under which this Group resides in the\nCloud Identity resource hierarchy.\n\nMust be of the form identitysources/{identity_source_id} for external-identity-mapped\ngroups or customers/{customer_id} for Google Groups.",
+                "Type": "TypeString"
+            },
+            "update_time": {
+                "Computed": true,
+                "Description": "The time when the Group was last updated.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "parent": {
+        "Description": "The resource name of the entity under which this Group resides in the\nCloud Identity resource hierarchy.\n\nMust be of the form identitysources/{identity_source_id} for external-identity-mapped\ngroups or customers/{customer_id} for Google Groups.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

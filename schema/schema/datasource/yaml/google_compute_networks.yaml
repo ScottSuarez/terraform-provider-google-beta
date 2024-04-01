@@ -1,0 +1,10 @@
+networks:
+    Type: TypeList
+    Computed: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+

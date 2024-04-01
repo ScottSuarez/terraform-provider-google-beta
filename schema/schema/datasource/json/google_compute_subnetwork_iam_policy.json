@@ -1,0 +1,24 @@
+{
+    "etag": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "policy_data": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "subnetwork": {
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

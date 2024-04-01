@@ -1,0 +1,46 @@
+display_name:
+    Type: TypeString
+    Description: Name used for UI elements listing this Service.
+    Computed: "true"
+module_id:
+    Type: TypeString
+    Description: "The ID of the App Engine module underlying this service. \nCorresponds to the 'moduleId' resource label for a 'gae_app'\nmonitored resource(see https://cloud.google.com/monitoring/api/resources#tag_gae_app)"
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The full resource name for this service. The syntax is:
+        projects/[PROJECT_ID]/services/[SERVICE_ID].
+    Computed: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+service_id:
+    Type: TypeString
+    Description: |-
+        An optional service ID to use. If not given, the server will generate a
+        service ID.
+    Computed: "true"
+telemetry:
+    Type: TypeList
+    Description: Configuration for how to query telemetry on a Service.
+    Computed: "true"
+    Properties:
+        resource_name:
+            Type: TypeString
+            Description: |-
+                The full name of the resource that defines this service.
+                Formatted as described in
+                https://cloud.google.com/apis/design/resource_names.
+            Computed: "true"
+user_labels:
+    Type: TypeMap
+    Description: |-
+        Labels which have been used to annotate the service. Label keys must start
+        with a letter. Label keys and values may contain lowercase letters,
+        numbers, underscores, and dashes. Label keys and values have a maximum
+        length of 63 characters, and must be less than 128 bytes in size. Up to 64
+        label entries may be stored. For labels which do not have a semantic value,
+        the empty string may be supplied for the label value.
+    Computed: "true"
+

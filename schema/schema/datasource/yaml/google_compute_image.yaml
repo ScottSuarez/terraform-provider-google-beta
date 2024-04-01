@@ -1,0 +1,67 @@
+archive_size_bytes:
+    Type: TypeInt
+    Computed: "true"
+creation_timestamp:
+    Type: TypeString
+    Computed: "true"
+description:
+    Type: TypeString
+    Computed: "true"
+disk_size_gb:
+    Type: TypeInt
+    Computed: "true"
+family:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: name, family, filter
+filter:
+    Type: TypeString
+    Optional: "true"
+    ExactlyOneOf: name, family, filter
+image_encryption_key_sha256:
+    Type: TypeString
+    Computed: "true"
+image_id:
+    Type: TypeString
+    Computed: "true"
+label_fingerprint:
+    Type: TypeString
+    Computed: "true"
+labels:
+    Type: TypeMap
+    Computed: "true"
+licenses:
+    Type: TypeList
+    Computed: "true"
+most_recent:
+    Type: TypeBool
+    Optional: "true"
+name:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+    ExactlyOneOf: name, family, filter
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+source_disk:
+    Type: TypeString
+    Computed: "true"
+source_disk_encryption_key_sha256:
+    Type: TypeString
+    Computed: "true"
+source_disk_id:
+    Type: TypeString
+    Computed: "true"
+source_image_id:
+    Type: TypeString
+    Computed: "true"
+status:
+    Type: TypeString
+    Computed: "true"
+

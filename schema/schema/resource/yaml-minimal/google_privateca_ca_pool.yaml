@@ -1,0 +1,75 @@
+effective_labels: TypeMap(TypeString)
+issuance_policy:
+    allowed_issuance_modes:
+        allow_config_based_issuance: TypeBool
+        allow_csr_based_issuance: TypeBool
+    allowed_key_types:
+        elliptic_curve:
+            signature_algorithm: TypeString
+        rsa:
+            max_modulus_size: TypeString
+            min_modulus_size: TypeString
+    baseline_values:
+        additional_extensions:
+            critical: TypeBool
+            object_id:
+                object_id_path: TypeList(TypeInt)
+            value: TypeString
+        aia_ocsp_servers: TypeList(TypeString)
+        ca_options:
+            is_ca: TypeBool
+            max_issuer_path_length: TypeInt
+            non_ca: TypeBool
+            zero_max_issuer_path_length: TypeBool
+        key_usage:
+            base_key_usage:
+                cert_sign: TypeBool
+                content_commitment: TypeBool
+                crl_sign: TypeBool
+                data_encipherment: TypeBool
+                decipher_only: TypeBool
+                digital_signature: TypeBool
+                encipher_only: TypeBool
+                key_agreement: TypeBool
+                key_encipherment: TypeBool
+            extended_key_usage:
+                client_auth: TypeBool
+                code_signing: TypeBool
+                email_protection: TypeBool
+                ocsp_signing: TypeBool
+                server_auth: TypeBool
+                time_stamping: TypeBool
+            unknown_extended_key_usages:
+                object_id_path: TypeList(TypeInt)
+        name_constraints:
+            critical: TypeBool
+            excluded_dns_names: TypeList(TypeString)
+            excluded_email_addresses: TypeList(TypeString)
+            excluded_ip_ranges: TypeList(TypeString)
+            excluded_uris: TypeList(TypeString)
+            permitted_dns_names: TypeList(TypeString)
+            permitted_email_addresses: TypeList(TypeString)
+            permitted_ip_ranges: TypeList(TypeString)
+            permitted_uris: TypeList(TypeString)
+        policy_ids:
+            object_id_path: TypeList(TypeInt)
+    identity_constraints:
+        allow_subject_alt_names_passthrough: TypeBool
+        allow_subject_passthrough: TypeBool
+        cel_expression:
+            description: TypeString
+            expression: TypeString
+            location: TypeString
+            title: TypeString
+    maximum_lifetime: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+publishing_options:
+    encoding_format: TypeString
+    publish_ca_cert: TypeBool
+    publish_crl: TypeBool
+terraform_labels: TypeMap(TypeString)
+tier: TypeString
+

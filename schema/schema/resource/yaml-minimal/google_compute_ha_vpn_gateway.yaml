@@ -1,0 +1,12 @@
+description: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+stack_type: TypeString
+vpn_interfaces:
+    id: TypeInt
+    interconnect_attachment: TypeString
+    ip_address: TypeString
+

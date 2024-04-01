@@ -1,0 +1,5 @@
+enforcement_mode: TypeString
+name: TypeString
+project: TypeString
+service_id: TypeString
+

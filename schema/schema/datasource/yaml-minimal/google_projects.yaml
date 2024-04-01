@@ -1,0 +1,10 @@
+filter: TypeString
+projects:
+    create_time: TypeString
+    labels: TypeMap(TypeString)
+    lifecycle_state: TypeString
+    name: TypeString
+    number: TypeString
+    parent: TypeMap(TypeString)
+    project_id: TypeString
+

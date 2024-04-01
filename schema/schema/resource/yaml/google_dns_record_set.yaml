@@ -1,0 +1,250 @@
+managed_zone:
+    Type: TypeString
+    Description: The name of the zone in which this record set will reside.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The DNS name this record set will apply to.
+    Required: "true"
+project:
+    Type: TypeString
+    Description: The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+    Computed: "true"
+    Optional: "true"
+routing_policy:
+    Type: TypeList
+    Description: The configuration for steering traffic based on query. You can specify either Weighted Round Robin(WRR) type or Geolocation(GEO) type.
+    Optional: "true"
+    ExactlyOneOf: rrdatas, routing_policy
+    MaxItems: "1"
+    Properties:
+        enable_geo_fencing:
+            Type: TypeBool
+            Description: Specifies whether to enable fencing for geo queries.
+            Optional: "true"
+            ConflictsWith: routing_policy.0.wrr, routing_policy.0.primary_backup
+        geo:
+            Type: TypeList
+            Description: The configuration for Geo location based routing policy.
+            Optional: "true"
+            ExactlyOneOf: routing_policy.0.wrr, routing_policy.0.geo, routing_policy.0.primary_backup
+            Properties:
+                health_checked_targets:
+                    Type: TypeList
+                    Description: For A and AAAA types only. The list of targets to be health checked. These can be specified along with `rrdatas` within this item.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        internal_load_balancers:
+                            Type: TypeList
+                            Description: The list of internal load balancers to health check.
+                            Required: "true"
+                            Properties:
+                                ip_address:
+                                    Type: TypeString
+                                    Description: The frontend IP address of the load balancer.
+                                    Required: "true"
+                                ip_protocol:
+                                    Type: TypeString
+                                    Description: 'The configured IP protocol of the load balancer. This value is case-sensitive. Possible values: ["tcp", "udp"]'
+                                    Required: "true"
+                                load_balancer_type:
+                                    Type: TypeString
+                                    Description: 'The type of load balancer. This value is case-sensitive. Possible values: ["regionalL4ilb", "regionalL7ilb", "globalL7ilb"]'
+                                    Required: "true"
+                                network_url:
+                                    Type: TypeString
+                                    Description: The fully qualified url of the network in which the load balancer belongs. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.
+                                    Required: "true"
+                                port:
+                                    Type: TypeString
+                                    Description: The configured port of the load balancer.
+                                    Required: "true"
+                                project:
+                                    Type: TypeString
+                                    Description: The ID of the project in which the load balancer belongs.
+                                    Required: "true"
+                                region:
+                                    Type: TypeString
+                                    Description: The region of the load balancer. Only needed for regional load balancers.
+                                    Optional: "true"
+                location:
+                    Type: TypeString
+                    Description: The location name defined in Google Cloud.
+                    Required: "true"
+                rrdatas:
+                    Type: TypeList
+                    Optional: "true"
+        primary_backup:
+            Type: TypeList
+            Description: The configuration for a primary-backup policy with global to regional failover. Queries are responded to with the global primary targets, but if none of the primary targets are healthy, then we fallback to a regional failover policy.
+            Optional: "true"
+            ExactlyOneOf: routing_policy.0.wrr, routing_policy.0.geo, routing_policy.0.primary_backup
+            ConflictsWith: routing_policy.0.enable_geo_fencing
+            MaxItems: "1"
+            Properties:
+                backup_geo:
+                    Type: TypeList
+                    Description: The backup geo targets, which provide a regional failover policy for the otherwise global primary targets.
+                    Required: "true"
+                    Properties:
+                        health_checked_targets:
+                            Type: TypeList
+                            Description: For A and AAAA types only. The list of targets to be health checked. These can be specified along with `rrdatas` within this item.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                internal_load_balancers:
+                                    Type: TypeList
+                                    Description: The list of internal load balancers to health check.
+                                    Required: "true"
+                                    Properties:
+                                        ip_address:
+                                            Type: TypeString
+                                            Description: The frontend IP address of the load balancer.
+                                            Required: "true"
+                                        ip_protocol:
+                                            Type: TypeString
+                                            Description: 'The configured IP protocol of the load balancer. This value is case-sensitive. Possible values: ["tcp", "udp"]'
+                                            Required: "true"
+                                        load_balancer_type:
+                                            Type: TypeString
+                                            Description: 'The type of load balancer. This value is case-sensitive. Possible values: ["regionalL4ilb", "regionalL7ilb", "globalL7ilb"]'
+                                            Required: "true"
+                                        network_url:
+                                            Type: TypeString
+                                            Description: The fully qualified url of the network in which the load balancer belongs. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.
+                                            Required: "true"
+                                        port:
+                                            Type: TypeString
+                                            Description: The configured port of the load balancer.
+                                            Required: "true"
+                                        project:
+                                            Type: TypeString
+                                            Description: The ID of the project in which the load balancer belongs.
+                                            Required: "true"
+                                        region:
+                                            Type: TypeString
+                                            Description: The region of the load balancer. Only needed for regional load balancers.
+                                            Optional: "true"
+                        location:
+                            Type: TypeString
+                            Description: The location name defined in Google Cloud.
+                            Required: "true"
+                        rrdatas:
+                            Type: TypeList
+                            Optional: "true"
+                enable_geo_fencing_for_backups:
+                    Type: TypeBool
+                    Description: Specifies whether to enable fencing for backup geo queries.
+                    Optional: "true"
+                primary:
+                    Type: TypeList
+                    Description: The list of global primary targets to be health checked.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        internal_load_balancers:
+                            Type: TypeList
+                            Description: The list of internal load balancers to health check.
+                            Required: "true"
+                            Properties:
+                                ip_address:
+                                    Type: TypeString
+                                    Description: The frontend IP address of the load balancer.
+                                    Required: "true"
+                                ip_protocol:
+                                    Type: TypeString
+                                    Description: 'The configured IP protocol of the load balancer. This value is case-sensitive. Possible values: ["tcp", "udp"]'
+                                    Required: "true"
+                                load_balancer_type:
+                                    Type: TypeString
+                                    Description: 'The type of load balancer. This value is case-sensitive. Possible values: ["regionalL4ilb", "regionalL7ilb", "globalL7ilb"]'
+                                    Required: "true"
+                                network_url:
+                                    Type: TypeString
+                                    Description: The fully qualified url of the network in which the load balancer belongs. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.
+                                    Required: "true"
+                                port:
+                                    Type: TypeString
+                                    Description: The configured port of the load balancer.
+                                    Required: "true"
+                                project:
+                                    Type: TypeString
+                                    Description: The ID of the project in which the load balancer belongs.
+                                    Required: "true"
+                                region:
+                                    Type: TypeString
+                                    Description: The region of the load balancer. Only needed for regional load balancers.
+                                    Optional: "true"
+                trickle_ratio:
+                    Type: TypeFloat
+                    Description: Specifies the percentage of traffic to send to the backup targets even when the primary targets are healthy.
+                    Optional: "true"
+        wrr:
+            Type: TypeList
+            Description: The configuration for Weighted Round Robin based routing policy.
+            Optional: "true"
+            ExactlyOneOf: routing_policy.0.wrr, routing_policy.0.geo, routing_policy.0.primary_backup
+            ConflictsWith: routing_policy.0.enable_geo_fencing
+            Properties:
+                health_checked_targets:
+                    Type: TypeList
+                    Description: The list of targets to be health checked. Note that if DNSSEC is enabled for this zone, only one of `rrdatas` or `health_checked_targets` can be set.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        internal_load_balancers:
+                            Type: TypeList
+                            Description: The list of internal load balancers to health check.
+                            Required: "true"
+                            Properties:
+                                ip_address:
+                                    Type: TypeString
+                                    Description: The frontend IP address of the load balancer.
+                                    Required: "true"
+                                ip_protocol:
+                                    Type: TypeString
+                                    Description: 'The configured IP protocol of the load balancer. This value is case-sensitive. Possible values: ["tcp", "udp"]'
+                                    Required: "true"
+                                load_balancer_type:
+                                    Type: TypeString
+                                    Description: 'The type of load balancer. This value is case-sensitive. Possible values: ["regionalL4ilb", "regionalL7ilb", "globalL7ilb"]'
+                                    Required: "true"
+                                network_url:
+                                    Type: TypeString
+                                    Description: The fully qualified url of the network in which the load balancer belongs. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.
+                                    Required: "true"
+                                port:
+                                    Type: TypeString
+                                    Description: The configured port of the load balancer.
+                                    Required: "true"
+                                project:
+                                    Type: TypeString
+                                    Description: The ID of the project in which the load balancer belongs.
+                                    Required: "true"
+                                region:
+                                    Type: TypeString
+                                    Description: The region of the load balancer. Only needed for regional load balancers.
+                                    Optional: "true"
+                rrdatas:
+                    Type: TypeList
+                    Optional: "true"
+                weight:
+                    Type: TypeFloat
+                    Description: The ratio of traffic routed to the target.
+                    Required: "true"
+rrdatas:
+    Type: TypeList
+    Description: The string data for the records in this record set whose meaning depends on the DNS type. For TXT record, if the string data contains spaces, add surrounding \" if you don't want your string to get split on spaces. To specify a single record value longer than 255 characters such as a TXT record for DKIM, add \"\" inside the Terraform configuration string (e.g. "first255characters\"\"morecharacters").
+    Optional: "true"
+    ExactlyOneOf: rrdatas, routing_policy
+ttl:
+    Type: TypeInt
+    Description: The time-to-live of this record set (seconds).
+    Optional: "true"
+type:
+    Type: TypeString
+    Description: The DNS record set type.
+    Required: "true"
+

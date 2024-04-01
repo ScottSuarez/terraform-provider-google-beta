@@ -1,0 +1,18 @@
+api_key: TypeString
+config_id: TypeString
+connected_repositories:
+    project_key: TypeString
+    repo_slug: TypeString
+host_uri: TypeString
+location: TypeString
+name: TypeString
+peered_network: TypeString
+project: TypeString
+secrets:
+    admin_access_token_version_name: TypeString
+    read_access_token_version_name: TypeString
+    webhook_secret_version_name: TypeString
+ssl_ca: TypeString
+username: TypeString
+webhook_key: TypeString
+

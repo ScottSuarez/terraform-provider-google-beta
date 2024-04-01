@@ -1,0 +1,78 @@
+{
+    "bigquery_options": {
+        "Computed": true,
+        "Description": "Options that affect sinks exporting data to BigQuery.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "use_partitioned_tables": {
+                "Description": "Whether to use BigQuery's partition tables. By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and special query syntax has to be used instead. In both cases, tables are sharded based on UTC timezone.",
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "billing_account": {
+        "Description": "The billing account exported to the sink.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A description of this sink. The maximum length of the description is 8000 characters.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "destination": {
+        "Description": "The destination of the sink (or, in other words, where logs are written to). Can be a Cloud Storage bucket, a PubSub topic, or a BigQuery dataset. Examples: \"storage.googleapis.com/[GCS_BUCKET]\" \"bigquery.googleapis.com/projects/[PROJECT_ID]/datasets/[DATASET]\" \"pubsub.googleapis.com/projects/[PROJECT_ID]/topics/[TOPIC_ID]\" The writer associated with the sink must have access to write to the above resource.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "disabled": {
+        "Description": "If set to True, then this sink is disabled and it does not export any log entries.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "exclusions": {
+        "Description": "Log entries that match any of the exclusion filters will not be exported. If a log entry is matched by both filter and one of exclusion's filters, it will not be exported.",
+        "Optional": true,
+        "Properties": {
+            "description": {
+                "Description": "A description of this exclusion.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "disabled": {
+                "Description": "If set to True, then this exclusion is disabled and it does not exclude any log entries",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "filter": {
+                "Description": "An advanced logs filter that matches the log entries to be excluded. By using the sample function, you can exclude less than 100% of the matching log entries",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "name": {
+                "Description": "A client-assigned identifier, such as \"load-balancer-exclusion\". Identifiers are limited to 100 characters and can include only letters, digits, underscores, hyphens, and periods. First character has to be alphanumeric.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "filter": {
+        "Description": "The filter to apply when exporting logs. Only log entries that match the filter are exported.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of the logging sink.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "writer_identity": {
+        "Computed": true,
+        "Description": "The identity associated with this sink. This identity must be granted write access to the configured destination.",
+        "Type": "TypeString"
+    }
+}

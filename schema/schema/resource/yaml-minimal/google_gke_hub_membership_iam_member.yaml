@@ -1,0 +1,11 @@
+condition:
+    description: TypeString
+    expression: TypeString
+    title: TypeString
+etag: TypeString
+location: TypeString
+member: TypeString
+membership_id: TypeString
+project: TypeString
+role: TypeString
+

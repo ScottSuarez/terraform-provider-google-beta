@@ -1,0 +1,88 @@
+action:
+    Type: TypeString
+    Description: 'The action that the external access rule performs. Possible values: ["ALLOW", "DENY"]'
+    Required: "true"
+create_time:
+    Type: TypeString
+    Description: |-
+        Creation time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and
+        up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: User-provided description for the external access rule.
+    Optional: "true"
+destination_ip_ranges:
+    Type: TypeList
+    Description: |-
+        If destination ranges are specified, the external access rule applies only to
+        traffic that has a destination IP address in these ranges.
+    Required: "true"
+    Properties:
+        external_address:
+            Type: TypeString
+            Description: The name of an 'ExternalAddress' resource.
+            Optional: "true"
+        ip_address_range:
+            Type: TypeString
+            Description: An IP address range in the CIDR format.
+            Optional: "true"
+destination_ports:
+    Type: TypeList
+    Description: A list of destination ports to which the external access rule applies.
+    Required: "true"
+ip_protocol:
+    Type: TypeString
+    Description: The IP protocol to which the external access rule applies.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: The ID of the external access rule.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The resource name of the network policy.
+        Resource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.
+        For example: projects/my-project/locations/us-west1-a/networkPolicies/my-policy
+    Required: "true"
+priority:
+    Type: TypeInt
+    Description: External access rule priority, which determines the external access rule to use when multiple rules apply.
+    Required: "true"
+source_ip_ranges:
+    Type: TypeList
+    Description: |-
+        If source ranges are specified, the external access rule applies only to
+        traffic that has a source IP address in these ranges.
+    Required: "true"
+    Properties:
+        ip_address:
+            Type: TypeString
+            Description: A single IP address.
+            Optional: "true"
+        ip_address_range:
+            Type: TypeString
+            Description: An IP address range in the CIDR format.
+            Optional: "true"
+source_ports:
+    Type: TypeList
+    Description: A list of source ports to which the external access rule applies.
+    Required: "true"
+state:
+    Type: TypeString
+    Description: State of the Cluster.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: System-generated unique identifier for the resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Last updated time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

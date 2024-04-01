@@ -1,0 +1,9 @@
+description: TypeString
+ip_cidr_range: TypeString
+is_live_migration: TypeBool
+name: TypeString
+parent_prefix: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+

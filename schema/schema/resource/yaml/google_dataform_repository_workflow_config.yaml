@@ -1,0 +1,98 @@
+cron_schedule:
+    Type: TypeString
+    Description: Optional. Optional schedule (in cron format) for automatic creation of compilation results.
+    Optional: "true"
+invocation_config:
+    Type: TypeList
+    Description: Optional. If left unset, a default InvocationConfig will be used.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        fully_refresh_incremental_tables_enabled:
+            Type: TypeBool
+            Description: Optional. When set to true, any incremental tables will be fully refreshed.
+            Optional: "true"
+        included_tags:
+            Type: TypeList
+            Description: Optional. The set of tags to include.
+            Optional: "true"
+        included_targets:
+            Type: TypeList
+            Description: Optional. The set of action identifiers to include.
+            Optional: "true"
+            Properties:
+                database:
+                    Type: TypeString
+                    Description: The action's database (Google Cloud project ID).
+                    Optional: "true"
+                name:
+                    Type: TypeString
+                    Description: The action's name, within database and schema.
+                    Optional: "true"
+                schema:
+                    Type: TypeString
+                    Description: The action's schema (BigQuery dataset ID), within database.
+                    Optional: "true"
+        service_account:
+            Type: TypeString
+            Description: Optional. The service account to run workflow invocations under.
+            Optional: "true"
+        transitive_dependencies_included:
+            Type: TypeBool
+            Description: Optional. When set to true, transitive dependencies of included actions will be executed.
+            Optional: "true"
+        transitive_dependents_included:
+            Type: TypeBool
+            Description: Optional. When set to true, transitive dependents of included actions will be executed.
+            Optional: "true"
+name:
+    Type: TypeString
+    Description: The workflow's name.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+recent_scheduled_execution_records:
+    Type: TypeList
+    Description: Records of the 10 most recent scheduled execution attempts, ordered in in descending order of executionTime. Updated whenever automatic creation of a workflow invocation is triggered by cronSchedule.
+    Computed: "true"
+    Properties:
+        error_status:
+            Type: TypeList
+            Description: The error status encountered upon this attempt to create the workflow invocation, if the attempt was unsuccessful.
+            Computed: "true"
+            Properties:
+                code:
+                    Type: TypeInt
+                    Description: The status code, which should be an enum value of google.rpc.Code.
+                    Computed: "true"
+                message:
+                    Type: TypeString
+                    Description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+                    Computed: "true"
+        execution_time:
+            Type: TypeString
+            Description: The timestamp of this workflow attempt.
+            Computed: "true"
+        workflow_invocation:
+            Type: TypeString
+            Description: The name of the created workflow invocation, if one was successfully created. In the format projects/*/locations/*/repositories/*/workflowInvocations/*.
+            Computed: "true"
+region:
+    Type: TypeString
+    Description: A reference to the region
+    Optional: "true"
+release_config:
+    Type: TypeString
+    Description: The name of the release config whose releaseCompilationResult should be executed. Must be in the format projects/*/locations/*/repositories/*/releaseConfigs/*.
+    Required: "true"
+repository:
+    Type: TypeString
+    Description: A reference to the Dataform repository
+    Optional: "true"
+time_zone:
+    Type: TypeString
+    Description: Optional. Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If left unspecified, the default is UTC.
+    Optional: "true"
+

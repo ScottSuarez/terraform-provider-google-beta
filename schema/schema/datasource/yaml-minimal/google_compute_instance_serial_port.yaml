@@ -1,0 +1,6 @@
+contents: TypeString
+instance: TypeString
+port: TypeInt
+project: TypeString
+zone: TypeString
+

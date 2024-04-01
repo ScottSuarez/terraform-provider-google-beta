@@ -1,0 +1,15 @@
+description: TypeString
+display_name: TypeString
+enabled: TypeBool
+force_delete: TypeBool
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+sensitive_labels:
+    auth_token: TypeString
+    password: TypeString
+    service_key: TypeString
+type: TypeString
+user_labels: TypeMap(TypeString)
+verification_status: TypeString
+

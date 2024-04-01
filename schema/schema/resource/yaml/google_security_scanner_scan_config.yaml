@@ -1,0 +1,106 @@
+authentication:
+    Type: TypeList
+    Description: |-
+        The authentication configuration.
+        If specified, service will use the authentication configuration during scanning.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        custom_account:
+            Type: TypeList
+            Description: Describes authentication configuration that uses a custom account.
+            Optional: "true"
+            AtLeastOneOf: authentication.0.google_account, authentication.0.custom_account
+            MaxItems: "1"
+            Properties:
+                login_url:
+                    Type: TypeString
+                    Description: The login form URL of the website.
+                    Required: "true"
+                password:
+                    Type: TypeString
+                    Description: |-
+                        The password of the custom account. The credential is stored encrypted
+                        in GCP.
+                    Required: "true"
+                username:
+                    Type: TypeString
+                    Description: The user name of the custom account.
+                    Required: "true"
+        google_account:
+            Type: TypeList
+            Description: Describes authentication configuration that uses a Google account.
+            Optional: "true"
+            AtLeastOneOf: authentication.0.google_account, authentication.0.custom_account
+            MaxItems: "1"
+            Properties:
+                password:
+                    Type: TypeString
+                    Description: |-
+                        The password of the Google account. The credential is stored encrypted
+                        in GCP.
+                    Required: "true"
+                username:
+                    Type: TypeString
+                    Description: The user name of the Google account.
+                    Required: "true"
+blacklist_patterns:
+    Type: TypeList
+    Description: |-
+        The blacklist URL patterns as described in
+        https://cloud.google.com/security-scanner/docs/excluded-urls
+    Optional: "true"
+display_name:
+    Type: TypeString
+    Description: The user provider display name of the ScanConfig.
+    Required: "true"
+export_to_security_command_center:
+    Type: TypeString
+    Description: 'Controls export of scan configurations and results to Cloud Security Command Center. Default value: "ENABLED" Possible values: ["ENABLED", "DISABLED"]'
+    Optional: "true"
+max_qps:
+    Type: TypeInt
+    Description: |-
+        The maximum QPS during scanning. A valid value ranges from 5 to 20 inclusively.
+        Defaults to 15.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: |-
+        A server defined name for this index. Format:
+        'projects/{{project}}/scanConfigs/{{server_generated_id}}'
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+schedule:
+    Type: TypeList
+    Description: The schedule of the ScanConfig
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        interval_duration_days:
+            Type: TypeInt
+            Description: The duration of time between executions in days
+            Required: "true"
+        schedule_time:
+            Type: TypeString
+            Description: |-
+                A timestamp indicates when the next run will be scheduled. The value is refreshed
+                by the server after each run. If unspecified, it will default to current server time,
+                which means the scan will be scheduled to start immediately.
+            Optional: "true"
+starting_urls:
+    Type: TypeList
+    Description: The starting URLs from which the scanner finds site pages.
+    Required: "true"
+target_platforms:
+    Type: TypeList
+    Description: 'Set of Cloud Platforms targeted by the scan. If empty, APP_ENGINE will be used as a default. Possible values: ["APP_ENGINE", "COMPUTE"]'
+    Optional: "true"
+user_agent:
+    Type: TypeString
+    Description: 'Type of the user agents used for scanning Default value: "CHROME_LINUX" Possible values: ["USER_AGENT_UNSPECIFIED", "CHROME_LINUX", "CHROME_ANDROID", "SAFARI_IPHONE"]'
+    Optional: "true"
+

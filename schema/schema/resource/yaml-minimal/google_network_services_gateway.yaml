@@ -1,0 +1,21 @@
+addresses: TypeList(TypeString)
+certificate_urls: TypeList(TypeString)
+create_time: TypeString
+delete_swg_autogen_router_on_destroy: TypeBool
+description: TypeString
+effective_labels: TypeMap(TypeString)
+gateway_security_policy: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+network: TypeString
+ports: TypeList(TypeInt)
+project: TypeString
+scope: TypeString
+self_link: TypeString
+server_tls_policy: TypeString
+subnetwork: TypeString
+terraform_labels: TypeMap(TypeString)
+type: TypeString
+update_time: TypeString
+

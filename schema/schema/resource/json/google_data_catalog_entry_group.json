@@ -1,0 +1,33 @@
+{
+    "description": {
+        "Description": "Entry group description, which can consist of several sentences or paragraphs that describe entry group contents.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "display_name": {
+        "Description": "A short name to identify the entry group, for example, \"analytics data - jan 2011\".",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "entry_group_id": {
+        "Description": "The id of the entry group to create. The id must begin with a letter or underscore,\ncontain only English letters, numbers and underscores, and be at most 64 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the entry group in URL format. Example: projects/{project}/locations/{location}/entryGroups/{entryGroupId}",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Computed": true,
+        "Description": "EntryGroup location region.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

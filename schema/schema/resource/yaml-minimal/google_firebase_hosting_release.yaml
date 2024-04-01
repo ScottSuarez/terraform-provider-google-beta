@@ -1,0 +1,8 @@
+channel_id: TypeString
+message: TypeString
+name: TypeString
+release_id: TypeString
+site_id: TypeString
+type: TypeString
+version_name: TypeString
+

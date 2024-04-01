@@ -1,0 +1,24 @@
+{
+    "contents": {
+        "Computed": true,
+        "Type": "TypeString"
+    },
+    "instance": {
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "port": {
+        "Required": true,
+        "Type": "TypeInt"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "zone": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

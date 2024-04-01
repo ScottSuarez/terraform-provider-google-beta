@@ -1,0 +1,32 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Time of creation",
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "A system-generated unique identifier for this Lien.",
+        "Type": "TypeString"
+    },
+    "origin": {
+        "Description": "A stable, user-visible/meaningful string identifying the origin\nof the Lien, intended to be inspected programmatically. Maximum length of\n200 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "parent": {
+        "Description": "A reference to the resource this Lien is attached to.\nThe server will validate the parent against those for which Liens are supported.\nSince a variety of objects can have Liens against them, you must provide the type\nprefix (e.g. \"projects/my-project-name\").",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "reason": {
+        "Description": "Concise user-visible strings indicating why an action cannot be performed\non a resource. Maximum length of 200 characters.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "restrictions": {
+        "Description": "The types of operations which should be blocked as a result of this Lien.\nEach value should correspond to an IAM permission. The server will validate\nthe permissions against those for which Liens are supported.  An empty\nlist is meaningless and will be rejected.\ne.g. ['resourcemanager.projects.delete']",
+        "Required": true,
+        "Type": "TypeList"
+    }
+}

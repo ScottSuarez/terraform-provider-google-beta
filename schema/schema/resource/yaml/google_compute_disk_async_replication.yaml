@@ -1,0 +1,19 @@
+primary_disk:
+    Type: TypeString
+    Description: Primary disk for asynchronous replication.
+    Required: "true"
+secondary_disk:
+    Type: TypeList
+    Description: Secondary disk for asynchronous replication.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        disk:
+            Type: TypeString
+            Description: Secondary disk for asynchronous replication.
+            Required: "true"
+        state:
+            Type: TypeString
+            Description: Output-only. Status of replication on the secondary disk.
+            Computed: "true"
+

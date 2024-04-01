@@ -1,0 +1,35 @@
+drain_nat_ips: TypeSet(TypeString)
+enable_dynamic_port_allocation: TypeBool
+enable_endpoint_independent_mapping: TypeBool
+icmp_idle_timeout_sec: TypeInt
+log_config:
+    enable: TypeBool
+    filter: TypeString
+max_ports_per_vm: TypeInt
+min_ports_per_vm: TypeInt
+name: TypeString
+nat_ip_allocate_option: TypeString
+nat_ips: TypeSet(TypeString)
+project: TypeString
+region: TypeString
+router: TypeString
+rules:
+    action:
+        source_nat_active_ips: TypeSet(TypeString)
+        source_nat_active_ranges: TypeSet(TypeString)
+        source_nat_drain_ips: TypeSet(TypeString)
+        source_nat_drain_ranges: TypeSet(TypeString)
+    description: TypeString
+    match: TypeString
+    rule_number: TypeInt
+source_subnetwork_ip_ranges_to_nat: TypeString
+subnetwork:
+    name: TypeString
+    secondary_ip_range_names: TypeSet(TypeString)
+    source_ip_ranges_to_nat: TypeSet(TypeString)
+tcp_established_idle_timeout_sec: TypeInt
+tcp_time_wait_timeout_sec: TypeInt
+tcp_transitory_idle_timeout_sec: TypeInt
+type: TypeString
+udp_idle_timeout_sec: TypeInt
+

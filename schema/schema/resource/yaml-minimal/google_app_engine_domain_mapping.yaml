@@ -1,0 +1,13 @@
+domain_name: TypeString
+name: TypeString
+override_strategy: TypeString
+project: TypeString
+resource_records:
+    name: TypeString
+    rrdata: TypeString
+    type: TypeString
+ssl_settings:
+    certificate_id: TypeString
+    pending_managed_certificate_id: TypeString
+    ssl_management_type: TypeString
+

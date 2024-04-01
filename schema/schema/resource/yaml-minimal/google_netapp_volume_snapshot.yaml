@@ -1,0 +1,10 @@
+description: TypeString
+effective_labels: TypeMap(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+used_bytes: TypeInt
+volume_name: TypeString
+

@@ -1,0 +1,163 @@
+approval_config:
+    approval_required: TypeBool
+bitbucket_server_trigger_config:
+    bitbucket_server_config_resource: TypeString
+    project_key: TypeString
+    pull_request:
+        branch: TypeString
+        comment_control: TypeString
+        invert_regex: TypeBool
+    push:
+        branch: TypeString
+        invert_regex: TypeBool
+        tag: TypeString
+    repo_slug: TypeString
+build:
+    artifacts:
+        images: TypeList(TypeString)
+        maven_artifacts:
+            artifact_id: TypeString
+            group_id: TypeString
+            path: TypeString
+            repository: TypeString
+            version: TypeString
+        npm_packages:
+            package_path: TypeString
+            repository: TypeString
+        objects:
+            location: TypeString
+            paths: TypeList(TypeString)
+            timing:
+                end_time: TypeString
+                start_time: TypeString
+        python_packages:
+            paths: TypeList(TypeString)
+            repository: TypeString
+    available_secrets:
+        secret_manager:
+            env: TypeString
+            version_name: TypeString
+    images: TypeList(TypeString)
+    logs_bucket: TypeString
+    options:
+        disk_size_gb: TypeInt
+        dynamic_substitutions: TypeBool
+        env: TypeList(TypeString)
+        log_streaming_option: TypeString
+        logging: TypeString
+        machine_type: TypeString
+        requested_verify_option: TypeString
+        secret_env: TypeList(TypeString)
+        source_provenance_hash: TypeList(TypeString)
+        substitution_option: TypeString
+        volumes:
+            name: TypeString
+            path: TypeString
+        worker_pool: TypeString
+    queue_ttl: TypeString
+    secret:
+        kms_key_name: TypeString
+        secret_env: TypeMap(TypeString)
+    source:
+        repo_source:
+            branch_name: TypeString
+            commit_sha: TypeString
+            dir: TypeString
+            invert_regex: TypeBool
+            project_id: TypeString
+            repo_name: TypeString
+            substitutions: TypeMap(TypeString)
+            tag_name: TypeString
+        storage_source:
+            bucket: TypeString
+            generation: TypeString
+            object: TypeString
+    step:
+        allow_exit_codes: TypeList(TypeInt)
+        allow_failure: TypeBool
+        args: TypeList(TypeString)
+        dir: TypeString
+        entrypoint: TypeString
+        env: TypeList(TypeString)
+        id: TypeString
+        name: TypeString
+        script: TypeString
+        secret_env: TypeList(TypeString)
+        timeout: TypeString
+        timing: TypeString
+        volumes:
+            name: TypeString
+            path: TypeString
+        wait_for: TypeList(TypeString)
+    substitutions: TypeMap(TypeString)
+    tags: TypeList(TypeString)
+    timeout: TypeString
+create_time: TypeString
+description: TypeString
+disabled: TypeBool
+filename: TypeString
+filter: TypeString
+git_file_source:
+    bitbucket_server_config: TypeString
+    github_enterprise_config: TypeString
+    path: TypeString
+    repo_type: TypeString
+    repository: TypeString
+    revision: TypeString
+    uri: TypeString
+github:
+    enterprise_config_resource_name: TypeString
+    name: TypeString
+    owner: TypeString
+    pull_request:
+        branch: TypeString
+        comment_control: TypeString
+        invert_regex: TypeBool
+    push:
+        branch: TypeString
+        invert_regex: TypeBool
+        tag: TypeString
+ignored_files: TypeList(TypeString)
+include_build_logs: TypeString
+included_files: TypeList(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+pubsub_config:
+    service_account_email: TypeString
+    state: TypeString
+    subscription: TypeString
+    topic: TypeString
+repository_event_config:
+    pull_request:
+        branch: TypeString
+        comment_control: TypeString
+        invert_regex: TypeBool
+    push:
+        branch: TypeString
+        invert_regex: TypeBool
+        tag: TypeString
+    repository: TypeString
+service_account: TypeString
+source_to_build:
+    bitbucket_server_config: TypeString
+    github_enterprise_config: TypeString
+    ref: TypeString
+    repo_type: TypeString
+    repository: TypeString
+    uri: TypeString
+substitutions: TypeMap(TypeString)
+tags: TypeList(TypeString)
+trigger_id: TypeString
+trigger_template:
+    branch_name: TypeString
+    commit_sha: TypeString
+    dir: TypeString
+    invert_regex: TypeBool
+    project_id: TypeString
+    repo_name: TypeString
+    tag_name: TypeString
+webhook_config:
+    secret: TypeString
+    state: TypeString
+

@@ -1,0 +1,5 @@
+location: TypeString
+name: TypeString
+project: TypeString
+vpcsc_policy: TypeString
+

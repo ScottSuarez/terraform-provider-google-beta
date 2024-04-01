@@ -1,0 +1,12 @@
+display_name: TypeString
+enabled: TypeBool
+features:
+    type: TypeString
+generic_web_service:
+    password: TypeString
+    request_headers: TypeMap(TypeString)
+    uri: TypeString
+    username: TypeString
+name: TypeString
+project: TypeString
+

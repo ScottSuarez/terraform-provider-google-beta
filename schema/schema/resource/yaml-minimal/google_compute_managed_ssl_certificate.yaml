@@ -1,0 +1,12 @@
+certificate_id: TypeInt
+creation_timestamp: TypeString
+description: TypeString
+expire_time: TypeString
+managed:
+    domains: TypeList(TypeString)
+name: TypeString
+project: TypeString
+self_link: TypeString
+subject_alternative_names: TypeList(TypeString)
+type: TypeString
+

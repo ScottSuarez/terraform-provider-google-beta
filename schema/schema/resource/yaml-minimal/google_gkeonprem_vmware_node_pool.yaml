@@ -1,0 +1,46 @@
+annotations: TypeMap(TypeString)
+config:
+    boot_disk_size_gb: TypeInt
+    cpus: TypeInt
+    enable_load_balancer: TypeBool
+    image: TypeString
+    image_type: TypeString
+    labels: TypeMap(TypeString)
+    memory_mb: TypeInt
+    replicas: TypeInt
+    taints:
+        effect: TypeString
+        key: TypeString
+        value: TypeString
+    vsphere_config:
+        datastore: TypeString
+        host_groups: TypeList(TypeString)
+        tags:
+            category: TypeString
+            tag: TypeString
+create_time: TypeString
+delete_time: TypeString
+display_name: TypeString
+effective_annotations: TypeMap(TypeString)
+etag: TypeString
+location: TypeString
+name: TypeString
+node_pool_autoscaling:
+    max_replicas: TypeInt
+    min_replicas: TypeInt
+on_prem_version: TypeString
+project: TypeString
+reconciling: TypeBool
+state: TypeString
+status:
+    conditions:
+        last_transition_time: TypeString
+        message: TypeString
+        reason: TypeString
+        state: TypeString
+        type: TypeString
+    error_message: TypeString
+uid: TypeString
+update_time: TypeString
+vmware_cluster: TypeString
+

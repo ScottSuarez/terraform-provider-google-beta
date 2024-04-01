@@ -1,0 +1,42 @@
+{
+    "dimensions": {
+        "Description": "If this map is nonempty, then this override applies only to specific values for dimensions defined in the limit unit.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "force": {
+        "Description": "If the new quota would decrease the existing quota by more than 10%, the request is rejected.\nIf 'force' is 'true', that safety check is ignored.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "limit": {
+        "Description": "The limit on the metric, e.g. '/project/region'.\n\n~\u003e Make sure that 'limit' is in a format that doesn't start with '1/' or contain curly braces.\nE.g. use '/project/user' instead of '1/{project}/{user}'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "metric": {
+        "Description": "The metric that should be limited, e.g. 'compute.googleapis.com/cpus'.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The server-generated name of the quota override.",
+        "Type": "TypeString"
+    },
+    "override_value": {
+        "Description": "The overriding quota limit value. Can be any nonnegative integer, or -1 (unlimited quota).",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "service": {
+        "Description": "The service that the metrics belong to, e.g. 'compute.googleapis.com'.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

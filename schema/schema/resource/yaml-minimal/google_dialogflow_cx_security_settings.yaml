@@ -1,0 +1,19 @@
+audio_export_settings:
+    audio_export_pattern: TypeString
+    audio_format: TypeString
+    enable_audio_redaction: TypeBool
+    gcs_bucket: TypeString
+deidentify_template: TypeString
+display_name: TypeString
+insights_export_settings:
+    enable_insights_export: TypeBool
+inspect_template: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+purge_data_types: TypeList(TypeString)
+redaction_scope: TypeString
+redaction_strategy: TypeString
+retention_strategy: TypeString
+retention_window_days: TypeInt
+

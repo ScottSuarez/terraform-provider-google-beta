@@ -1,0 +1,173 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "Free-text description of the resource.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "etag": {
+        "Computed": true,
+        "Description": "The etag is computed by the server, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
+        "Type": "TypeString"
+    },
+    "infrastructure": {
+        "Computed": true,
+        "Description": "The type of underlying resources used to create the connection.",
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "User-defined labels.\n\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field 'effective_labels' for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "location": {
+        "Description": "The location of the ServiceConnectionPolicy.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The name of a ServiceConnectionPolicy. Format: projects/{project}/locations/{location}/serviceConnectionPolicies/{service_connection_policy} See: https://google.aip.dev/122#fields-representing-resource-names",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network": {
+        "Description": "The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "psc_config": {
+        "Description": "Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "limit": {
+                "Description": "Max number of PSC connections for this policy.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "subnetworks": {
+                "Description": "IDs of the subnetworks or fully qualified identifiers for the subnetworks",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "psc_connections": {
+        "Computed": true,
+        "Description": "Information about each Private Service Connect connection.",
+        "Properties": {
+            "consumer_address": {
+                "Description": "The resource reference of the consumer address.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "consumer_forwarding_rule": {
+                "Description": "The resource reference of the PSC Forwarding Rule within the consumer VPC.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "consumer_target_project": {
+                "Description": "The project where the PSC connection is created.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "error": {
+                "Description": "The most recent error during operating this connection.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "code": {
+                        "Description": "The status code, which should be an enum value of [google.rpc.Code][].",
+                        "Optional": true,
+                        "Type": "TypeInt"
+                    },
+                    "details": {
+                        "Computed": true,
+                        "Description": "A list of messages that carry the error details.",
+                        "Type": "TypeList"
+                    },
+                    "message": {
+                        "Description": "A developer-facing error message.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "error_info": {
+                "Description": "The error info for the latest error during operating this connection.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "domain": {
+                        "Description": "The logical grouping to which the \"reason\" belongs.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "metadata": {
+                        "Description": "Additional structured details about this error.",
+                        "Optional": true,
+                        "Type": "TypeMap"
+                    },
+                    "reason": {
+                        "Description": "The reason of the error.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "error_type": {
+                "Description": "The error type indicates whether the error is consumer facing, producer\nfacing or system internal. Possible values: [\"CONNECTION_ERROR_TYPE_UNSPECIFIED\", \"ERROR_INTERNAL\", \"ERROR_CONSUMER_SIDE\", \"ERROR_PRODUCER_SIDE\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "gce_operation": {
+                "Description": "The last Compute Engine operation to setup PSC connection.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "psc_connection_id": {
+                "Description": "The PSC connection id of the PSC forwarding rule.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "state": {
+                "Description": "The state of the PSC connection. Possible values: [\"STATE_UNSPECIFIED\", \"ACTIVE\", \"CREATING\", \"DELETING\", \"FAILED\"]",
+                "Optional": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "service_class": {
+        "Description": "The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass.\nIt is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource\n and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "The timestamp when the resource was updated.",
+        "Type": "TypeString"
+    }
+}

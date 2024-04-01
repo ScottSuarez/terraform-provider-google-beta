@@ -1,0 +1,70 @@
+annotations: TypeMap(TypeString)
+authorization:
+    admin_groups:
+        group: TypeString
+    admin_users:
+        username: TypeString
+aws_region: TypeString
+binary_authorization:
+    evaluation_mode: TypeString
+control_plane:
+    aws_services_authentication:
+        role_arn: TypeString
+        role_session_name: TypeString
+    config_encryption:
+        kms_key_arn: TypeString
+    database_encryption:
+        kms_key_arn: TypeString
+    iam_instance_profile: TypeString
+    instance_placement:
+        tenancy: TypeString
+    instance_type: TypeString
+    main_volume:
+        iops: TypeInt
+        kms_key_arn: TypeString
+        size_gib: TypeInt
+        throughput: TypeInt
+        volume_type: TypeString
+    proxy_config:
+        secret_arn: TypeString
+        secret_version: TypeString
+    root_volume:
+        iops: TypeInt
+        kms_key_arn: TypeString
+        size_gib: TypeInt
+        throughput: TypeInt
+        volume_type: TypeString
+    security_group_ids: TypeList(TypeString)
+    ssh_config:
+        ec2_key_pair: TypeString
+    subnet_ids: TypeList(TypeString)
+    tags: TypeMap(TypeString)
+    version: TypeString
+create_time: TypeString
+description: TypeString
+effective_annotations: unknown
+endpoint: TypeString
+etag: TypeString
+fleet:
+    membership: TypeString
+    project: TypeString
+location: TypeString
+logging_config:
+    component_config:
+        enable_components: TypeList(TypeString)
+name: TypeString
+networking:
+    per_node_pool_sg_rules_disabled: TypeBool
+    pod_address_cidr_blocks: TypeList(TypeString)
+    service_address_cidr_blocks: TypeList(TypeString)
+    vpc_id: TypeString
+project: TypeString
+reconciling: TypeBool
+state: TypeString
+uid: TypeString
+update_time: TypeString
+workload_identity_config:
+    identity_provider: TypeString
+    issuer_uri: TypeString
+    workload_pool: TypeString
+

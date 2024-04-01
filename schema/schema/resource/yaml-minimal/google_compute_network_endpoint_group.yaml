@@ -1,0 +1,11 @@
+default_port: TypeInt
+description: TypeString
+name: TypeString
+network: TypeString
+network_endpoint_type: TypeString
+project: TypeString
+self_link: TypeString
+size: TypeInt
+subnetwork: TypeString
+zone: TypeString
+

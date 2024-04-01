@@ -1,0 +1,727 @@
+baseline:
+    Type: TypeBool
+    Description: |-
+        Output only. Indicates that this revision has been successfully rolled out in this zone and new VMs will be assigned OS policies from this revision.
+        For a given OS policy assignment, there is only one revision with a value of 'true' for this field.
+    Computed: "true"
+deleted:
+    Type: TypeBool
+    Description: Output only. Indicates that this revision deletes the OS policy assignment.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: OS policy assignment description. Length of the description is limited to 1024 characters.
+    Optional: "true"
+etag:
+    Type: TypeString
+    Description: The etag for this OS policy assignment. If this is provided on update, it must match the server's etag.
+    Computed: "true"
+instance_filter:
+    Type: TypeList
+    Description: Filter to select VMs.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        all:
+            Type: TypeBool
+            Description: Target all VMs in the project. If true, no other criteria is permitted.
+            Optional: "true"
+        exclusion_labels:
+            Type: TypeList
+            Description: |-
+                List of label sets used for VM exclusion.
+                If the list has more than one label set, the VM is excluded if any of the label sets are applicable for the VM.
+            Optional: "true"
+            Properties:
+                labels:
+                    Type: TypeMap
+                    Description: Labels are identified by key/value pairs in this map. A VM should contain all the key/value pairs specified in this map to be selected.
+                    Optional: "true"
+        inclusion_labels:
+            Type: TypeList
+            Description: |-
+                List of label sets used for VM inclusion.
+                If the list has more than one 'LabelSet', the VM is included if any of the label sets are applicable for the VM.
+            Optional: "true"
+            Properties:
+                labels:
+                    Type: TypeMap
+                    Description: Labels are identified by key/value pairs in this map. A VM should contain all the key/value pairs specified in this map to be selected.
+                    Optional: "true"
+        inventories:
+            Type: TypeList
+            Description: |-
+                List of inventories to select VMs.
+                A VM is selected if its inventory data matches at least one of the following inventories.
+            Optional: "true"
+            Properties:
+                os_short_name:
+                    Type: TypeString
+                    Description: The OS short name
+                    Required: "true"
+                os_version:
+                    Type: TypeString
+                    Description: The OS version Prefix matches are supported if asterisk(*) is provided as the last character. For example, to match all versions with a major version of '7', specify the following value for this field '7.*' An empty string matches all OS versions.
+                    Optional: "true"
+location:
+    Type: TypeString
+    Description: The location for the resource
+    Required: "true"
+name:
+    Type: TypeString
+    Description: Resource name.
+    Required: "true"
+os_policies:
+    Type: TypeList
+    Description: List of OS policies to be applied to the VMs.
+    Required: "true"
+    Properties:
+        allow_no_resource_group_match:
+            Type: TypeBool
+            Description: This flag determines the OS policy compliance status when none of the resource groups within the policy are applicable for a VM. Set this value to 'true' if the policy needs to be reported as compliant even if the policy has nothing to validate or enforce.
+            Optional: "true"
+        description:
+            Type: TypeString
+            Description: Policy description. Length of the description is limited to 1024 characters.
+            Optional: "true"
+        id:
+            Type: TypeString
+            Description: |-
+                The id of the OS policy with the following restrictions:
+                * Must contain only lowercase letters, numbers, and hyphens.
+                * Must start with a letter.
+                * Must be between 1-63 characters.
+                * Must end with a number or a letter.
+                * Must be unique within the assignment.
+            Required: "true"
+        mode:
+            Type: TypeString
+            Description: 'Policy mode Possible values: ["MODE_UNSPECIFIED", "VALIDATION", "ENFORCEMENT"]'
+            Required: "true"
+        resource_groups:
+            Type: TypeList
+            Description: |-
+                List of resource groups for the policy. For a particular VM, resource groups are evaluated in the order specified and the first resource group that is applicable is selected and the rest are ignored.
+                If none of the resource groups are applicable for a VM, the VM is considered to be non-compliant w.r.t this policy. This behavior can be toggled by the flag 'allow_no_resource_group_match'
+            Required: "true"
+            Properties:
+                inventory_filters:
+                    Type: TypeList
+                    Description: |-
+                        List of inventory filters for the resource group.
+                        The resources in this resource group are applied to the target VM if it satisfies at least one of the following inventory filters.
+                        For example, to apply this resource group to VMs running either 'RHEL' or 'CentOS' operating systems, specify 2 items for the list with following values: inventory_filters[0].os_short_name='rhel' and inventory_filters[1].os_short_name='centos'
+                        If the list is empty, this resource group will be applied to the target VM unconditionally.
+                    Optional: "true"
+                    Properties:
+                        os_short_name:
+                            Type: TypeString
+                            Description: The OS short name
+                            Required: "true"
+                        os_version:
+                            Type: TypeString
+                            Description: |-
+                                The OS version
+                                Prefix matches are supported if asterisk(*) is provided as the last character. For example, to match all versions with a major version of '7', specify the following value for this field '7.*'
+                                An empty string matches all OS versions.
+                            Optional: "true"
+                resources:
+                    Type: TypeList
+                    Description: List of resources configured for this resource group. The resources are executed in the exact order specified here.
+                    Required: "true"
+                    Properties:
+                        exec:
+                            Type: TypeList
+                            Description: Exec resource
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                enforce:
+                                    Type: TypeList
+                                    Description: What to run to bring this resource into the desired state. An exit code of 100 indicates "success", any other exit code indicates a failure running enforce.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        args:
+                                            Type: TypeList
+                                            Description: Optional arguments to pass to the source during execution.
+                                            Optional: "true"
+                                        file:
+                                            Type: TypeList
+                                            Description: A remote or local file.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allow_insecure:
+                                                    Type: TypeBool
+                                                    Description: 'Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.'
+                                                    Optional: "true"
+                                                gcs:
+                                                    Type: TypeList
+                                                    Description: A Cloud Storage object.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        bucket:
+                                                            Type: TypeString
+                                                            Description: Bucket of the Cloud Storage object.
+                                                            Required: "true"
+                                                        generation:
+                                                            Type: TypeInt
+                                                            Description: Generation number of the Cloud Storage object.
+                                                            Optional: "true"
+                                                        object:
+                                                            Type: TypeString
+                                                            Description: Name of the Cloud Storage object.
+                                                            Required: "true"
+                                                local_path:
+                                                    Type: TypeString
+                                                    Description: A local path within the VM to use.
+                                                    Optional: "true"
+                                                remote:
+                                                    Type: TypeList
+                                                    Description: A generic remote file.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        sha256_checksum:
+                                                            Type: TypeString
+                                                            Description: SHA256 checksum of the remote file.
+                                                            Optional: "true"
+                                                        uri:
+                                                            Type: TypeString
+                                                            Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                            Required: "true"
+                                        interpreter:
+                                            Type: TypeString
+                                            Description: 'The script interpreter to use. Possible values: ["INTERPRETER_UNSPECIFIED", "NONE", "SHELL", "POWERSHELL"]'
+                                            Required: "true"
+                                        output_file_path:
+                                            Type: TypeString
+                                            Description: Only recorded for enforce Exec. Path to an output file (that is created by this Exec) whose content will be recorded in OSPolicyResourceCompliance after a successful run. Absence or failure to read this file will result in this ExecResource being non-compliant. Output file size is limited to 100K bytes.
+                                            Optional: "true"
+                                        script:
+                                            Type: TypeString
+                                            Description: An inline script. The size of the script is limited to 1024 characters.
+                                            Optional: "true"
+                                validate:
+                                    Type: TypeList
+                                    Description: What to run to validate this resource is in the desired state. An exit code of 100 indicates "in desired state", and exit code of 101 indicates "not in desired state". Any other exit code indicates a failure running validate.
+                                    Required: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        args:
+                                            Type: TypeList
+                                            Description: Optional arguments to pass to the source during execution.
+                                            Optional: "true"
+                                        file:
+                                            Type: TypeList
+                                            Description: A remote or local file.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allow_insecure:
+                                                    Type: TypeBool
+                                                    Description: |-
+                                                        Defaults to false. When false, files are subject to validations based on the file type:
+                                                        Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
+                                                    Optional: "true"
+                                                gcs:
+                                                    Type: TypeList
+                                                    Description: A Cloud Storage object.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        bucket:
+                                                            Type: TypeString
+                                                            Description: Bucket of the Cloud Storage object.
+                                                            Required: "true"
+                                                        generation:
+                                                            Type: TypeInt
+                                                            Description: Generation number of the Cloud Storage object.
+                                                            Optional: "true"
+                                                        object:
+                                                            Type: TypeString
+                                                            Description: Name of the Cloud Storage object.
+                                                            Required: "true"
+                                                local_path:
+                                                    Type: TypeString
+                                                    Description: A local path within the VM to use.
+                                                    Optional: "true"
+                                                remote:
+                                                    Type: TypeList
+                                                    Description: A generic remote file.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        sha256_checksum:
+                                                            Type: TypeString
+                                                            Description: SHA256 checksum of the remote file.
+                                                            Optional: "true"
+                                                        uri:
+                                                            Type: TypeString
+                                                            Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                            Required: "true"
+                                        interpreter:
+                                            Type: TypeString
+                                            Description: 'The script interpreter to use. Possible values: ["INTERPRETER_UNSPECIFIED", "NONE", "SHELL", "POWERSHELL"]'
+                                            Required: "true"
+                                        output_file_path:
+                                            Type: TypeString
+                                            Description: Only recorded for enforce Exec. Path to an output file (that is created by this Exec) whose content will be recorded in OSPolicyResourceCompliance after a successful run. Absence or failure to read this file will result in this ExecResource being non-compliant. Output file size is limited to 100K bytes.
+                                            Optional: "true"
+                                        script:
+                                            Type: TypeString
+                                            Description: An inline script. The size of the script is limited to 1024 characters.
+                                            Optional: "true"
+                        file:
+                            Type: TypeList
+                            Description: File resource
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                content:
+                                    Type: TypeString
+                                    Description: A a file with this content. The size of the content is limited to 1024 characters.
+                                    Optional: "true"
+                                file:
+                                    Type: TypeList
+                                    Description: A remote or local source.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        allow_insecure:
+                                            Type: TypeBool
+                                            Description: 'Defaults to false. When false, files are subject to validations based on the file type: Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.'
+                                            Optional: "true"
+                                        gcs:
+                                            Type: TypeList
+                                            Description: A Cloud Storage object.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                bucket:
+                                                    Type: TypeString
+                                                    Description: Bucket of the Cloud Storage object.
+                                                    Required: "true"
+                                                generation:
+                                                    Type: TypeInt
+                                                    Description: Generation number of the Cloud Storage object.
+                                                    Optional: "true"
+                                                object:
+                                                    Type: TypeString
+                                                    Description: Name of the Cloud Storage object.
+                                                    Required: "true"
+                                        local_path:
+                                            Type: TypeString
+                                            Description: A local path within the VM to use.
+                                            Optional: "true"
+                                        remote:
+                                            Type: TypeList
+                                            Description: A generic remote file.
+                                            Optional: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                sha256_checksum:
+                                                    Type: TypeString
+                                                    Description: SHA256 checksum of the remote file.
+                                                    Optional: "true"
+                                                uri:
+                                                    Type: TypeString
+                                                    Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                    Required: "true"
+                                path:
+                                    Type: TypeString
+                                    Description: The absolute path of the file within the VM.
+                                    Required: "true"
+                                permissions:
+                                    Type: TypeString
+                                    Description: |-
+                                        Consists of three octal digits which represent, in order, the permissions of the owner, group, and other users for the file (similarly to the numeric mode used in the linux chmod utility). Each digit represents a three bit number with the 4 bit corresponding to the read permissions, the 2 bit corresponds to the write bit, and the one bit corresponds to the execute permission. Default behavior is 755.
+                                        Below are some examples of permissions and their associated values: read, write, and execute: 7 read and execute: 5 read and write: 6 read only: 4
+                                    Computed: "true"
+                                state:
+                                    Type: TypeString
+                                    Description: 'Desired state of the file. Possible values: ["DESIRED_STATE_UNSPECIFIED", "PRESENT", "ABSENT", "CONTENTS_MATCH"]'
+                                    Required: "true"
+                        id:
+                            Type: TypeString
+                            Description: |-
+                                The id of the resource with the following restrictions:
+                                * Must contain only lowercase letters, numbers, and hyphens.
+                                * Must start with a letter.
+                                * Must be between 1-63 characters.
+                                * Must end with a number or a letter.
+                                * Must be unique within the OS policy.
+                            Required: "true"
+                        pkg:
+                            Type: TypeList
+                            Description: Package resource
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                apt:
+                                    Type: TypeList
+                                    Description: A package managed by Apt.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        name:
+                                            Type: TypeString
+                                            Description: Package name.
+                                            Required: "true"
+                                deb:
+                                    Type: TypeList
+                                    Description: A deb package file.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        pull_deps:
+                                            Type: TypeBool
+                                            Description: 'Whether dependencies should also be installed. - install when false: ''dpkg -i package'' - install when true: ''apt-get update && apt-get -y install package.deb'''
+                                            Optional: "true"
+                                        source:
+                                            Type: TypeList
+                                            Description: A deb package.
+                                            Required: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allow_insecure:
+                                                    Type: TypeBool
+                                                    Description: |-
+                                                        Defaults to false. When false, files are subject to validations based on the file type:
+                                                        Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
+                                                    Optional: "true"
+                                                gcs:
+                                                    Type: TypeList
+                                                    Description: A Cloud Storage object.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        bucket:
+                                                            Type: TypeString
+                                                            Description: Bucket of the Cloud Storage object.
+                                                            Required: "true"
+                                                        generation:
+                                                            Type: TypeInt
+                                                            Description: Generation number of the Cloud Storage object.
+                                                            Optional: "true"
+                                                        object:
+                                                            Type: TypeString
+                                                            Description: Name of the Cloud Storage object.
+                                                            Required: "true"
+                                                local_path:
+                                                    Type: TypeString
+                                                    Description: A local path within the VM to use.
+                                                    Optional: "true"
+                                                remote:
+                                                    Type: TypeList
+                                                    Description: A generic remote file.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        sha256_checksum:
+                                                            Type: TypeString
+                                                            Description: SHA256 checksum of the remote file.
+                                                            Optional: "true"
+                                                        uri:
+                                                            Type: TypeString
+                                                            Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                            Required: "true"
+                                desired_state:
+                                    Type: TypeString
+                                    Description: 'The desired state the agent should maintain for this package. Possible values: ["DESIRED_STATE_UNSPECIFIED", "INSTALLED", "REMOVED"]'
+                                    Required: "true"
+                                googet:
+                                    Type: TypeList
+                                    Description: A package managed by GooGet.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        name:
+                                            Type: TypeString
+                                            Description: Package name.
+                                            Required: "true"
+                                msi:
+                                    Type: TypeList
+                                    Description: An MSI package.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        properties:
+                                            Type: TypeList
+                                            Description: Additional properties to use during installation. This should be in the format of Property=Setting. Appended to the defaults of 'ACTION=INSTALL REBOOT=ReallySuppress'.
+                                            Optional: "true"
+                                        source:
+                                            Type: TypeList
+                                            Description: The MSI package.
+                                            Required: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allow_insecure:
+                                                    Type: TypeBool
+                                                    Description: |-
+                                                        Defaults to false. When false, files are subject to validations based on the file type:
+                                                        Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
+                                                    Optional: "true"
+                                                gcs:
+                                                    Type: TypeList
+                                                    Description: A Cloud Storage object.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        bucket:
+                                                            Type: TypeString
+                                                            Description: Bucket of the Cloud Storage object.
+                                                            Required: "true"
+                                                        generation:
+                                                            Type: TypeInt
+                                                            Description: Generation number of the Cloud Storage object.
+                                                            Optional: "true"
+                                                        object:
+                                                            Type: TypeString
+                                                            Description: Name of the Cloud Storage object.
+                                                            Required: "true"
+                                                local_path:
+                                                    Type: TypeString
+                                                    Description: A local path within the VM to use.
+                                                    Optional: "true"
+                                                remote:
+                                                    Type: TypeList
+                                                    Description: A generic remote file.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        sha256_checksum:
+                                                            Type: TypeString
+                                                            Description: SHA256 checksum of the remote file.
+                                                            Optional: "true"
+                                                        uri:
+                                                            Type: TypeString
+                                                            Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                            Required: "true"
+                                rpm:
+                                    Type: TypeList
+                                    Description: An rpm package file.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        pull_deps:
+                                            Type: TypeBool
+                                            Description: 'Whether dependencies should also be installed. - install when false: ''rpm --upgrade --replacepkgs package.rpm'' - install when true: ''yum -y install package.rpm'' or ''zypper -y install package.rpm'''
+                                            Optional: "true"
+                                        source:
+                                            Type: TypeList
+                                            Description: An rpm package.
+                                            Required: "true"
+                                            MaxItems: "1"
+                                            Properties:
+                                                allow_insecure:
+                                                    Type: TypeBool
+                                                    Description: |-
+                                                        Defaults to false. When false, files are subject to validations based on the file type:
+                                                        Remote: A checksum must be specified. Cloud Storage: An object generation number must be specified.
+                                                    Optional: "true"
+                                                gcs:
+                                                    Type: TypeList
+                                                    Description: A Cloud Storage object.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        bucket:
+                                                            Type: TypeString
+                                                            Description: Bucket of the Cloud Storage object.
+                                                            Required: "true"
+                                                        generation:
+                                                            Type: TypeInt
+                                                            Description: Generation number of the Cloud Storage object.
+                                                            Optional: "true"
+                                                        object:
+                                                            Type: TypeString
+                                                            Description: Name of the Cloud Storage object.
+                                                            Required: "true"
+                                                local_path:
+                                                    Type: TypeString
+                                                    Description: A local path within the VM to use.
+                                                    Optional: "true"
+                                                remote:
+                                                    Type: TypeList
+                                                    Description: A generic remote file.
+                                                    Optional: "true"
+                                                    MaxItems: "1"
+                                                    Properties:
+                                                        sha256_checksum:
+                                                            Type: TypeString
+                                                            Description: SHA256 checksum of the remote file.
+                                                            Optional: "true"
+                                                        uri:
+                                                            Type: TypeString
+                                                            Description: URI from which to fetch the object. It should contain both the protocol and path following the format '{protocol}://{location}'.
+                                                            Required: "true"
+                                yum:
+                                    Type: TypeList
+                                    Description: A package managed by YUM.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        name:
+                                            Type: TypeString
+                                            Description: Package name.
+                                            Required: "true"
+                                zypper:
+                                    Type: TypeList
+                                    Description: A package managed by Zypper.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        name:
+                                            Type: TypeString
+                                            Description: Package name.
+                                            Required: "true"
+                        repository:
+                            Type: TypeList
+                            Description: Package repository resource
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                apt:
+                                    Type: TypeList
+                                    Description: An Apt Repository.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        archive_type:
+                                            Type: TypeString
+                                            Description: 'Type of archive files in this repository. Possible values: ["ARCHIVE_TYPE_UNSPECIFIED", "DEB", "DEB_SRC"]'
+                                            Required: "true"
+                                        components:
+                                            Type: TypeList
+                                            Description: List of components for this repository. Must contain at least one item.
+                                            Required: "true"
+                                        distribution:
+                                            Type: TypeString
+                                            Description: Distribution of this repository.
+                                            Required: "true"
+                                        gpg_key:
+                                            Type: TypeString
+                                            Description: URI of the key file for this repository. The agent maintains a keyring at '/etc/apt/trusted.gpg.d/osconfig_agent_managed.gpg'.
+                                            Optional: "true"
+                                        uri:
+                                            Type: TypeString
+                                            Description: URI for this repository.
+                                            Required: "true"
+                                goo:
+                                    Type: TypeList
+                                    Description: A Goo Repository.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        name:
+                                            Type: TypeString
+                                            Description: The name of the repository.
+                                            Required: "true"
+                                        url:
+                                            Type: TypeString
+                                            Description: The url of the repository.
+                                            Required: "true"
+                                yum:
+                                    Type: TypeList
+                                    Description: A Yum Repository.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        base_url:
+                                            Type: TypeString
+                                            Description: The location of the repository directory.
+                                            Required: "true"
+                                        display_name:
+                                            Type: TypeString
+                                            Description: The display name of the repository.
+                                            Optional: "true"
+                                        gpg_keys:
+                                            Type: TypeList
+                                            Description: URIs of GPG keys.
+                                            Optional: "true"
+                                        id:
+                                            Type: TypeString
+                                            Description: A one word, unique name for this repository. This is the 'repo id' in the yum config file and also the 'display_name' if 'display_name' is omitted. This id is also used as the unique identifier when checking for resource conflicts.
+                                            Required: "true"
+                                zypper:
+                                    Type: TypeList
+                                    Description: A Zypper Repository.
+                                    Optional: "true"
+                                    MaxItems: "1"
+                                    Properties:
+                                        base_url:
+                                            Type: TypeString
+                                            Description: The location of the repository directory.
+                                            Required: "true"
+                                        display_name:
+                                            Type: TypeString
+                                            Description: The display name of the repository.
+                                            Optional: "true"
+                                        gpg_keys:
+                                            Type: TypeList
+                                            Description: URIs of GPG keys.
+                                            Optional: "true"
+                                        id:
+                                            Type: TypeString
+                                            Description: A one word, unique name for this repository. This is the 'repo id' in the zypper config file and also the 'display_name' if 'display_name' is omitted. This id is also used as the unique identifier when checking for GuestPolicy conflicts.
+                                            Required: "true"
+project:
+    Type: TypeString
+    Description: The project for the resource
+    Computed: "true"
+    Optional: "true"
+reconciling:
+    Type: TypeBool
+    Description: |-
+        Output only. Indicates that reconciliation is in progress for the revision. This value is 'true' when the 'rollout_state' is one of:
+        * IN_PROGRESS
+        * CANCELLING
+    Computed: "true"
+revision_create_time:
+    Type: TypeString
+    Description: Output only. The timestamp that the revision was created.
+    Computed: "true"
+revision_id:
+    Type: TypeString
+    Description: Output only. The assignment revision ID A new revision is committed whenever a rollout is triggered for a OS policy assignment
+    Computed: "true"
+rollout:
+    Type: TypeList
+    Description: 'Rollout to deploy the OS policy assignment. A rollout is triggered in the following situations: 1) OSPolicyAssignment is created. 2) OSPolicyAssignment is updated and the update contains changes to one of the following fields: - instance_filter - os_policies 3) OSPolicyAssignment is deleted.'
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        disruption_budget:
+            Type: TypeList
+            Description: The maximum number (or percentage) of VMs per zone to disrupt at any given moment.
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                fixed:
+                    Type: TypeInt
+                    Description: Specifies a fixed value.
+                    Optional: "true"
+                percent:
+                    Type: TypeInt
+                    Description: Specifies the relative value defined as a percentage, which will be multiplied by a reference value.
+                    Optional: "true"
+        min_wait_duration:
+            Type: TypeString
+            Description: This determines the minimum duration of time to wait after the configuration changes are applied through the current rollout. A VM continues to count towards the 'disruption_budget' at least until this duration of time has passed after configuration changes are applied.
+            Required: "true"
+rollout_state:
+    Type: TypeString
+    Description: Output only. OS policy assignment rollout state
+    Computed: "true"
+skip_await_rollout:
+    Type: TypeBool
+    Description: Set to true to skip awaiting rollout during resource creation and update.
+    Optional: "true"
+uid:
+    Type: TypeString
+    Description: Output only. Server generated unique id for the OS policy assignment resource.
+    Computed: "true"
+

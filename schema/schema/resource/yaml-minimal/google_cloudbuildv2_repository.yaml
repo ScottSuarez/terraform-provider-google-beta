@@ -1,0 +1,11 @@
+annotations: TypeMap(TypeString)
+create_time: TypeString
+effective_annotations: TypeMap(TypeString)
+etag: TypeString
+location: TypeString
+name: TypeString
+parent_connection: TypeString
+project: TypeString
+remote_uri: TypeString
+update_time: TypeString
+

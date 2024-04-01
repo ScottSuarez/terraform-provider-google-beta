@@ -1,0 +1,31 @@
+default_cluster_version:
+    Type: TypeString
+    Computed: "true"
+latest_master_version:
+    Type: TypeString
+    Computed: "true"
+latest_node_version:
+    Type: TypeString
+    Computed: "true"
+location:
+    Type: TypeString
+    Optional: "true"
+project:
+    Type: TypeString
+    Optional: "true"
+release_channel_default_version:
+    Type: TypeMap
+    Computed: "true"
+release_channel_latest_version:
+    Type: TypeMap
+    Computed: "true"
+valid_master_versions:
+    Type: TypeList
+    Computed: "true"
+valid_node_versions:
+    Type: TypeList
+    Computed: "true"
+version_prefix:
+    Type: TypeString
+    Optional: "true"
+

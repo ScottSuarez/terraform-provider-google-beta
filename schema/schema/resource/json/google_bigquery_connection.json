@@ -1,0 +1,251 @@
+{
+    "aws": {
+        "Description": "Connection properties specific to Amazon Web Services.",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "access_role": {
+                "Description": "Authentication using Google owned service account to assume into customer's AWS IAM Role.",
+                "MaxItems": 1,
+                "Properties": {
+                    "iam_role_id": {
+                        "Description": "The user’s AWS IAM Role that trusts the Google-owned AWS IAM user Connection.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "identity": {
+                        "Computed": true,
+                        "Description": "A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's AWS IAM Role.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "azure": {
+        "Description": "Container for connection properties specific to Azure.",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "application": {
+                "Computed": true,
+                "Description": "The name of the Azure Active Directory Application.",
+                "Type": "TypeString"
+            },
+            "client_id": {
+                "Computed": true,
+                "Description": "The client id of the Azure Active Directory Application.",
+                "Type": "TypeString"
+            },
+            "customer_tenant_id": {
+                "Description": "The id of customer's directory that host the data.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "federated_application_client_id": {
+                "Description": "The Azure Application (client) ID where the federated credentials will be hosted.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "identity": {
+                "Computed": true,
+                "Description": "A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's Azure Active Directory Application.",
+                "Type": "TypeString"
+            },
+            "object_id": {
+                "Computed": true,
+                "Description": "The object id of the Azure Active Directory Application.",
+                "Type": "TypeString"
+            },
+            "redirect_uri": {
+                "Computed": true,
+                "Description": "The URL user will be redirected to after granting consent during connection setup.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cloud_resource": {
+        "Description": "Container for connection properties for delegation of access to GCP resources.",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "service_account_id": {
+                "Computed": true,
+                "Description": "The account ID of the service created for the purpose of this connection.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cloud_spanner": {
+        "Description": "Connection properties specific to Cloud Spanner",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "database": {
+                "Description": "Cloud Spanner database in the form 'project/instance/database'.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "database_role": {
+                "Description": "Cloud Spanner database role for fine-grained access control. The Cloud Spanner admin should have provisioned the database role with appropriate permissions, such as 'SELECT' and 'INSERT'. Other users should only use roles provided by their Cloud Spanner admins. The database role name must start with a letter, and can only contain letters, numbers, and underscores. For more details, see https://cloud.google.com/spanner/docs/fgac-about.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "max_parallelism": {
+                "Description": "Allows setting max parallelism per query when executing on Spanner independent compute resources. If unspecified, default values of parallelism are chosen that are dependent on the Cloud Spanner instance configuration. 'useParallelism' and 'useDataBoost' must be set when setting max parallelism.",
+                "Optional": true,
+                "RequiredWith": "cloud_spanner.0.use_data_boost, cloud_spanner.0.use_parallelism",
+                "Type": "TypeInt"
+            },
+            "use_data_boost": {
+                "Description": "If set, the request will be executed via Spanner independent compute resources. 'use_parallelism' must be set when using data boost.",
+                "Optional": true,
+                "RequiredWith": "cloud_spanner.0.use_parallelism",
+                "Type": "TypeBool"
+            },
+            "use_parallelism": {
+                "Description": "If parallelism should be used when reading from Cloud Spanner.",
+                "Optional": true,
+                "Type": "TypeBool"
+            },
+            "use_serverless_analytics": {
+                "Description": "If the serverless analytics service should be used to read data from Cloud Spanner. 'useParallelism' must be set when using serverless analytics.",
+                "Optional": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cloud_sql": {
+        "Description": "Connection properties specific to the Cloud SQL.",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "credential": {
+                "Description": "Cloud SQL properties.",
+                "MaxItems": 1,
+                "Properties": {
+                    "password": {
+                        "Description": "Password for database.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    },
+                    "username": {
+                        "Description": "Username for database.",
+                        "Required": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "database": {
+                "Description": "Database name.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "instance_id": {
+                "Description": "Cloud SQL instance ID in the form project:location:instance.",
+                "Required": true,
+                "Type": "TypeString"
+            },
+            "service_account_id": {
+                "Computed": true,
+                "Description": "When the connection is used in the context of an operation in BigQuery, this service account will serve as the identity being used for connecting to the CloudSQL instance specified in this connection.",
+                "Type": "TypeString"
+            },
+            "type": {
+                "Description": "Type of the Cloud SQL database. Possible values: [\"DATABASE_TYPE_UNSPECIFIED\", \"POSTGRES\", \"MYSQL\"]",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "connection_id": {
+        "Computed": true,
+        "Description": "Optional connection id that should be assigned to the created connection.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "A descriptive description for the connection",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "friendly_name": {
+        "Description": "A descriptive name for the connection",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "has_credential": {
+        "Computed": true,
+        "Description": "True if the connection has credential assigned.",
+        "Type": "TypeBool"
+    },
+    "location": {
+        "Description": "The geographic location where the connection should reside.\nCloud SQL instance must be in the same location as the connection\nwith following exceptions: Cloud SQL us-central1 maps to BigQuery US, Cloud SQL europe-west1 maps to BigQuery EU.\nExamples: US, EU, asia-northeast1, us-central1, europe-west1.\nSpanner Connections same as spanner region\nAWS allowed regions are aws-us-east-1\nAzure allowed regions are azure-eastus2",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Computed": true,
+        "Description": "The resource name of the connection in the form of:\n\"projects/{project_id}/locations/{location_id}/connections/{connectionId}\"",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "spark": {
+        "Description": "Container for connection properties to execute stored procedures for Apache Spark. resources.",
+        "ExactlyOneOf": "cloud_sql, aws, azure, cloud_spanner, cloud_resource, spark",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "metastore_service_config": {
+                "Description": "Dataproc Metastore Service configuration for the connection.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "metastore_service": {
+                        "Description": "Resource name of an existing Dataproc Metastore service in the form of projects/[projectId]/locations/[region]/services/[serviceId].",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "service_account_id": {
+                "Computed": true,
+                "Description": "The account ID of the service created for the purpose of this connection.",
+                "Type": "TypeString"
+            },
+            "spark_history_server_config": {
+                "Description": "Spark History Server configuration for the connection.",
+                "MaxItems": 1,
+                "Optional": true,
+                "Properties": {
+                    "dataproc_cluster": {
+                        "Description": "Resource name of an existing Dataproc Cluster to act as a Spark History Server for the connection if the form of projects/[projectId]/regions/[region]/clusters/[cluster_name].",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    }
+}

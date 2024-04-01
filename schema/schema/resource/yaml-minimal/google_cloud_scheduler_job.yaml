@@ -1,0 +1,40 @@
+app_engine_http_target:
+    app_engine_routing:
+        instance: TypeString
+        service: TypeString
+        version: TypeString
+    body: TypeString
+    headers: TypeMap(TypeString)
+    http_method: TypeString
+    relative_uri: TypeString
+attempt_deadline: TypeString
+description: TypeString
+http_target:
+    body: TypeString
+    headers: TypeMap(TypeString)
+    http_method: TypeString
+    oauth_token:
+        scope: TypeString
+        service_account_email: TypeString
+    oidc_token:
+        audience: TypeString
+        service_account_email: TypeString
+    uri: TypeString
+name: TypeString
+paused: TypeBool
+project: TypeString
+pubsub_target:
+    attributes: TypeMap(TypeString)
+    data: TypeString
+    topic_name: TypeString
+region: TypeString
+retry_config:
+    max_backoff_duration: TypeString
+    max_doublings: TypeInt
+    max_retry_duration: TypeString
+    min_backoff_duration: TypeString
+    retry_count: TypeInt
+schedule: TypeString
+state: TypeString
+time_zone: TypeString
+

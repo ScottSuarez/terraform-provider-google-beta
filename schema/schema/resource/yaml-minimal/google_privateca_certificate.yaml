@@ -1,0 +1,161 @@
+certificate_authority: TypeString
+certificate_description:
+    aia_issuing_certificate_urls: TypeList(TypeString)
+    authority_key_id:
+        key_id: TypeString
+    cert_fingerprint:
+        sha256_hash: TypeString
+    crl_distribution_points: TypeList(TypeString)
+    public_key:
+        format: TypeString
+        key: TypeString
+    subject_description:
+        hex_serial_number: TypeString
+        lifetime: TypeString
+        not_after_time: TypeString
+        not_before_time: TypeString
+        subject:
+            common_name: TypeString
+            country_code: TypeString
+            locality: TypeString
+            organization: TypeString
+            organizational_unit: TypeString
+            postal_code: TypeString
+            province: TypeString
+            street_address: TypeString
+        subject_alt_name:
+            custom_sans:
+                critical: TypeBool
+                obect_id:
+                    object_id_path: TypeList(TypeInt)
+                value: TypeString
+            dns_names: TypeList(TypeString)
+            email_addresses: TypeList(TypeString)
+            ip_addresses: TypeList(TypeString)
+            uris: TypeList(TypeString)
+    subject_key_id:
+        key_id: TypeString
+    x509_description:
+        additional_extensions:
+            critical: TypeBool
+            object_id:
+                object_id_path: TypeList(TypeInt)
+            value: TypeString
+        aia_ocsp_servers: TypeList(TypeString)
+        ca_options:
+            is_ca: TypeBool
+            max_issuer_path_length: TypeInt
+        key_usage:
+            base_key_usage:
+                cert_sign: TypeBool
+                content_commitment: TypeBool
+                crl_sign: TypeBool
+                data_encipherment: TypeBool
+                decipher_only: TypeBool
+                digital_signature: TypeBool
+                encipher_only: TypeBool
+                key_agreement: TypeBool
+                key_encipherment: TypeBool
+            extended_key_usage:
+                client_auth: TypeBool
+                code_signing: TypeBool
+                email_protection: TypeBool
+                ocsp_signing: TypeBool
+                server_auth: TypeBool
+                time_stamping: TypeBool
+            unknown_extended_key_usages:
+                object_id_path: TypeList(TypeInt)
+        name_constraints:
+            critical: TypeBool
+            excluded_dns_names: TypeList(TypeString)
+            excluded_email_addresses: TypeList(TypeString)
+            excluded_ip_ranges: TypeList(TypeString)
+            excluded_uris: TypeList(TypeString)
+            permitted_dns_names: TypeList(TypeString)
+            permitted_email_addresses: TypeList(TypeString)
+            permitted_ip_ranges: TypeList(TypeString)
+            permitted_uris: TypeList(TypeString)
+        policy_ids:
+            object_id_path: TypeList(TypeInt)
+certificate_template: TypeString
+config:
+    public_key:
+        format: TypeString
+        key: TypeString
+    subject_config:
+        subject:
+            common_name: TypeString
+            country_code: TypeString
+            locality: TypeString
+            organization: TypeString
+            organizational_unit: TypeString
+            postal_code: TypeString
+            province: TypeString
+            street_address: TypeString
+        subject_alt_name:
+            dns_names: TypeList(TypeString)
+            email_addresses: TypeList(TypeString)
+            ip_addresses: TypeList(TypeString)
+            uris: TypeList(TypeString)
+    x509_config:
+        additional_extensions:
+            critical: TypeBool
+            object_id:
+                object_id_path: TypeList(TypeInt)
+            value: TypeString
+        aia_ocsp_servers: TypeList(TypeString)
+        ca_options:
+            is_ca: TypeBool
+            max_issuer_path_length: TypeInt
+            non_ca: TypeBool
+            zero_max_issuer_path_length: TypeBool
+        key_usage:
+            base_key_usage:
+                cert_sign: TypeBool
+                content_commitment: TypeBool
+                crl_sign: TypeBool
+                data_encipherment: TypeBool
+                decipher_only: TypeBool
+                digital_signature: TypeBool
+                encipher_only: TypeBool
+                key_agreement: TypeBool
+                key_encipherment: TypeBool
+            extended_key_usage:
+                client_auth: TypeBool
+                code_signing: TypeBool
+                email_protection: TypeBool
+                ocsp_signing: TypeBool
+                server_auth: TypeBool
+                time_stamping: TypeBool
+            unknown_extended_key_usages:
+                object_id_path: TypeList(TypeInt)
+        name_constraints:
+            critical: TypeBool
+            excluded_dns_names: TypeList(TypeString)
+            excluded_email_addresses: TypeList(TypeString)
+            excluded_ip_ranges: TypeList(TypeString)
+            excluded_uris: TypeList(TypeString)
+            permitted_dns_names: TypeList(TypeString)
+            permitted_email_addresses: TypeList(TypeString)
+            permitted_ip_ranges: TypeList(TypeString)
+            permitted_uris: TypeList(TypeString)
+        policy_ids:
+            object_id_path: TypeList(TypeInt)
+create_time: TypeString
+effective_labels: TypeMap(TypeString)
+issuer_certificate_authority: TypeString
+labels: TypeMap(TypeString)
+lifetime: TypeString
+location: TypeString
+name: TypeString
+pem_certificate: TypeString
+pem_certificate_chain: TypeList(TypeString)
+pem_csr: TypeString
+pool: TypeString
+project: TypeString
+revocation_details:
+    revocation_state: TypeString
+    revocation_time: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

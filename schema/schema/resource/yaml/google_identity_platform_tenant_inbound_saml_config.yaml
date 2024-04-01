@@ -1,0 +1,76 @@
+display_name:
+    Type: TypeString
+    Description: Human friendly display name.
+    Required: "true"
+enabled:
+    Type: TypeBool
+    Description: If this config allows users to sign in with the provider.
+    Optional: "true"
+idp_config:
+    Type: TypeList
+    Description: SAML IdP configuration when the project acts as the relying party
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        idp_certificates:
+            Type: TypeList
+            Description: The IDP's certificate data to verify the signature in the SAMLResponse issued by the IDP.
+            Required: "true"
+            Properties:
+                x509_certificate:
+                    Type: TypeString
+                    Description: The x509 certificate
+                    Optional: "true"
+        idp_entity_id:
+            Type: TypeString
+            Description: Unique identifier for all SAML entities
+            Required: "true"
+        sign_request:
+            Type: TypeBool
+            Description: Indicates if outbounding SAMLRequest should be signed.
+            Optional: "true"
+        sso_url:
+            Type: TypeString
+            Description: URL to send Authentication request to.
+            Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The name of the InboundSamlConfig resource. Must start with 'saml.' and can only have alphanumeric characters,
+        hyphens, underscores or periods. The part after 'saml.' must also start with a lowercase letter, end with an
+        alphanumeric character, and have at least 2 characters.
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+sp_config:
+    Type: TypeList
+    Description: |-
+        SAML SP (Service Provider) configuration when the project acts as the relying party to receive
+        and accept an authentication assertion issued by a SAML identity provider.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        callback_uri:
+            Type: TypeString
+            Description: Callback URI where responses from IDP are handled. Must start with 'https://'.
+            Required: "true"
+        sp_certificates:
+            Type: TypeList
+            Description: The IDP's certificate data to verify the signature in the SAMLResponse issued by the IDP.
+            Computed: "true"
+            Properties:
+                x509_certificate:
+                    Type: TypeString
+                    Description: The x509 certificate
+                    Computed: "true"
+        sp_entity_id:
+            Type: TypeString
+            Description: Unique identifier for all SAML entities.
+            Required: "true"
+tenant:
+    Type: TypeString
+    Description: The name of the tenant where this inbound SAML config resource exists
+    Required: "true"
+

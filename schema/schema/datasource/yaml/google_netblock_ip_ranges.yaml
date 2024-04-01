@@ -1,0 +1,13 @@
+cidr_blocks:
+    Type: TypeList
+    Computed: "true"
+cidr_blocks_ipv4:
+    Type: TypeList
+    Computed: "true"
+cidr_blocks_ipv6:
+    Type: TypeList
+    Computed: "true"
+range_type:
+    Type: TypeString
+    Optional: "true"
+

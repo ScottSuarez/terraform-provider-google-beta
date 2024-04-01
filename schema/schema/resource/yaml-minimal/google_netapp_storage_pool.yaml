@@ -1,0 +1,17 @@
+active_directory: TypeString
+capacity_gib: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+encryption_type: TypeString
+kms_config: TypeString
+labels: TypeMap(TypeString)
+ldap_enabled: TypeBool
+location: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+service_level: TypeString
+terraform_labels: TypeMap(TypeString)
+volume_capacity_gib: TypeString
+volume_count: TypeInt
+

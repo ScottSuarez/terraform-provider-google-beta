@@ -1,0 +1,81 @@
+create_time:
+    Type: TypeString
+    Description: The time the fleet was created, in RFC3339 text format.
+    Computed: "true"
+default_cluster_config:
+    Type: TypeList
+    Description: The default cluster configurations to apply across the fleet.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        binary_authorization_config:
+            Type: TypeList
+            Description: Enable/Disable binary authorization features for the cluster.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                evaluation_mode:
+                    Type: TypeString
+                    Description: 'Mode of operation for binauthz policy evaluation. Possible values: ["DISABLED", "POLICY_BINDINGS"]'
+                    Optional: "true"
+                policy_bindings:
+                    Type: TypeList
+                    Description: Binauthz policies that apply to this cluster.
+                    Optional: "true"
+                    Properties:
+                        name:
+                            Type: TypeString
+                            Description: |-
+                                The relative resource name of the binauthz platform policy to audit. GKE
+                                platform policies have the following format:
+                                'projects/{project_number}/platforms/gke/policies/{policy_id}'.
+                            Optional: "true"
+        security_posture_config:
+            Type: TypeList
+            Description: Enable/Disable Security Posture features for the cluster.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                mode:
+                    Type: TypeString
+                    Description: 'Sets which mode to use for Security Posture features. Possible values: ["DISABLED", "BASIC"]'
+                    Optional: "true"
+                vulnerability_mode:
+                    Type: TypeString
+                    Description: 'Sets which mode to use for vulnerability scanning. Possible values: ["VULNERABILITY_DISABLED", "VULNERABILITY_BASIC", "VULNERABILITY_ENTERPRISE"]'
+                    Optional: "true"
+delete_time:
+    Type: TypeString
+    Description: The time the fleet was deleted, in RFC3339 text format.
+    Computed: "true"
+display_name:
+    Type: TypeString
+    Description: |-
+        A user-assigned display name of the Fleet. When present, it must be between 4 to 30 characters.
+        Allowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.
+    Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+state:
+    Type: TypeList
+    Description: The state of the fleet resource.
+    Computed: "true"
+    Properties:
+        code:
+            Type: TypeString
+            Description: Describes the state of a Fleet resource.
+            Computed: "true"
+uid:
+    Type: TypeString
+    Description: |-
+        Google-generated UUID for this resource. This is unique across all
+        Fleet resources. If a Fleet resource is deleted and another
+        resource with the same name is created, it gets a different uid.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: The time the fleet was last updated, in RFC3339 text format.
+    Computed: "true"
+

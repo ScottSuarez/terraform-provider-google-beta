@@ -1,0 +1,15 @@
+create_time: TypeString
+description: TypeString
+ipv4_cidr: TypeList(TypeString)
+ipv6_cidr: TypeList(TypeString)
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+network: TypeString
+project: TypeString
+state: TypeString
+subnet_id: TypeString
+update_time: TypeString
+vlan_id: TypeInt
+zone: TypeString
+

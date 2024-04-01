@@ -1,0 +1,38 @@
+address:
+    Type: TypeString
+    Computed: "true"
+address_type:
+    Type: TypeString
+    Computed: "true"
+name:
+    Type: TypeString
+    Required: "true"
+network:
+    Type: TypeString
+    Computed: "true"
+network_tier:
+    Type: TypeString
+    Computed: "true"
+prefix_length:
+    Type: TypeInt
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+purpose:
+    Type: TypeString
+    Computed: "true"
+self_link:
+    Type: TypeString
+    Computed: "true"
+status:
+    Type: TypeString
+    Computed: "true"
+subnetwork:
+    Type: TypeString
+    Computed: "true"
+users:
+    Type: TypeString
+    Computed: "true"
+

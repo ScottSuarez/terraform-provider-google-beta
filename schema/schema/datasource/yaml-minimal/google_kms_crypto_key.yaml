@@ -1,0 +1,17 @@
+destroy_scheduled_duration: TypeString
+effective_labels: TypeMap(TypeString)
+import_only: TypeBool
+key_ring: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+primary:
+    name: TypeString
+    state: TypeString
+purpose: TypeString
+rotation_period: TypeString
+skip_initial_version_creation: TypeBool
+terraform_labels: TypeMap(TypeString)
+version_template:
+    algorithm: TypeString
+    protection_level: TypeString
+

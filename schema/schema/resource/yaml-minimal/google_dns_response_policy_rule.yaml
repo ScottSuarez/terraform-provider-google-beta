@@ -1,0 +1,12 @@
+behavior: TypeString
+dns_name: TypeString
+local_data:
+    local_datas:
+        name: TypeString
+        rrdatas: TypeList(TypeString)
+        ttl: TypeInt
+        type: TypeString
+project: TypeString
+response_policy: TypeString
+rule_name: TypeString
+

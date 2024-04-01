@@ -1,0 +1,151 @@
+{
+    "create_time": {
+        "Computed": true,
+        "Description": "Output only. The time the spoke was created.",
+        "Type": "TypeString"
+    },
+    "description": {
+        "Description": "An optional description of the spoke.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "effective_labels": {
+        "Computed": true,
+        "Description": "All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.",
+        "Type": "TypeMap"
+    },
+    "hub": {
+        "Description": "Immutable. The URI of the hub that this spoke is attached to.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "labels": {
+        "Description": "Optional labels in key:value format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).\n\n**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.\nPlease refer to the field `effective_labels` for all of the labels present on the resource.",
+        "Optional": true,
+        "Type": "TypeMap"
+    },
+    "linked_interconnect_attachments": {
+        "ConflictsWith": "linked_vpn_tunnels, linked_router_appliance_instances, linked_vpc_network",
+        "Description": "A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "site_to_site_data_transfer": {
+                "Description": "A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "uris": {
+                "Description": "The URIs of linked interconnect attachment resources",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "linked_router_appliance_instances": {
+        "ConflictsWith": "linked_vpn_tunnels, linked_interconnect_attachments, linked_vpc_network",
+        "Description": "The URIs of linked Router appliance resources",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "instances": {
+                "Description": "The list of router appliance instances",
+                "Properties": {
+                    "ip_address": {
+                        "Description": "The IP address on the VM to use for peering.",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    },
+                    "virtual_machine": {
+                        "Description": "The URI of the virtual machine resource",
+                        "Optional": true,
+                        "Type": "TypeString"
+                    }
+                },
+                "Required": true,
+                "Type": "TypeList"
+            },
+            "site_to_site_data_transfer": {
+                "Description": "A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.",
+                "Required": true,
+                "Type": "TypeBool"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "linked_vpc_network": {
+        "ConflictsWith": "linked_vpn_tunnels, linked_interconnect_attachments, linked_router_appliance_instances",
+        "Description": "VPC network that is associated with the spoke.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "exclude_export_ranges": {
+                "Description": "IP ranges encompassing the subnets to be excluded from peering.",
+                "Optional": true,
+                "Type": "TypeList"
+            },
+            "uri": {
+                "Description": "The URI of the VPC network resource.",
+                "Required": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "linked_vpn_tunnels": {
+        "ConflictsWith": "linked_interconnect_attachments, linked_router_appliance_instances, linked_vpc_network",
+        "Description": "The URIs of linked VPN tunnel resources",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "site_to_site_data_transfer": {
+                "Description": "A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.",
+                "Required": true,
+                "Type": "TypeBool"
+            },
+            "uris": {
+                "Description": "The URIs of linked VPN tunnel resources.",
+                "Required": true,
+                "Type": "TypeList"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "location": {
+        "Description": "The location for the resource",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "Immutable. The name of the spoke. Spoke names must be unique.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The project for the resource",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "state": {
+        "Computed": true,
+        "Description": "Output only. The current lifecycle state of this spoke. Possible values: STATE_UNSPECIFIED, CREATING, ACTIVE, DELETING",
+        "Type": "TypeString"
+    },
+    "terraform_labels": {
+        "Computed": true,
+        "Description": "The combination of labels configured directly on the resource and default labels configured on the provider.",
+        "Type": "TypeMap"
+    },
+    "unique_id": {
+        "Computed": true,
+        "Description": "Output only. The Google-generated UUID for the spoke. This value is unique across all spoke resources. If a spoke is deleted and another with the same name is created, the new spoke is assigned a different unique_id.",
+        "Type": "TypeString"
+    },
+    "update_time": {
+        "Computed": true,
+        "Description": "Output only. The time the spoke was last updated.",
+        "Type": "TypeString"
+    }
+}

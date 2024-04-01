@@ -1,0 +1,16 @@
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+error:
+    details: TypeMap(TypeString)
+    message: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+private_connection_id: TypeString
+project: TypeString
+state: TypeString
+terraform_labels: TypeMap(TypeString)
+vpc_peering_config:
+    subnet: TypeString
+    vpc_name: TypeString
+

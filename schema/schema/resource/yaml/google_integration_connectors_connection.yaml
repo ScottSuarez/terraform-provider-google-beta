@@ -1,0 +1,747 @@
+auth_config:
+    Type: TypeList
+    Description: authConfig for the connection.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_variable:
+            Type: TypeList
+            Description: List containing additional auth configs.
+            Optional: "true"
+            Properties:
+                boolean_value:
+                    Type: TypeBool
+                    Description: Boolean Value of configVariable.
+                    Optional: "true"
+                encryption_key_value:
+                    Type: TypeList
+                    Description: Encription key value of configVariable.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        kms_key_name:
+                            Type: TypeString
+                            Description: |-
+                                The [KMS key name] with which the content of the Operation is encrypted. The expected
+                                format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+                                Will be empty string if google managed.
+                            Optional: "true"
+                        type:
+                            Type: TypeString
+                            Description: 'Type of Encription Key Possible values: ["GOOGLE_MANAGED", "CUSTOMER_MANAGED"]'
+                            Required: "true"
+                integer_value:
+                    Type: TypeInt
+                    Description: Integer Value of configVariable.
+                    Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for the configVariable
+                    Required: "true"
+                secret_value:
+                    Type: TypeList
+                    Description: Secret value of configVariable.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: Secret version of Secret Value for Config variable.
+                            Required: "true"
+                string_value:
+                    Type: TypeString
+                    Description: String Value of configVariabley.
+                    Optional: "true"
+        auth_key:
+            Type: TypeString
+            Description: The type of authentication configured.
+            Optional: "true"
+        auth_type:
+            Type: TypeString
+            Description: 'authType of the Connection Possible values: ["USER_PASSWORD", "OAUTH2_JWT_BEARER", "OAUTH2_CLIENT_CREDENTIALS", "SSH_PUBLIC_KEY", "OAUTH2_AUTH_CODE_FLOW"]'
+            Required: "true"
+        oauth2_auth_code_flow:
+            Type: TypeList
+            Description: Parameters to support Oauth 2.0 Auth Code Grant Authentication.
+            Optional: "true"
+            ExactlyOneOf: auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow
+            MaxItems: "1"
+            Properties:
+                auth_uri:
+                    Type: TypeString
+                    Description: Auth URL for Authorization Code Flow.
+                    Optional: "true"
+                client_id:
+                    Type: TypeString
+                    Description: Client ID for user-provided OAuth app.
+                    Optional: "true"
+                client_secret:
+                    Type: TypeList
+                    Description: Client secret for user-provided OAuth app.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+                enable_pkce:
+                    Type: TypeBool
+                    Description: Whether to enable PKCE when the user performs the auth code flow.
+                    Optional: "true"
+                scopes:
+                    Type: TypeList
+                    Description: Scopes the connection will request when the user performs the auth code flow.
+                    Optional: "true"
+        oauth2_client_credentials:
+            Type: TypeList
+            Description: OAuth3 Client Credentials for Authentication.
+            Optional: "true"
+            ExactlyOneOf: auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow
+            MaxItems: "1"
+            Properties:
+                client_id:
+                    Type: TypeString
+                    Description: Secret version of Password for Authentication.
+                    Required: "true"
+                client_secret:
+                    Type: TypeList
+                    Description: Secret version reference containing the client secret.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+        oauth2_jwt_bearer:
+            Type: TypeList
+            Description: OAuth2 JWT Bearer for Authentication.
+            Optional: "true"
+            ExactlyOneOf: auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow
+            MaxItems: "1"
+            Properties:
+                client_key:
+                    Type: TypeList
+                    Description: |-
+                        Secret version reference containing a PKCS#8 PEM-encoded private key associated with the Client Certificate.
+                        This private key will be used to sign JWTs used for the jwt-bearer authorization grant.
+                        Specified in the form as: projects/*/secrets/*/versions/*.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+                jwt_claims:
+                    Type: TypeList
+                    Description: JwtClaims providers fields to generate the token.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        audience:
+                            Type: TypeString
+                            Description: Value for the "aud" claim.
+                            Optional: "true"
+                        issuer:
+                            Type: TypeString
+                            Description: Value for the "iss" claim.
+                            Optional: "true"
+                        subject:
+                            Type: TypeString
+                            Description: Value for the "sub" claim.
+                            Optional: "true"
+        ssh_public_key:
+            Type: TypeList
+            Description: SSH Public Key for Authentication.
+            Optional: "true"
+            ExactlyOneOf: auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow
+            MaxItems: "1"
+            Properties:
+                cert_type:
+                    Type: TypeString
+                    Description: Format of SSH Client cert.
+                    Optional: "true"
+                ssh_client_cert:
+                    Type: TypeList
+                    Description: SSH Client Cert. It should contain both public and private key.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+                ssh_client_cert_pass:
+                    Type: TypeList
+                    Description: Password (passphrase) for ssh client certificate if it has one.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+                username:
+                    Type: TypeString
+                    Description: The user account used to authenticate.
+                    Required: "true"
+        user_password:
+            Type: TypeList
+            Description: User password for Authentication.
+            Optional: "true"
+            ExactlyOneOf: auth_config.0.user_password, auth_config.0.oauth2_jwt_bearer, auth_config.0.oauth2_client_credentials, auth_config.0.ssh_public_key, auth_config.0.oauth2_auth_code_flow
+            MaxItems: "1"
+            Properties:
+                password:
+                    Type: TypeList
+                    Description: Password for Authentication.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: |-
+                                The resource name of the secret version in the format,
+                                format as: projects/*/secrets/*/versions/*.
+                            Required: "true"
+                username:
+                    Type: TypeString
+                    Description: Username for Authentication.
+                    Required: "true"
+config_variable:
+    Type: TypeList
+    Description: Config Variables for the connection.
+    Optional: "true"
+    Properties:
+        boolean_value:
+            Type: TypeBool
+            Description: Boolean Value of configVariable
+            Optional: "true"
+        encryption_key_value:
+            Type: TypeList
+            Description: Encription key value of configVariable.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                kms_key_name:
+                    Type: TypeString
+                    Description: |-
+                        The [KMS key name] with which the content of the Operation is encrypted. The expected
+                        format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+                        Will be empty string if google managed.
+                    Optional: "true"
+                type:
+                    Type: TypeString
+                    Description: 'Type of Encription Key Possible values: ["GOOGLE_MANAGED", "CUSTOMER_MANAGED"]'
+                    Required: "true"
+        integer_value:
+            Type: TypeInt
+            Description: Integer Value of configVariable
+            Optional: "true"
+        key:
+            Type: TypeString
+            Description: Key for the configVariable
+            Required: "true"
+        secret_value:
+            Type: TypeList
+            Description: Secret value of configVariable.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                secret_version:
+                    Type: TypeString
+                    Description: Secret version of Secret Value for Config variable.
+                    Required: "true"
+        string_value:
+            Type: TypeString
+            Description: String Value of configVariabley
+            Optional: "true"
+connection_revision:
+    Type: TypeString
+    Description: Connection revision. This field is only updated when the connection is created or updated by User.
+    Computed: "true"
+connector_version:
+    Type: TypeString
+    Description: connectorVersion of the Connector.
+    Required: "true"
+connector_version_infra_config:
+    Type: TypeList
+    Description: This cofiguration provides infra configs like rate limit threshold which need to be configurable for every connector version.
+    Computed: "true"
+    Properties:
+        ratelimit_threshold:
+            Type: TypeString
+            Description: Max QPS supported by the connector version before throttling of requests.
+            Computed: "true"
+connector_version_launch_stage:
+    Type: TypeString
+    Description: Flag to mark the version indicating the launch stage.
+    Computed: "true"
+create_time:
+    Type: TypeString
+    Description: Time the Namespace was created in UTC.
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: An arbitrary description for the Conection.
+    Optional: "true"
+destination_config:
+    Type: TypeList
+    Description: Define the Connectors target endpoint.
+    Optional: "true"
+    Properties:
+        destination:
+            Type: TypeList
+            Description: The destinations for the key.
+            Optional: "true"
+            Properties:
+                host:
+                    Type: TypeString
+                    Description: For publicly routable host.
+                    Optional: "true"
+                port:
+                    Type: TypeInt
+                    Description: The port is the target port number that is accepted by the destination.
+                    Optional: "true"
+                service_attachment:
+                    Type: TypeString
+                    Description: 'PSC service attachments. Format: projects/*/regions/*/serviceAttachments/*'
+                    Optional: "true"
+        key:
+            Type: TypeString
+            Description: The key is the destination identifier that is supported by the Connector.
+            Required: "true"
+effective_labels:
+    Type: TypeMap
+    Description: All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+    Computed: "true"
+eventing_config:
+    Type: TypeList
+    Description: Eventing Configuration of a connection
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_variable:
+            Type: TypeList
+            Description: List containing additional auth configs.
+            Optional: "true"
+            Properties:
+                boolean_value:
+                    Type: TypeBool
+                    Description: Boolean Value of configVariable.
+                    Optional: "true"
+                encryption_key_value:
+                    Type: TypeList
+                    Description: Encription key value of configVariable.
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        kms_key_name:
+                            Type: TypeString
+                            Description: |-
+                                The [KMS key name] with which the content of the Operation is encrypted. The expected
+                                format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+                                Will be empty string if google managed.
+                            Optional: "true"
+                        type:
+                            Type: TypeString
+                            Description: 'Type of Encryption Key Possible values: ["GOOGLE_MANAGED", "CUSTOMER_MANAGED"]'
+                            Optional: "true"
+                integer_value:
+                    Type: TypeInt
+                    Description: Integer Value of configVariable.
+                    Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for the configVariable
+                    Required: "true"
+                secret_value:
+                    Type: TypeList
+                    Description: Secret value of configVariable
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: Secret version of Secret Value for Config variable.
+                            Required: "true"
+                string_value:
+                    Type: TypeString
+                    Description: String Value of configVariabley.
+                    Optional: "true"
+        auth_config:
+            Type: TypeList
+            Description: authConfig for Eventing Configuration.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                additional_variable:
+                    Type: TypeList
+                    Description: List containing additional auth configs.
+                    Optional: "true"
+                    Properties:
+                        boolean_value:
+                            Type: TypeBool
+                            Description: Boolean Value of configVariable.
+                            Optional: "true"
+                        encryption_key_value:
+                            Type: TypeList
+                            Description: Encription key value of configVariable
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                kms_key_name:
+                                    Type: TypeString
+                                    Description: |-
+                                        The [KMS key name] with which the content of the Operation is encrypted. The expected
+                                        format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+                                        Will be empty string if google managed.
+                                    Optional: "true"
+                                type:
+                                    Type: TypeString
+                                    Description: 'Type of Encription Key Possible values: ["GOOGLE_MANAGED", "CUSTOMER_MANAGED"]'
+                                    Optional: "true"
+                        integer_value:
+                            Type: TypeInt
+                            Description: Integer Value of configVariable.
+                            Optional: "true"
+                        key:
+                            Type: TypeString
+                            Description: Key for the configVariable
+                            Required: "true"
+                        secret_value:
+                            Type: TypeList
+                            Description: Secret value of configVariable
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                secret_version:
+                                    Type: TypeString
+                                    Description: Secret version of Secret Value for Config variable.
+                                    Required: "true"
+                        string_value:
+                            Type: TypeString
+                            Description: String Value of configVariabley.
+                            Optional: "true"
+                auth_key:
+                    Type: TypeString
+                    Description: The type of authentication configured.
+                    Optional: "true"
+                auth_type:
+                    Type: TypeString
+                    Description: 'authType of the Connection Possible values: ["USER_PASSWORD"]'
+                    Required: "true"
+                user_password:
+                    Type: TypeList
+                    Description: User password for Authentication.
+                    Required: "true"
+                    MaxItems: "1"
+                    Properties:
+                        password:
+                            Type: TypeList
+                            Description: Password for Authentication.
+                            Optional: "true"
+                            MaxItems: "1"
+                            Properties:
+                                secret_version:
+                                    Type: TypeString
+                                    Description: |-
+                                        The resource name of the secret version in the format,
+                                        format as: projects/*/secrets/*/versions/*.
+                                    Required: "true"
+                        username:
+                            Type: TypeString
+                            Description: Username for Authentication.
+                            Optional: "true"
+        enrichment_enabled:
+            Type: TypeBool
+            Description: Enrichment Enabled.
+            Optional: "true"
+        registration_destination_config:
+            Type: TypeList
+            Description: registrationDestinationConfig
+            Required: "true"
+            MaxItems: "1"
+            Properties:
+                destination:
+                    Type: TypeList
+                    Description: destinations for the connection
+                    Optional: "true"
+                    Properties:
+                        host:
+                            Type: TypeString
+                            Description: Host
+                            Optional: "true"
+                        port:
+                            Type: TypeInt
+                            Description: port number
+                            Optional: "true"
+                        service_attachment:
+                            Type: TypeString
+                            Description: Service Attachment
+                            Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for the connection
+                    Optional: "true"
+eventing_enablement_type:
+    Type: TypeString
+    Description: 'Eventing enablement type. Will be nil if eventing is not enabled. Possible values: ["EVENTING_AND_CONNECTION", "ONLY_EVENTING"]'
+    Optional: "true"
+eventing_runtime_data:
+    Type: TypeList
+    Description: Eventing Runtime Data.
+    Computed: "true"
+    Properties:
+        events_listener_endpoint:
+            Type: TypeString
+            Description: Events listener endpoint. The value will populated after provisioning the events listener.
+            Optional: "true"
+        status:
+            Type: TypeList
+            Description: Current status of eventing.
+            Computed: "true"
+            Properties:
+                description:
+                    Type: TypeString
+                    Description: Description of error if State is set to "ERROR".
+                    Computed: "true"
+                state:
+                    Type: TypeString
+                    Description: State of the Eventing
+                    Computed: "true"
+labels:
+    Type: TypeMap
+    Description: |-
+        Resource labels to represent user provided metadata.
+
+
+        **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+        Please refer to the field 'effective_labels' for all of the labels present on the resource.
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Location in which Connection needs to be created.
+    Required: "true"
+lock_config:
+    Type: TypeList
+    Description: Determines whether or no a connection is locked. If locked, a reason must be specified.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        locked:
+            Type: TypeBool
+            Description: Indicates whether or not the connection is locked.
+            Required: "true"
+        reason:
+            Type: TypeString
+            Description: Describes why a connection is locked.
+            Optional: "true"
+log_config:
+    Type: TypeList
+    Description: Log configuration for the connection.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        enabled:
+            Type: TypeBool
+            Description: Enabled represents whether logging is enabled or not for a connection.
+            Required: "true"
+name:
+    Type: TypeString
+    Description: Name of Connection needs to be created.
+    Required: "true"
+node_config:
+    Type: TypeList
+    Description: Node configuration for the connection.
+    Computed: "true"
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        max_node_count:
+            Type: TypeInt
+            Description: Minimum number of nodes in the runtime nodes.
+            Computed: "true"
+            Optional: "true"
+        min_node_count:
+            Type: TypeInt
+            Description: Minimum number of nodes in the runtime nodes.
+            Computed: "true"
+            Optional: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+service_account:
+    Type: TypeString
+    Description: Service account needed for runtime plane to access Google Cloud resources.
+    Computed: "true"
+    Optional: "true"
+service_directory:
+    Type: TypeString
+    Description: |-
+        The name of the Service Directory service name. Used for Private Harpoon to resolve the ILB address.
+        e.g. "projects/cloud-connectors-e2e-testing/locations/us-central1/namespaces/istio-system/services/istio-ingressgateway-connectors"
+    Computed: "true"
+ssl_config:
+    Type: TypeList
+    Description: SSL Configuration of a connection
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        additional_variable:
+            Type: TypeList
+            Description: Additional SSL related field values.
+            Optional: "true"
+            Properties:
+                boolean_value:
+                    Type: TypeBool
+                    Description: Boolean Value of configVariable.
+                    Optional: "true"
+                encryption_key_value:
+                    Type: TypeList
+                    Description: Encription key value of configVariable
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        kms_key_name:
+                            Type: TypeString
+                            Description: |-
+                                The [KMS key name] with which the content of the Operation is encrypted. The expected
+                                format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+                                Will be empty string if google managed.
+                            Optional: "true"
+                        type:
+                            Type: TypeString
+                            Description: 'Type of Encription Key Possible values: ["GOOGLE_MANAGED", "CUSTOMER_MANAGED"]'
+                            Optional: "true"
+                integer_value:
+                    Type: TypeInt
+                    Description: Integer Value of configVariable.
+                    Optional: "true"
+                key:
+                    Type: TypeString
+                    Description: Key for the configVariable
+                    Required: "true"
+                secret_value:
+                    Type: TypeList
+                    Description: Secret value of configVariable
+                    Optional: "true"
+                    MaxItems: "1"
+                    Properties:
+                        secret_version:
+                            Type: TypeString
+                            Description: Secret version of Secret Value for Config variable.
+                            Required: "true"
+                string_value:
+                    Type: TypeString
+                    Description: String Value of configVariabley.
+                    Optional: "true"
+        client_cert_type:
+            Type: TypeString
+            Description: 'Type of Client Cert (PEM/JKS/.. etc.) Possible values: ["PEM"]'
+            Optional: "true"
+        client_certificate:
+            Type: TypeList
+            Description: Client Certificate
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                secret_version:
+                    Type: TypeString
+                    Description: Secret version of Secret Value for Config variable.
+                    Required: "true"
+        client_private_key:
+            Type: TypeList
+            Description: Client Private Key
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                secret_version:
+                    Type: TypeString
+                    Description: Secret version of Secret Value for Config variable.
+                    Required: "true"
+        client_private_key_pass:
+            Type: TypeList
+            Description: Secret containing the passphrase protecting the Client Private Key
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                secret_version:
+                    Type: TypeString
+                    Description: Secret version of Secret Value for Config variable.
+                    Required: "true"
+        private_server_certificate:
+            Type: TypeList
+            Description: Private Server Certificate. Needs to be specified if trust model is PRIVATE.
+            Optional: "true"
+            MaxItems: "1"
+            Properties:
+                secret_version:
+                    Type: TypeString
+                    Description: Secret version of Secret Value for Config variable.
+                    Required: "true"
+        server_cert_type:
+            Type: TypeString
+            Description: 'Type of Server Cert (PEM/JKS/.. etc.) Possible values: ["PEM"]'
+            Optional: "true"
+        trust_model:
+            Type: TypeString
+            Description: 'Enum for Trust Model Possible values: ["PUBLIC", "PRIVATE", "INSECURE"]'
+            Optional: "true"
+        type:
+            Type: TypeString
+            Description: 'Enum for controlling the SSL Type (TLS/MTLS) Possible values: ["TLS", "MTLS"]'
+            Required: "true"
+        use_ssl:
+            Type: TypeBool
+            Description: Bool for enabling SSL
+            Optional: "true"
+status:
+    Type: TypeList
+    Description: Status of the Integration Connector.
+    Computed: "true"
+    Properties:
+        description:
+            Type: TypeString
+            Description: Description of Status of Connection.
+            Computed: "true"
+        state:
+            Type: TypeString
+            Description: State of the Integration Connector
+            Computed: "true"
+        status:
+            Type: TypeString
+            Description: Status of the Connection.
+            Computed: "true"
+subscription_type:
+    Type: TypeString
+    Description: This subscription type enum states the subscription type of the project.
+    Computed: "true"
+suspended:
+    Type: TypeBool
+    Description: Suspended indicates if a user has suspended a connection or not.
+    Optional: "true"
+terraform_labels:
+    Type: TypeMap
+    Description: |-
+        The combination of labels configured directly on the resource
+         and default labels configured on the provider.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: Time the Namespace was updated in UTC.
+    Computed: "true"
+

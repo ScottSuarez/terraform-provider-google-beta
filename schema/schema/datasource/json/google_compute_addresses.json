@@ -1,0 +1,61 @@
+{
+    "addresses": {
+        "Computed": true,
+        "Properties": {
+            "address": {
+                "Computed": true,
+                "Description": "The IP address.",
+                "Type": "TypeString"
+            },
+            "address_type": {
+                "Computed": true,
+                "Description": "The IP address type.",
+                "Type": "TypeString"
+            },
+            "description": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "labels": {
+                "Computed": true,
+                "Description": "Labels attached to this address",
+                "Type": "TypeMap"
+            },
+            "name": {
+                "Computed": true,
+                "Description": "The name of the IP address.",
+                "Type": "TypeString"
+            },
+            "region": {
+                "Computed": true,
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "self_link": {
+                "Computed": true,
+                "Type": "TypeString"
+            },
+            "status": {
+                "Computed": true,
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "filter": {
+        "Description": "Filter sets the optional parameter \"filter\": A filter expression that\nfilters resources listed in the response. The expression must specify\nthe field name, an operator, and the value that you want to use for\nfiltering. The value must be a string, a number, or a boolean. The\noperator must be either \"=\", \"!=\", \"\u003e\", \"\u003c\", \"\u003c=\", \"\u003e=\" or \":\". For\nexample, if you are filtering Compute Engine instances, you can\nexclude instances named \"example-instance\" by specifying \"name !=\nexample-instance\". The \":\" operator can be used with string fields to\nmatch substrings. For non-string fields it is equivalent to the \"=\"\noperator. The \":*\" comparison can be used to test whether a key has\nbeen defined. For example, to find all objects with \"owner\" label\nuse: \"\"\" labels.owner:* \"\"\" You can also filter nested fields. For\nexample, you could specify \"scheduling.automaticRestart = false\" to\ninclude instances only if they are not scheduled for automatic\nrestarts. You can use filtering on nested fields to filter based on\nresource labels. To filter on multiple expressions, provide each\nseparate expression within parentheses. For example: \"\"\"\n(scheduling.automaticRestart = true) (cpuPlatform = \"Intel Skylake\")\n\"\"\" By default, each expression is an \"AND\" expression. However, you\ncan include \"AND\" and \"OR\" expressions explicitly. For example: \"\"\"\n(cpuPlatform = \"Intel Skylake\") OR (cpuPlatform = \"Intel Broadwell\")\nAND (scheduling.automaticRestart = true) \"\"\"",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Description": "The google project in which addresses are listed. Defaults to provider's configuration if missing.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "region": {
+        "Description": "Region that should be considered to search addresses. All regions are considered if missing.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

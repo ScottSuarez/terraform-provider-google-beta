@@ -1,0 +1,30 @@
+active_version:
+    Type: TypeString
+    Computed: "true"
+certs:
+    Type: TypeList
+    Computed: "true"
+    Properties:
+        cert:
+            Type: TypeString
+            Computed: "true"
+        common_name:
+            Type: TypeString
+            Computed: "true"
+        create_time:
+            Type: TypeString
+            Computed: "true"
+        expiration_time:
+            Type: TypeString
+            Computed: "true"
+        sha1_fingerprint:
+            Type: TypeString
+            Computed: "true"
+instance:
+    Type: TypeString
+    Required: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+

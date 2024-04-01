@@ -1,0 +1,21 @@
+app_engine_routing_override:
+    host: TypeString
+    instance: TypeString
+    service: TypeString
+    version: TypeString
+location: TypeString
+name: TypeString
+project: TypeString
+rate_limits:
+    max_burst_size: TypeInt
+    max_concurrent_dispatches: TypeInt
+    max_dispatches_per_second: TypeFloat
+retry_config:
+    max_attempts: TypeInt
+    max_backoff: TypeString
+    max_doublings: TypeInt
+    max_retry_duration: TypeString
+    min_backoff: TypeString
+stackdriver_logging_config:
+    sampling_ratio: TypeFloat
+

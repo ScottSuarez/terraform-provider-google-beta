@@ -1,0 +1,29 @@
+authorization_mode: TypeString
+create_time: TypeString
+discovery_endpoints:
+    address: TypeString
+    port: TypeInt
+    psc_config:
+        network: TypeString
+name: TypeString
+project: TypeString
+psc_configs:
+    network: TypeString
+psc_connections:
+    address: TypeString
+    forwarding_rule: TypeString
+    network: TypeString
+    project_id: TypeString
+    psc_connection_id: TypeString
+region: TypeString
+replica_count: TypeInt
+shard_count: TypeInt
+size_gb: TypeInt
+state: TypeString
+state_info:
+    update_info:
+        target_replica_count: TypeInt
+        target_shard_count: TypeInt
+transit_encryption_mode: TypeString
+uid: TypeString
+

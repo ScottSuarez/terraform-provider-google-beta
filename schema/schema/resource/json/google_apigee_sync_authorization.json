@@ -1,0 +1,17 @@
+{
+    "etag": {
+        "Computed": true,
+        "Description": "Entity tag (ETag) used for optimistic concurrency control as a way to help prevent simultaneous updates from overwriting each other.\nUsed internally during updates.",
+        "Type": "TypeString"
+    },
+    "identities": {
+        "Description": "Array of service accounts to grant access to control plane resources, each specified using the following format: 'serviceAccount:service-account-name'.\n\nThe 'service-account-name' is formatted like an email address. For example: my-synchronizer-manager-serviceAccount@my_project_id.iam.gserviceaccount.com\n\nYou might specify multiple service accounts, for example, if you have multiple environments and wish to assign a unique service account to each one.\n\nThe service accounts must have **Apigee Synchronizer Manager** role. See also [Create service accounts](https://cloud.google.com/apigee/docs/hybrid/v1.8/sa-about#create-the-service-accounts).",
+        "Required": true,
+        "Type": "TypeList"
+    },
+    "name": {
+        "Description": "Name of the Apigee organization.",
+        "Required": true,
+        "Type": "TypeString"
+    }
+}

@@ -1,0 +1,46 @@
+create_time:
+    Type: TypeString
+    Description: |-
+        Creation time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and
+        up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+description:
+    Type: TypeString
+    Description: User-provided description for this resource.
+    Computed: "true"
+external_ip:
+    Type: TypeString
+    Description: The external IP address of a workload VM.
+    Computed: "true"
+internal_ip:
+    Type: TypeString
+    Description: The internal IP address of a workload VM.
+    Computed: "true"
+name:
+    Type: TypeString
+    Description: The ID of the external IP Address.
+    Required: "true"
+parent:
+    Type: TypeString
+    Description: |-
+        The resource name of the private cloud to create a new external address in.
+        Resource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names.
+        For example: projects/my-project/locations/us-west1-a/privateClouds/my-cloud
+    Required: "true"
+state:
+    Type: TypeString
+    Description: State of the resource.
+    Computed: "true"
+uid:
+    Type: TypeString
+    Description: System-generated unique identifier for the resource.
+    Computed: "true"
+update_time:
+    Type: TypeString
+    Description: |-
+        Last updated time of this resource.
+        A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine
+        fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
+    Computed: "true"
+

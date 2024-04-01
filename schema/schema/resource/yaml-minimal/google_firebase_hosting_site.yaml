@@ -1,0 +1,6 @@
+app_id: TypeString
+default_url: TypeString
+name: TypeString
+project: TypeString
+site_id: TypeString
+

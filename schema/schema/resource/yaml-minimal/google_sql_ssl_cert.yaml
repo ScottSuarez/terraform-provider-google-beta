@@ -1,0 +1,11 @@
+cert: TypeString
+cert_serial_number: TypeString
+common_name: TypeString
+create_time: TypeString
+expiration_time: TypeString
+instance: TypeString
+private_key: TypeString
+project: TypeString
+server_ca_cert: TypeString
+sha1_fingerprint: TypeString
+

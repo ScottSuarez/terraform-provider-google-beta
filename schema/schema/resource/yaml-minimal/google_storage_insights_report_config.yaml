@@ -1,0 +1,26 @@
+csv_options:
+    delimiter: TypeString
+    header_required: TypeBool
+    record_separator: TypeString
+display_name: TypeString
+frequency_options:
+    end_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+    frequency: TypeString
+    start_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+location: TypeString
+name: TypeString
+object_metadata_report_options:
+    metadata_fields: TypeList(TypeString)
+    storage_destination_options:
+        bucket: TypeString
+        destination_path: TypeString
+    storage_filters:
+        bucket: TypeString
+project: TypeString
+

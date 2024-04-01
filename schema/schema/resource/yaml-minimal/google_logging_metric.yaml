@@ -1,0 +1,29 @@
+bucket_name: TypeString
+bucket_options:
+    explicit_buckets:
+        bounds: TypeList(TypeFloat)
+    exponential_buckets:
+        growth_factor: TypeFloat
+        num_finite_buckets: TypeInt
+        scale: TypeFloat
+    linear_buckets:
+        num_finite_buckets: TypeInt
+        offset: TypeFloat
+        width: TypeFloat
+description: TypeString
+disabled: TypeBool
+filter: TypeString
+label_extractors: TypeMap(TypeString)
+metric_descriptor:
+    display_name: TypeString
+    labels:
+        description: TypeString
+        key: TypeString
+        value_type: TypeString
+    metric_kind: TypeString
+    unit: TypeString
+    value_type: TypeString
+name: TypeString
+project: TypeString
+value_extractor: TypeString
+

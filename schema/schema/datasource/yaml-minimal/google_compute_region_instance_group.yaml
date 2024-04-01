@@ -1,0 +1,12 @@
+instances:
+    instance: TypeString
+    named_ports:
+        name: TypeString
+        port: TypeInt
+    status: TypeString
+name: TypeString
+project: TypeString
+region: TypeString
+self_link: TypeString
+size: TypeInt
+

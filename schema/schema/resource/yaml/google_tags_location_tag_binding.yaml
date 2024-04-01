@@ -1,0 +1,19 @@
+location:
+    Type: TypeString
+    Description: |-
+        The geographic location where the transfer config should reside.
+        Examples: US, EU, asia-northeast1. The default value is US.
+    Optional: "true"
+name:
+    Type: TypeString
+    Description: 'The generated id for the TagBinding. This is a string of the form: ''tagBindings/{full-resource-name}/{tag-value-name}'''
+    Computed: "true"
+parent:
+    Type: TypeString
+    Description: The full resource name of the resource the TagValue is bound to. E.g. //cloudresourcemanager.googleapis.com/projects/123
+    Required: "true"
+tag_value:
+    Type: TypeString
+    Description: The TagValue of the TagBinding. Must be of the form tagValues/456.
+    Required: "true"
+

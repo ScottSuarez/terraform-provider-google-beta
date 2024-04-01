@@ -1,0 +1,119 @@
+{
+    "code_compilation_config": {
+        "Description": "Optional. If set, fields of codeCompilationConfig override the default compilation settings that are specified in dataform.json.",
+        "MaxItems": 1,
+        "Optional": true,
+        "Properties": {
+            "assertion_schema": {
+                "Description": "Optional. The default schema (BigQuery dataset ID) for assertions.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "database_suffix": {
+                "Description": "Optional. The suffix that should be appended to all database (Google Cloud project ID) names.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "default_database": {
+                "Description": "Optional. The default database (Google Cloud project ID).",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "default_location": {
+                "Description": "Optional. The default BigQuery location to use. Defaults to \"US\".\nSee the BigQuery docs for a full list of locations: https://cloud.google.com/bigquery/docs/locations.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "default_schema": {
+                "Description": "Optional. The default schema (BigQuery dataset ID).",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "schema_suffix": {
+                "Description": "Optional. The suffix that should be appended to all schema (BigQuery dataset ID) names.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "table_prefix": {
+                "Description": "Optional. The prefix that should be prepended to all table names.",
+                "Optional": true,
+                "Type": "TypeString"
+            },
+            "vars": {
+                "Description": "Optional. User-defined variables that are made available to project code during compilation.\nAn object containing a list of \"key\": value pairs.\nExample: { \"name\": \"wrench\", \"mass\": \"1.3kg\", \"count\": \"3\" }.",
+                "Optional": true,
+                "Type": "TypeMap"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "cron_schedule": {
+        "Description": "Optional. Optional schedule (in cron format) for automatic creation of compilation results.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "git_commitish": {
+        "Description": "Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "name": {
+        "Description": "The release's name.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "recent_scheduled_release_records": {
+        "Computed": true,
+        "Description": "Records of the 10 most recent scheduled release attempts, ordered in in descending order of releaseTime. Updated whenever automatic creation of a compilation result is triggered by cronSchedule.",
+        "Properties": {
+            "compilation_result": {
+                "Computed": true,
+                "Description": "The name of the created compilation result, if one was successfully created. Must be in the format projects/*/locations/*/repositories/*/compilationResults/*.",
+                "Type": "TypeString"
+            },
+            "error_status": {
+                "Computed": true,
+                "Description": "The error status encountered upon this attempt to create the compilation result, if the attempt was unsuccessful.",
+                "Properties": {
+                    "code": {
+                        "Computed": true,
+                        "Description": "The status code, which should be an enum value of google.rpc.Code.",
+                        "Type": "TypeInt"
+                    },
+                    "message": {
+                        "Computed": true,
+                        "Description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+                        "Type": "TypeString"
+                    }
+                },
+                "Type": "TypeList"
+            },
+            "release_time": {
+                "Computed": true,
+                "Description": "The timestamp of this release attempt.",
+                "Type": "TypeString"
+            }
+        },
+        "Type": "TypeList"
+    },
+    "region": {
+        "Description": "A reference to the region",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "repository": {
+        "Description": "A reference to the Dataform repository",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "time_zone": {
+        "Description": "Optional. Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If left unspecified, the default is UTC.",
+        "Optional": true,
+        "Type": "TypeString"
+    }
+}

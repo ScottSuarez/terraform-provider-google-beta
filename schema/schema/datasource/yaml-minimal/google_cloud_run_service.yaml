@@ -1,0 +1,132 @@
+autogenerate_revision_name: TypeBool
+location: TypeString
+metadata:
+    annotations: TypeMap(TypeString)
+    effective_annotations: TypeMap(TypeString)
+    effective_labels: TypeMap(TypeString)
+    generation: TypeInt
+    labels: TypeMap(TypeString)
+    namespace: TypeString
+    resource_version: TypeString
+    self_link: TypeString
+    terraform_labels: TypeMap(TypeString)
+    uid: TypeString
+name: TypeString
+project: TypeString
+status:
+    conditions:
+        message: TypeString
+        reason: TypeString
+        status: TypeString
+        type: TypeString
+    latest_created_revision_name: TypeString
+    latest_ready_revision_name: TypeString
+    observed_generation: TypeInt
+    traffic:
+        latest_revision: TypeBool
+        percent: TypeInt
+        revision_name: TypeString
+        tag: TypeString
+        url: TypeString
+    url: TypeString
+template:
+    metadata:
+        annotations: TypeMap(TypeString)
+        generation: TypeInt
+        labels: TypeMap(TypeString)
+        name: TypeString
+        namespace: TypeString
+        resource_version: TypeString
+        self_link: TypeString
+        uid: TypeString
+    spec:
+        container_concurrency: TypeInt
+        containers:
+            args: TypeList(TypeString)
+            command: TypeList(TypeString)
+            env:
+                name: TypeString
+                value: TypeString
+                value_from:
+                    secret_key_ref:
+                        key: TypeString
+                        name: TypeString
+            env_from:
+                config_map_ref:
+                    local_object_reference:
+                        name: TypeString
+                    optional: TypeBool
+                prefix: TypeString
+                secret_ref:
+                    local_object_reference:
+                        name: TypeString
+                    optional: TypeBool
+            image: TypeString
+            liveness_probe:
+                failure_threshold: TypeInt
+                grpc:
+                    port: TypeInt
+                    service: TypeString
+                http_get:
+                    http_headers:
+                        name: TypeString
+                        value: TypeString
+                    path: TypeString
+                    port: TypeInt
+                initial_delay_seconds: TypeInt
+                period_seconds: TypeInt
+                timeout_seconds: TypeInt
+            name: TypeString
+            ports:
+                container_port: TypeInt
+                name: TypeString
+                protocol: TypeString
+            resources:
+                limits: TypeMap(TypeString)
+                requests: TypeMap(TypeString)
+            startup_probe:
+                failure_threshold: TypeInt
+                grpc:
+                    port: TypeInt
+                    service: TypeString
+                http_get:
+                    http_headers:
+                        name: TypeString
+                        value: TypeString
+                    path: TypeString
+                    port: TypeInt
+                initial_delay_seconds: TypeInt
+                period_seconds: TypeInt
+                tcp_socket:
+                    port: TypeInt
+                timeout_seconds: TypeInt
+            volume_mounts:
+                mount_path: TypeString
+                name: TypeString
+            working_dir: TypeString
+        service_account_name: TypeString
+        serving_state: TypeString
+        timeout_seconds: TypeInt
+        volumes:
+            csi:
+                driver: TypeString
+                read_only: TypeBool
+                volume_attributes: TypeMap(TypeString)
+            empty_dir:
+                medium: TypeString
+                size_limit: TypeString
+            name: TypeString
+            secret:
+                default_mode: TypeInt
+                items:
+                    key: TypeString
+                    mode: TypeInt
+                    path: TypeString
+                secret_name: TypeString
+traffic:
+    latest_revision: TypeBool
+    percent: TypeInt
+    revision_name: TypeString
+    tag: TypeString
+    url: TypeString
+

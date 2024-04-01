@@ -1,0 +1,15 @@
+big_query:
+    big_query_source:
+        input_uri: TypeString
+    entity_id_columns: TypeList(TypeString)
+create_time: TypeString
+description: TypeString
+effective_labels: TypeMap(TypeString)
+etag: TypeString
+labels: TypeMap(TypeString)
+name: TypeString
+project: TypeString
+region: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

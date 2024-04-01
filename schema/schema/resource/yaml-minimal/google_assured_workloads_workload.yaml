@@ -1,0 +1,41 @@
+billing_account: TypeString
+compliance_regime: TypeString
+compliance_status:
+    acknowledged_violation_count: TypeList(TypeInt)
+    active_violation_count: TypeList(TypeInt)
+compliant_but_disallowed_services: TypeList(TypeString)
+create_time: TypeString
+display_name: TypeString
+effective_labels: unknown
+ekm_provisioning_response:
+    ekm_provisioning_error_domain: TypeString
+    ekm_provisioning_error_mapping: TypeString
+    ekm_provisioning_state: TypeString
+enable_sovereign_controls: TypeBool
+kaj_enrollment_state: TypeString
+kms_settings:
+    next_rotation_time: TypeString
+    rotation_period: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+organization: TypeString
+partner: TypeString
+partner_permissions:
+    assured_workloads_monitoring: TypeBool
+    data_logs_viewer: TypeBool
+    service_access_approver: TypeBool
+provisioned_resources_parent: TypeString
+resource_settings:
+    display_name: TypeString
+    resource_id: TypeString
+    resource_type: TypeString
+resources:
+    resource_id: TypeInt
+    resource_type: TypeString
+saa_enrollment_response:
+    setup_errors: TypeList(TypeString)
+    setup_status: TypeString
+terraform_labels: unknown
+violation_notifications_enabled: TypeBool
+

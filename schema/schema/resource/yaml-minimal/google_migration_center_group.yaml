@@ -1,0 +1,12 @@
+create_time: TypeString
+description: TypeString
+display_name: TypeString
+effective_labels: TypeMap(TypeString)
+group_id: TypeString
+labels: TypeMap(TypeString)
+location: TypeString
+name: TypeString
+project: TypeString
+terraform_labels: TypeMap(TypeString)
+update_time: TypeString
+

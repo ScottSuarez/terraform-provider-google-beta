@@ -1,0 +1,69 @@
+{
+    "auto_create_subnetworks": {
+        "Description": "When set to 'true', the network is created in \"auto subnet mode\" and\nit will create a subnet for each region automatically across the\n'10.128.0.0/9' address range.\n\nWhen set to 'false', the network is created in \"custom subnet mode\" so\nthe user can explicitly connect subnetwork resources.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "delete_default_routes_on_create": {
+        "Description": "If set to 'true', default routes ('0.0.0.0/0') will be deleted\nimmediately after network creation. Defaults to 'false'.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "description": {
+        "Description": "An optional description of this resource. The resource must be\nrecreated to modify this field.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "enable_ula_internal_ipv6": {
+        "Description": "Enable ULA internal ipv6 on this network. Enabling this feature will assign\na /48 from google defined ULA prefix fd20::/20.",
+        "Optional": true,
+        "Type": "TypeBool"
+    },
+    "gateway_ipv4": {
+        "Computed": true,
+        "Description": "The gateway address for default routing out of the network. This value\nis selected by GCP.",
+        "Type": "TypeString"
+    },
+    "internal_ipv6_range": {
+        "Computed": true,
+        "Description": "When enabling ula internal ipv6, caller optionally can specify the /48 range\nthey want from the google defined ULA prefix fd20::/20. The input must be a\nvalid /48 ULA IPv6 address and must be within the fd20::/20. Operation will\nfail if the speficied /48 is already in used by another resource.\nIf the field is not speficied, then a /48 range will be randomly allocated from fd20::/20 and returned via this field.",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "mtu": {
+        "Computed": true,
+        "Description": "Maximum Transmission Unit in bytes. The default value is 1460 bytes.\nThe minimum value for this field is 1300 and the maximum value is 8896 bytes (jumbo frames).\nNote that packets larger than 1500 bytes (standard Ethernet) can be subject to TCP-MSS clamping or dropped\nwith an ICMP 'Fragmentation-Needed' message if the packets are routed to the Internet or other VPCs\nwith varying MTUs.",
+        "Optional": true,
+        "Type": "TypeInt"
+    },
+    "name": {
+        "Description": "Name of the resource. Provided by the client when the resource is\ncreated. The name must be 1-63 characters long, and comply with\nRFC1035. Specifically, the name must be 1-63 characters long and match\nthe regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the\nfirst character must be a lowercase letter, and all following\ncharacters must be a dash, lowercase letter, or digit, except the last\ncharacter, which cannot be a dash.",
+        "Required": true,
+        "Type": "TypeString"
+    },
+    "network_firewall_policy_enforcement_order": {
+        "Description": "Set the order that Firewall Rules and Firewall Policies are evaluated. Default value: \"AFTER_CLASSIC_FIREWALL\" Possible values: [\"BEFORE_CLASSIC_FIREWALL\", \"AFTER_CLASSIC_FIREWALL\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "numeric_id": {
+        "Computed": true,
+        "Description": "The unique identifier for the resource. This identifier is defined by the server.",
+        "Type": "TypeString"
+    },
+    "project": {
+        "Computed": true,
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "routing_mode": {
+        "Computed": true,
+        "Description": "The network-wide routing mode to use. If set to 'REGIONAL', this\nnetwork's cloud routers will only advertise routes with subnetworks\nof this network in the same region as the router. If set to 'GLOBAL',\nthis network's cloud routers will advertise routes with all\nsubnetworks of this network, across regions. Possible values: [\"REGIONAL\", \"GLOBAL\"]",
+        "Optional": true,
+        "Type": "TypeString"
+    },
+    "self_link": {
+        "Computed": true,
+        "Type": "TypeString"
+    }
+}

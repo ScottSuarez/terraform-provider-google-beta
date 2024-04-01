@@ -1,0 +1,69 @@
+collection_id:
+    Type: TypeString
+    Description: The collection ID.
+    Required: "true"
+common_config:
+    Type: TypeList
+    Description: Common config spec that specifies the metadata of the engine.
+    Optional: "true"
+    MaxItems: "1"
+    Properties:
+        company_name:
+            Type: TypeString
+            Description: The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.cd
+            Optional: "true"
+create_time:
+    Type: TypeString
+    Description: Timestamp the Engine was created at.
+    Computed: "true"
+data_store_ids:
+    Type: TypeList
+    Description: The data stores associated with this engine. For SOLUTION_TYPE_SEARCH type of engines, they can only associate with at most one data store.
+    Required: "true"
+display_name:
+    Type: TypeString
+    Description: Required. The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.
+    Required: "true"
+engine_id:
+    Type: TypeString
+    Description: Unique ID to use for Search Engine App.
+    Required: "true"
+industry_vertical:
+    Type: TypeString
+    Description: 'The industry vertical that the engine registers. The restriction of the Engine industry vertical is based on DataStore: If unspecified, default to GENERIC. Vertical on Engine has to match vertical of the DataStore liniked to the engine. Default value: "GENERIC" Possible values: ["GENERIC", "MEDIA"]'
+    Optional: "true"
+location:
+    Type: TypeString
+    Description: Location.
+    Required: "true"
+name:
+    Type: TypeString
+    Description: |-
+        The unique full resource name of the search engine. Values are of the format
+        'projects/{project}/locations/{location}/collections/{collection_id}/engines/{engine_id}'.
+        This field must be a UTF-8 encoded string with a length limit of 1024
+        characters.
+    Computed: "true"
+project:
+    Type: TypeString
+    Computed: "true"
+    Optional: "true"
+search_engine_config:
+    Type: TypeList
+    Description: Configurations for a Search Engine.
+    Required: "true"
+    MaxItems: "1"
+    Properties:
+        search_add_ons:
+            Type: TypeList
+            Description: 'The add-on that this search engine enables. Possible values: ["SEARCH_ADD_ON_LLM"]'
+            Optional: "true"
+        search_tier:
+            Type: TypeString
+            Description: 'The search feature tier of this engine. Defaults to SearchTier.SEARCH_TIER_STANDARD if not specified. Default value: "SEARCH_TIER_STANDARD" Possible values: ["SEARCH_TIER_STANDARD", "SEARCH_TIER_ENTERPRISE"]'
+            Optional: "true"
+update_time:
+    Type: TypeString
+    Description: Timestamp the Engine was last updated.
+    Computed: "true"
+

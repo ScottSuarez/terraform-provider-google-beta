@@ -1,0 +1,50 @@
+admin_settings:
+    allowed_email_domains: TypeList(TypeString)
+consumer_network: TypeString
+create_time: TypeString
+deny_maintenance_period:
+    end_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+    start_date:
+        day: TypeInt
+        month: TypeInt
+        year: TypeInt
+    time:
+        hours: TypeInt
+        minutes: TypeInt
+        nanos: TypeInt
+        seconds: TypeInt
+egress_public_ip: TypeString
+encryption_config:
+    kms_key_name: TypeString
+    kms_key_name_version: TypeString
+    kms_key_state: TypeString
+ingress_private_ip: TypeString
+ingress_public_ip: TypeString
+looker_uri: TypeString
+looker_version: TypeString
+maintenance_window:
+    day_of_week: TypeString
+    start_time:
+        hours: TypeInt
+        minutes: TypeInt
+        nanos: TypeInt
+        seconds: TypeInt
+name: TypeString
+oauth_config:
+    client_id: TypeString
+    client_secret: TypeString
+platform_edition: TypeString
+private_ip_enabled: TypeBool
+project: TypeString
+public_ip_enabled: TypeBool
+region: TypeString
+reserved_range: TypeString
+update_time: TypeString
+user_metadata:
+    additional_developer_user_count: TypeInt
+    additional_standard_user_count: TypeInt
+    additional_viewer_user_count: TypeInt
+

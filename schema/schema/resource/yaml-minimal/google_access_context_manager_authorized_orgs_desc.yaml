@@ -1,0 +1,9 @@
+asset_type: TypeString
+authorization_direction: TypeString
+authorization_type: TypeString
+create_time: TypeString
+name: TypeString
+orgs: TypeList(TypeString)
+parent: TypeString
+update_time: TypeString
+
