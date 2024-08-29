@@ -20,6 +20,7 @@ package vertexai
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -80,7 +81,7 @@ func ResourceVertexAIFeatureGroup() *schema.Resource {
 						"entity_id_columns": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: `Columns to construct entityId / row keys. Currently only supports 1 entity_id_column. If not provided defaults to entityId.`,
+							Description: `Columns to construct entityId / row keys. If not provided defaults to entityId.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -204,6 +205,7 @@ func resourceVertexAIFeatureGroupCreate(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -212,6 +214,7 @@ func resourceVertexAIFeatureGroupCreate(d *schema.ResourceData, meta interface{}
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating FeatureGroup: %s", err)
@@ -278,12 +281,14 @@ func resourceVertexAIFeatureGroupRead(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("VertexAIFeatureGroup %q", d.Id()))
@@ -368,6 +373,7 @@ func resourceVertexAIFeatureGroupUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	log.Printf("[DEBUG] Updating FeatureGroup %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("name") {
@@ -379,7 +385,7 @@ func resourceVertexAIFeatureGroupUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	if d.HasChange("big_query") {
-		updateMask = append(updateMask, "bigQuery")
+		updateMask = append(updateMask, "bigQuery.entityIdColumns")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -407,6 +413,7 @@ func resourceVertexAIFeatureGroupUpdate(d *schema.ResourceData, meta interface{}
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -448,13 +455,15 @@ func resourceVertexAIFeatureGroupDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting FeatureGroup %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting FeatureGroup %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -463,6 +472,7 @@ func resourceVertexAIFeatureGroupDelete(d *schema.ResourceData, meta interface{}
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "FeatureGroup")

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccDataplexDatascan_dataplexDatascanBasicProfileExample(t *testing.T) {
 				ResourceName:            "google_dataplex_datascan.basic_profile",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "data_scan_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_scan_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -100,7 +100,7 @@ func TestAccDataplexDatascan_dataplexDatascanFullProfileExample(t *testing.T) {
 				ResourceName:            "google_dataplex_datascan.full_profile",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "data_scan_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_scan_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -182,7 +182,7 @@ func TestAccDataplexDatascan_dataplexDatascanBasicQualityExample(t *testing.T) {
 				ResourceName:            "google_dataplex_datascan.basic_quality",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "data_scan_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_scan_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -240,7 +240,7 @@ func TestAccDataplexDatascan_dataplexDatascanFullQualityExample(t *testing.T) {
 				ResourceName:            "google_dataplex_datascan.full_quality",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "data_scan_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_scan_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -342,6 +342,13 @@ resource "google_dataplex_datascan" "full_quality" {
       dimension = "VALIDITY"
       table_condition_expectation {
         sql_expression = "COUNT(*) > 0"
+      }
+    }
+
+    rules {
+      dimension = "VALIDITY"
+      sql_assertion {
+        sql_statement = "select * from bigquery-public-data.austin_bikeshare.bikeshare_stations where station_id is null"
       }
     }
   }

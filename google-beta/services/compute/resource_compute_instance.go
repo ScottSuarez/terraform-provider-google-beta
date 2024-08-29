@@ -15,7 +15,7 @@ import (
 
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/mitchellh/hashstructure"
@@ -25,6 +25,30 @@ import (
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
+
+func IpCidrRangeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// The range may be a:
+	// A) single IP address (e.g. 10.2.3.4)
+	// B) CIDR format string (e.g. 10.1.2.0/24)
+	// C) netmask (e.g. /24)
+	//
+	// For A) and B), no diff to suppress, they have to match completely.
+	// For C), The API picks a network IP address and this creates a diff of the form:
+	// network_interface.0.alias_ip_range.0.ip_cidr_range: "10.128.1.0/24" => "/24"
+	// We should only compare the mask portion for this case.
+	if len(new) > 0 && new[0] == '/' {
+		oldNetmaskStartPos := strings.LastIndex(old, "/")
+
+		if oldNetmaskStartPos != -1 {
+			oldNetmask := old[strings.LastIndex(old, "/"):]
+			if oldNetmask == new {
+				return true
+			}
+		}
+	}
+
+	return false
+}
 
 var (
 	bootDiskKeys = []string{
@@ -46,6 +70,7 @@ var (
 		"boot_disk.0.initialize_params.0.provisioned_iops",
 		"boot_disk.0.initialize_params.0.provisioned_throughput",
 		"boot_disk.0.initialize_params.0.enable_confidential_compute",
+		"boot_disk.0.initialize_params.0.storage_pool",
 	}
 
 	schedulingKeys = []string{
@@ -57,6 +82,7 @@ var (
 		"scheduling.0.provisioning_model",
 		"scheduling.0.instance_termination_action",
 		"scheduling.0.max_run_duration",
+		"scheduling.0.on_instance_stop_action",
 		"scheduling.0.maintenance_interval",
 		"scheduling.0.local_ssd_recovery_timeout",
 	}
@@ -85,11 +111,13 @@ func forceNewIfNetworkIPNotUpdatableFunc(d tpgresource.TerraformResourceDiff) er
 	for i := 0; i < newCount.(int); i++ {
 		prefix := fmt.Sprintf("network_interface.%d", i)
 		networkKey := prefix + ".network"
+		oldN, newN := d.GetChange(networkKey)
 		subnetworkKey := prefix + ".subnetwork"
+		oldS, newS := d.GetChange(subnetworkKey)
 		subnetworkProjectKey := prefix + ".subnetwork_project"
 		networkIPKey := prefix + ".network_ip"
 		if d.HasChange(networkIPKey) {
-			if !d.HasChange(networkKey) && !d.HasChange(subnetworkKey) && !d.HasChange(subnetworkProjectKey) {
+			if tpgresource.CompareSelfLinkOrResourceName("", oldS.(string), newS.(string), nil) && !d.HasChange(subnetworkProjectKey) && tpgresource.CompareSelfLinkOrResourceName("", oldN.(string), newN.(string), nil) {
 				if err := d.ForceNew(networkIPKey); err != nil {
 					return err
 				}
@@ -246,8 +274,7 @@ func ResourceComputeInstance() *schema.Resource {
 										AtLeastOneOf: initializeParamsKeys,
 										Computed:     true,
 										ForceNew:     true,
-										ValidateFunc: validation.IntBetween(10000, 120000),
-										Description:  `Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. Values must be between 10,000 and 120,000.`,
+										Description:  `Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.`,
 									},
 
 									"provisioned_throughput": {
@@ -256,8 +283,7 @@ func ResourceComputeInstance() *schema.Resource {
 										AtLeastOneOf: initializeParamsKeys,
 										Computed:     true,
 										ForceNew:     true,
-										ValidateFunc: validation.IntBetween(1, 7124),
-										Description:  `Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be between 1 and 7,124.`,
+										Description:  `Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.`,
 									},
 
 									"enable_confidential_compute": {
@@ -266,6 +292,15 @@ func ResourceComputeInstance() *schema.Resource {
 										AtLeastOneOf: initializeParamsKeys,
 										ForceNew:     true,
 										Description:  `A flag to enable confidential compute mode on boot disk`,
+									},
+
+									"storage_pool": {
+										Type:             schema.TypeString,
+										Optional:         true,
+										AtLeastOneOf:     initializeParamsKeys,
+										ForceNew:         true,
+										DiffSuppressFunc: tpgresource.CompareResourceNames,
+										Description:      `The URL of the storage pool in which the new disk is created`,
 									},
 								},
 							},
@@ -296,9 +331,10 @@ func ResourceComputeInstance() *schema.Resource {
 			},
 
 			"machine_type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `The machine type to create.`,
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      `The machine type to create.`,
+				DiffSuppressFunc: tpgresource.CompareResourceNames,
 			},
 
 			"name": {
@@ -409,7 +445,7 @@ func ResourceComputeInstance() *schema.Resource {
 									"ip_cidr_range": {
 										Type:             schema.TypeString,
 										Required:         true,
-										DiffSuppressFunc: tpgresource.IpCidrRangeDiffSuppress,
+										DiffSuppressFunc: IpCidrRangeDiffSuppress,
 										Description:      `The IP CIDR range represented by this alias IP range.`,
 									},
 									"subnetwork_range_name": {
@@ -619,7 +655,6 @@ func ResourceComputeInstance() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 				ForceNew:    true,
-				ConfigMode:  schema.SchemaConfigModeAttr,
 				Description: `List of the type and count of accelerator cards attached to the instance.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -662,7 +697,7 @@ func ResourceComputeInstance() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Description: `A set of key/value label pairs assigned to the instance.
-				
+
 				**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 				Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 			},
@@ -686,6 +721,15 @@ func ResourceComputeInstance() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: `Metadata key/value pairs made available within the instance.`,
+			},
+
+			"partner_metadata": {
+				Type:                  schema.TypeMap,
+				Optional:              true,
+				DiffSuppressFunc:      ComparePartnerMetadataDiff,
+				DiffSuppressOnRefresh: true,
+				Elem:                  &schema.Schema{Type: schema.TypeString},
+				Description:           `Partner Metadata Map made available within the instance.`,
 			},
 
 			"metadata_startup_script": {
@@ -801,6 +845,24 @@ Must be from 0 to 315,576,000,000 inclusive.`,
 resolution. Durations less than one second are represented
 with a 0 seconds field and a positive nanos field. Must
 be from 0 to 999,999,999 inclusive.`,
+									},
+								},
+							},
+						},
+						"on_instance_stop_action": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							MaxItems:    1,
+							ForceNew:    true,
+							Description: `Defines the behaviour for instances with the instance_termination_action.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"discard_local_ssd": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `If true, the contents of any attached Local SSD disks will be discarded.`,
+										Default:     false,
+										ForceNew:    true,
 									},
 								},
 							},
@@ -981,7 +1043,6 @@ be from 0 to 999,999,999 inclusive.`,
 				Description: `The Confidential VM config being used by the instance.  on_host_maintenance has to be set to TERMINATE or this will fail to create.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-
 						"enable_confidential_compute": {
 							Type:         schema.TypeBool,
 							Optional:     true,
@@ -992,9 +1053,10 @@ be from 0 to 999,999,999 inclusive.`,
 							Type:     schema.TypeString,
 							Optional: true,
 							Description: `
-								Specifies which confidential computing technology to use.
-								This could be one of the following values: SEV, SEV_SNP.
-								If SEV_SNP, min_cpu_platform = "AMD Milan" is currently required.`,
+								The confidential computing technology the instance uses.
+								SEV is an AMD feature. TDX is an Intel feature. One of the following
+								values is required: SEV, SEV_SNP, TDX. If SEV_SNP, min_cpu_platform =
+								"AMD Milan" is currently required. TDX is only available in beta.`,
 							AtLeastOneOf: []string{"confidential_instance_config.0.enable_confidential_compute", "confidential_instance_config.0.confidential_instance_type"},
 						},
 					},
@@ -1158,7 +1220,7 @@ func getInstance(config *transport_tpg.Config, d *schema.ResourceData) (*compute
 	if err != nil {
 		return nil, err
 	}
-	instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, d.Get("name").(string)).Do()
+	instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, d.Get("name").(string)).View("FULL").Do()
 	if err != nil {
 		return nil, transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("Instance %s", d.Get("name").(string)))
 	}
@@ -1243,6 +1305,11 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		return nil, fmt.Errorf("Error creating metadata: %s", err)
 	}
 
+	PartnerMetadata, err := resourceInstancePartnerMetadata(d)
+	if err != nil {
+		return nil, fmt.Errorf("Error creating partner metadata: %s", err)
+	}
+
 	networkInterfaces, err := expandNetworkInterfaces(d, config)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating network interfaces: %s", err)
@@ -1268,6 +1335,7 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		Disks:                      disks,
 		MachineType:                machineTypeUrl,
 		Metadata:                   metadata,
+		PartnerMetadata:            PartnerMetadata,
 		Name:                       d.Get("name").(string),
 		NetworkInterfaces:          networkInterfaces,
 		NetworkPerformanceConfig:   networkPerformanceConfig,
@@ -1324,7 +1392,7 @@ func waitUntilInstanceHasDesiredStatus(config *transport_tpg.Config, d *schema.R
 			}
 			return instance.Id, instance.Status, nil
 		}
-		stateChangeConf := resource.StateChangeConf{
+		stateChangeConf := retry.StateChangeConf{
 			Delay:      5 * time.Second,
 			Pending:    getAllStatusBut(desiredStatus),
 			Refresh:    stateRefreshFunc,
@@ -1440,6 +1508,17 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("metadata_fingerprint", instance.Metadata.Fingerprint); err != nil {
 		return fmt.Errorf("Error setting metadata_fingerprint: %s", err)
 	}
+
+	if instance.PartnerMetadata != nil {
+		partnerMetadata, err := flattenPartnerMetadata(instance.PartnerMetadata)
+		if err != nil {
+			return fmt.Errorf("Error parsing partner metadata: %s", err)
+		}
+		if err = d.Set("partner_metadata", partnerMetadata); err != nil {
+			return fmt.Errorf("Error setting partner metadata: %s", err)
+		}
+	}
+
 	if err := d.Set("can_ip_forward", instance.CanIpForward); err != nil {
 		return fmt.Errorf("Error setting can_ip_forward: %s", err)
 	}
@@ -1608,14 +1687,6 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("scratch_disk", scratchDisks); err != nil {
 		return fmt.Errorf("Error setting scratch_disk: %s", err)
 	}
-	// Add extra check on Scheduling to prevent STOP instance setting MaxRunDuration.
-	// When Instance being stopped, GCE will wipe out the MaxRunDuration field.
-	// And Terraform has no visiblity on this field after then. Given the infrastructure
-	// constraint, MaxRunDuration will only be supported with instance has
-	// DELETE InstanceTerminationAction
-	if instance.Scheduling.MaxRunDuration != nil && instance.Scheduling.InstanceTerminationAction == "STOP" {
-		return fmt.Errorf("Can not set MaxRunDuration on instance with STOP InstanceTerminationAction, it is not supported by terraform.")
-	}
 	if err := d.Set("scheduling", flattenScheduling(instance.Scheduling)); err != nil {
 		return fmt.Errorf("Error setting scheduling: %s", err)
 	}
@@ -1770,6 +1841,35 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 					return opErr
 				}
 
+				return nil
+			},
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if d.HasChange("partner_metadata") {
+		err = transport_tpg.Retry(transport_tpg.RetryOptions{
+			RetryFunc: func() error {
+				instance, err := config.NewComputeClient(userAgent).Instances.Get(project, zone, instance.Name).View("FULL").Do()
+				if err != nil {
+					return fmt.Errorf("Error retrieving partner_metadata: %s", err)
+				}
+				instance.Fingerprint = instance.Fingerprint
+				instance.PartnerMetadata = resourceInstancePatchPartnerMetadata(d, instance.PartnerMetadata)
+				instance.NullFields = []string{"partnerMetadata"}
+
+				op, err := config.NewComputeClient(userAgent).Instances.Update(project, zone, instance.Name, instance).Do()
+				if err != nil {
+					return fmt.Errorf("Error updating partner_metadata: %s", err)
+				}
+
+				opErr := ComputeOperationWaitTime(config, op, project, "partner metadata to update", userAgent, d.Timeout(schema.TimeoutUpdate))
+				if opErr != nil {
+					return opErr
+				}
 				return nil
 			},
 		})
@@ -2008,6 +2108,9 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 					Fingerprint:     instNetworkInterface.Fingerprint,
 					ForceSendFields: []string{"AliasIpRanges"},
 				}
+				if commonAliasIpRanges := CheckForCommonAliasIp(instNetworkInterface, networkInterface); len(commonAliasIpRanges) > 0 {
+					ni.AliasIpRanges = commonAliasIpRanges
+				}
 				op, err := config.NewComputeClient(userAgent).Instances.UpdateNetworkInterface(project, zone, instance.Name, networkName, ni).Do()
 				if err != nil {
 					return errwrap.Wrapf("Error removing alias_ip_range: {{err}}", err)
@@ -2027,6 +2130,23 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 			networkInterfacePatchObj := &compute.NetworkInterface{
 				AliasIpRanges: networkInterface.AliasIpRanges,
 				Fingerprint:   instNetworkInterface.Fingerprint,
+			}
+			updateCall := config.NewComputeClient(userAgent).Instances.UpdateNetworkInterface(project, zone, instance.Name, networkName, networkInterfacePatchObj).Do
+			op, err := updateCall()
+			if err != nil {
+				return errwrap.Wrapf("Error updating network interface: {{err}}", err)
+			}
+			opErr := ComputeOperationWaitTime(config, op, project, "network interface to update", userAgent, d.Timeout(schema.TimeoutUpdate))
+			if opErr != nil {
+				return opErr
+			}
+		}
+
+		if !updateDuringStop && d.HasChange(prefix+".stack_type") {
+
+			networkInterfacePatchObj := &compute.NetworkInterface{
+				StackType:   d.Get(prefix + ".stack_type").(string),
+				Fingerprint: instNetworkInterface.Fingerprint,
 			}
 			updateCall := config.NewComputeClient(userAgent).Instances.UpdateNetworkInterface(project, zone, instance.Name, networkName, networkInterfacePatchObj).Do
 			op, err := updateCall()
@@ -2292,7 +2412,7 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		desiredStatus := d.Get("desired_status").(string)
 
 		if statusBeforeUpdate == "RUNNING" && desiredStatus != "TERMINATED" && !d.Get("allow_stopping_for_update").(bool) {
-			return fmt.Errorf("Changing the machine_type, min_cpu_platform, service_account, enable_display, shielded_instance_config, scheduling.node_affinities " +
+			return fmt.Errorf("Changing the machine_type, min_cpu_platform, service_account, enable_display, shielded_instance_config, scheduling.node_affinities, scheduling.max_run_duration " +
 				"or network_interface.[#d].(network/subnetwork/subnetwork_project) or advanced_machine_features on a started instance requires stopping it. " +
 				"To acknowledge this, please set allow_stopping_for_update = true in your config. " +
 				"You can also stop it by setting desired_status = \"TERMINATED\", but the instance will not be restarted after the update.")
@@ -2346,7 +2466,7 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if d.HasChange("service_account.0.email") || scopesChange {
 			sa := d.Get("service_account").([]interface{})
 			req := &compute.InstancesSetServiceAccountRequest{ForceSendFields: []string{"email"}}
-			if len(sa) > 0 && sa[0] != nil {
+			if !isEmptyServiceAccountBlock(d) && len(sa) > 0 && sa[0] != nil {
 				saMap := sa[0].(map[string]interface{})
 				req.Email = saMap["email"].(string)
 				req.Scopes = tpgresource.CanonicalizeServiceScopes(tpgresource.ConvertStringSet(saMap["scopes"].(*schema.Set)))
@@ -2842,6 +2962,10 @@ func expandBootDisk(d *schema.ResourceData, config *transport_tpg.Config, projec
 		if _, ok := d.GetOk("boot_disk.0.initialize_params.0.resource_manager_tags"); ok {
 			disk.InitializeParams.ResourceManagerTags = tpgresource.ExpandStringMap(d, "boot_disk.0.initialize_params.0.resource_manager_tags")
 		}
+
+		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.storage_pool"); ok {
+			disk.InitializeParams.StoragePool = v.(string)
+		}
 	}
 
 	if v, ok := d.GetOk("boot_disk.0.mode"); ok {
@@ -2884,6 +3008,7 @@ func flattenBootDisk(d *schema.ResourceData, disk *compute.AttachedDisk, config 
 			"provisioned_iops":            diskDetails.ProvisionedIops,
 			"provisioned_throughput":      diskDetails.ProvisionedThroughput,
 			"enable_confidential_compute": diskDetails.EnableConfidentialCompute,
+			"storage_pool":                tpgresource.GetResourceNameFromSelfLink(diskDetails.StoragePool),
 		}}
 	}
 
@@ -2962,6 +3087,11 @@ func serviceAccountDiffSuppress(k, old, new string, d *schema.ResourceData) bool
 	// suppress changes between { } and {scopes:[]}
 	if l[0] != nil {
 		contents := l[0].(map[string]interface{})
+		email := contents["email"]
+		if email != "" {
+			// if email is non empty, don't suppress the diff
+			return false
+		}
 		if scopes, ok := contents["scopes"]; ok {
 			a := scopes.(*schema.Set).List()
 			if a != nil && len(a) > 0 {
@@ -2970,4 +3100,60 @@ func serviceAccountDiffSuppress(k, old, new string, d *schema.ResourceData) bool
 		}
 	}
 	return true
+}
+
+// isEmptyServiceAccountBlock is used to work around an issue when updating
+// service accounts. Creating the instance with some scopes but without
+// specifying a service account email, assigns default compute service account
+// to the instance:
+//
+//	service_account {
+//	   scopes = ["some-scope"]
+//	}
+//
+// Then when updating the instance with empty service account:
+//
+//	service_account {
+//	   scopes = []
+//	}
+//
+// the default Terraform behavior is to clear scopes without clearing the
+// email. The email was previously computed to be the default service account
+// and has not been modified, so the default plan is to leave it unchanged.
+// However, when creating a new instance:
+//
+//	service_account {
+//	   scopes = []
+//	}
+//
+// indicates an instance without any service account set.
+// isEmptyServiceAccountBlock is used to detect empty service_account block
+// and if it is, it is interpreted as no service account and no scopes.
+func isEmptyServiceAccountBlock(d *schema.ResourceData) bool {
+	serviceAccountsConfig := d.GetRawConfig().GetAttr("service_account")
+	if serviceAccountsConfig.IsNull() || len(serviceAccountsConfig.AsValueSlice()) == 0 {
+		return true
+	}
+	serviceAccount := serviceAccountsConfig.AsValueSlice()[0]
+	if serviceAccount.GetAttr("email").IsNull() && len(serviceAccount.GetAttr("scopes").AsValueSlice()) == 0 {
+		return true
+	}
+	return false
+}
+
+// Alias ip ranges cannot be removed and created at the same time. This checks if there are any unchanged alias ip ranges
+// to be kept in between the PATCH operations on Network Interface
+func CheckForCommonAliasIp(old, new *compute.NetworkInterface) []*compute.AliasIpRange {
+	newAliasIpMap := make(map[string]bool)
+	for _, ipRange := range new.AliasIpRanges {
+		newAliasIpMap[ipRange.IpCidrRange] = true
+	}
+
+	resultAliasIpRanges := make([]*compute.AliasIpRange, 0)
+	for _, val := range old.AliasIpRanges {
+		if newAliasIpMap[val.IpCidrRange] {
+			resultAliasIpRanges = append(resultAliasIpRanges, val)
+		}
+	}
+	return resultAliasIpRanges
 }

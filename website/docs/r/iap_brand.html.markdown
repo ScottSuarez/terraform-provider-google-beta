@@ -17,7 +17,7 @@ description: |-
   OAuth brand data.
 ---
 
-# google\_iap\_brand
+# google_iap_brand
 
 OAuth brand data. Only "Organization Internal" brands can be created
 programmatically via API. To convert it into an external brands
@@ -44,6 +44,7 @@ resource "google_project" "project" {
   project_id = "my-project"
   name       = "my-project"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "project_service" {

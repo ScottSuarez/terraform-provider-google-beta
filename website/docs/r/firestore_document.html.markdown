@@ -17,7 +17,7 @@ description: |-
   In Cloud Firestore, the unit of storage is the document.
 ---
 
-# google\_firestore\_document
+# google_firestore_document
 
 In Cloud Firestore, the unit of storage is the document. A document is a lightweight record
 that contains fields, which map to values. Each document is identified by a name.
@@ -37,8 +37,6 @@ If you wish to use App Engine, you may instead create a
 `google_app_engine_application` resource with `database_type` set to
 `"CLOUD_FIRESTORE"`. Your Firestore location will be the same as
 the App Engine location specified.
-Note: The surface does not support configurable database id. Only `(default)`
-is allowed for the database parameter.
 
 ## Example Usage - Firestore Document Basic
 
@@ -48,6 +46,7 @@ resource "google_project" "project" {
   project_id = "project-id"
   name       = "project-id"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {
@@ -89,6 +88,7 @@ resource "google_project" "project" {
   project_id      = "project-id"
   name            = "project-id"
   org_id          = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {
@@ -175,7 +175,7 @@ In addition to the arguments listed above, the following computed attributes are
 * `id` - an identifier for the resource with format `{{name}}`
 
 * `name` -
-  A server defined name for this index. Format:
+  A server defined name for this document. Format:
   `projects/{{project_id}}/databases/{{database_id}}/documents/{{path}}/{{document_id}}`
 
 * `path` -

@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -135,8 +136,8 @@ as 'accelerator_type'. If neither is specified, 'accelerator_type' defaults to '
 							Type:         schema.TypeString,
 							Required:     true,
 							ForceNew:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"V2", "V3", "V4"}),
-							Description:  `Type of TPU. Possible values: ["V2", "V3", "V4"]`,
+							ValidateFunc: verify.ValidateEnum([]string{"V2", "V3", "V4", "V5P"}),
+							Description:  `Type of TPU. Possible values: ["V2", "V3", "V4", "V5P"]`,
 						},
 					},
 				},
@@ -568,6 +569,7 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -576,6 +578,7 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Vm: %s", err)
@@ -642,12 +645,14 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("TpuV2Vm %q", d.Id()))
@@ -786,6 +791,7 @@ func resourceTpuV2VmUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Updating Vm %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -829,6 +835,7 @@ func resourceTpuV2VmUpdate(d *schema.ResourceData, meta interface{}) error {
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -870,13 +877,15 @@ func resourceTpuV2VmDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Vm %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Vm %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -885,6 +894,7 @@ func resourceTpuV2VmDelete(d *schema.ResourceData, meta interface{}) error {
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Vm")

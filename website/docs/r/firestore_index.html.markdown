@@ -17,11 +17,12 @@ description: |-
   Cloud Firestore indexes enable simple and complex queries against documents in a database.
 ---
 
-# google\_firestore\_index
+# google_firestore_index
 
 Cloud Firestore indexes enable simple and complex queries against documents in a database.
- This resource manages composite indexes and not single
-field indexes.
+ Both Firestore Native and Datastore Mode indexes are supported.
+ This resource manages composite indexes and not single field indexes.
+ To manage single field indexes, use the `google_firestore_field` resource instead.
 
 
 To get more information about Index, see:
@@ -34,56 +35,27 @@ To get more information about Index, see:
 a Firestore database. If you haven't already created it, you may
 create a `google_firestore_database` resource and `location_id` set
 to your chosen location. If you wish to use App Engine, you may
-instead create a `google_app_engine_application` resource with
-`database_type` set to `"CLOUD_FIRESTORE"`. Your Firestore location
-will be the same as the App Engine location specified.
+instead create a `google_app_engine_application` resource.
+Your Firestore location will be the same as the App Engine location specified.
 
 ## Example Usage - Firestore Index Basic
 
 
 ```hcl
-resource "google_project" "project" {
-  project_id = "project-id"
-  name       = "project-id"
-  org_id     = "123456789"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
 resource "google_firestore_database" "database" {
-  project     = google_project.project.project_id
-  name        = "(default)"
+  project     = "my-project-name"
+  name        = "database-id"
   location_id = "nam5"
   type        = "FIRESTORE_NATIVE"
 
-  depends_on = [google_project_service.firestore]
-}
-
-# Creating a document also creates its collection
-resource "google_firestore_document" "document" {
-  project     = google_project.project.project_id
-  database    = google_firestore_database.database.name
-  collection  = "somenewcollection"
-  document_id = ""
-  fields      = "{\"something\":{\"mapValue\":{\"fields\":{\"akey\":{\"stringValue\":\"avalue\"}}}}}"
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
 }
 
 resource "google_firestore_index" "my-index" {
-  project    = google_project.project.project_id
+  project     = "my-project-name"
   database   = google_firestore_database.database.name
-  collection = google_firestore_document.document.collection
+  collection = "atestcollection"
 
   fields {
     field_path = "name"
@@ -94,17 +66,26 @@ resource "google_firestore_index" "my-index" {
     field_path = "description"
     order      = "DESCENDING"
   }
-
 }
 ```
 ## Example Usage - Firestore Index Datastore Mode
 
 
 ```hcl
+resource "google_firestore_database" "database" {
+  project     = "my-project-name"
+  name        = "database-id-dm"
+  location_id = "nam5"
+  type        = "DATASTORE_MODE"
+
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
+}
+
 resource "google_firestore_index" "my-index" {
-  project    = "my-project-name"
-  database   = "(default)"
-  collection = "chatrooms"
+  project     = "my-project-name"
+  database   = google_firestore_database.database.name
+  collection = "atestcollection"
 
   query_scope = "COLLECTION_RECURSIVE"
   api_scope = "DATASTORE_MODE_API"
@@ -120,6 +101,44 @@ resource "google_firestore_index" "my-index" {
   }
 }
 ```
+## Example Usage - Firestore Index Vector
+
+
+```hcl
+resource "google_firestore_database" "database" {
+  project     = "my-project-name"
+  name        = "database-id-vector"
+  location_id = "nam5"
+  type        = "FIRESTORE_NATIVE"
+
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
+}
+
+resource "google_firestore_index" "my-index" {
+  project     = "my-project-name"
+  database   = google_firestore_database.database.name
+  collection = "atestcollection"
+
+  fields {
+    field_path = "field_name"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "__name__"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "description"
+    vector_config {
+      dimension = 128
+      flat {}
+    }
+  }
+}
+```
 
 ## Argument Reference
 
@@ -132,12 +151,12 @@ The following arguments are supported:
 
 * `fields` -
   (Required)
-  The fields supported by this index. The last field entry is always for
-  the field path `__name__`. If, on creation, `__name__` was not
-  specified as the last field, it will be added automatically with the
-  same direction as that of the last field defined. If the final field
-  in a composite index is not directional, the `__name__` will be
-  ordered `"ASCENDING"` (unless explicitly specified otherwise).
+  The fields supported by this index. The last non-stored field entry is
+  always for the field path `__name__`. If, on creation, `__name__` was not
+  specified as the last field, it will be added automatically with the same
+  direction as that of the last field defined. If the final field in a
+  composite index is not directional, the `__name__` will be ordered
+  `"ASCENDING"` (unless explicitly specified otherwise).
   Structure is [documented below](#nested_fields).
 
 
@@ -150,14 +169,32 @@ The following arguments are supported:
 * `order` -
   (Optional)
   Indicates that this field supports ordering by the specified order or comparing using =, <, <=, >, >=.
-  Only one of `order` and `arrayConfig` can be specified.
+  Only one of `order`, `arrayConfig`, and `vectorConfig` can be specified.
   Possible values are: `ASCENDING`, `DESCENDING`.
 
 * `array_config` -
   (Optional)
-  Indicates that this field supports operations on arrayValues. Only one of `order` and `arrayConfig` can
-  be specified.
+  Indicates that this field supports operations on arrayValues. Only one of `order`, `arrayConfig`, and
+  `vectorConfig` can be specified.
   Possible values are: `CONTAINS`.
+
+* `vector_config` -
+  (Optional)
+  Indicates that this field supports vector search operations. Only one of `order`, `arrayConfig`, and
+  `vectorConfig` can be specified. Vector Fields should come after the field path `__name__`.
+  Structure is [documented below](#nested_vector_config).
+
+
+<a name="nested_vector_config"></a>The `vector_config` block supports:
+
+* `dimension` -
+  (Optional)
+  The resulting index will only include vectors of this dimension, and can be used for vector search
+  with the same dimension.
+
+* `flat` -
+  (Optional)
+  Indicates the vector index is a flat index.
 
 - - -
 

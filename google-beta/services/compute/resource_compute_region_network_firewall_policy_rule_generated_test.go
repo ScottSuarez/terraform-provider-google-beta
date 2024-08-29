@@ -23,8 +23,8 @@ import (
 	"fmt"
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	compute "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/compute/beta"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"strings"
 	"testing"
 
@@ -233,16 +233,18 @@ func testAccCheckComputeRegionNetworkFirewallPolicyRuleDestroyProducer(t *testin
 			}
 
 			obj := &compute.NetworkFirewallPolicyRule{
-				Action:         dcl.String(rs.Primary.Attributes["action"]),
-				Direction:      compute.NetworkFirewallPolicyRuleDirectionEnumRef(rs.Primary.Attributes["direction"]),
-				FirewallPolicy: dcl.String(rs.Primary.Attributes["firewall_policy"]),
-				Description:    dcl.String(rs.Primary.Attributes["description"]),
-				Disabled:       dcl.Bool(rs.Primary.Attributes["disabled"] == "true"),
-				EnableLogging:  dcl.Bool(rs.Primary.Attributes["enable_logging"] == "true"),
-				Project:        dcl.StringOrNil(rs.Primary.Attributes["project"]),
-				Location:       dcl.StringOrNil(rs.Primary.Attributes["region"]),
-				RuleName:       dcl.String(rs.Primary.Attributes["rule_name"]),
-				Kind:           dcl.StringOrNil(rs.Primary.Attributes["kind"]),
+				Action:               dcl.String(rs.Primary.Attributes["action"]),
+				Direction:            compute.NetworkFirewallPolicyRuleDirectionEnumRef(rs.Primary.Attributes["direction"]),
+				FirewallPolicy:       dcl.String(rs.Primary.Attributes["firewall_policy"]),
+				Description:          dcl.String(rs.Primary.Attributes["description"]),
+				Disabled:             dcl.Bool(rs.Primary.Attributes["disabled"] == "true"),
+				EnableLogging:        dcl.Bool(rs.Primary.Attributes["enable_logging"] == "true"),
+				Project:              dcl.StringOrNil(rs.Primary.Attributes["project"]),
+				Location:             dcl.StringOrNil(rs.Primary.Attributes["region"]),
+				RuleName:             dcl.String(rs.Primary.Attributes["rule_name"]),
+				SecurityProfileGroup: dcl.String(rs.Primary.Attributes["security_profile_group"]),
+				TlsInspect:           dcl.Bool(rs.Primary.Attributes["tls_inspect"] == "true"),
+				Kind:                 dcl.StringOrNil(rs.Primary.Attributes["kind"]),
 			}
 
 			client := transport_tpg.NewDCLComputeClient(config, config.UserAgent, billingProject, 0)

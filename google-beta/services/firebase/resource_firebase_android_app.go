@@ -20,6 +20,7 @@ package firebase
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -58,6 +59,13 @@ func ResourceFirebaseAndroidApp() *schema.Resource {
 				Required:    true,
 				Description: `The user-assigned display name of the AndroidApp.`,
 			},
+			"package_name": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `The canonical package name of the Android app as would appear in the Google Play
+Developer Console.`,
+			},
 			"api_key_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -65,12 +73,6 @@ func ResourceFirebaseAndroidApp() *schema.Resource {
 				Description: `The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the AndroidApp.
 If apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the AndroidApp.
 This auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.`,
-			},
-			"package_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: `Immutable. The canonical package name of the Android app as would appear in the Google Play
-Developer Console.`,
 			},
 			"sha1_hashes": {
 				Type:        schema.TypeList,
@@ -109,10 +111,10 @@ projects/projectId/androidApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `(Optional) Set to 'ABANDON' to allow the AndroidApp to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful because the AndroidApp may be
 serving traffic. Set to 'DELETE' to delete the AndroidApp. Defaults to 'DELETE'.`,
+				Default: "DELETE",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -189,6 +191,7 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -197,6 +200,7 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating AndroidApp: %s", err)
@@ -266,12 +270,14 @@ func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseAndroidApp %q", d.Id()))
@@ -337,12 +343,6 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	packageNameProp, err := expandFirebaseAndroidAppPackageName(d.Get("package_name"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("package_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, packageNameProp)) {
-		obj["packageName"] = packageNameProp
-	}
 	sha1HashesProp, err := expandFirebaseAndroidAppSha1Hashes(d.Get("sha1_hashes"), d, config)
 	if err != nil {
 		return err
@@ -374,14 +374,11 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Updating AndroidApp %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
-	}
-
-	if d.HasChange("package_name") {
-		updateMask = append(updateMask, "packageName")
 	}
 
 	if d.HasChange("sha1_hashes") {
@@ -421,6 +418,7 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {

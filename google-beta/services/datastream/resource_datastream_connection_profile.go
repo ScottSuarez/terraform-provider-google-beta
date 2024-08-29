@@ -20,6 +20,7 @@ package datastream
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -79,7 +80,14 @@ func ResourceDatastreamConnectionProfile() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{},
 				},
-				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile"},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
+			},
+			"create_without_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Create the connection profile without validating it.`,
+				Default:     false,
 			},
 			"forward_ssh_connectivity": {
 				Type:        schema.TypeList,
@@ -143,7 +151,7 @@ func ResourceDatastreamConnectionProfile() *schema.Resource {
 						},
 					},
 				},
-				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile"},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -237,7 +245,7 @@ If this field is used then the 'client_certificate' and the
 						},
 					},
 				},
-				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile"},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
 			},
 			"oracle_profile": {
 				Type:        schema.TypeList,
@@ -281,7 +289,7 @@ If this field is used then the 'client_certificate' and the
 						},
 					},
 				},
-				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile"},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
 			},
 			"postgresql_profile": {
 				Type:        schema.TypeList,
@@ -319,7 +327,7 @@ If this field is used then the 'client_certificate' and the
 						},
 					},
 				},
-				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile"},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
 			},
 			"private_connectivity": {
 				Type:        schema.TypeList,
@@ -336,6 +344,44 @@ If this field is used then the 'client_certificate' and the
 					},
 				},
 				ConflictsWith: []string{"forward_ssh_connectivity"},
+			},
+			"sql_server_profile": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `SQL Server database profile.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"database": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Database for the SQL Server connection.`,
+						},
+						"hostname": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Hostname for the SQL Server connection.`,
+						},
+						"password": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Password for the SQL Server connection.`,
+							Sensitive:   true,
+						},
+						"username": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Username for the SQL Server connection.`,
+						},
+						"port": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Port for the SQL Server connection.`,
+							Default:     1433,
+						},
+					},
+				},
+				ExactlyOneOf: []string{"oracle_profile", "gcs_profile", "mysql_profile", "bigquery_profile", "postgresql_profile", "sql_server_profile"},
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -410,6 +456,12 @@ func resourceDatastreamConnectionProfileCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("postgresql_profile"); !tpgresource.IsEmptyValue(reflect.ValueOf(postgresqlProfileProp)) && (ok || !reflect.DeepEqual(v, postgresqlProfileProp)) {
 		obj["postgresqlProfile"] = postgresqlProfileProp
 	}
+	sqlServerProfileProp, err := expandDatastreamConnectionProfileSqlServerProfile(d.Get("sql_server_profile"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("sql_server_profile"); !tpgresource.IsEmptyValue(reflect.ValueOf(sqlServerProfileProp)) && (ok || !reflect.DeepEqual(v, sqlServerProfileProp)) {
+		obj["sqlServerProfile"] = sqlServerProfileProp
+	}
 	forwardSshConnectivityProp, err := expandDatastreamConnectionProfileForwardSshConnectivity(d.Get("forward_ssh_connectivity"), d, config)
 	if err != nil {
 		return err
@@ -429,7 +481,7 @@ func resourceDatastreamConnectionProfileCreate(d *schema.ResourceData, meta inte
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DatastreamBasePath}}projects/{{project}}/locations/{{location}}/connectionProfiles?connectionProfileId={{connection_profile_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DatastreamBasePath}}projects/{{project}}/locations/{{location}}/connectionProfiles?connectionProfileId={{connection_profile_id}}&force={{create_without_validation}}")
 	if err != nil {
 		return err
 	}
@@ -448,6 +500,7 @@ func resourceDatastreamConnectionProfileCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -456,6 +509,7 @@ func resourceDatastreamConnectionProfileCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ConnectionProfile: %s", err)
@@ -522,12 +576,14 @@ func resourceDatastreamConnectionProfileRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DatastreamConnectionProfile %q", d.Id()))
@@ -559,6 +615,9 @@ func resourceDatastreamConnectionProfileRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading ConnectionProfile: %s", err)
 	}
 	if err := d.Set("postgresql_profile", flattenDatastreamConnectionProfilePostgresqlProfile(res["postgresqlProfile"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConnectionProfile: %s", err)
+	}
+	if err := d.Set("sql_server_profile", flattenDatastreamConnectionProfileSqlServerProfile(res["sqlServerProfile"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConnectionProfile: %s", err)
 	}
 	if err := d.Set("forward_ssh_connectivity", flattenDatastreamConnectionProfileForwardSshConnectivity(res["forwardSshConnectivity"], d, config)); err != nil {
@@ -629,6 +688,12 @@ func resourceDatastreamConnectionProfileUpdate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("postgresql_profile"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, postgresqlProfileProp)) {
 		obj["postgresqlProfile"] = postgresqlProfileProp
 	}
+	sqlServerProfileProp, err := expandDatastreamConnectionProfileSqlServerProfile(d.Get("sql_server_profile"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("sql_server_profile"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sqlServerProfileProp)) {
+		obj["sqlServerProfile"] = sqlServerProfileProp
+	}
 	forwardSshConnectivityProp, err := expandDatastreamConnectionProfileForwardSshConnectivity(d.Get("forward_ssh_connectivity"), d, config)
 	if err != nil {
 		return err
@@ -654,6 +719,7 @@ func resourceDatastreamConnectionProfileUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating ConnectionProfile %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -678,6 +744,10 @@ func resourceDatastreamConnectionProfileUpdate(d *schema.ResourceData, meta inte
 
 	if d.HasChange("postgresql_profile") {
 		updateMask = append(updateMask, "postgresqlProfile")
+	}
+
+	if d.HasChange("sql_server_profile") {
+		updateMask = append(updateMask, "sqlServerProfile")
 	}
 
 	if d.HasChange("forward_ssh_connectivity") {
@@ -713,6 +783,7 @@ func resourceDatastreamConnectionProfileUpdate(d *schema.ResourceData, meta inte
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -754,13 +825,15 @@ func resourceDatastreamConnectionProfileDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ConnectionProfile %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ConnectionProfile %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -769,6 +842,7 @@ func resourceDatastreamConnectionProfileDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ConnectionProfile")
@@ -1069,6 +1143,60 @@ func flattenDatastreamConnectionProfilePostgresqlProfilePassword(v interface{}, 
 }
 
 func flattenDatastreamConnectionProfilePostgresqlProfileDatabase(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDatastreamConnectionProfileSqlServerProfile(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["hostname"] =
+		flattenDatastreamConnectionProfileSqlServerProfileHostname(original["hostname"], d, config)
+	transformed["port"] =
+		flattenDatastreamConnectionProfileSqlServerProfilePort(original["port"], d, config)
+	transformed["username"] =
+		flattenDatastreamConnectionProfileSqlServerProfileUsername(original["username"], d, config)
+	transformed["password"] =
+		flattenDatastreamConnectionProfileSqlServerProfilePassword(original["password"], d, config)
+	transformed["database"] =
+		flattenDatastreamConnectionProfileSqlServerProfileDatabase(original["database"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDatastreamConnectionProfileSqlServerProfileHostname(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDatastreamConnectionProfileSqlServerProfilePort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenDatastreamConnectionProfileSqlServerProfileUsername(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDatastreamConnectionProfileSqlServerProfilePassword(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return d.Get("sql_server_profile.0.password")
+}
+
+func flattenDatastreamConnectionProfileSqlServerProfileDatabase(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1505,6 +1633,73 @@ func expandDatastreamConnectionProfilePostgresqlProfilePassword(v interface{}, d
 }
 
 func expandDatastreamConnectionProfilePostgresqlProfileDatabase(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedHostname, err := expandDatastreamConnectionProfileSqlServerProfileHostname(original["hostname"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHostname); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["hostname"] = transformedHostname
+	}
+
+	transformedPort, err := expandDatastreamConnectionProfileSqlServerProfilePort(original["port"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["port"] = transformedPort
+	}
+
+	transformedUsername, err := expandDatastreamConnectionProfileSqlServerProfileUsername(original["username"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUsername); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["username"] = transformedUsername
+	}
+
+	transformedPassword, err := expandDatastreamConnectionProfileSqlServerProfilePassword(original["password"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPassword); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["password"] = transformedPassword
+	}
+
+	transformedDatabase, err := expandDatastreamConnectionProfileSqlServerProfileDatabase(original["database"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDatabase); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["database"] = transformedDatabase
+	}
+
+	return transformed, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfileHostname(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfilePort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfileUsername(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfilePassword(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatastreamConnectionProfileSqlServerProfileDatabase(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -74,7 +74,7 @@ resource "google_firestore_backup_schedule" "daily-backup" {
   project  = "%{project_id}"
   database = google_firestore_database.database.name
 
-  retention = "604800s" // 7 days (maximum possible value for daily backups)
+  retention = "8467200s" // 14 weeks (maximum possible retention)
 
   daily_recurrence {}
 }
@@ -124,7 +124,7 @@ resource "google_firestore_backup_schedule" "weekly-backup" {
   project  = "%{project_id}"
   database = google_firestore_database.database.name
 
-  retention = "8467200s" // 14 weeks (maximum possible value for weekly backups)
+  retention = "8467200s" // 14 weeks (maximum possible retention)
 
   weekly_recurrence {
     day = "SUNDAY"

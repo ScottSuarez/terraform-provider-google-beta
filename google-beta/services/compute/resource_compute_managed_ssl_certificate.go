@@ -20,7 +20,9 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -30,6 +32,14 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// For managed SSL certs, if new is an absolute FQDN (trailing '.') but old isn't, treat them as equals.
+func AbsoluteDomainSuppress(k, old, new string, _ *schema.ResourceData) bool {
+	if strings.HasPrefix(k, "managed.0.domains.") {
+		return old == strings.TrimRight(new, ".") || new == strings.TrimRight(old, ".")
+	}
+	return false
+}
 
 func ResourceComputeManagedSslCertificate() *schema.Resource {
 	return &schema.Resource{
@@ -70,7 +80,7 @@ certificate is managed (as indicated by a value of 'MANAGED' in 'type').`,
 							Type:             schema.TypeList,
 							Required:         true,
 							ForceNew:         true,
-							DiffSuppressFunc: tpgresource.AbsoluteDomainSuppress,
+							DiffSuppressFunc: AbsoluteDomainSuppress,
 							Description: `Domains for which a managed SSL certificate will be valid.  Currently,
 there can be up to 100 domains in this list.`,
 							MaxItems: 100,
@@ -93,7 +103,6 @@ first character must be a lowercase letter, and all following
 characters must be a dash, lowercase letter, or digit, except the last
 character, which cannot be a dash.
 
-
 These are in the same namespace as the managed SSL certificates.`,
 			},
 			"type": {
@@ -108,7 +117,6 @@ which type this is. Default value: "MANAGED" Possible values: ["MANAGED"]`,
 			"certificate_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Optional:    true,
 				Description: `The unique identifier for the resource.`,
 			},
 			"creation_timestamp": {
@@ -196,6 +204,7 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -204,6 +213,7 @@ func resourceComputeManagedSslCertificateCreate(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ManagedSslCertificate: %s", err)
@@ -256,12 +266,14 @@ func resourceComputeManagedSslCertificateRead(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeManagedSslCertificate %q", d.Id()))
@@ -323,13 +335,15 @@ func resourceComputeManagedSslCertificateDelete(d *schema.ResourceData, meta int
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ManagedSslCertificate %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ManagedSslCertificate %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -338,6 +352,7 @@ func resourceComputeManagedSslCertificateDelete(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ManagedSslCertificate")

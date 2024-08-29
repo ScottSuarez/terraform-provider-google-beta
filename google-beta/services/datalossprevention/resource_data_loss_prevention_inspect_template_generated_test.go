@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccDataLossPreventionInspectTemplate_dlpInspectTemplateBasicExample(t *
 				ResourceName:            "google_data_loss_prevention_inspect_template.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"template_id", "parent"},
+				ImportStateVerifyIgnore: []string{"parent", "template_id"},
 			},
 		},
 	})
@@ -186,7 +186,7 @@ func TestAccDataLossPreventionInspectTemplate_dlpInspectTemplateCustomTypeExampl
 				ResourceName:            "google_data_loss_prevention_inspect_template.custom",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"template_id", "parent"},
+				ImportStateVerifyIgnore: []string{"parent", "template_id"},
 			},
 		},
 	})
@@ -279,7 +279,7 @@ func TestAccDataLossPreventionInspectTemplate_dlpInspectTemplateCustomTypeSurrog
 				ResourceName:            "google_data_loss_prevention_inspect_template.custom_type_surrogate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"template_id", "parent"},
+				ImportStateVerifyIgnore: []string{"parent", "template_id"},
 			},
 		},
 	})
@@ -370,7 +370,7 @@ func TestAccDataLossPreventionInspectTemplate_dlpInspectTemplateWithTemplateIdEx
 				ResourceName:            "google_data_loss_prevention_inspect_template.with_template_id",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"template_id", "parent"},
+				ImportStateVerifyIgnore: []string{"parent", "template_id"},
 			},
 		},
 	})
@@ -422,6 +422,59 @@ resource "google_data_loss_prevention_inspect_template" "with_template_id" {
           }
         }
       }
+    }
+  }
+}
+`, context)
+}
+
+func TestAccDataLossPreventionInspectTemplate_dlpInspectTemplateMaxInfotypePerFindingDefaultExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataLossPreventionInspectTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataLossPreventionInspectTemplate_dlpInspectTemplateMaxInfotypePerFindingDefaultExample(context),
+			},
+			{
+				ResourceName:            "google_data_loss_prevention_inspect_template.max_infotype_per_finding_default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"parent", "template_id"},
+			},
+		},
+	})
+}
+
+func testAccDataLossPreventionInspectTemplate_dlpInspectTemplateMaxInfotypePerFindingDefaultExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_data_loss_prevention_inspect_template" "max_infotype_per_finding_default" {
+  parent = "projects/%{project}"
+
+  inspect_config {
+    info_types {
+      name = "EMAIL_ADDRESS"
+    }
+    info_types {
+      name = "PERSON_NAME"
+    }
+
+    min_likelihood = "UNLIKELY"
+    limits {
+        max_findings_per_request = 333
+        max_findings_per_item = 222
+        max_findings_per_info_type {
+          # Entry with no info_type specifies the default value used by all info_types that don't specify their own limit
+          max_findings = 111
+        }
     }
   }
 }

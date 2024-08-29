@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDiscoveryEngineSearchEngine_discoveryengineSearchengineBasicExample(
 				ResourceName:            "google_discovery_engine_search_engine.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"engine_id", "collection_id", "location"},
+				ImportStateVerifyIgnore: []string{"collection_id", "engine_id", "location"},
 			},
 		},
 	})

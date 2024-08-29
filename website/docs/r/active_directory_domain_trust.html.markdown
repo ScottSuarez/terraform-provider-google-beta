@@ -17,7 +17,7 @@ description: |-
   Adds a trust between Active Directory domains
 ---
 
-# google\_active\_directory\_domain\_trust
+# google_active_directory_domain_trust
 
 Adds a trust between Active Directory domains
 
@@ -43,6 +43,7 @@ resource "google_active_directory_domain_trust" "ad-domain-trust" {
     trust_direction         = "OUTBOUND"
     trust_type              = "FOREST"
     trust_handshake_secret  = "Testing1!"
+    deletion_protection = false
 }
 ```
 
@@ -76,8 +77,8 @@ The following arguments are supported:
 
 * `domain` -
   (Required)
-  The fully qualified domain name. e.g. mydomain.myorganization.com, with the restrictions,
-  https://cloud.google.com/managed-microsoft-ad/reference/rest/v1/projects.locations.global.domains.
+  The fully qualified domain name. e.g. mydomain.myorganization.com, with the restrictions
+  of https://cloud.google.com/managed-microsoft-ad/reference/rest/v1/projects.locations.global.domains.
 
 
 - - -

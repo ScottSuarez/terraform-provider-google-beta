@@ -20,6 +20,7 @@ package beyondcorp
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -146,8 +147,8 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `The type of network connectivity used by the AppConnection. Refer to
-https://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type
+				Description: `The type of network connectivity used by the AppConnection. Refer
+to https://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type
 for a list of possible values.`,
 			},
 			"effective_labels": {
@@ -238,6 +239,7 @@ func resourceBeyondcorpAppConnectionCreate(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -246,6 +248,7 @@ func resourceBeyondcorpAppConnectionCreate(d *schema.ResourceData, meta interfac
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating AppConnection: %s", err)
@@ -308,12 +311,14 @@ func resourceBeyondcorpAppConnectionRead(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BeyondcorpAppConnection %q", d.Id()))
@@ -404,6 +409,7 @@ func resourceBeyondcorpAppConnectionUpdate(d *schema.ResourceData, meta interfac
 	}
 
 	log.Printf("[DEBUG] Updating AppConnection %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -447,6 +453,7 @@ func resourceBeyondcorpAppConnectionUpdate(d *schema.ResourceData, meta interfac
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -488,13 +495,15 @@ func resourceBeyondcorpAppConnectionDelete(d *schema.ResourceData, meta interfac
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting AppConnection %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting AppConnection %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -503,6 +512,7 @@ func resourceBeyondcorpAppConnectionDelete(d *schema.ResourceData, meta interfac
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "AppConnection")

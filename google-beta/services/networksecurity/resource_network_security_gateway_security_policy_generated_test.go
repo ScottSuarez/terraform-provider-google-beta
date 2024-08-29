@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 				ResourceName:            "google_network_security_gateway_security_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"tls_inspection_policy", "name", "location"},
+				ImportStateVerifyIgnore: []string{"location", "name", "tls_inspection_policy"},
 			},
 		},
 	})
@@ -84,7 +84,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 				ResourceName:            "google_network_security_gateway_security_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"tls_inspection_policy", "name", "location"},
+				ImportStateVerifyIgnore: []string{"location", "name", "tls_inspection_policy"},
 			},
 		},
 	})
@@ -155,10 +155,8 @@ resource "google_privateca_certificate_authority" "default" {
   }
 }
 
-resource "google_project_service_identity" "ns_sa" {
+data "google_project" "project" {
   provider = google-beta
-
-  service = "networksecurity.googleapis.com"
 }
 
 resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
@@ -166,7 +164,7 @@ resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
 
   ca_pool = google_privateca_ca_pool.default.id
   role = "roles/privateca.certificateManager"
-  member = "serviceAccount:${google_project_service_identity.ns_sa.email}"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-networksecurity.iam.gserviceaccount.com"
 }
 
 resource "google_network_security_tls_inspection_policy" "default" {

@@ -18,7 +18,7 @@ description: |-
   global forwarding rule to route incoming HTTPS requests to a URL map.
 ---
 
-# google\_compute\_target\_https\_proxy
+# google_compute_target_https_proxy
 
 Represents a TargetHttpsProxy resource, which is used by one or more
 global forwarding rule to route incoming HTTPS requests to a URL map.
@@ -31,7 +31,7 @@ To get more information about TargetHttpsProxy, see:
     * [Official Documentation](https://cloud.google.com/compute/docs/load-balancing/http/target-proxies)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=target_https_proxy_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=target_https_proxy_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -90,7 +90,7 @@ resource "google_compute_http_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=target_https_proxy_http_keep_alive_timeout&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=target_https_proxy_http_keep_alive_timeout&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -151,7 +151,7 @@ resource "google_compute_http_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=target_https_proxy_mtls&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=target_https_proxy_mtls&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -252,7 +252,7 @@ resource "google_compute_http_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=target_https_proxy_certificate_manager_certificate&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=target_https_proxy_certificate_manager_certificate&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -344,10 +344,19 @@ The following arguments are supported:
   Default value is `NONE`.
   Possible values are: `NONE`, `ENABLE`, `DISABLE`.
 
+* `tls_early_data` -
+  (Optional)
+  Specifies whether TLS 1.3 0-RTT Data (“Early Data”) should be accepted for this service.
+  Early Data allows a TLS resumption handshake to include the initial application payload
+  (a HTTP request) alongside the handshake, reducing the effective round trips to “zero”.
+  This applies to TLS 1.3 connections over TCP (HTTP/2) as well as over UDP (QUIC/h3).
+  Possible values are: `STRICT`, `PERMISSIVE`, `DISABLED`.
+
 * `certificate_manager_certificates` -
   (Optional)
   URLs to certificate manager certificate resources that are used to authenticate connections between users and the load balancer.
-  Currently, you may specify up to 15 certificates. Certificate manager certificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.
+  Certificate manager certificates only apply when the load balancing scheme is set to INTERNAL_MANAGED.
+  For EXTERNAL and EXTERNAL_MANAGED, use certificate_map instead.
   sslCertificates and certificateManagerCertificates fields can not be defined together.
   Accepted format is `//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificates/{resourceName}` or just the self_link `projects/{project}/locations/{location}/certificates/{resourceName}`
 
@@ -360,7 +369,8 @@ The following arguments are supported:
 * `certificate_map` -
   (Optional)
   A reference to the CertificateMap resource uri that identifies a certificate map
-  associated with the given target proxy. This field can only be set for global target proxies.
+  associated with the given target proxy. This field is only supported for EXTERNAL and EXTERNAL_MANAGED load balancing schemes.
+  For INTERNAL_MANAGED, use certificate_manager_certificates instead.
   Accepted format is `//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}`.
 
 * `ssl_policy` -
@@ -394,6 +404,10 @@ The following arguments are supported:
   INTERNAL_SELF_MANAGED and which with EXTERNAL, EXTERNAL_MANAGED
   loadBalancingScheme consult ServerTlsPolicy documentation.
   If left blank, communications are not encrypted.
+  If you remove this field from your configuration at the same time as
+  deleting or recreating a referenced ServerTlsPolicy resource, you will
+  receive a resourceInUseByAnotherResource error. Use lifecycle.create_before_destroy
+  within the ServerTlsPolicy resource to avoid this.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

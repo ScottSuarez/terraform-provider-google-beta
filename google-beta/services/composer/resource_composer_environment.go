@@ -3,8 +3,10 @@
 package composer
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"net"
 	"regexp"
 	"strings"
 	"time"
@@ -24,7 +26,7 @@ import (
 const (
 	composerEnvironmentEnvVariablesRegexp          = "[a-zA-Z_][a-zA-Z0-9_]*."
 	composerEnvironmentReservedAirflowEnvVarRegexp = "AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+"
-	composerEnvironmentVersionRegexp               = `composer-(([0-9]+)(\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?)?|latest)-airflow-(([0-9]+)((\.[0-9]+)(\.[0-9]+)?)?)`
+	composerEnvironmentVersionRegexp               = `composer-(([0-9]+)(\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?)?|latest)-airflow-(([0-9]+)((\.[0-9]+)(\.[0-9]+)?)?(-build\.[0-9]+)?)`
 )
 
 var composerEnvironmentReservedEnvVar = map[string]struct{}{
@@ -159,6 +161,12 @@ func ResourceComposerEnvironment() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderRegion,
 			tpgresource.SetLabelsDiff,
+			customdiff.Sequence(
+				customdiff.ValidateChange("config.0.software_config.0.image_version", imageVersionChangeValidationFunc),
+				versionValidationCustomizeDiffFunc,
+			),
+			customdiff.ForceNewIf("config.0.node_config.0.network", forceNewCustomDiff("config.0.node_config.0.network")),
+			customdiff.ForceNewIf("config.0.node_config.0.subnetwork", forceNewCustomDiff("config.0.node_config.0.subnetwork")),
 		),
 
 		Schema: map[string]*schema.Schema{
@@ -228,16 +236,26 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Type:             schema.TypeString,
 										Computed:         true,
 										Optional:         true,
-										ForceNew:         true,
+										ForceNew:         false,
+										ConflictsWith:    []string{"config.0.node_config.0.composer_network_attachment"},
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 										Description:      `The Compute Engine machine type used for cluster instances, specified as a name or relative resource name. For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}". Must belong to the enclosing environment's project and region/zone. The network must belong to the environment's project. If unspecified, the "default" network ID in the environment's project is used. If a Custom Subnet Network is provided, subnetwork must also be provided.`,
 									},
 									"subnetwork": {
 										Type:             schema.TypeString,
 										Optional:         true,
-										ForceNew:         true,
+										ForceNew:         false,
+										Computed:         true,
+										ConflictsWith:    []string{"config.0.node_config.0.composer_network_attachment"},
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-										Description:      `The Compute Engine subnetwork to be used for machine communications, , specified as a self-link, relative resource name (e.g. "projects/{project}/regions/{region}/subnetworks/{subnetwork}"), or by name. If subnetwork is provided, network must also be provided and the subnetwork must belong to the enclosing environment's project and region.`,
+										Description:      `The Compute Engine subnetwork to be used for machine communications, specified as a self-link, relative resource name (e.g. "projects/{project}/regions/{region}/subnetworks/{subnetwork}"), or by name. If subnetwork is provided, network must also be provided and the subnetwork must belong to the enclosing environment's project and region.`,
+									},
+									"composer_network_attachment": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										ForceNew:    false,
+										Description: `PSC (Private Service Connect) Network entry point. Customers can pre-create the Network Attachment and point Cloud Composer environment to use. It is possible to share network attachment among many environments, provided enough IP addresses are available.`,
 									},
 									"disk_size_gb": {
 										Type:        schema.TypeInt,
@@ -297,7 +315,6 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Optional:    true,
 										Computed:    true,
 										ForceNew:    true,
-										ConfigMode:  schema.SchemaConfigModeAttr,
 										MaxItems:    1,
 										Description: `Configuration for controlling how IPs are allocated in the GKE cluster. Cannot be updated.`,
 										Elem: &schema.Resource{
@@ -347,11 +364,12 @@ func ResourceComposerEnvironment() *schema.Resource {
 										},
 									},
 									"composer_internal_ipv4_cidr_block": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Optional:    true,
-										ForceNew:    true,
-										Description: `IPv4 cidr range that will be used by Composer internal components.`,
+										Type:         schema.TypeString,
+										Computed:     true,
+										Optional:     true,
+										ForceNew:     true,
+										ValidateFunc: validateComposerInternalIpv4CidrBlock,
+										Description:  `IPv4 cidr range that will be used by Composer internal components.`,
 									},
 								},
 							},
@@ -921,6 +939,14 @@ func ResourceComposerEnvironment() *schema.Resource {
 													ValidateFunc: validation.FloatAtLeast(0),
 													Description:  `Storage (GB) request and limit for DAG processor.`,
 												},
+												"count": {
+													Type:         schema.TypeInt,
+													Optional:     true,
+													ForceNew:     false,
+													Computed:     true,
+													ValidateFunc: validation.IntBetween(0, 3),
+													Description:  `Number of DAG processors.`,
+												},
 											},
 										},
 									},
@@ -1166,6 +1192,66 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 		config, err := expandComposerEnvironmentConfig(d.Get("config"), d, tfConfig)
 		if err != nil {
 			return err
+		}
+
+		noChangeErrorMessage := "Update request does not result in any change to the environment's configuration"
+		if d.HasChange("config.0.node_config.0.network") || d.HasChange("config.0.node_config.0.subnetwork") {
+			// step 1: update with empty network and subnetwork
+			patchObjEmpty := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					NodeConfig: &composer.NodeConfig{},
+				},
+			}
+			err = resourceComposerEnvironmentPatchField("config.nodeConfig.network,config.nodeConfig.subnetwork", userAgent, patchObjEmpty, d, tfConfig)
+			if err != nil && !strings.Contains(err.Error(), noChangeErrorMessage) {
+				return err
+			}
+
+			// step 2: update with new network and subnetwork, if new values are not empty
+			if config.NodeConfig.Network != "" && config.NodeConfig.Subnetwork != "" {
+				patchObj := &composer.Environment{
+					Config: &composer.EnvironmentConfig{
+						NodeConfig: &composer.NodeConfig{},
+					},
+				}
+				if config != nil && config.NodeConfig != nil {
+					patchObj.Config.NodeConfig.Network = config.NodeConfig.Network
+					patchObj.Config.NodeConfig.Subnetwork = config.NodeConfig.Subnetwork
+				}
+				err = resourceComposerEnvironmentPatchField("config.nodeConfig.network,config.nodeConfig.subnetwork", userAgent, patchObj, d, tfConfig)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		if d.HasChange("config.0.node_config.0.composer_network_attachment") {
+			// step 1: update with empty composer_network_attachment
+			patchObjEmpty := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					NodeConfig: &composer.NodeConfig{},
+				},
+			}
+			err = resourceComposerEnvironmentPatchField("config.nodeConfig.composerNetworkAttachment", userAgent, patchObjEmpty, d, tfConfig)
+			if err != nil && !strings.Contains(err.Error(), noChangeErrorMessage) {
+				return err
+			}
+
+			// step 2: update with new composer_network_attachment
+			if config.NodeConfig.ComposerNetworkAttachment != "" {
+				patchObj := &composer.Environment{
+					Config: &composer.EnvironmentConfig{
+						NodeConfig: &composer.NodeConfig{},
+					},
+				}
+				if config != nil && config.NodeConfig != nil {
+					patchObj.Config.NodeConfig.ComposerNetworkAttachment = config.NodeConfig.ComposerNetworkAttachment
+				}
+				err = resourceComposerEnvironmentPatchField("config.nodeConfig.composerNetworkAttachment", userAgent, patchObj, d, tfConfig)
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		if d.HasChange("config.0.software_config.0.image_version") {
@@ -1564,9 +1650,14 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["airflow_uri"] = envCfg.AirflowUri
 	transformed["node_config"] = flattenComposerEnvironmentConfigNodeConfig(envCfg.NodeConfig)
 	transformed["software_config"] = flattenComposerEnvironmentConfigSoftwareConfig(envCfg.SoftwareConfig)
-	transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
-	transformed["enable_private_environment"] = envCfg.PrivateEnvironmentConfig.EnablePrivateEnvironment
-	transformed["enable_private_builds_only"] = envCfg.PrivateEnvironmentConfig.EnablePrivateBuildsOnly
+	imageVersion := envCfg.SoftwareConfig.ImageVersion
+	if !isComposer3(imageVersion) {
+		transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
+	}
+	if isComposer3(imageVersion) && envCfg.PrivateEnvironmentConfig != nil {
+		transformed["enable_private_environment"] = envCfg.PrivateEnvironmentConfig.EnablePrivateEnvironment
+		transformed["enable_private_builds_only"] = envCfg.PrivateEnvironmentConfig.EnablePrivateBuildsOnly
+	}
 	transformed["web_server_network_access_control"] = flattenComposerEnvironmentConfigWebServerNetworkAccessControl(envCfg.WebServerNetworkAccessControl)
 	transformed["database_config"] = flattenComposerEnvironmentConfigDatabaseConfig(envCfg.DatabaseConfig)
 	transformed["web_server_config"] = flattenComposerEnvironmentConfigWebServerConfig(envCfg.WebServerConfig)
@@ -1758,6 +1849,7 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 		transformedDagProcessor["cpu"] = wlCfgDagProcessor.Cpu
 		transformedDagProcessor["memory_gb"] = wlCfgDagProcessor.MemoryGb
 		transformedDagProcessor["storage_gb"] = wlCfgDagProcessor.StorageGb
+		transformedDagProcessor["count"] = wlCfgDagProcessor.Count
 	}
 
 	transformed["scheduler"] = []interface{}{transformedScheduler}
@@ -1766,7 +1858,9 @@ func flattenComposerEnvironmentConfigWorkloadsConfig(workloadsConfig *composer.W
 	}
 	transformed["web_server"] = []interface{}{transformedWebServer}
 	transformed["worker"] = []interface{}{transformedWorker}
-	transformed["dag_processor"] = []interface{}{transformedDagProcessor}
+	if transformedDagProcessor != nil {
+		transformed["dag_processor"] = []interface{}{transformedDagProcessor}
+	}
 
 	return []interface{}{transformed}
 }
@@ -1802,6 +1896,7 @@ func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig) in
 	transformed["machine_type"] = nodeCfg.MachineType
 	transformed["network"] = nodeCfg.Network
 	transformed["subnetwork"] = nodeCfg.Subnetwork
+	transformed["composer_network_attachment"] = nodeCfg.ComposerNetworkAttachment
 	transformed["disk_size_gb"] = nodeCfg.DiskSizeGb
 	transformed["service_account"] = nodeCfg.ServiceAccount
 	transformed["oauth_scopes"] = flattenComposerEnvironmentConfigNodeConfigOauthScopes(nodeCfg.OauthScopes)
@@ -1934,7 +2029,8 @@ func expandComposerEnvironmentConfig(v interface{}, d *schema.ResourceData, conf
 		composer.PrivateEnvironmentConfig.EnablePrivateEnvironment in API.
 		Check image version to avoid overriding EnablePrivateEnvironment in case of other versions.
 	*/
-	if isComposer3(d, config) {
+	imageVersion := d.Get("config.0.software_config.0.image_version").(string)
+	if isComposer3(imageVersion) {
 		transformed.PrivateEnvironmentConfig = &composer.PrivateEnvironmentConfig{}
 		if enablePrivateEnvironmentRaw, ok := original["enable_private_environment"]; ok {
 			transformed.PrivateEnvironmentConfig.EnablePrivateEnvironment = enablePrivateEnvironmentRaw.(bool)
@@ -2246,6 +2342,7 @@ func expandComposerEnvironmentConfigWorkloadsConfig(v interface{}, d *schema.Res
 			transformedDagProcessor.Cpu = originalDagProcessorRaw["cpu"].(float64)
 			transformedDagProcessor.MemoryGb = originalDagProcessorRaw["memory_gb"].(float64)
 			transformedDagProcessor.StorageGb = originalDagProcessorRaw["storage_gb"].(float64)
+			transformedDagProcessor.Count = int64(originalDagProcessorRaw["count"].(int))
 			transformed.DagProcessor = transformedDagProcessor
 		}
 	}
@@ -2402,6 +2499,11 @@ func expandComposerEnvironmentConfigNodeConfig(v interface{}, d *schema.Resource
 		}
 		transformed.Subnetwork = transformedSubnetwork
 	}
+
+	if v, ok := original["composer_network_attachment"]; ok {
+		transformed.ComposerNetworkAttachment = v.(string)
+	}
+
 	transformedIPAllocationPolicy, err := expandComposerEnvironmentIPAllocationPolicy(original["ip_allocation_policy"], d, config)
 	if err != nil {
 		return nil, err
@@ -2766,7 +2868,7 @@ func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData
 	versionRe := regexp.MustCompile(composerEnvironmentVersionRegexp)
 	oldVersions := versionRe.FindStringSubmatch(old)
 	newVersions := versionRe.FindStringSubmatch(new)
-	if oldVersions == nil || len(oldVersions) < 10 {
+	if oldVersions == nil || len(oldVersions) < 11 {
 		// Somehow one of the versions didn't match the regexp or didn't
 		// have values in the capturing groups. In that case, fall back to
 		// an equality check.
@@ -2775,7 +2877,7 @@ func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData
 		}
 		return old == new
 	}
-	if newVersions == nil || len(newVersions) < 10 {
+	if newVersions == nil || len(newVersions) < 11 {
 		// Somehow one of the versions didn't match the regexp or didn't
 		// have values in the capturing groups. In that case, fall back to
 		// an equality check.
@@ -2788,9 +2890,11 @@ func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData
 	oldAirflow := oldVersions[5]
 	oldAirflowMajor := oldVersions[6]
 	oldAirflowMajorMinor := oldVersions[6] + oldVersions[8]
+	oldAirflowMajorMinorPatch := oldVersions[6] + oldVersions[8] + oldVersions[9]
 	newAirflow := newVersions[5]
 	newAirflowMajor := newVersions[6]
 	newAirflowMajorMinor := newVersions[6] + newVersions[8]
+	newAirflowMajorMinorPatch := newVersions[6] + newVersions[8] + newVersions[9]
 	// Check Airflow versions.
 	if oldAirflow == oldAirflowMajor || newAirflow == newAirflowMajor {
 		// If one of the Airflow versions specifies only major version
@@ -2812,8 +2916,18 @@ func composerImageVersionDiffSuppress(_, old, new string, _ *schema.ResourceData
 		if !eq {
 			return false
 		}
+	} else if oldAirflow == oldAirflowMajorMinorPatch || newAirflow == newAirflowMajorMinorPatch {
+		// If one of the Airflow versions specifies only major, minor and patch version
+		// (like 1.10.15), we can only compare major, minor and patch versions.
+		eq, err := versionsEqual(oldAirflowMajorMinorPatch, newAirflowMajorMinorPatch)
+		if err != nil {
+			log.Printf("[WARN] Could not parse airflow version, %s", err)
+		}
+		if !eq {
+			return false
+		}
 	} else {
-		// Otherwise, we compare the full Airflow versions (like 1.10.15).
+		// Otherwise, we compare the full Airflow versions (like 1.10.15-build.5).
 		eq, err := versionsEqual(oldAirflow, newAirflow)
 		if err != nil {
 			log.Printf("[WARN] Could not parse airflow version, %s", err)
@@ -2861,7 +2975,73 @@ func versionsEqual(old, new string) (bool, error) {
 	return o.Equal(n), nil
 }
 
-func isComposer3(d *schema.ResourceData, config *transport_tpg.Config) bool {
-	image_version := d.Get("config.0.software_config.0.image_version").(string)
-	return strings.Contains(image_version, "composer-3")
+func isComposer3(imageVersion string) bool {
+	return strings.Contains(imageVersion, "composer-3")
+}
+
+func forceNewCustomDiff(key string) customdiff.ResourceConditionFunc {
+	return func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+		old, new := d.GetChange(key)
+		imageVersion := d.Get("config.0.software_config.0.image_version").(string)
+		if isComposer3(imageVersion) || tpgresource.CompareSelfLinkRelativePaths("", old.(string), new.(string), nil) {
+			return false
+		}
+		return true
+	}
+}
+
+func imageVersionChangeValidationFunc(ctx context.Context, old, new, meta any) error {
+	if old.(string) != "" && !isComposer3(old.(string)) && isComposer3(new.(string)) {
+		return fmt.Errorf("upgrade to composer 3 is not yet supported")
+	}
+	return nil
+}
+
+func validateComposer3FieldUsage(d *schema.ResourceDiff, key string, requireComposer3 bool) error {
+	_, ok := d.GetOk(key)
+	imageVersion := d.Get("config.0.software_config.0.image_version").(string)
+	if ok && (isComposer3(imageVersion) != requireComposer3) {
+		if requireComposer3 {
+			return fmt.Errorf("error in configuration, %s should only be used in Composer 3", key)
+		} else {
+			return fmt.Errorf("error in configuration, %s should not be used in Composer 3", key)
+		}
+	}
+	return nil
+}
+
+func versionValidationCustomizeDiffFunc(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	composer3FieldUsagePolicy := map[string]bool{
+		"config.0.node_config.0.max_pods_per_node":                           false, // not allowed in composer 3
+		"config.0.node_config.0.enable_ip_masq_agent":                        false,
+		"config.0.node_config.0.config.0.node_config.0.ip_allocation_policy": false,
+		"config.0.private_environment_config":                                false,
+		"config.0.master_authorized_networks_config":                         false,
+		"config.0.node_config.0.composer_network_attachment":                 true, // allowed only in composer 3
+		"config.0.node_config.0.composer_internal_ipv4_cidr_block":           true,
+		"config.0.software_config.0.web_server_plugins_mode":                 true,
+		"config.0.enable_private_environment":                                true,
+		"config.0.enable_private_builds_only":                                true,
+		"config.0.workloads_config.0.dag_processor":                          true,
+	}
+	for key, allowed := range composer3FieldUsagePolicy {
+		if err := validateComposer3FieldUsage(d, key, allowed); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateComposerInternalIpv4CidrBlock(v any, k string) (warns []string, errs []error) {
+	cidr_range := v.(string)
+	_, ip_net, err := net.ParseCIDR(cidr_range)
+	if err != nil {
+		errs = append(errs, fmt.Errorf("Invalid CIDR range: %s", err))
+		return
+	}
+	ones, _ := ip_net.Mask.Size()
+	if ones != 20 {
+		errs = append(errs, fmt.Errorf("Composer Internal IPv4 CIDR range must have size /20"))
+	}
+	return
 }

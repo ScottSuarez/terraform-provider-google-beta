@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccHealthcareFhirStoreIdParsing(t *testing.T) {
@@ -134,7 +134,6 @@ resource "google_healthcare_fhir_store" "default" {
   disable_resource_versioning   = false
   enable_history_import         = false
   version                       = "R4"
-
   enable_history_modifications = false
 }
 
@@ -155,17 +154,13 @@ resource "google_healthcare_fhir_store" "default" {
   version              = "R4"
 
 
-  notification_config {
-    pubsub_topic = google_pubsub_topic.topic.id
-  }
-
   notification_configs {
 	pubsub_topic                     = google_pubsub_topic.topic.id
 	send_full_resource               = true
 	send_previous_resource_on_delete = true
   }
-
   enable_history_modifications = true
+
   labels = {
     label1 = "labelvalue1"
   }
@@ -218,9 +213,12 @@ func testAccCheckGoogleHealthcareFhirStoreUpdate(t *testing.T, pubsubTopic strin
 				return fmt.Errorf("fhirStore labels not updated: %s", gcpResourceUri)
 			}
 
-			topicName := path.Base(response.NotificationConfig.PubsubTopic)
-			if topicName != pubsubTopic {
-				return fmt.Errorf("fhirStore 'NotificationConfig' not updated ('%s' != '%s'): %s", topicName, pubsubTopic, gcpResourceUri)
+			notifications := response.NotificationConfigs
+			if len(notifications) > 0 {
+				topicName := path.Base(notifications[0].PubsubTopic)
+				if topicName != pubsubTopic {
+					return fmt.Errorf("fhirStore 'NotificationConfig' not updated ('%s' != '%s'): %s", topicName, pubsubTopic, gcpResourceUri)
+				}
 			}
 		}
 

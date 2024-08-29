@@ -17,12 +17,10 @@ description: |-
   A network attachment is a resource that lets a producer Virtual Private Cloud (VPC) network initiate connections to a consumer VPC network through a Private Service Connect interface.
 ---
 
-# google\_compute\_network\_attachment
+# google_compute_network_attachment
 
 A network attachment is a resource that lets a producer Virtual Private Cloud (VPC) network initiate connections to a consumer VPC network through a Private Service Connect interface.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about NetworkAttachment, see:
 
@@ -35,7 +33,6 @@ To get more information about NetworkAttachment, see:
 
 ```hcl
 resource "google_compute_network_attachment" "default" {
-    provider = google-beta
     name = "basic-network-attachment"
     region = "us-central1"
     description = "basic network attachment description"
@@ -55,13 +52,11 @@ resource "google_compute_network_attachment" "default" {
 }
 
 resource "google_compute_network" "default" {
-    provider = google-beta
     name = "basic-network"
     auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-    provider = google-beta
     name = "basic-subnetwork"
     region = "us-central1"
 
@@ -70,23 +65,23 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_project" "rejected_producer_project" {
-    provider = google-beta
     project_id      = "prj-rejected"
     name            = "prj-rejected"
     org_id          = "123456789"
     billing_account = "000000-0000000-0000000-000000"
+    deletion_policy = "DELETE"
 }
 
 resource "google_project" "accepted_producer_project" {
-    provider = google-beta
     project_id      = "prj-accepted"
     name            = "prj-accepted"
     org_id          = "123456789"
     billing_account = "000000-0000000-0000000-000000"
+    deletion_policy = "DELETE"
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_attachment_instance_usage&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_attachment_instance_usage&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>

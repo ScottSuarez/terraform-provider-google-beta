@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccCloudRunDomainMapping_cloudRunDomainMappingBasicExample(t *testing.T
 				ResourceName:            "google_cloud_run_domain_mapping.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "metadata.0.labels", "metadata.0.annotations", "metadata.0.terraform_labels"},
+				ImportStateVerifyIgnore: []string{"location", "metadata.0.annotations", "metadata.0.labels", "metadata.0.terraform_labels", "name"},
 			},
 		},
 	})

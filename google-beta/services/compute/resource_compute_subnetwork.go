@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -54,6 +55,37 @@ func IsShrinkageIpCidr(_ context.Context, old, new, _ interface{}) bool {
 	return true
 }
 
+func sendSecondaryIpRangeIfEmptyDiff(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	// on create, return immediately as we don't need to determine if the value is empty or not
+	if diff.Id() == "" {
+		return nil
+	}
+
+	sendZero := diff.Get("send_secondary_ip_range_if_empty").(bool)
+	if !sendZero {
+		return nil
+	}
+
+	configSecondaryIpRange := diff.GetRawConfig().GetAttr("secondary_ip_range")
+	if !configSecondaryIpRange.IsKnown() {
+		return nil
+	}
+	configValueIsEmpty := configSecondaryIpRange.IsNull() || configSecondaryIpRange.LengthInt() == 0
+
+	stateSecondaryIpRange := diff.GetRawState().GetAttr("secondary_ip_range")
+	if !stateSecondaryIpRange.IsKnown() {
+		return nil
+	}
+	stateValueIsEmpty := stateSecondaryIpRange.IsNull() || stateSecondaryIpRange.LengthInt() == 0
+
+	if configValueIsEmpty && !stateValueIsEmpty {
+		log.Printf("[DEBUG] setting secondary_ip_range to newly empty")
+		diff.SetNew("secondary_ip_range", make([]interface{}, 0))
+	}
+
+	return nil
+}
+
 func ResourceComputeSubnetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeSubnetworkCreate,
@@ -74,19 +106,11 @@ func ResourceComputeSubnetwork() *schema.Resource {
 		CustomizeDiff: customdiff.All(
 			resourceComputeSubnetworkSecondaryIpRangeSetStyleDiff,
 			customdiff.ForceNewIfChange("ip_cidr_range", IsShrinkageIpCidr),
+			sendSecondaryIpRangeIfEmptyDiff,
 			tpgresource.DefaultProviderProject,
 		),
 
 		Schema: map[string]*schema.Schema{
-			"ip_cidr_range": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: verify.ValidateIpCidrRange,
-				Description: `The range of internal addresses that are owned by this subnetwork.
-Provide this property when you create the subnetwork. For example,
-10.0.0.0/8 or 192.168.0.0/16. Ranges must be unique and
-non-overlapping within a network. Only IPv4 is supported.`,
-			},
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -131,6 +155,17 @@ creation time.`,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `The range of external IPv6 addresses that are owned by this subnetwork.`,
+			},
+			"ip_cidr_range": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: verify.ValidateIpCidrRange,
+				Description: `The range of internal addresses that are owned by this subnetwork.
+Provide this property when you create the subnetwork. For example,
+10.0.0.0/8 or 192.168.0.0/16. Ranges must be unique and
+non-overlapping within a network. Only IPv4 is supported.
+Field is optional when 'reserved_internal_range' is defined, otherwise required.`,
 			},
 			"ipv6_access_type": {
 				Type:         schema.TypeString,
@@ -238,6 +273,14 @@ If unspecified, the purpose defaults to 'PRIVATE_RFC_1918'.`,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `The GCP region for this subnetwork.`,
 			},
+			"reserved_internal_range": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description: `The ID of the reserved internal range. Must be prefixed with 'networkconnectivity.googleapis.com'
+E.g. 'networkconnectivity.googleapis.com/projects/{project}/locations/global/internalRanges/{rangeId}'`,
+			},
 			"role": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -249,31 +292,19 @@ An 'ACTIVE' subnetwork is one that is currently being used for Envoy-based load 
 A 'BACKUP' subnetwork is one that is ready to be promoted to 'ACTIVE' or is currently draining. Possible values: ["ACTIVE", "BACKUP"]`,
 			},
 			"secondary_ip_range": {
-				Type:       schema.TypeList,
-				Computed:   true,
-				Optional:   true,
-				ConfigMode: schema.SchemaConfigModeAttr,
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
 				Description: `An array of configurations for secondary IP ranges for VM instances
 contained in this subnetwork. The primary IP of such VM must belong
 to the primary ipCidrRange of the subnetwork. The alias IPs may belong
 to either primary or secondary ranges.
 
 **Note**: This field uses [attr-as-block mode](https://www.terraform.io/docs/configuration/attr-as-blocks.html) to avoid
-breaking users during the 0.12 upgrade. To explicitly send a list
-of zero objects you must use the following syntax:
-'example=[]'
-For more details about this behavior, see [this section](https://www.terraform.io/docs/configuration/attr-as-blocks.html#defining-a-fixed-object-collection-value).`,
+breaking users during the 0.12 upgrade. To explicitly send a list of zero objects,
+set 'send_secondary_ip_range_if_empty = true'`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"ip_cidr_range": {
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: verify.ValidateIpCidrRange,
-							Description: `The range of IP addresses belonging to this subnetwork secondary
-range. Provide this property when you create the subnetwork.
-Ranges must be unique and non-overlapping with all primary and
-secondary IP ranges within a network. Only IPv4 is supported.`,
-						},
 						"range_name": {
 							Type:         schema.TypeString,
 							Required:     true,
@@ -282,6 +313,24 @@ secondary IP ranges within a network. Only IPv4 is supported.`,
 when adding an alias IP range to a VM instance. The name must
 be 1-63 characters long, and comply with RFC1035. The name
 must be unique within the subnetwork.`,
+						},
+						"ip_cidr_range": {
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: verify.ValidateIpCidrRange,
+							Description: `The range of IP addresses belonging to this subnetwork secondary
+range. Provide this property when you create the subnetwork.
+Ranges must be unique and non-overlapping with all primary and
+secondary IP ranges within a network. Only IPv4 is supported.
+Field is optional when 'reserved_internal_range' is defined, otherwise required.`,
+						},
+						"reserved_internal_range": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+							Description: `The ID of the reserved internal range. Must be prefixed with 'networkconnectivity.googleapis.com'
+E.g. 'networkconnectivity.googleapis.com/projects/{project}/locations/global/internalRanges/{rangeId}'`,
 						},
 					},
 				},
@@ -314,6 +363,16 @@ outside this subnetwork.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `The range of internal IPv6 addresses that are owned by this subnetwork.`,
+			},
+			"send_secondary_ip_range_if_empty": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Controls the removal behavior of secondary_ip_range.
+When false, removing secondary_ip_range from config will not produce a diff as
+the provider will default to the API's value.
+When true, the provider will treat removing secondary_ip_range as sending an
+empty list of secondary IP ranges to the API.
+Defaults to false.`,
 			},
 			"fingerprint": {
 				Type:        schema.TypeString,
@@ -397,6 +456,12 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("ip_cidr_range"); !tpgresource.IsEmptyValue(reflect.ValueOf(ipCidrRangeProp)) && (ok || !reflect.DeepEqual(v, ipCidrRangeProp)) {
 		obj["ipCidrRange"] = ipCidrRangeProp
+	}
+	reservedInternalRangeProp, err := expandComputeSubnetworkReservedInternalRange(d.Get("reserved_internal_range"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("reserved_internal_range"); !tpgresource.IsEmptyValue(reflect.ValueOf(reservedInternalRangeProp)) && (ok || !reflect.DeepEqual(v, reservedInternalRangeProp)) {
+		obj["reservedInternalRange"] = reservedInternalRangeProp
 	}
 	nameProp, err := expandComputeSubnetworkName(d.Get("name"), d, config)
 	if err != nil {
@@ -496,6 +561,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -504,6 +570,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Subnetwork: %s", err)
@@ -556,17 +623,20 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
@@ -581,6 +651,9 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("ip_cidr_range", flattenComputeSubnetworkIpCidrRange(res["ipCidrRange"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("reserved_internal_range", flattenComputeSubnetworkReservedInternalRange(res["reservedInternalRange"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("name", flattenComputeSubnetworkName(res["name"], d, config)); err != nil {
@@ -667,6 +740,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -680,6 +755,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -709,6 +785,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -722,6 +800,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -792,6 +871,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -805,6 +886,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -857,6 +939,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -870,6 +954,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -922,6 +1007,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -935,6 +1022,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -987,6 +1075,8 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -1000,6 +1090,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
@@ -1017,6 +1108,78 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 	d.Partial(false)
 
+	if v, ok := d.GetOk("send_secondary_ip_range_if_empty"); ok && v.(bool) {
+		if sv, ok := d.GetOk("secondary_ip_range"); ok {
+			configValue := d.GetRawConfig().GetAttr("secondary_ip_range")
+			stateValue := sv.([]interface{})
+			if configValue.LengthInt() == 0 && len(stateValue) != 0 {
+				log.Printf("[DEBUG] Sending empty secondary_ip_range in update")
+				obj := make(map[string]interface{})
+				obj["secondaryIpRanges"] = make([]interface{}, 0)
+
+				// The rest is the same as the secondary_ip_range generated update code
+				// without the secondaryIpRangesProp logic
+
+				getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+				if err != nil {
+					return err
+				}
+
+				// err == nil indicates that the billing_project value was found
+				if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+					billingProject = bp
+				}
+
+				getRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+					Config:    config,
+					Method:    "GET",
+					Project:   billingProject,
+					RawURL:    getUrl,
+					UserAgent: userAgent,
+				})
+				if err != nil {
+					return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
+				}
+
+				obj["fingerprint"] = getRes["fingerprint"]
+
+				url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+				if err != nil {
+					return err
+				}
+
+				headers := make(http.Header)
+
+				// err == nil indicates that the billing_project value was found
+				if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+					billingProject = bp
+				}
+
+				res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+					Config:    config,
+					Method:    "PATCH",
+					Project:   billingProject,
+					RawURL:    url,
+					UserAgent: userAgent,
+					Body:      obj,
+					Timeout:   d.Timeout(schema.TimeoutUpdate),
+					Headers:   headers,
+				})
+				if err != nil {
+					return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
+				} else {
+					log.Printf("[DEBUG] Finished updating Subnetwork %q: %#v", d.Id(), res)
+				}
+
+				err = ComputeOperationWaitTime(
+					config, res, project, "Updating Subnetwork", userAgent,
+					d.Timeout(schema.TimeoutUpdate))
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
 	return resourceComputeSubnetworkRead(d, meta)
 }
 
@@ -1041,13 +1204,15 @@ func resourceComputeSubnetworkDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Subnetwork %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Subnetwork %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1056,6 +1221,7 @@ func resourceComputeSubnetworkDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Subnetwork")
@@ -1091,6 +1257,8 @@ func resourceComputeSubnetworkImport(d *schema.ResourceData, meta interface{}) (
 	}
 	d.SetId(id)
 
+	// Explicitly set virtual fields to default values on import
+
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -1108,6 +1276,13 @@ func flattenComputeSubnetworkGatewayAddress(v interface{}, d *schema.ResourceDat
 
 func flattenComputeSubnetworkIpCidrRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenComputeSubnetworkReservedInternalRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeSubnetworkName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1142,8 +1317,9 @@ func flattenComputeSubnetworkSecondaryIpRange(v interface{}, d *schema.ResourceD
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"range_name":    flattenComputeSubnetworkSecondaryIpRangeRangeName(original["rangeName"], d, config),
-			"ip_cidr_range": flattenComputeSubnetworkSecondaryIpRangeIpCidrRange(original["ipCidrRange"], d, config),
+			"range_name":              flattenComputeSubnetworkSecondaryIpRangeRangeName(original["rangeName"], d, config),
+			"ip_cidr_range":           flattenComputeSubnetworkSecondaryIpRangeIpCidrRange(original["ipCidrRange"], d, config),
+			"reserved_internal_range": flattenComputeSubnetworkSecondaryIpRangeReservedInternalRange(original["reservedInternalRange"], d, config),
 		})
 	}
 	return transformed
@@ -1154,6 +1330,13 @@ func flattenComputeSubnetworkSecondaryIpRangeRangeName(v interface{}, d *schema.
 
 func flattenComputeSubnetworkSecondaryIpRangeIpCidrRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenComputeSubnetworkSecondaryIpRangeReservedInternalRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
 }
 
 func flattenComputeSubnetworkPrivateIpGoogleAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1236,6 +1419,10 @@ func expandComputeSubnetworkIpCidrRange(v interface{}, d tpgresource.TerraformRe
 	return v, nil
 }
 
+func expandComputeSubnetworkReservedInternalRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeSubnetworkName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1280,6 +1467,13 @@ func expandComputeSubnetworkSecondaryIpRange(v interface{}, d tpgresource.Terraf
 			transformed["ipCidrRange"] = transformedIpCidrRange
 		}
 
+		transformedReservedInternalRange, err := expandComputeSubnetworkSecondaryIpRangeReservedInternalRange(original["reserved_internal_range"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedReservedInternalRange); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["reservedInternalRange"] = transformedReservedInternalRange
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1290,6 +1484,10 @@ func expandComputeSubnetworkSecondaryIpRangeRangeName(v interface{}, d tpgresour
 }
 
 func expandComputeSubnetworkSecondaryIpRangeIpCidrRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkSecondaryIpRangeReservedInternalRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

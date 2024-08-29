@@ -17,7 +17,7 @@ description: |-
   Standard App Version resource to create a new version of standard GAE Application.
 ---
 
-# google\_app\_engine\_standard\_app\_version
+# google_app_engine_standard_app_version
 
 Standard App Version resource to create a new version of standard GAE Application.
 Learn about the differences between the standard environment and the flexible environment
@@ -55,7 +55,7 @@ resource "google_project_iam_member" "storage_viewer" {
 resource "google_app_engine_standard_app_version" "myapp_v1" {
   version_id = "v1"
   service    = "myapp"
-  runtime    = "nodejs10"
+  runtime    = "nodejs20"
 
   entrypoint {
     shell = "node ./app.js"
@@ -92,7 +92,7 @@ resource "google_app_engine_standard_app_version" "myapp_v1" {
 resource "google_app_engine_standard_app_version" "myapp_v2" {
   version_id      = "v2"
   service         = "myapp"
-  runtime         = "nodejs10"
+  runtime         = "nodejs20"
   app_engine_apis = true
 
   entrypoint {

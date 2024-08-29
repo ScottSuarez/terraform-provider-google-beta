@@ -20,6 +20,7 @@ package redis
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -94,6 +95,31 @@ projects/{network_project_id_or_number}/global/networks/{network_id}.`,
 				Description:  `Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster. Default value: "AUTH_MODE_DISABLED" Possible values: ["AUTH_MODE_UNSPECIFIED", "AUTH_MODE_IAM_AUTH", "AUTH_MODE_DISABLED"]`,
 				Default:      "AUTH_MODE_DISABLED",
 			},
+			"deletion_protection_enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Optional. Indicates if the cluster is deletion protected or not.
+If the value if set to true, any delete cluster operation will fail.
+Default value is true.`,
+				Default: true,
+			},
+			"node_type": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"REDIS_SHARED_CORE_NANO", "REDIS_HIGHMEM_MEDIUM", "REDIS_HIGHMEM_XLARGE", "REDIS_STANDARD_SMALL", ""}),
+				Description: `The nodeType for the Redis cluster.
+If not provided, REDIS_HIGHMEM_MEDIUM will be used as default Possible values: ["REDIS_SHARED_CORE_NANO", "REDIS_HIGHMEM_MEDIUM", "REDIS_HIGHMEM_XLARGE", "REDIS_STANDARD_SMALL"]`,
+			},
+			"redis_configs": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Configure Redis Cluster behavior using a subset of native Redis configuration parameters.
+Please check Memorystore documentation for the list of supported parameters:
+https://cloud.google.com/memorystore/docs/cluster/supported-instance-configurations`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"region": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -114,6 +140,30 @@ projects/{network_project_id_or_number}/global/networks/{network_id}.`,
 				Description: `Optional. The in-transit encryption for the Redis cluster.
 If not provided, encryption is disabled for the cluster. Default value: "TRANSIT_ENCRYPTION_MODE_DISABLED" Possible values: ["TRANSIT_ENCRYPTION_MODE_UNSPECIFIED", "TRANSIT_ENCRYPTION_MODE_DISABLED", "TRANSIT_ENCRYPTION_MODE_SERVER_AUTHENTICATION"]`,
 				Default: "TRANSIT_ENCRYPTION_MODE_DISABLED",
+			},
+			"zone_distribution_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Immutable. Zone distribution config for Memorystore Redis cluster.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mode": {
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"MULTI_ZONE", "SINGLE_ZONE", ""}),
+							Description: `Immutable. The mode for zone distribution for Memorystore Redis cluster.
+If not provided, MULTI_ZONE will be used as default Possible values: ["MULTI_ZONE", "SINGLE_ZONE"]`,
+						},
+						"zone": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Immutable. The zone for single zone Memorystore Redis cluster.`,
+						},
+					},
+				},
 			},
 			"create_time": {
 				Type:     schema.TypeString,
@@ -160,6 +210,11 @@ projects/{network_project_id}/global/networks/{network_id}.`,
 						},
 					},
 				},
+			},
+			"precise_size_gb": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: `Output only. Redis memory precise size in GB for the entire cluster.`,
 			},
 			"psc_connections": {
 				Type:        schema.TypeList,
@@ -270,6 +325,18 @@ func resourceRedisClusterCreate(d *schema.ResourceData, meta interface{}) error 
 	} else if v, ok := d.GetOkExists("transit_encryption_mode"); !tpgresource.IsEmptyValue(reflect.ValueOf(transitEncryptionModeProp)) && (ok || !reflect.DeepEqual(v, transitEncryptionModeProp)) {
 		obj["transitEncryptionMode"] = transitEncryptionModeProp
 	}
+	nodeTypeProp, err := expandRedisClusterNodeType(d.Get("node_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("node_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(nodeTypeProp)) && (ok || !reflect.DeepEqual(v, nodeTypeProp)) {
+		obj["nodeType"] = nodeTypeProp
+	}
+	zoneDistributionConfigProp, err := expandRedisClusterZoneDistributionConfig(d.Get("zone_distribution_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("zone_distribution_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(zoneDistributionConfigProp)) && (ok || !reflect.DeepEqual(v, zoneDistributionConfigProp)) {
+		obj["zoneDistributionConfig"] = zoneDistributionConfigProp
+	}
 	pscConfigsProp, err := expandRedisClusterPscConfigs(d.Get("psc_configs"), d, config)
 	if err != nil {
 		return err
@@ -287,6 +354,18 @@ func resourceRedisClusterCreate(d *schema.ResourceData, meta interface{}) error 
 		return err
 	} else if v, ok := d.GetOkExists("shard_count"); !tpgresource.IsEmptyValue(reflect.ValueOf(shardCountProp)) && (ok || !reflect.DeepEqual(v, shardCountProp)) {
 		obj["shardCount"] = shardCountProp
+	}
+	deletionProtectionEnabledProp, err := expandRedisClusterDeletionProtectionEnabled(d.Get("deletion_protection_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("deletion_protection_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(deletionProtectionEnabledProp)) && (ok || !reflect.DeepEqual(v, deletionProtectionEnabledProp)) {
+		obj["deletionProtectionEnabled"] = deletionProtectionEnabledProp
+	}
+	redisConfigsProp, err := expandRedisClusterRedisConfigs(d.Get("redis_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("redis_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(redisConfigsProp)) && (ok || !reflect.DeepEqual(v, redisConfigsProp)) {
+		obj["redisConfigs"] = redisConfigsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{RedisBasePath}}projects/{{project}}/locations/{{region}}/clusters?clusterId={{name}}")
@@ -308,6 +387,7 @@ func resourceRedisClusterCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -316,6 +396,7 @@ func resourceRedisClusterCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Cluster: %s", err)
@@ -368,12 +449,14 @@ func resourceRedisClusterRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("RedisCluster %q", d.Id()))
@@ -406,6 +489,12 @@ func resourceRedisClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("transit_encryption_mode", flattenRedisClusterTransitEncryptionMode(res["transitEncryptionMode"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
+	if err := d.Set("node_type", flattenRedisClusterNodeType(res["nodeType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("zone_distribution_config", flattenRedisClusterZoneDistributionConfig(res["zoneDistributionConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
 	if err := d.Set("discovery_endpoints", flattenRedisClusterDiscoveryEndpoints(res["discoveryEndpoints"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
@@ -421,7 +510,16 @@ func resourceRedisClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("size_gb", flattenRedisClusterSizeGb(res["sizeGb"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
+	if err := d.Set("precise_size_gb", flattenRedisClusterPreciseSizeGb(res["preciseSizeGb"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
 	if err := d.Set("shard_count", flattenRedisClusterShardCount(res["shardCount"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("deletion_protection_enabled", flattenRedisClusterDeletionProtectionEnabled(res["deletionProtectionEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("redis_configs", flattenRedisClusterRedisConfigs(res["redisConfigs"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
 
@@ -462,6 +560,18 @@ func resourceRedisClusterUpdate(d *schema.ResourceData, meta interface{}) error 
 	} else if v, ok := d.GetOkExists("shard_count"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, shardCountProp)) {
 		obj["shardCount"] = shardCountProp
 	}
+	deletionProtectionEnabledProp, err := expandRedisClusterDeletionProtectionEnabled(d.Get("deletion_protection_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("deletion_protection_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, deletionProtectionEnabledProp)) {
+		obj["deletionProtectionEnabled"] = deletionProtectionEnabledProp
+	}
+	redisConfigsProp, err := expandRedisClusterRedisConfigs(d.Get("redis_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("redis_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, redisConfigsProp)) {
+		obj["redisConfigs"] = redisConfigsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{RedisBasePath}}projects/{{project}}/locations/{{region}}/clusters/{{name}}")
 	if err != nil {
@@ -469,6 +579,7 @@ func resourceRedisClusterUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Updating Cluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("psc_configs") {
@@ -481,6 +592,14 @@ func resourceRedisClusterUpdate(d *schema.ResourceData, meta interface{}) error 
 
 	if d.HasChange("shard_count") {
 		updateMask = append(updateMask, "shardCount")
+	}
+
+	if d.HasChange("deletion_protection_enabled") {
+		updateMask = append(updateMask, "deletionProtectionEnabled")
+	}
+
+	if d.HasChange("redis_configs") {
+		updateMask = append(updateMask, "redisConfigs")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -504,6 +623,7 @@ func resourceRedisClusterUpdate(d *schema.ResourceData, meta interface{}) error 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -545,13 +665,15 @@ func resourceRedisClusterDelete(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -560,6 +682,7 @@ func resourceRedisClusterDelete(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Cluster")
@@ -615,6 +738,33 @@ func flattenRedisClusterAuthorizationMode(v interface{}, d *schema.ResourceData,
 }
 
 func flattenRedisClusterTransitEncryptionMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenRedisClusterNodeType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenRedisClusterZoneDistributionConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["mode"] =
+		flattenRedisClusterZoneDistributionConfigMode(original["mode"], d, config)
+	transformed["zone"] =
+		flattenRedisClusterZoneDistributionConfigZone(original["zone"], d, config)
+	return []interface{}{transformed}
+}
+func flattenRedisClusterZoneDistributionConfigMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenRedisClusterZoneDistributionConfigZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -814,6 +964,10 @@ func flattenRedisClusterSizeGb(v interface{}, d *schema.ResourceData, config *tr
 	return v // let terraform core handle it otherwise
 }
 
+func flattenRedisClusterPreciseSizeGb(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenRedisClusterShardCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
@@ -831,11 +985,57 @@ func flattenRedisClusterShardCount(v interface{}, d *schema.ResourceData, config
 	return v // let terraform core handle it otherwise
 }
 
+func flattenRedisClusterDeletionProtectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenRedisClusterRedisConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandRedisClusterAuthorizationMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandRedisClusterTransitEncryptionMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisClusterNodeType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisClusterZoneDistributionConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMode, err := expandRedisClusterZoneDistributionConfigMode(original["mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mode"] = transformedMode
+	}
+
+	transformedZone, err := expandRedisClusterZoneDistributionConfigZone(original["zone"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedZone); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["zone"] = transformedZone
+	}
+
+	return transformed, nil
+}
+
+func expandRedisClusterZoneDistributionConfigMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisClusterZoneDistributionConfigZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -871,4 +1071,19 @@ func expandRedisClusterReplicaCount(v interface{}, d tpgresource.TerraformResour
 
 func expandRedisClusterShardCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandRedisClusterDeletionProtectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisClusterRedisConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }

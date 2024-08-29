@@ -5,7 +5,7 @@ package dataform_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -26,7 +26,7 @@ func TestAccDataformRepository_updated(t *testing.T) {
 				Config: testAccDataformRepository_basic(context),
 			},
 			{
-				ResourceName:            "google_dataform_repository.dataform_respository",
+				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
@@ -35,7 +35,7 @@ func TestAccDataformRepository_updated(t *testing.T) {
 				Config: testAccDataformRepository_updated(context),
 			},
 			{
-				ResourceName:            "google_dataform_repository.dataform_respository",
+				ResourceName:            "google_dataform_repository.dataform_repository",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
@@ -67,7 +67,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
 
@@ -95,7 +95,7 @@ resource "google_sourcerepo_repository" "git_repository" {
 
 resource "google_secret_manager_secret" "secret" {
   provider = google-beta
-  secret_id = "secret"
+  secret_id = "tf-test-secret%{random_suffix}"
 
   replication {
     auto {}
@@ -109,7 +109,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
   secret_data = "tf-test-secret-data%{random_suffix}"
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
   name = "tf_test_dataform_repository%{random_suffix}"
 

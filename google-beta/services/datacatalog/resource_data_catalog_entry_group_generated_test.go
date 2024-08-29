@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDataCatalogEntryGroup_dataCatalogEntryGroupBasicExample(t *testing.T
 				ResourceName:            "google_data_catalog_entry_group.basic_entry_group",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "entry_group_id"},
+				ImportStateVerifyIgnore: []string{"entry_group_id", "region"},
 			},
 		},
 	})
@@ -82,7 +82,7 @@ func TestAccDataCatalogEntryGroup_dataCatalogEntryGroupFullExample(t *testing.T)
 				ResourceName:            "google_data_catalog_entry_group.basic_entry_group",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "entry_group_id"},
+				ImportStateVerifyIgnore: []string{"entry_group_id", "region"},
 			},
 		},
 	})

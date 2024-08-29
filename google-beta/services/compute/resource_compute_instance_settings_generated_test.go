@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -37,7 +37,7 @@ func TestAccComputeInstanceSettings_instanceSettingsBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceSettingsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -57,7 +57,6 @@ func testAccComputeInstanceSettings_instanceSettingsBasicExample(context map[str
 	return acctest.Nprintf(`
 
 resource "google_compute_instance_settings" "gce_instance_settings" {
-  provider = google-beta
   zone = "us-east7-b"
   metadata {
     items = {
@@ -65,7 +64,6 @@ resource "google_compute_instance_settings" "gce_instance_settings" {
     }
   }
 }
-
 `, context)
 }
 

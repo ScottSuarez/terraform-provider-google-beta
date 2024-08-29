@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccBeyondcorpAppGateway_beyondcorpAppGatewayBasicExample(t *testing.T) 
 				ResourceName:            "google_beyondcorp_app_gateway.app_gateway",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -85,7 +85,7 @@ func TestAccBeyondcorpAppGateway_beyondcorpAppGatewayFullExample(t *testing.T) {
 				ResourceName:            "google_beyondcorp_app_gateway.app_gateway",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "region", "terraform_labels"},
 			},
 		},
 	})

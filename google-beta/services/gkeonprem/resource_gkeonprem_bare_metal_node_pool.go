@@ -20,6 +20,7 @@ package gkeonprem
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -97,9 +98,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 										Elem: &schema.Schema{Type: schema.TypeString},
 									},
 									"node_ip": {
@@ -122,9 +123,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 							Elem: &schema.Schema{Type: schema.TypeString},
 						},
 						"operating_system": {
@@ -339,6 +340,7 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -347,6 +349,7 @@ func resourceGkeonpremBareMetalNodePoolCreate(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating BareMetalNodePool: %s", err)
@@ -406,12 +409,14 @@ func resourceGkeonpremBareMetalNodePoolRead(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GkeonpremBareMetalNodePool %q", d.Id()))
@@ -502,6 +507,7 @@ func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Updating BareMetalNodePool %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -537,6 +543,7 @@ func resourceGkeonpremBareMetalNodePoolUpdate(d *schema.ResourceData, meta inter
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -578,13 +585,15 @@ func resourceGkeonpremBareMetalNodePoolDelete(d *schema.ResourceData, meta inter
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting BareMetalNodePool %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting BareMetalNodePool %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -593,6 +602,7 @@ func resourceGkeonpremBareMetalNodePoolDelete(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "BareMetalNodePool")

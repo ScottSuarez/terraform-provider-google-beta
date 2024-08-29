@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccLoggingLinkedDataset_loggingLinkedDatasetBasicExample(t *testing.T) 
 				ResourceName:            "google_logging_linked_dataset.logging_linked_dataset",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"link_id", "parent", "location", "bucket"},
+				ImportStateVerifyIgnore: []string{"bucket", "link_id", "location", "parent"},
 			},
 		},
 	})
@@ -94,7 +94,7 @@ func TestAccLoggingLinkedDataset_loggingLinkedDatasetAllParamsExample(t *testing
 				ResourceName:            "google_logging_linked_dataset.logging_linked_dataset",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"link_id", "parent", "location", "bucket"},
+				ImportStateVerifyIgnore: []string{"bucket", "link_id", "location", "parent"},
 			},
 		},
 	})

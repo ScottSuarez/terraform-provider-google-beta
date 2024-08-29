@@ -17,7 +17,7 @@ description: |-
   Replace all existing Access Levels in an Access Policy with the Access Levels provided.
 ---
 
-# google\_access\_context\_manager\_access\_levels
+# google_access_context_manager_access_levels
 
 Replace all existing Access Levels in an Access Policy with the Access Levels provided. This is done atomically.
 This is a bulk edit of all Access Levels and may override existing Access Levels created by `google_access_context_manager_access_level`,
@@ -29,6 +29,12 @@ To get more information about AccessLevels, see:
 * [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1/accessPolicies.accessLevels)
 * How-to Guides
     * [Access Policy Quickstart](https://cloud.google.com/access-context-manager/docs/quickstart)
+
+~> **Warning:** This resource is authoritative over the access levels under an access policy. Due to a limitation in Terraform,
+it will overwrite all preexisting access levels during a create opration without displaying the old values on
+the left side of plan. To prevent this, we recommend importing the resource before applying it if overwriting
+preexisting rules, as the plan will correctly display the complete changes to your access policy if the
+resource is present in state.
 
 ## Example Usage - Access Context Manager Access Levels Basic
 

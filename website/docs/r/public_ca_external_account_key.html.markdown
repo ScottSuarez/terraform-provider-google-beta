@@ -17,7 +17,7 @@ description: |-
   A representation of an ExternalAccountKey used for external account binding within ACME.
 ---
 
-# google\_public\_ca\_external\_account\_key
+# google_public_ca_external_account_key
 
 A representation of an ExternalAccountKey used for external account binding within ACME.
 
@@ -27,8 +27,8 @@ To get more information about ExternalAccountKey, see:
 * [API documentation](https://cloud.google.com/certificate-manager/docs/reference/public-ca/rest/v1/projects.locations.externalAccountKeys/create)
 * How-to Guides
     * [Official Documentation](https://cloud.google.com/certificate-manager/docs/public-ca)
-    * [Request EAB key ID and HMAC](https://cloud.google.com/certificate-manager/docs/public-ca-tutorial#request-key-hmac)
     * [Request Certificate Using Public CA](https://cloud.google.com/certificate-manager/docs/public-ca-tutorial)
+    * [Request EAB key ID and HMAC](https://cloud.google.com/certificate-manager/docs/public-ca-tutorial#request-key-hmac)
 
 ~> **Warning:** This resource is create-only and could not be read from the API.
 On delete, the resource would be removed from the state.

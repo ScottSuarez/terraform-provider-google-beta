@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -78,6 +79,11 @@ except the last character, which cannot be a dash.`,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `An optional description of this resource.`,
+			},
+			"shared_secret": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Output Only. The shared secret to be used for reverse DNS verification.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -146,6 +152,7 @@ func resourceComputePublicAdvertisedPrefixCreate(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -154,6 +161,7 @@ func resourceComputePublicAdvertisedPrefixCreate(d *schema.ResourceData, meta in
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating PublicAdvertisedPrefix: %s", err)
@@ -206,12 +214,14 @@ func resourceComputePublicAdvertisedPrefixRead(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputePublicAdvertisedPrefix %q", d.Id()))
@@ -231,6 +241,9 @@ func resourceComputePublicAdvertisedPrefixRead(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error reading PublicAdvertisedPrefix: %s", err)
 	}
 	if err := d.Set("ip_cidr_range", flattenComputePublicAdvertisedPrefixIpCidrRange(res["ipCidrRange"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PublicAdvertisedPrefix: %s", err)
+	}
+	if err := d.Set("shared_secret", flattenComputePublicAdvertisedPrefixSharedSecret(res["sharedSecret"], d, config)); err != nil {
 		return fmt.Errorf("Error reading PublicAdvertisedPrefix: %s", err)
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -261,13 +274,15 @@ func resourceComputePublicAdvertisedPrefixDelete(d *schema.ResourceData, meta in
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting PublicAdvertisedPrefix %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting PublicAdvertisedPrefix %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -276,6 +291,7 @@ func resourceComputePublicAdvertisedPrefixDelete(d *schema.ResourceData, meta in
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "PublicAdvertisedPrefix")
@@ -326,6 +342,10 @@ func flattenComputePublicAdvertisedPrefixDnsVerificationIp(v interface{}, d *sch
 }
 
 func flattenComputePublicAdvertisedPrefixIpCidrRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputePublicAdvertisedPrefixSharedSecret(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

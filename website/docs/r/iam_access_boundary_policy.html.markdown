@@ -17,7 +17,7 @@ description: |-
   Represents a collection of access boundary policies to apply to a given resource.
 ---
 
-# google\_iam\_access\_boundary\_policy
+# google_iam_access_boundary_policy
 
 Represents a collection of access boundary policies to apply to a given resource.
 **NOTE**: This is a private feature and users should contact GCP support
@@ -34,6 +34,7 @@ resource "google_project" "project" {
   name            = "my-project"
   org_id          = "123456789"
   billing_account = "000000-0000000-0000000-000000"
+  deletion_policy = "DELETE"
 }
 
 resource "google_access_context_manager_access_level" "test-access" {

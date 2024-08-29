@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -36,8 +36,8 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"site_id":       envvar.GetTestProjectFromEnv(),
 		"custom_domain": "basic.custom.domain.com",
+		"site_id":       envvar.GetTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -53,7 +53,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
 		},
 	})
@@ -93,7 +93,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainFullExample(t
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
 		},
 	})
@@ -126,9 +126,10 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"custom_domain": "run.custom.domain.com",
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":          envvar.GetTestProjectFromEnv(),
+		"custom_domain":       "run.custom.domain.com",
+		"deletion_protection": false,
+		"random_suffix":       acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -143,7 +144,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 				ResourceName:            "google_firebase_hosting_custom_domain.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "custom_domain"},
+				ImportStateVerifyIgnore: []string{"custom_domain", "deletion_protection", "site_id"},
 			},
 		},
 	})
@@ -171,6 +172,8 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  deletion_protection = "%{deletion_protection}"
 }
 
 resource "google_firebase_hosting_version" "default" {

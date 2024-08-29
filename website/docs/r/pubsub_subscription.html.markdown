@@ -18,7 +18,7 @@ description: |-
   specific topic, to be delivered to the subscribing application.
 ---
 
-# google\_pubsub\_subscription
+# google_pubsub_subscription
 
 A named resource representing the stream of messages from a single,
 specific topic, to be delivered to the subscribing application.
@@ -34,7 +34,7 @@ To get more information about Subscription, see:
 by using the `google_project_service_identity` resource.
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_push&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -66,7 +66,7 @@ resource "google_pubsub_subscription" "example" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_pull&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_pull&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -103,7 +103,7 @@ resource "google_pubsub_subscription" "example" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_dead_letter&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_dead_letter&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -130,7 +130,7 @@ resource "google_pubsub_subscription" "example" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_push_bq&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_bq&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -190,7 +190,7 @@ EOF
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_push_bq_table_schema&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_bq_table_schema&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -251,7 +251,73 @@ EOF
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_push_cloudstorage&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_bq_service_account&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Pubsub Subscription Push Bq Service Account
+
+
+```hcl
+resource "google_pubsub_topic" "example" {
+  name = "example-topic"
+}
+
+resource "google_pubsub_subscription" "example" {
+  name  = "example-subscription"
+  topic = google_pubsub_topic.example.id
+
+  bigquery_config {
+    table = "${google_bigquery_table.test.project}.${google_bigquery_table.test.dataset_id}.${google_bigquery_table.test.table_id}"
+    service_account_email = google_service_account.bq_write_service_account.email
+  }
+
+  depends_on = [google_service_account.bq_write_service_account, google_project_iam_member.viewer, google_project_iam_member.editor]
+}
+
+data "google_project" "project" {
+}
+
+resource "google_service_account" "bq_write_service_account" {
+  account_id = "example-bqw"
+  display_name = "BQ Write Service Account"
+}
+
+resource "google_project_iam_member" "viewer" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.metadataViewer"
+  member = "serviceAccount:${google_service_account.bq_write_service_account.email}"
+}
+
+resource "google_project_iam_member" "editor" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.dataEditor"
+  member = "serviceAccount:${google_service_account.bq_write_service_account.email}"
+}
+
+resource "google_bigquery_dataset" "test" {
+  dataset_id = "example_dataset"
+}
+
+resource "google_bigquery_table" "test" {
+  deletion_protection = false
+  table_id   = "example_table"
+  dataset_id = google_bigquery_dataset.test.dataset_id
+
+  schema = <<EOF
+[
+  {
+    "name": "data",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The data"
+  }
+]
+EOF
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_cloudstorage&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -278,11 +344,12 @@ resource "google_pubsub_subscription" "example" {
 
     filename_prefix = "pre-"
     filename_suffix = "-%{random_suffix}"
-  
+    filename_datetime_format = "YYYY-MM-DD/hh_mm_ssZ"
+
     max_bytes = 1000
     max_duration = "300s"
   }
-  depends_on = [ 
+  depends_on = [
     google_storage_bucket.example,
     google_storage_bucket_iam_member.admin,
   ]
@@ -298,7 +365,7 @@ resource "google_storage_bucket_iam_member" "admin" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=pubsub_subscription_push_cloudstorage_avro&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_cloudstorage_avro&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -325,15 +392,16 @@ resource "google_pubsub_subscription" "example" {
 
     filename_prefix = "pre-"
     filename_suffix = "-%{random_suffix}"
-  
+    filename_datetime_format = "YYYY-MM-DD/hh_mm_ssZ"
+
     max_bytes = 1000
     max_duration = "300s"
-  
+
     avro_config {
       write_metadata = true
     }
   }
-  depends_on = [ 
+  depends_on = [
     google_storage_bucket.example,
     google_storage_bucket_iam_member.admin,
   ]
@@ -346,6 +414,62 @@ resource "google_storage_bucket_iam_member" "admin" {
   bucket = google_storage_bucket.example.name
   role   = "roles/storage.admin"
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=pubsub_subscription_push_cloudstorage_service_account&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Pubsub Subscription Push Cloudstorage Service Account
+
+
+```hcl
+resource "google_storage_bucket" "example" {
+  name  = "example-bucket"
+  location = "US"
+  uniform_bucket_level_access = true
+}
+
+resource "google_pubsub_topic" "example" {
+  name = "example-topic"
+}
+
+resource "google_pubsub_subscription" "example" {
+  name  = "example-subscription"
+  topic = google_pubsub_topic.example.id
+
+  cloud_storage_config {
+    bucket = google_storage_bucket.example.name
+
+    filename_prefix = "pre-"
+    filename_suffix = "-%{random_suffix}"
+    filename_datetime_format = "YYYY-MM-DD/hh_mm_ssZ"
+
+    max_bytes = 1000
+    max_duration = "300s"
+
+    service_account_email = google_service_account.storage_write_service_account.email
+  }
+  depends_on = [
+    google_service_account.storage_write_service_account,
+    google_storage_bucket.example,
+    google_storage_bucket_iam_member.admin,
+  ]
+}
+
+data "google_project" "project" {
+}
+
+resource "google_service_account" "storage_write_service_account" {
+  account_id = "example-stw"
+  display_name = "Storage Write Service Account"
+}
+
+resource "google_storage_bucket_iam_member" "admin" {
+  bucket = google_storage_bucket.example.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.storage_write_service_account.email}"
 }
 ```
 
@@ -491,7 +615,7 @@ The following arguments are supported:
 
 * `table` -
   (Required)
-  The name of the table to which to write data, of the form {projectId}:{datasetId}.{tableId}
+  The name of the table to which to write data, of the form {projectId}.{datasetId}.{tableId}
 
 * `use_topic_schema` -
   (Optional)
@@ -514,6 +638,12 @@ The following arguments are supported:
   are not part of the BigQuery table schema are dropped when writing to BigQuery. Otherwise, the schemas must be kept in sync
   and any messages with extra fields are not written and remain in the subscription's backlog.
 
+* `service_account_email` -
+  (Optional)
+  The service account to use to write to BigQuery. If not specified, the Pub/Sub
+  [service agent](https://cloud.google.com/iam/docs/service-agents),
+  service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.
+
 <a name="nested_cloud_storage_config"></a>The `cloud_storage_config` block supports:
 
 * `bucket` -
@@ -527,6 +657,10 @@ The following arguments are supported:
 * `filename_suffix` -
   (Optional)
   User-provided suffix for Cloud Storage filename. Must not end in "/".
+
+* `filename_datetime_format` -
+  (Optional)
+  User-provided format string specifying how to represent datetimes in Cloud Storage filenames.
 
 * `max_duration` -
   (Optional)
@@ -547,6 +681,12 @@ The following arguments are supported:
   (Optional)
   If set, message data will be written to Cloud Storage in Avro format.
   Structure is [documented below](#nested_avro_config).
+
+* `service_account_email` -
+  (Optional)
+  The service account to use to write to Cloud Storage. If not specified, the Pub/Sub
+  [service agent](https://cloud.google.com/iam/docs/service-agents),
+  service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.
 
 
 <a name="nested_avro_config"></a>The `avro_config` block supports:

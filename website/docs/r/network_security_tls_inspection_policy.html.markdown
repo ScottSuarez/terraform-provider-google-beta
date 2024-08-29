@@ -17,21 +17,19 @@ description: |-
   The TlsInspectionPolicy resource contains references to CA pools in Certificate Authority Service and associated metadata.
 ---
 
-# google\_network\_security\_tls\_inspection\_policy
+# google_network_security_tls_inspection_policy
 
 The TlsInspectionPolicy resource contains references to CA pools in Certificate Authority Service and associated metadata.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about TlsInspectionPolicy, see:
 
-* [API documentation](https://cloud.google.com/secure-web-proxy/docs/reference/network-security/rest/v1beta1/projects.locations.tlsInspectionPolicies)
+* [API documentation](https://cloud.google.com/secure-web-proxy/docs/reference/network-security/rest/v1/projects.locations.tlsInspectionPolicies)
 * How-to Guides
     * [Use TlsInspectionPolicy](https://cloud.google.com/secure-web-proxy/docs/tls-inspection-overview)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_tls_inspection_policy_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_tls_inspection_policy_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -40,7 +38,6 @@ To get more information about TlsInspectionPolicy, see:
 
 ```hcl
 resource "google_privateca_ca_pool" "default" {
-  provider = google-beta
   name      = "my-basic-ca-pool"
   location  = "us-central1"
   tier     = "DEVOPS"
@@ -64,22 +61,20 @@ resource "google_privateca_ca_pool" "default" {
   }
 }
 
-
 resource "google_privateca_certificate_authority" "default" {
-  provider = google-beta
-  pool = google_privateca_ca_pool.default.name
-  certificate_authority_id = "my-basic-certificate-authority"
-  location = "us-central1"
-  lifetime = "86400s"
-  type = "SELF_SIGNED"
-  deletion_protection = false
-  skip_grace_period = true
+  pool                                   = google_privateca_ca_pool.default.name
+  certificate_authority_id               = "my-basic-certificate-authority"
+  location                               = "us-central1"
+  lifetime                               = "86400s"
+  type                                   = "SELF_SIGNED"
+  deletion_protection                    = false
+  skip_grace_period                      = true
   ignore_active_certificates_on_deletion = true
   config {
     subject_config {
       subject {
         organization = "Test LLC"
-        common_name = "my-ca"
+        common_name  = "my-ca"
       }
     }
     x509_config {
@@ -89,7 +84,7 @@ resource "google_privateca_certificate_authority" "default" {
       key_usage {
         base_key_usage {
           cert_sign = true
-          crl_sign = true
+          crl_sign  = true
         }
         extended_key_usage {
           server_auth = false
@@ -102,18 +97,126 @@ resource "google_privateca_certificate_authority" "default" {
   }
 }
 
-resource "google_project_service_identity" "ns_sa" {
-  provider = google-beta
 
-  service = "networksecurity.googleapis.com"
-}
+data "google_project" "project" {}
 
 resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
-  provider = google-beta
-
   ca_pool = google_privateca_ca_pool.default.id
-  role = "roles/privateca.certificateManager"
-  member = "serviceAccount:${google_project_service_identity.ns_sa.email}"
+  role    = "roles/privateca.certificateManager"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-networksecurity.iam.gserviceaccount.com"
+}
+
+resource "google_network_security_tls_inspection_policy" "default" {
+  name                  = "my-tls-inspection-policy"
+  location              = "us-central1"
+  ca_pool               = google_privateca_ca_pool.default.id
+  exclude_public_ca_set = false
+  depends_on            = [google_privateca_ca_pool.default, google_privateca_certificate_authority.default, google_privateca_ca_pool_iam_member.tls_inspection_permission]
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_tls_inspection_policy_custom&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Network Security Tls Inspection Policy Custom
+
+
+```hcl
+resource "google_privateca_ca_pool" "default" {
+  provider = google-beta
+  name     = "my-basic-ca-pool"
+  location = "us-central1"
+  tier     = "DEVOPS"
+
+  publishing_options {
+    publish_ca_cert = false
+    publish_crl = false
+  }
+
+  issuance_policy {
+    maximum_lifetime = "1209600s"
+    baseline_values {
+      ca_options {
+        is_ca = false
+      }
+      key_usage {
+        base_key_usage {}
+        extended_key_usage {
+          server_auth = true
+        }
+      }
+    }
+  }
+}
+
+resource "google_privateca_certificate_authority" "default" {
+  provider = google-beta
+  pool     = google_privateca_ca_pool.default.name
+
+  certificate_authority_id = "my-basic-certificate-authority"
+  location                 = "us-central1"
+  lifetime                 = "86400s"
+  type                     = "SELF_SIGNED"
+  deletion_protection      = false
+  skip_grace_period        = true
+
+  ignore_active_certificates_on_deletion = true
+
+  config {
+    subject_config {
+      subject {
+        organization = "Test LLC"
+        common_name  = "my-ca"
+      }
+    }
+    x509_config {
+      ca_options {
+        is_ca = true
+      }
+      key_usage {
+        base_key_usage {
+          cert_sign = true
+          crl_sign  = true
+        }
+        extended_key_usage {
+          server_auth = false
+        }
+      }
+    }
+  }
+
+  key_spec {
+    algorithm = "RSA_PKCS1_4096_SHA256"
+  }
+}
+
+resource "google_project_service_identity" "ns_sa" {
+  provider = google-beta
+  service  = "networksecurity.googleapis.com"
+}
+
+resource "google_privateca_ca_pool_iam_member" "default" {
+  provider = google-beta
+  ca_pool  = google_privateca_ca_pool.default.id
+  role     = "roles/privateca.certificateManager"
+  member   = google_project_service_identity.ns_sa.member
+}
+
+resource "google_certificate_manager_trust_config" "default" {
+  provider    = google-beta
+  name        = "my-trust-config"
+  description = "sample trust config description"
+  location    = "us-central1"
+
+  trust_stores {
+    trust_anchors {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+    intermediate_cas {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+  }
 }
 
 resource "google_network_security_tls_inspection_policy" "default" {
@@ -121,8 +224,34 @@ resource "google_network_security_tls_inspection_policy" "default" {
   name     = "my-tls-inspection-policy"
   location = "us-central1"
   ca_pool  = google_privateca_ca_pool.default.id
+
   exclude_public_ca_set = false
-  depends_on = [google_privateca_ca_pool.default, google_privateca_certificate_authority.default, google_privateca_ca_pool_iam_member.tls_inspection_permission]
+  min_tls_version       = "TLS_1_0"
+  trust_config          = google_certificate_manager_trust_config.default.id
+  tls_feature_profile   = "PROFILE_CUSTOM"
+
+  custom_tls_features = [
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+    "TLS_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_RSA_WITH_AES_256_GCM_SHA384",
+  ]
+
+  depends_on = [
+    google_privateca_certificate_authority.default,
+    google_privateca_ca_pool_iam_member.default,
+  ]
 }
 ```
 
@@ -146,6 +275,24 @@ The following arguments are supported:
 * `description` -
   (Optional)
   Free-text description of the resource.
+
+* `trust_config` -
+  (Optional)
+  A TrustConfig resource used when making a connection to the TLS server. This is a relative resource path following the form \"projects/{project}/locations/{location}/trustConfigs/{trust_config}\". This is necessary to intercept TLS connections to servers with certificates signed by a private CA or self-signed certificates. Trust config and the TLS inspection policy must be in the same region. Note that Secure Web Proxy does not yet honor this field.
+
+* `min_tls_version` -
+  (Optional)
+  Minimum TLS version that the firewall should use when negotiating connections with both clients and servers. If this is not set, then the default value is to allow the broadest set of clients and servers (TLS 1.0 or higher). Setting this to more restrictive values may improve security, but may also prevent the firewall from connecting to some clients or servers. Note that Secure Web Proxy does not yet honor this field.
+  Possible values are: `TLS_VERSION_UNSPECIFIED`, `TLS_1_0`, `TLS_1_1`, `TLS_1_2`, `TLS_1_3`.
+
+* `tls_feature_profile` -
+  (Optional)
+  The selected Profile. If this is not set, then the default value is to allow the broadest set of clients and servers (\"PROFILE_COMPATIBLE\"). Setting this to more restrictive values may improve security, but may also prevent the TLS inspection proxy from connecting to some clients or servers. Note that Secure Web Proxy does not yet honor this field.
+  Possible values are: `PROFILE_UNSPECIFIED`, `PROFILE_COMPATIBLE`, `PROFILE_MODERN`, `PROFILE_RESTRICTED`, `PROFILE_CUSTOM`.
+
+* `custom_tls_features` -
+  (Optional)
+  List of custom TLS cipher suites selected. This field is valid only if the selected tls_feature_profile is CUSTOM. The compute.SslPoliciesService.ListAvailableFeatures method returns the set of features that can be specified in this list. Note that Secure Web Proxy does not yet honor this field.
 
 * `exclude_public_ca_set` -
   (Optional)

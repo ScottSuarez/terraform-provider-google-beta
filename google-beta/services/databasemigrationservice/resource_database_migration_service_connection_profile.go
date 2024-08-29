@@ -20,6 +20,7 @@ package databasemigrationservice
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -387,33 +388,30 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"host": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `Required. The IP or hostname of the source MySQL database.`,
-						},
-						"password": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-							Description: `Required. Input only. The password for the user that Database Migration Service will be using to connect to the database.
-This field is not returned on request, and the value is encrypted when stored in Database Migration Service.`,
-							Sensitive: true,
-						},
-						"port": {
-							Type:        schema.TypeInt,
-							Required:    true,
-							Description: `Required. The network port of the source MySQL database.`,
-						},
-						"username": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.`,
-						},
 						"cloud_sql_id": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: `If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.`,
+						},
+						"host": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The IP or hostname of the source MySQL database.`,
+							RequiredWith: []string{"mysql.0.port", "mysql.0.username"},
+						},
+						"password": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `Input only. The password for the user that Database Migration Service will be using to connect to the database.
+This field is not returned on request, and the value is encrypted when stored in Database Migration Service.`,
+							Sensitive: true,
+						},
+						"port": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Description:  `The network port of the source MySQL database.`,
+							RequiredWith: []string{"mysql.0.host", "mysql.0.username"},
 						},
 						"ssl": {
 							Type:        schema.TypeList,
@@ -453,6 +451,12 @@ If this field is used then the 'clientCertificate' field is mandatory.`,
 									},
 								},
 							},
+						},
+						"username": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.`,
+							RequiredWith: []string{"mysql.0.host", "mysql.0.port"},
 						},
 						"password_set": {
 							Type:        schema.TypeBool,
@@ -625,33 +629,36 @@ Static IP address connectivity configured on service project.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"host": {
+						"alloydb_cluster_id": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: `Required. The IP or hostname of the source MySQL database.`,
-						},
-						"password": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-							Description: `Required. Input only. The password for the user that Database Migration Service will be using to connect to the database.
-This field is not returned on request, and the value is encrypted when stored in Database Migration Service.`,
-							Sensitive: true,
-						},
-						"port": {
-							Type:        schema.TypeInt,
-							Required:    true,
-							Description: `Required. The network port of the source MySQL database.`,
-						},
-						"username": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: `Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.`,
+							Optional:    true,
+							Description: `If the connected database is an AlloyDB instance, use this field to provide the AlloyDB cluster ID.`,
 						},
 						"cloud_sql_id": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: `If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.`,
+						},
+						"host": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The IP or hostname of the source MySQL database.`,
+							RequiredWith: []string{"postgresql.0.port", "postgresql.0.username", "postgresql.0.password"},
+						},
+						"password": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `Input only. The password for the user that Database Migration Service will be using to connect to the database.
+This field is not returned on request, and the value is encrypted when stored in Database Migration Service.`,
+							Sensitive:    true,
+							RequiredWith: []string{"postgresql.0.host", "postgresql.0.port", "postgresql.0.username"},
+						},
+						"port": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Description:  `The network port of the source MySQL database.`,
+							RequiredWith: []string{"postgresql.0.host", "postgresql.0.username", "postgresql.0.password"},
 						},
 						"ssl": {
 							Type:        schema.TypeList,
@@ -693,6 +700,12 @@ If this field is used then the 'clientCertificate' field is mandatory.`,
 									},
 								},
 							},
+						},
+						"username": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.`,
+							RequiredWith: []string{"postgresql.0.host", "postgresql.0.port", "postgresql.0.password"},
 						},
 						"network_architecture": {
 							Type:        schema.TypeString,
@@ -849,6 +862,7 @@ func resourceDatabaseMigrationServiceConnectionProfileCreate(d *schema.ResourceD
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -857,6 +871,7 @@ func resourceDatabaseMigrationServiceConnectionProfileCreate(d *schema.ResourceD
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ConnectionProfile: %s", err)
@@ -909,12 +924,14 @@ func resourceDatabaseMigrationServiceConnectionProfileRead(d *schema.ResourceDat
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DatabaseMigrationServiceConnectionProfile %q", d.Id()))
@@ -1035,6 +1052,7 @@ func resourceDatabaseMigrationServiceConnectionProfileUpdate(d *schema.ResourceD
 	}
 
 	log.Printf("[DEBUG] Updating ConnectionProfile %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -1086,6 +1104,7 @@ func resourceDatabaseMigrationServiceConnectionProfileUpdate(d *schema.ResourceD
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1127,13 +1146,15 @@ func resourceDatabaseMigrationServiceConnectionProfileDelete(d *schema.ResourceD
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ConnectionProfile %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ConnectionProfile %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1142,6 +1163,7 @@ func resourceDatabaseMigrationServiceConnectionProfileDelete(d *schema.ResourceD
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ConnectionProfile")
@@ -1376,6 +1398,8 @@ func flattenDatabaseMigrationServiceConnectionProfilePostgresql(v interface{}, d
 		flattenDatabaseMigrationServiceConnectionProfilePostgresqlSsl(original["ssl"], d, config)
 	transformed["cloud_sql_id"] =
 		flattenDatabaseMigrationServiceConnectionProfilePostgresqlCloudSqlId(original["cloudSqlId"], d, config)
+	transformed["alloydb_cluster_id"] =
+		flattenDatabaseMigrationServiceConnectionProfilePostgresqlAlloydbClusterId(original["alloydbClusterId"], d, config)
 	transformed["network_architecture"] =
 		flattenDatabaseMigrationServiceConnectionProfilePostgresqlNetworkArchitecture(original["networkArchitecture"], d, config)
 	return []interface{}{transformed}
@@ -1449,6 +1473,10 @@ func flattenDatabaseMigrationServiceConnectionProfilePostgresqlSslCaCertificate(
 }
 
 func flattenDatabaseMigrationServiceConnectionProfilePostgresqlCloudSqlId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDatabaseMigrationServiceConnectionProfilePostgresqlAlloydbClusterId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2210,6 +2238,13 @@ func expandDatabaseMigrationServiceConnectionProfilePostgresql(v interface{}, d 
 		transformed["cloudSqlId"] = transformedCloudSqlId
 	}
 
+	transformedAlloydbClusterId, err := expandDatabaseMigrationServiceConnectionProfilePostgresqlAlloydbClusterId(original["alloydb_cluster_id"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAlloydbClusterId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["alloydbClusterId"] = transformedAlloydbClusterId
+	}
+
 	transformedNetworkArchitecture, err := expandDatabaseMigrationServiceConnectionProfilePostgresqlNetworkArchitecture(original["network_architecture"], d, config)
 	if err != nil {
 		return nil, err
@@ -2297,6 +2332,10 @@ func expandDatabaseMigrationServiceConnectionProfilePostgresqlSslCaCertificate(v
 }
 
 func expandDatabaseMigrationServiceConnectionProfilePostgresqlCloudSqlId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDatabaseMigrationServiceConnectionProfilePostgresqlAlloydbClusterId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

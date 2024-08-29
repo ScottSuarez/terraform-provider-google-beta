@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeRegionNetworkEndpoint_regionNetworkEndpointInternetIpPortExam
 				ResourceName:            "google_compute_region_network_endpoint.region-internet-ip-port-endpoint",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "region_network_endpoint_group"},
+				ImportStateVerifyIgnore: []string{"instance", "region", "region_network_endpoint_group"},
 			},
 		},
 	})
@@ -100,7 +100,7 @@ func TestAccComputeRegionNetworkEndpoint_regionNetworkEndpointInternetFqdnPortEx
 				ResourceName:            "google_compute_region_network_endpoint.region-internet-fqdn-port-endpoint",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "region_network_endpoint_group"},
+				ImportStateVerifyIgnore: []string{"instance", "region", "region_network_endpoint_group"},
 			},
 		},
 	})

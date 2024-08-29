@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDatastreamConnectionProfile_datastreamConnectionProfileBasicExample(
 				ResourceName:            "google_datastream_connection_profile.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"connection_profile_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"connection_profile_id", "create_without_validation", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -95,7 +95,7 @@ func TestAccDatastreamConnectionProfile_datastreamConnectionProfilePostgresqlPri
 				ResourceName:            "google_datastream_connection_profile.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"connection_profile_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"connection_profile_id", "create_without_validation", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -211,7 +211,7 @@ func TestAccDatastreamConnectionProfile_datastreamConnectionProfileFullExample(t
 				ResourceName:            "google_datastream_connection_profile.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"connection_profile_id", "location", "forward_ssh_connectivity.0.password", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"connection_profile_id", "create_without_validation", "forward_ssh_connectivity.0.password", "labels", "location", "terraform_labels"},
 			},
 		},
 	})

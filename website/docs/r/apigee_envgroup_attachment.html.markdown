@@ -17,7 +17,7 @@ description: |-
   An `Environment Group attachment` in Apigee.
 ---
 
-# google\_apigee\_envgroup\_attachment
+# google_apigee_envgroup_attachment
 
 An `Environment Group attachment` in Apigee.
 
@@ -37,6 +37,7 @@ resource "google_project" "project" {
   name            = "my-project"
   org_id          = ""
   billing_account = ""
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {

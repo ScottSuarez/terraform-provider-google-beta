@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -149,6 +150,16 @@ using threshold rules.`,
 when a threshold is exceeded. Default recipients are
 those with Billing Account Administrators and Billing
 Account Users IAM roles for the target account.`,
+							Default: false,
+						},
+						"enable_project_level_recipients": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `When set to true, and when the budget has a single project configured,
+notifications will be sent to project level recipients of that project.
+This field will be ignored if the budget has multiple or no project configured.
+
+Currently, project level recipients are the users with Owner role on a cloud project.`,
 							Default: false,
 						},
 						"monitoring_notification_channels": {
@@ -375,6 +386,13 @@ account and all subaccounts, if they exist.
 				Optional:    true,
 				Description: `User data for display name in UI. Must be <= 60 chars.`,
 			},
+			"ownership_scope": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"OWNERSHIP_SCOPE_UNSPECIFIED", "ALL_USERS", "BILLING_ACCOUNT", ""}),
+				Description: `The ownership scope of the budget. The ownership scope and users'
+IAM permissions determine who has full access to the budget's data. Possible values: ["OWNERSHIP_SCOPE_UNSPECIFIED", "ALL_USERS", "BILLING_ACCOUNT"]`,
+			},
 			"threshold_rules": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -450,6 +468,12 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("all_updates_rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(notificationsRuleProp)) && (ok || !reflect.DeepEqual(v, notificationsRuleProp)) {
 		obj["notificationsRule"] = notificationsRuleProp
 	}
+	ownershipScopeProp, err := expandBillingBudgetOwnershipScope(d.Get("ownership_scope"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ownership_scope"); !tpgresource.IsEmptyValue(reflect.ValueOf(ownershipScopeProp)) && (ok || !reflect.DeepEqual(v, ownershipScopeProp)) {
+		obj["ownershipScope"] = ownershipScopeProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BillingBasePath}}billingAccounts/{{billing_account}}/budgets")
 	if err != nil {
@@ -464,6 +488,7 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -472,6 +497,7 @@ func resourceBillingBudgetCreate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Budget: %s", err)
@@ -511,12 +537,14 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BillingBudget %q", d.Id()))
@@ -538,6 +566,9 @@ func resourceBillingBudgetRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Budget: %s", err)
 	}
 	if err := d.Set("all_updates_rule", flattenBillingBudgetAllUpdatesRule(res["notificationsRule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Budget: %s", err)
+	}
+	if err := d.Set("ownership_scope", flattenBillingBudgetOwnershipScope(res["ownershipScope"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Budget: %s", err)
 	}
 
@@ -584,6 +615,12 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("all_updates_rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, notificationsRuleProp)) {
 		obj["notificationsRule"] = notificationsRuleProp
 	}
+	ownershipScopeProp, err := expandBillingBudgetOwnershipScope(d.Get("ownership_scope"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ownership_scope"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ownershipScopeProp)) {
+		obj["ownershipScope"] = ownershipScopeProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BillingBasePath}}billingAccounts/{{billing_account}}/budgets/{{name}}")
 	if err != nil {
@@ -591,6 +628,7 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Budget %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -623,7 +661,12 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 		updateMask = append(updateMask, "notificationsRule.pubsubTopic",
 			"notificationsRule.schemaVersion",
 			"notificationsRule.monitoringNotificationChannels",
-			"notificationsRule.disableDefaultIamRecipients")
+			"notificationsRule.disableDefaultIamRecipients",
+			"notificationsRule.enableProjectLevelRecipients")
+	}
+
+	if d.HasChange("ownership_scope") {
+		updateMask = append(updateMask, "ownershipScope")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -647,6 +690,7 @@ func resourceBillingBudgetUpdate(d *schema.ResourceData, meta interface{}) error
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -675,13 +719,15 @@ func resourceBillingBudgetDelete(d *schema.ResourceData, meta interface{}) error
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Budget %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Budget %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -690,6 +736,7 @@ func resourceBillingBudgetDelete(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Budget")
@@ -1074,6 +1121,8 @@ func flattenBillingBudgetAllUpdatesRule(v interface{}, d *schema.ResourceData, c
 		flattenBillingBudgetAllUpdatesRuleMonitoringNotificationChannels(original["monitoringNotificationChannels"], d, config)
 	transformed["disable_default_iam_recipients"] =
 		flattenBillingBudgetAllUpdatesRuleDisableDefaultIamRecipients(original["disableDefaultIamRecipients"], d, config)
+	transformed["enable_project_level_recipients"] =
+		flattenBillingBudgetAllUpdatesRuleEnableProjectLevelRecipients(original["enableProjectLevelRecipients"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBillingBudgetAllUpdatesRulePubsubTopic(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1093,6 +1142,14 @@ func flattenBillingBudgetAllUpdatesRuleMonitoringNotificationChannels(v interfac
 }
 
 func flattenBillingBudgetAllUpdatesRuleDisableDefaultIamRecipients(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBillingBudgetAllUpdatesRuleEnableProjectLevelRecipients(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBillingBudgetOwnershipScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1485,6 +1542,13 @@ func expandBillingBudgetAllUpdatesRule(v interface{}, d tpgresource.TerraformRes
 		transformed["disableDefaultIamRecipients"] = transformedDisableDefaultIamRecipients
 	}
 
+	transformedEnableProjectLevelRecipients, err := expandBillingBudgetAllUpdatesRuleEnableProjectLevelRecipients(original["enable_project_level_recipients"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnableProjectLevelRecipients); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enableProjectLevelRecipients"] = transformedEnableProjectLevelRecipients
+	}
+
 	return transformed, nil
 }
 
@@ -1501,6 +1565,14 @@ func expandBillingBudgetAllUpdatesRuleMonitoringNotificationChannels(v interface
 }
 
 func expandBillingBudgetAllUpdatesRuleDisableDefaultIamRecipients(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBillingBudgetAllUpdatesRuleEnableProjectLevelRecipients(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBillingBudgetOwnershipScope(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

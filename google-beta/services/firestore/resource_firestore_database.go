@@ -20,6 +20,7 @@ package firestore
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -86,6 +87,50 @@ for information about how to choose. Possible values: ["FIRESTORE_NATIVE", "DATA
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"ENABLED", "DISABLED", ""}),
 				Description:  `The App Engine integration mode to use for this database. Possible values: ["ENABLED", "DISABLED"]`,
+			},
+			"cmek_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Description: `The CMEK (Customer Managed Encryption Key) configuration for a Firestore
+database. If not present, the database is secured by the default Google
+encryption key.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `The resource ID of a Cloud KMS key. If set, the database created will
+be a Customer-managed Encryption Key (CMEK) database encrypted with
+this key. This feature is allowlist only in initial launch.
+
+Only keys in the same location as this database are allowed to be used
+for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS
+multi-region us. For Firestore's eur3 multi-region, this corresponds to
+Cloud KMS multi-region europe. See https://cloud.google.com/kms/docs/locations.
+
+This value should be the KMS key resource ID in the format of
+'projects/{project_id}/locations/{kms_location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}'.
+How to retrive this resource ID is listed at
+https://cloud.google.com/kms/docs/getting-resource-ids#getting_the_id_for_a_key_and_version.`,
+						},
+						"active_key_version": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Description: `Currently in-use KMS key versions (https://cloud.google.com/kms/docs/resource-hierarchy#key_versions).
+During key rotation (https://cloud.google.com/kms/docs/key-rotation), there can be
+multiple in-use key versions.
+
+The expected format is
+'projects/{project_id}/locations/{kms_location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}/cryptoKeyVersions/{key_version}'.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
 			},
 			"concurrency_mode": {
 				Type:         schema.TypeString,
@@ -163,12 +208,12 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ABANDON",
 				Description: `Deletion behavior for this database.
 If the deletion policy is 'ABANDON', the database will be removed from Terraform state but not deleted from Google Cloud upon destruction.
 If the deletion policy is 'DELETE', the database will both be removed from Terraform state and deleted from Google Cloud upon destruction.
 The default value is 'ABANDON'.
 See also 'delete_protection'.`,
+				Default: "ABANDON",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -237,6 +282,12 @@ func resourceFirestoreDatabaseCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
 		obj["etag"] = etagProp
 	}
+	cmekConfigProp, err := expandFirestoreDatabaseCmekConfig(d.Get("cmek_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("cmek_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(cmekConfigProp)) && (ok || !reflect.DeepEqual(v, cmekConfigProp)) {
+		obj["cmekConfig"] = cmekConfigProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{FirestoreBasePath}}projects/{{project}}/databases?databaseId={{name}}")
 	if err != nil {
@@ -257,6 +308,7 @@ func resourceFirestoreDatabaseCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -265,6 +317,7 @@ func resourceFirestoreDatabaseCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Database: %s", err)
@@ -331,12 +384,14 @@ func resourceFirestoreDatabaseRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirestoreDatabase %q", d.Id()))
@@ -392,6 +447,9 @@ func resourceFirestoreDatabaseRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Database: %s", err)
 	}
 	if err := d.Set("earliest_version_time", flattenFirestoreDatabaseEarliestVersionTime(res["earliestVersionTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Database: %s", err)
+	}
+	if err := d.Set("cmek_config", flattenFirestoreDatabaseCmekConfig(res["cmekConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Database: %s", err)
 	}
 
@@ -457,6 +515,7 @@ func resourceFirestoreDatabaseUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Updating Database %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("type") {
@@ -504,6 +563,7 @@ func resourceFirestoreDatabaseUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -545,6 +605,13 @@ func resourceFirestoreDatabaseDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
 	if deletionPolicy := d.Get("deletion_policy"); deletionPolicy != "DELETE" {
 		log.Printf("[WARN] Firestore database %q deletion_policy is not set to 'DELETE', skipping deletion", d.Get("name").(string))
 		return nil
@@ -552,13 +619,8 @@ func resourceFirestoreDatabaseDelete(d *schema.ResourceData, meta interface{}) e
 	if deleteProtection := d.Get("delete_protection_state"); deleteProtection == "DELETE_PROTECTION_ENABLED" {
 		return fmt.Errorf("Cannot delete Firestore database %s: Delete Protection is enabled. Set delete_protection_state to DELETE_PROTECTION_DISABLED for this resource and run \"terraform apply\" before attempting to delete it.", d.Get("name").(string))
 	}
+
 	log.Printf("[DEBUG] Deleting Database %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -567,6 +629,7 @@ func resourceFirestoreDatabaseDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Database")
@@ -660,6 +723,29 @@ func flattenFirestoreDatabaseEarliestVersionTime(v interface{}, d *schema.Resour
 	return v
 }
 
+func flattenFirestoreDatabaseCmekConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["kms_key_name"] =
+		flattenFirestoreDatabaseCmekConfigKmsKeyName(original["kmsKeyName"], d, config)
+	transformed["active_key_version"] =
+		flattenFirestoreDatabaseCmekConfigActiveKeyVersion(original["activeKeyVersion"], d, config)
+	return []interface{}{transformed}
+}
+func flattenFirestoreDatabaseCmekConfigKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFirestoreDatabaseCmekConfigActiveKeyVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandFirestoreDatabaseName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return tpgresource.ReplaceVars(d, config, "projects/{{project}}/databases/{{name}}")
 }
@@ -689,5 +775,39 @@ func expandFirestoreDatabaseDeleteProtectionState(v interface{}, d tpgresource.T
 }
 
 func expandFirestoreDatabaseEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirestoreDatabaseCmekConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedKmsKeyName, err := expandFirestoreDatabaseCmekConfigKmsKeyName(original["kms_key_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeyName
+	}
+
+	transformedActiveKeyVersion, err := expandFirestoreDatabaseCmekConfigActiveKeyVersion(original["active_key_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedActiveKeyVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["activeKeyVersion"] = transformedActiveKeyVersion
+	}
+
+	return transformed, nil
+}
+
+func expandFirestoreDatabaseCmekConfigKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirestoreDatabaseCmekConfigActiveKeyVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

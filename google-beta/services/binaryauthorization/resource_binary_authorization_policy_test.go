@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -196,6 +196,7 @@ resource "google_project" "project" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "binauthz" {
@@ -213,6 +214,7 @@ resource "google_project" "project" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "binauthz" {
@@ -245,6 +247,7 @@ resource "google_project" "project" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "binauthz" {
@@ -309,6 +312,7 @@ resource "google_project" "project" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 data "google_client_config" "current" {

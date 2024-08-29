@@ -17,7 +17,7 @@ description: |-
   Flexible App Version resource to create a new version of flexible GAE Application.
 ---
 
-# google\_app\_engine\_flexible\_app\_version
+# google_app_engine_flexible_app_version
 
 Flexible App Version resource to create a new version of flexible GAE Application. Based on Google Compute Engine,
 the App Engine flexible environment automatically scales your app up and down while also balancing the load.
@@ -43,6 +43,7 @@ resource "google_project" "my_project" {
   project_id = "appeng-flex"
   org_id = "123456789"
   billing_account = "000000-0000000-0000000-000000"
+  deletion_policy = "DELETE"
 }
 
 resource "google_app_engine_application" "app" {
@@ -86,6 +87,10 @@ resource "google_app_engine_flexible_app_version" "myapp_v1" {
   project    = google_project_iam_member.gae_api.project
   service    = "default"
   runtime    = "nodejs"
+  flexible_runtime_settings {
+    operating_system = "ubuntu22"
+    runtime_version = "20"
+  }
 
   entrypoint {
     shell = "node ./app.js"
@@ -264,6 +269,11 @@ The following arguments are supported:
   (Optional)
   The channel of the runtime to use. Only available for some runtimes.
 
+* `flexible_runtime_settings` -
+  (Optional)
+  Runtime settings for App Engine flexible environment.
+  Structure is [documented below](#nested_flexible_runtime_settings).
+
 * `beta_settings` -
   (Optional)
   Metadata settings that are supplied to this version to enable beta runtime features.
@@ -357,6 +367,11 @@ The following arguments are supported:
   (Optional)
   List of ports, or port pairs, to forward from the virtual machine to the application container.
 
+* `instance_ip_mode` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Prevent instances from receiving an ephemeral external IP address.
+  Possible values are: `EXTERNAL`, `INTERNAL`.
+
 * `instance_tag` -
   (Optional)
   Tag to apply to the instance during creation.
@@ -410,6 +425,16 @@ The following arguments are supported:
 * `size_gb` -
   (Required)
   Volume size in gigabytes.
+
+<a name="nested_flexible_runtime_settings"></a>The `flexible_runtime_settings` block supports:
+
+* `operating_system` -
+  (Optional)
+  Operating System of the application runtime.
+
+* `runtime_version` -
+  (Optional)
+  The runtime version of an App Engine flexible application.
 
 <a name="nested_handlers"></a>The `handlers` block supports:
 

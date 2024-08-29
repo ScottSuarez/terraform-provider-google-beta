@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccSecurityposturePosture_securityposturePostureBasicExample(t *testing
 				ResourceName:            "google_securityposture_posture.posture1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"parent", "location", "posture_id"},
+				ImportStateVerifyIgnore: []string{"location", "parent", "posture_id"},
 			},
 		},
 	})
@@ -60,7 +60,7 @@ func TestAccSecurityposturePosture_securityposturePostureBasicExample(t *testing
 func testAccSecurityposturePosture_securityposturePostureBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_securityposture_posture" "posture1"{
-  posture_id  = "posture_1"
+  posture_id  = "tf_test_posture_example%{random_suffix}"
   parent      = "organizations/%{org_id}"
   location    = "global"
   state       = "ACTIVE"
@@ -75,6 +75,11 @@ resource "google_securityposture_posture" "posture1"{
           canned_constraint_id = "storage.uniformBucketLevelAccess"
           policy_rules {
             enforce = true
+            condition {
+            	description = "condition description"
+            	expression  = "resource.matchTag('org_id/tag_key_short_name,'tag_value_short_name')"
+            	title       = "a CEL condition"
+            }
           }
         }
       }
@@ -84,9 +89,9 @@ resource "google_securityposture_posture" "posture1"{
       constraint {
         org_policy_constraint_custom {
           custom_constraint {
-            name         = "organizations/%{org_id}/customConstraints/custom.disableGkeAutoUpgrade"
-            display_name = "Disable GKE auto upgrade"
-            description  = "Only allow GKE NodePool resource to be created or updated if AutoUpgrade is not enabled where this custom constraint is enforced."
+            name           = "organizations/%{org_id}/customConstraints/custom.disableGkeAutoUpgrade"
+            display_name   = "Disable GKE auto upgrade"
+            description    = "Only allow GKE NodePool resource to be created or updated if AutoUpgrade is not enabled where this custom constraint is enforced."
             action_type    = "ALLOW"
             condition      = "resource.management.autoUpgrade == false"
             method_types   = ["CREATE", "UPDATE"]
@@ -94,6 +99,11 @@ resource "google_securityposture_posture" "posture1"{
           }
           policy_rules {
             enforce = true
+            condition {
+            	description = "condition description"
+            	expression = "resource.matchTagId('tagKeys/key_id','tagValues/value_id')"
+            	title = "a CEL condition"
+            }
           }
         }
       }
@@ -116,7 +126,7 @@ resource "google_securityposture_posture" "posture1"{
       policy_id = "sha_custom_module"
       constraint {
         security_health_analytics_custom_module {
-          display_name = "custom SHA policy"
+          display_name = "custom_SHA_policy"
           config {
             predicate {
               expression = "resource.rotationPeriod > duration('2592000s')"

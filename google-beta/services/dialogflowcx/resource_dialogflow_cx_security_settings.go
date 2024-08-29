@@ -20,6 +20,7 @@ package dialogflowcx
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -276,6 +277,7 @@ func resourceDialogflowCXSecuritySettingsCreate(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -284,6 +286,7 @@ func resourceDialogflowCXSecuritySettingsCreate(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating SecuritySettings: %s", err)
@@ -298,6 +301,11 @@ func resourceDialogflowCXSecuritySettingsCreate(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// This is useful if the resource in question doesn't have a perfectly consistent API
+	// That is, the Operation for Create might return before the Get operation shows the
+	// completed state of the resource.
+	time.Sleep(5 * time.Second)
 
 	log.Printf("[DEBUG] Finished creating SecuritySettings %q: %#v", d.Id(), res)
 
@@ -329,12 +337,14 @@ func resourceDialogflowCXSecuritySettingsRead(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DialogflowCXSecuritySettings %q", d.Id()))
@@ -464,6 +474,7 @@ func resourceDialogflowCXSecuritySettingsUpdate(d *schema.ResourceData, meta int
 	}
 
 	log.Printf("[DEBUG] Updating SecuritySettings %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -527,6 +538,7 @@ func resourceDialogflowCXSecuritySettingsUpdate(d *schema.ResourceData, meta int
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -561,13 +573,15 @@ func resourceDialogflowCXSecuritySettingsDelete(d *schema.ResourceData, meta int
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting SecuritySettings %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting SecuritySettings %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -576,6 +590,7 @@ func resourceDialogflowCXSecuritySettingsDelete(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "SecuritySettings")

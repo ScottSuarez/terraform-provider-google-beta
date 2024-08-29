@@ -18,19 +18,28 @@
 package compute
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// sha256DiffSuppress
+// if old is the hex-encoded sha256 sum of new, treat them as equal
+func sha256DiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
+	return hex.EncodeToString(sha256.New().Sum([]byte(old))) == new
+}
 
 func ResourceComputeRegionSslCertificate() *schema.Resource {
 	return &schema.Resource{
@@ -65,7 +74,7 @@ The chain must include at least one intermediate cert.`,
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.Sha256DiffSuppress,
+				DiffSuppressFunc: sha256DiffSuppress,
 				Description:      `The write-only private key in PEM format.`,
 				Sensitive:        true,
 			},
@@ -88,7 +97,6 @@ the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
 first character must be a lowercase letter, and all following
 characters must be a dash, lowercase letter, or digit, except the last
 character, which cannot be a dash.
-
 
 These are in the same namespace as the managed SSL certificates.`,
 			},
@@ -125,11 +133,11 @@ If it is not provided, the provider region is used.`,
 				Description:   "Creates a unique name beginning with the specified prefix. Conflicts with name.",
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
 					// https://cloud.google.com/compute/docs/reference/latest/sslCertificates#resource
-					// uuid is 26 characters, limit the prefix to 37.
+					// uuid is 9 characters, limit the prefix to 54.
 					value := v.(string)
-					if len(value) > 37 {
+					if len(value) > 54 {
 						errors = append(errors, fmt.Errorf(
-							"%q cannot be longer than 37 characters, name is limited to 63", k))
+							"%q cannot be longer than 54 characters, name is limited to 63", k))
 					}
 					return
 				},
@@ -207,6 +215,7 @@ func resourceComputeRegionSslCertificateCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -215,6 +224,7 @@ func resourceComputeRegionSslCertificateCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionSslCertificate: %s", err)
@@ -267,12 +277,14 @@ func resourceComputeRegionSslCertificateRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionSslCertificate %q", d.Id()))
@@ -331,13 +343,15 @@ func resourceComputeRegionSslCertificateDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting RegionSslCertificate %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting RegionSslCertificate %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -346,6 +360,7 @@ func resourceComputeRegionSslCertificateDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionSslCertificate")
@@ -441,9 +456,14 @@ func expandComputeRegionSslCertificateName(v interface{}, d tpgresource.Terrafor
 	if v, ok := d.GetOk("name"); ok {
 		certName = v.(string)
 	} else if v, ok := d.GetOk("name_prefix"); ok {
-		certName = resource.PrefixedUniqueId(v.(string))
+		prefix := v.(string)
+		if len(prefix) > 37 {
+			certName = tpgresource.ReducedPrefixedUniqueId(prefix)
+		} else {
+			certName = id.PrefixedUniqueId(prefix)
+		}
 	} else {
-		certName = resource.UniqueId()
+		certName = id.UniqueId()
 	}
 
 	// We need to get the {{name}} into schema to set the ID using tpgresource.ReplaceVars

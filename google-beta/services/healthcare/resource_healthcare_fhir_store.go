@@ -20,6 +20,7 @@ package healthcare
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -161,6 +162,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"notification_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				Deprecated:  "`notification_config` is deprecated and will be removed in a future major release. Use `notification_configs` instead.",
 				Description: `A nested object resource`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -439,6 +441,7 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -447,6 +450,7 @@ func resourceHealthcareFhirStoreCreate(d *schema.ResourceData, meta interface{})
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating FhirStore: %s", err)
@@ -483,12 +487,14 @@ func resourceHealthcareFhirStoreRead(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("HealthcareFhirStore %q", d.Id()))
@@ -620,6 +626,7 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Updating FhirStore %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("complex_data_type_reference_parsing") {
@@ -675,6 +682,7 @@ func resourceHealthcareFhirStoreUpdate(d *schema.ResourceData, meta interface{})
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -703,13 +711,15 @@ func resourceHealthcareFhirStoreDelete(d *schema.ResourceData, meta interface{})
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting FhirStore %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting FhirStore %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -718,6 +728,7 @@ func resourceHealthcareFhirStoreDelete(d *schema.ResourceData, meta interface{})
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "FhirStore")

@@ -17,7 +17,7 @@ description: |-
   A NAT service created in a router.
 ---
 
-# google\_compute\_router\_nat
+# google_compute_router_nat
 
 A NAT service created in a router.
 
@@ -307,7 +307,7 @@ The following arguments are supported:
 
 * `min_ports_per_vm` -
   (Optional)
-  Minimum number of ports allocated to a VM from this NAT.
+  Minimum number of ports allocated to a VM from this NAT. Defaults to 64 for static port allocation and 32 dynamic port allocation if not set.
 
 * `max_ports_per_vm` -
   (Optional)
@@ -351,6 +351,13 @@ The following arguments are supported:
   Configuration for logging on NAT
   Structure is [documented below](#nested_log_config).
 
+* `endpoint_types` -
+  (Optional)
+  Specifies the endpoint Types supported by the NAT Gateway.
+  Supported values include:
+        `ENDPOINT_TYPE_VM`, `ENDPOINT_TYPE_SWG`,
+        `ENDPOINT_TYPE_MANAGED_PROXY_LB`.
+
 * `rules` -
   (Optional)
   A list of rules associated with this NAT.
@@ -369,6 +376,13 @@ The following arguments are supported:
   If `PRIVATE` NAT used for private IP translation.
   Default value is `PUBLIC`.
   Possible values are: `PUBLIC`, `PRIVATE`.
+
+* `auto_network_tier` -
+  (Optional)
+  The network tier to use when automatically reserving NAT IP addresses.
+  Must be one of: PREMIUM, STANDARD. If not specified, then the current
+  project-level default tier is used.
+  Possible values are: `PREMIUM`, `STANDARD`.
 
 * `region` -
   (Optional)

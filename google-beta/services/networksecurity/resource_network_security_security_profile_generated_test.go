@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -41,7 +41,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -51,7 +51,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileBasicEx
 				ResourceName:            "google_network_security_security_profile.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "parent", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
 			},
 		},
 	})
@@ -60,7 +60,6 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileBasicEx
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "tf-test-my-security-profile%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "my description"
@@ -83,7 +82,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileOverrid
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,7 +92,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileOverrid
 				ResourceName:            "google_network_security_security_profile.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "parent", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
 			},
 		},
 	})
@@ -102,7 +101,6 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileOverrid
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileOverridesExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "tf-test-my-security-profile%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "my description"

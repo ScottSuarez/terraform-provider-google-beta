@@ -22,15 +22,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccNetappVolume_volumeBasicExample(t *testing.T) {
+func TestAccNetappVolume_netappVolumeBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -44,19 +44,19 @@ func TestAccNetappVolume_volumeBasicExample(t *testing.T) {
 		CheckDestroy:             testAccCheckNetappVolumeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetappVolume_volumeBasicExample(context),
+				Config: testAccNetappVolume_netappVolumeBasicExample(context),
 			},
 			{
 				ResourceName:            "google_netapp_volume.test_volume",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "name", "deletion_policy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "labels", "location", "name", "restore_parameters", "terraform_labels"},
 			},
 		},
 	})
 }
 
-func testAccNetappVolume_volumeBasicExample(context map[string]interface{}) string {
+func testAccNetappVolume_netappVolumeBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "default" {
   name = "tf-test-test-pool%{random_suffix}"

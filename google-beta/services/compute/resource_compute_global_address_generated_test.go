@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_global_address.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "terraform_labels"},
 			},
 		},
 	})
@@ -82,7 +82,7 @@ func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *t
 				ResourceName:            "google_compute_global_address.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "terraform_labels"},
 			},
 		},
 	})

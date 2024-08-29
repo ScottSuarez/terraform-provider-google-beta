@@ -34,8 +34,7 @@ A data source can be used to retrieve policy data in advent you do not need crea
 
 
 
-
-## google\_bigquery\_analytics\_hub\_data\_exchange\_iam\_policy
+## google_bigquery_analytics_hub_data_exchange_iam_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
@@ -55,7 +54,7 @@ resource "google_bigquery_analytics_hub_data_exchange_iam_policy" "policy" {
 }
 ```
 
-## google\_bigquery\_analytics\_hub\_data\_exchange\_iam\_binding
+## google_bigquery_analytics_hub_data_exchange_iam_binding
 
 ```hcl
 resource "google_bigquery_analytics_hub_data_exchange_iam_binding" "binding" {
@@ -69,7 +68,7 @@ resource "google_bigquery_analytics_hub_data_exchange_iam_binding" "binding" {
 }
 ```
 
-## google\_bigquery\_analytics\_hub\_data\_exchange\_iam\_member
+## google_bigquery_analytics_hub_data_exchange_iam_member
 
 ```hcl
 resource "google_bigquery_analytics_hub_data_exchange_iam_member" "member" {
@@ -87,8 +86,10 @@ resource "google_bigquery_analytics_hub_data_exchange_iam_member" "member" {
 The following arguments are supported:
 
 * `data_exchange_id` - (Required) The ID of the data exchange. Must contain only Unicode letters, numbers (0-9), underscores (_). Should not use characters that require URL-escaping, or characters outside of ASCII, spaces. Used to find the parent resource to bind the IAM policy to
-* `location` - (Required) The name of the location this data exchange.
- Used to find the parent resource to bind the IAM policy to
+* `location` - (Optional) The name of the location this data exchange.
+ Used to find the parent resource to bind the IAM policy to. If not specified,
+  the value will be parsed from the identifier of the parent resource. If no location is provided in the parent identifier and no
+  location is specified, it is taken from the provider configuration.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the project will be parsed from the identifier of the parent resource. If no project is provided in the parent identifier and no project is specified, the provider project is used.

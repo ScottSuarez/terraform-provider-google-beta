@@ -17,7 +17,7 @@ description: |-
   Represents a PublicAdvertisedPrefix for use with bring your own IP addresses (BYOIP).
 ---
 
-# google\_compute\_public\_advertised\_prefix
+# google_compute_public_advertised_prefix
 
 Represents a PublicAdvertisedPrefix for use with bring your own IP addresses (BYOIP).
 
@@ -79,6 +79,9 @@ The following arguments are supported:
 In addition to the arguments listed above, the following computed attributes are exported:
 
 * `id` - an identifier for the resource with format `projects/{{project}}/global/publicAdvertisedPrefixes/{{name}}`
+
+* `shared_secret` -
+  Output Only. The shared secret to be used for reverse DNS verification.
 * `self_link` - The URI of the created resource.
 
 

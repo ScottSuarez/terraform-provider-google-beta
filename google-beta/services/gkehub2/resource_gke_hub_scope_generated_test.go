@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccGKEHub2Scope_gkehubScopeBasicExample(t *testing.T) {
 				ResourceName:            "google_gke_hub_scope.scope",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"scope_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "scope_id", "terraform_labels"},
 			},
 		},
 	})
@@ -61,6 +61,11 @@ func testAccGKEHub2Scope_gkehubScopeBasicExample(context map[string]interface{})
 	return acctest.Nprintf(`
 resource "google_gke_hub_scope" "scope" {
   scope_id = "tf-test-my-scope%{random_suffix}"
+  namespace_labels = {
+      keyb = "valueb"
+      keya = "valuea"
+      keyc = "valuec" 
+  }
   labels = {
       keyb = "valueb"
       keya = "valuea"

@@ -17,14 +17,14 @@ description: |-
   A Workbench instance.
 ---
 
-# google\_workbench\_instance
+# google_workbench_instance
 
 A Workbench instance.
 
 
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workbench_instance_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workbench_instance_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -38,7 +38,28 @@ resource "google_workbench_instance" "instance" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workbench_instance_basic_gpu&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workbench_instance_basic_container&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Workbench Instance Basic Container
+
+
+```hcl
+resource "google_workbench_instance" "instance" {
+  name = "workbench-instance"
+  location = "us-west1-a"
+
+  gce_setup {
+    container_image {
+      repository = "us-docker.pkg.dev/deeplearning-platform-release/gcr.io/base-cu113.py310"
+      tag = "latest"
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workbench_instance_basic_gpu&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -56,13 +77,13 @@ resource "google_workbench_instance" "instance" {
       core_count   = 1
     }
     vm_image {
-      project      = "deeplearning-platform-release"
-      family       = "tf-latest-gpu"
+      project      = "cloud-notebooks-managed"
+      family       = "workbench-instances"
     }
   }
 }
 ```
-## Example Usage - Workbench Instance Labels
+## Example Usage - Workbench Instance Labels Stopped
 
 
 ```hcl
@@ -72,6 +93,12 @@ resource "google_workbench_instance" "instance" {
 
   gce_setup {
     machine_type = "e2-standard-4"
+
+    shielded_instance_config {
+      enable_secure_boot = false
+      enable_vtpm = false
+      enable_integrity_monitoring = false
+    }
 
     service_accounts {
       email = "my@service-account.com"
@@ -83,11 +110,11 @@ resource "google_workbench_instance" "instance" {
 
   }
 
-  instance_owners  = [ "my@service-account.com"]
-
   labels = {
     k = "val"
   }
+
+  desired_state = "STOPPED"
 
 }
 ```
@@ -107,6 +134,18 @@ resource "google_compute_subnetwork" "my_subnetwork" {
   ip_cidr_range = "10.0.1.0/24"
 }
 
+resource "google_compute_address" "static" {
+  name = "wbi-test-default"
+}
+
+resource "google_service_account_iam_binding" "act_as_permission" {
+  service_account_id = "projects/my-project-name/serviceAccounts/my@service-account.com"
+  role               = "roles/iam.serviceAccountUser"
+  members = [
+    "user:example@example.com",
+  ]
+}
+
 resource "google_workbench_instance" "instance" {
   name = "workbench-instance"
   location = "us-central1-a"
@@ -118,6 +157,12 @@ resource "google_workbench_instance" "instance" {
       core_count   = 1
     }
 
+    shielded_instance_config {
+      enable_secure_boot = true
+      enable_vtpm = true
+      enable_integrity_monitoring = true
+    }
+
     disable_public_ip = false
 
     service_accounts {
@@ -127,14 +172,14 @@ resource "google_workbench_instance" "instance" {
     boot_disk {
       disk_size_gb  = 310
       disk_type = "PD_SSD"
-      disk_encryption = "GMEK"
+      disk_encryption = "CMEK"
       kms_key = "my-crypto-key"
     }
 
     data_disks {
       disk_size_gb  = 330
       disk_type = "PD_SSD"
-      disk_encryption = "GMEK"
+      disk_encryption = "CMEK"
       kms_key = "my-crypto-key"
     }
 
@@ -142,6 +187,9 @@ resource "google_workbench_instance" "instance" {
       network = google_compute_network.my_network.id
       subnet = google_compute_subnetwork.my_subnetwork.id
       nic_type = "GVNIC"
+      access_configs {
+        external_ip = google_compute_address.static.address
+      }
     }
 
     metadata = {
@@ -156,11 +204,13 @@ resource "google_workbench_instance" "instance" {
 
   disable_proxy_access = "true"
 
-  instance_owners  = [ "my@service-account.com"]
+  instance_owners  = ["example@example.com"]
 
   labels = {
     k = "val"
   }
+
+  desired_state = "ACTIVE"
 
 }
 ```
@@ -212,6 +262,8 @@ The following arguments are supported:
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
+* `desired_state` - (Optional) Desired state of the Workbench Instance. Set this field to `ACTIVE` to start the Instance, and `STOPPED` to stop the Instance.
+
 
 <a name="nested_gce_setup"></a>The `gce_setup` block supports:
 
@@ -226,6 +278,13 @@ The following arguments are supported:
   Currently supports only one accelerator configuration.
   Structure is [documented below](#nested_accelerator_configs).
 
+* `shielded_instance_config` -
+  (Optional)
+  A set of Shielded Instance options. See [Images using supported Shielded
+  VM features](https://cloud.google.com/compute/docs/instances/modifying-shielded-vm).
+  Not all combinations are valid.
+  Structure is [documented below](#nested_shielded_instance_config).
+
 * `service_accounts` -
   (Optional)
   The service account that serves as an identity for the VM instance. Currently supports only one service account.
@@ -236,6 +295,11 @@ The following arguments are supported:
   Definition of a custom Compute Engine virtual machine image for starting
   a workbench instance with the environment installed directly on the VM.
   Structure is [documented below](#nested_vm_image).
+
+* `container_image` -
+  (Optional)
+  Use a container image to start the workbench instance.
+  Structure is [documented below](#nested_container_image).
 
 * `boot_disk` -
   (Optional)
@@ -282,6 +346,28 @@ The following arguments are supported:
   (Optional)
   Optional. Count of cores of this accelerator.
 
+<a name="nested_shielded_instance_config"></a>The `shielded_instance_config` block supports:
+
+* `enable_secure_boot` -
+  (Optional)
+  Optional. Defines whether the VM instance has Secure Boot enabled.
+  Secure Boot helps ensure that the system only runs authentic software by verifying
+  the digital signature of all boot components, and halting the boot process
+  if signature verification fails. Disabled by default.
+
+* `enable_vtpm` -
+  (Optional)
+  Optional. Defines whether the VM instance has the vTPM enabled.
+  Enabled by default.
+
+* `enable_integrity_monitoring` -
+  (Optional)
+  Optional. Defines whether the VM instance has integrity monitoring
+  enabled. Enables monitoring and attestation of the boot integrity of the VM
+  instance. The attestation is performed against the integrity policy baseline.
+  This baseline is initially derived from the implicitly trusted boot image
+  when the VM instance is created. Enabled by default.
+
 <a name="nested_service_accounts"></a>The `service_accounts` block supports:
 
 * `email` -
@@ -309,6 +395,17 @@ The following arguments are supported:
   Optional. Use this VM image family to find the image; the newest
   image in this family will be used.
 
+<a name="nested_container_image"></a>The `container_image` block supports:
+
+* `repository` -
+  (Required)
+  The path to the container image repository.
+  For example: gcr.io/{project_id}/{imageName}
+
+* `tag` -
+  (Optional)
+  The tag of the container image. If not specified, this defaults to the latest tag.
+
 <a name="nested_boot_disk"></a>The `boot_disk` block supports:
 
 * `disk_size_gb` -
@@ -330,7 +427,7 @@ The following arguments are supported:
 
 * `kms_key` -
   (Optional)
-  'Optional. Input only. The KMS key used to encrypt the disks, only
+  'Optional. The KMS key used to encrypt the disks, only
   applicable if disk_encryption is CMEK. Format: `projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}`
   Learn more about using your own encryption keys.'
 
@@ -355,7 +452,7 @@ The following arguments are supported:
 
 * `kms_key` -
   (Optional)
-  'Optional. Input only. The KMS key used to encrypt the disks,
+  'Optional. The KMS key used to encrypt the disks,
   only applicable if disk_encryption is CMEK. Format: `projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}`
   Learn more about using your own encryption keys.'
 
@@ -374,6 +471,25 @@ The following arguments are supported:
   Optional. The type of vNIC to be used on this interface. This
   may be gVNIC or VirtioNet.
   Possible values are: `VIRTIO_NET`, `GVNIC`.
+
+* `access_configs` -
+  (Optional)
+  Optional. An array of configurations for this interface. Currently, only one access
+  config, ONE_TO_ONE_NAT, is supported. If no accessConfigs specified, the
+  instance will have an external internet access through an ephemeral
+  external IP address.
+  Structure is [documented below](#nested_access_configs).
+
+
+<a name="nested_access_configs"></a>The `access_configs` block supports:
+
+* `external_ip` -
+  (Required)
+  An external IP address associated with this instance. Specify an unused
+  static external IP address available to the project or leave this field
+  undefined to use an IP from a shared ephemeral IP address pool. If you
+  specify a static external IP address, it must live in the same region as
+  the zone of the instance.
 
 ## Attributes Reference
 

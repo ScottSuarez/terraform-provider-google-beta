@@ -17,7 +17,7 @@ description: |-
   A `Version` is a configuration which determine how a site is displayed.
 ---
 
-# google\_firebase\_hosting\_version
+# google_firebase_hosting_version
 
 A `Version` is a configuration which determine how a site is displayed. Static files are not supported at the moment.
 
@@ -59,6 +59,34 @@ resource "google_firebase_hosting_release" "default" {
   message      = "Redirect to Google"
 }
 ```
+## Example Usage - Firebasehosting Version Path
+
+
+```hcl
+resource "google_firebase_hosting_site" "default" {
+  provider = google-beta
+  project  = "my-project-name"
+  site_id  = "site-id"
+}
+
+resource "google_firebase_hosting_version" "default" {
+  provider = google-beta
+  site_id  = google_firebase_hosting_site.default.site_id
+  config {
+    rewrites {
+      glob = "**"
+      path = "/index.html"
+    }
+  }
+}
+
+resource "google_firebase_hosting_release" "default" {
+  provider     = google-beta
+  site_id      = google_firebase_hosting_site.default.site_id
+  version_name = google_firebase_hosting_version.default.name
+  message      = "Path Rewrite"
+}
+```
 ## Example Usage - Firebasehosting Version Cloud Run
 
 
@@ -83,6 +111,8 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  deletion_protection = "true"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -208,6 +238,10 @@ The following arguments are supported:
 * `regex` -
   (Optional)
   The user-supplied RE2 regular expression to match against the request URL path.
+
+* `path` -
+  (Optional)
+  The URL path to rewrite the request to.
 
 * `function` -
   (Optional)

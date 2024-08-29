@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
@@ -208,6 +208,48 @@ func TestAccComputeRouterPeer_Ipv6Basic(t *testing.T) {
 	})
 }
 
+func TestAccComputeRouterPeer_Ipv4BasicCreateUpdate(t *testing.T) {
+	t.Parallel()
+
+	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
+	resourceName := "google_compute_router_peer.foobar"
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRouterPeerDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouterPeerIpv4(routerName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeRouterPeerExists(
+						t, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_ipv4", "true"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccComputeRouterPeerUpdateIpv4Address(routerName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeRouterPeerExists(
+						t, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_ipv4", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ipv4_nexthop_address", "169.254.1.2"),
+					resource.TestCheckResourceAttr(resourceName, "peer_ipv4_nexthop_address", "169.254.1.1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccComputeRouterPeer_UpdateIpv6Address(t *testing.T) {
 	t.Parallel()
 
@@ -351,6 +393,29 @@ func TestAccComputeRouterPeer_UpdateMd5AuthenticationKey(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "md5_authentication_key.#", "1"), // Check for one element in the list
 					resource.TestCheckResourceAttr(resourceName, "md5_authentication_key.0.name", fmt.Sprintf("%s-peer1-key", routerName)),
 					resource.TestCheckResourceAttr(resourceName, "md5_authentication_key.0.key", fmt.Sprintf("%s-peer1-key-value-changed", routerName)),
+				),
+			},
+		},
+	})
+}
+
+func TestAccComputeRouterPeer_addImportAndExportPolicy(t *testing.T) {
+	t.Parallel()
+
+	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
+	resourceName := "google_compute_router_peer.foobar"
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRouterPeerDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouterWithRoutePolicies(routerName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "import_policies.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "import_policies.0", fmt.Sprintf("%s-rp-import", routerName)),
+					resource.TestCheckResourceAttr(resourceName, "export_policies.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "export_policies.0", fmt.Sprintf("%s-rp-export", routerName)),
 				),
 			},
 		},
@@ -606,6 +671,17 @@ func testAccComputeRouterPeerWithMd5AuthKey(routerName string) string {
     router             = google_compute_router.foobar.name
     vpn_gateway_interface           = 0
   }
+
+  resource "google_compute_vpn_tunnel" "foobar1" {
+    name               = "%s1"
+    region             = google_compute_subnetwork.foobar.region
+    vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
+    peer_external_gateway           = google_compute_external_vpn_gateway.external_gateway.id
+    peer_external_gateway_interface = 0  
+    shared_secret      = "unguessable"
+    router             = google_compute_router.foobar.name
+    vpn_gateway_interface           = 1
+  }
   
   resource "google_compute_router_interface" "foobar" {
     name       = "%s"
@@ -619,7 +695,7 @@ func testAccComputeRouterPeerWithMd5AuthKey(routerName string) string {
     name       = "%s1"
     router     = google_compute_router.foobar.name
     region     = google_compute_router.foobar.region
-    vpn_tunnel = google_compute_vpn_tunnel.foobar.name
+    vpn_tunnel = google_compute_vpn_tunnel.foobar1.name
     ip_range = "169.254.4.1/30"
     depends_on = [
       google_compute_router_interface.foobar
@@ -657,7 +733,151 @@ func testAccComputeRouterPeerWithMd5AuthKey(routerName string) string {
     ]
   }
 `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName,
-		routerName)
+		routerName, routerName)
+}
+
+func testAccComputeRouterWithRoutePolicies(routerName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_network" "foobar" {
+  provider = google-beta
+  name = "%s-net"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "foobar" {
+  provider = google-beta
+  name          = "%s-subnet"
+  network       = google_compute_network.foobar.self_link
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-central1"
+}
+
+resource "google_compute_address" "foobar" {
+  provider = google-beta
+  name   = "%s"
+  region = google_compute_subnetwork.foobar.region
+}
+
+resource "google_compute_ha_vpn_gateway" "foobar" {
+  provider = google-beta
+  name    = "%s-gateway"
+  network = google_compute_network.foobar.self_link
+  region  = google_compute_subnetwork.foobar.region
+}
+
+resource "google_compute_external_vpn_gateway" "external_gateway" {
+  provider = google-beta
+  name            = "%s-external-gateway"
+  redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
+  description     = "An externally managed VPN gateway"
+  interface {
+    id         = 0
+    ip_address = "8.8.8.8"
+  }
+}
+
+resource "google_compute_router" "foobar" {
+  provider = google-beta
+  name    = "%s"
+  region  = google_compute_subnetwork.foobar.region
+  network = google_compute_network.foobar.self_link
+  bgp {
+    asn = 64514
+  }
+}
+
+resource "google_compute_vpn_tunnel" "foobar" {
+  provider = google-beta
+  name               = "%s"
+  region             = google_compute_subnetwork.foobar.region
+  vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
+  peer_external_gateway           = google_compute_external_vpn_gateway.external_gateway.id
+  peer_external_gateway_interface = 0  
+  shared_secret      = "unguessable"
+  router             = google_compute_router.foobar.name
+  vpn_gateway_interface           = 0
+}
+
+resource "google_compute_router_interface" "foobar" {
+  provider = google-beta
+  name       = "%s"
+  router     = google_compute_router.foobar.name
+  region     = google_compute_router.foobar.region
+  vpn_tunnel = google_compute_vpn_tunnel.foobar.name
+}
+
+resource "google_compute_router_route_policy" "rp-export" {
+  provider = google-beta
+	name = "%s-rp-export"
+  router = google_compute_router.foobar.name
+  region = google_compute_router.foobar.region
+  type = "ROUTE_POLICY_TYPE_EXPORT"
+	terms {
+    priority = 2
+    match {
+      expression = "destination == '10.0.0.0/12'"
+      title      = "export_expression"
+      description = "acceptance expression for export"
+      location = "location of the expression"
+    }
+    actions {
+      expression = "accept()"
+      title      = "export_action"
+      description = "acceptance action for export"
+      location = "location of the expression"
+    }
+  }
+  depends_on = [
+    google_compute_router_interface.foobar
+  ]
+}
+
+resource "google_compute_router_route_policy" "rp-import" {
+  provider = google-beta
+  name = "%s-rp-import"
+  router = google_compute_router.foobar.name
+  region = google_compute_router.foobar.region
+	type = "ROUTE_POLICY_TYPE_IMPORT"
+  terms {
+    priority = 1
+    match {
+      expression = "destination == '10.0.0.0/12'"
+      title      = "import_expression"
+      description = "acceptance expression for import"
+      location = "location of the expression"
+	  }
+    actions {
+      expression = "accept()"
+      title      = "import_action"
+      description = "acceptance action for import"
+      location = "location of the expression"
+    }
+  }
+  depends_on = [
+    google_compute_router_interface.foobar, google_compute_router_route_policy.rp-export
+  ]
+}
+
+resource "google_compute_router_peer" "foobar" {
+  provider = google-beta
+  name                      = "%s-peer"
+  router                    = google_compute_router.foobar.name
+  region                    = google_compute_router.foobar.region
+  peer_asn                  = 65515
+  advertised_route_priority = 100
+  interface                 = google_compute_router_interface.foobar.name
+  md5_authentication_key {
+    name = "%s-peer-key"
+    key = "%s-peer-key-value"
+  }
+  import_policies           = [google_compute_router_route_policy.rp-import.name]
+  export_policies           = [google_compute_router_route_policy.rp-export.name]
+  depends_on = [
+    google_compute_router_route_policy.rp-export, google_compute_router_route_policy.rp-import, google_compute_router_interface.foobar
+  ]
+}
+  `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName,
+		routerName, routerName, routerName, routerName)
 }
 
 func testAccComputeRouterPeerWithMd5AuthKeyUpdate(routerName string) string {
@@ -714,6 +934,17 @@ func testAccComputeRouterPeerWithMd5AuthKeyUpdate(routerName string) string {
     router             = google_compute_router.foobar.name
     vpn_gateway_interface           = 0
   }
+
+  resource "google_compute_vpn_tunnel" "foobar1" {
+    name               = "%s1"
+    region             = google_compute_subnetwork.foobar.region
+    vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
+    peer_external_gateway           = google_compute_external_vpn_gateway.external_gateway.id
+    peer_external_gateway_interface = 0  
+    shared_secret      = "unguessable"
+    router             = google_compute_router.foobar.name
+    vpn_gateway_interface           = 1
+  }
   
   resource "google_compute_router_interface" "foobar" {
     name       = "%s"
@@ -727,7 +958,7 @@ func testAccComputeRouterPeerWithMd5AuthKeyUpdate(routerName string) string {
     name       = "%s1"
     router     = google_compute_router.foobar.name
     region     = google_compute_router.foobar.region
-    vpn_tunnel = google_compute_vpn_tunnel.foobar.name
+    vpn_tunnel = google_compute_vpn_tunnel.foobar1.name
     ip_range = "169.254.4.1/30"
     depends_on = [
       google_compute_router_interface.foobar
@@ -765,7 +996,7 @@ func testAccComputeRouterPeerWithMd5AuthKeyUpdate(routerName string) string {
     ]
   }
 `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName,
-		routerName)
+		routerName, routerName)
 }
 
 func testAccComputeRouterPeerKeepRouter(routerName string) string {
@@ -1092,6 +1323,10 @@ resource "google_compute_router_peer" "foobar" {
   advertised_ip_ranges {
     range = "10.1.0.0/32"
   }
+  custom_learned_ip_ranges {
+    range = "6.7.0.0/16"
+  }
+  custom_learned_route_priority=200
   interface = google_compute_router_interface.foobar.name
 }
 `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName)
@@ -1399,8 +1634,8 @@ resource "google_compute_router_peer" "foobar" {
   peer_asn                  = 65515
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.foobar.name
-
   enable_ipv6               = %v
+
 }
 `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, enableIpv6)
 }
@@ -1475,10 +1710,165 @@ resource "google_compute_router_peer" "foobar" {
   peer_asn                  = 65515
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.foobar.name
-
   enable_ipv6               = %v
   ipv6_nexthop_address      = "2600:2d00:0000:0002:0000:0000:0000:0001"
   peer_ipv6_nexthop_address = "2600:2d00:0:2::2"
 }
 `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName, enableIpv6)
+}
+
+func testAccComputeRouterPeerIpv4(routerName string) string {
+	return fmt.Sprintf(`resource "google_compute_network" "foobar" {
+    name = "%s-net"
+    auto_create_subnetworks = false
+  }
+  
+  resource "google_compute_subnetwork" "foobar" {
+    name          = "%s-subnet"
+    network       = google_compute_network.foobar.self_link
+    ip_cidr_range = "10.0.0.0/16"
+    region        = "us-central1"
+    stack_type = "IPV4_IPV6"
+    ipv6_access_type = "EXTERNAL" 
+  }
+  
+  resource "google_compute_ha_vpn_gateway" "foobar" {
+    name    = "%s-gateway"
+    network = google_compute_network.foobar.self_link
+    region  = google_compute_subnetwork.foobar.region
+    stack_type = "IPV4_IPV6"
+  }
+  
+  resource "google_compute_external_vpn_gateway" "external_gateway" {
+    name            = "%s-external-gateway"
+    redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
+    description     = "An externally managed VPN gateway"
+    interface {
+      id         = 0
+      ip_address = "8.8.8.8"
+    }
+  }
+  
+  resource "google_compute_router" "foobar" {
+    name    = "%s"
+    region  = google_compute_subnetwork.foobar.region
+    network = google_compute_network.foobar.self_link
+    bgp {
+      asn = 64514
+    }
+  }
+  
+  resource "google_compute_vpn_tunnel" "foobar" {
+    name               = "%s-tunnel"
+    region             = google_compute_subnetwork.foobar.region
+    vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
+    peer_external_gateway           = google_compute_external_vpn_gateway.external_gateway.id
+    peer_external_gateway_interface = 0  
+    shared_secret      = "unguessable"
+    router             = google_compute_router.foobar.name
+    vpn_gateway_interface           = 0
+  }
+  
+  resource "google_compute_router_interface" "foobar" {
+    name       = "%s-interface"
+    router     = google_compute_router.foobar.name
+    region     = google_compute_router.foobar.region
+    vpn_tunnel = google_compute_vpn_tunnel.foobar.name
+    ip_range   = "fdff:1::1:1/126"
+  }
+  
+  resource "google_compute_router_peer" "foobar" {
+    name                      = "%s-peer"
+    router                    = google_compute_router.foobar.name
+    region                    = google_compute_router.foobar.region
+    peer_asn                  = 65515
+    advertised_route_priority = 100
+    interface                 = google_compute_router_interface.foobar.name
+    ip_address                = "fdff:1::1:1"
+    peer_ip_address           = "fdff:1::1:2"
+
+    enable_ipv4               = true
+    enable_ipv6               = true
+    ipv4_nexthop_address      = "169.254.1.1"
+    peer_ipv4_nexthop_address = "169.254.1.2"
+  }
+  `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName)
+}
+
+func testAccComputeRouterPeerUpdateIpv4Address(routerName string) string {
+	return fmt.Sprintf(`resource "google_compute_network" "foobar" {
+    name = "%s-net"
+    auto_create_subnetworks = false
+  }
+  
+  resource "google_compute_subnetwork" "foobar" {
+    name          = "%s-subnet"
+    network       = google_compute_network.foobar.self_link
+    ip_cidr_range = "10.0.0.0/16"
+    region        = "us-central1"
+    stack_type = "IPV4_IPV6"
+    ipv6_access_type = "EXTERNAL" 
+  }
+  
+  resource "google_compute_ha_vpn_gateway" "foobar" {
+    name    = "%s-gateway"
+    network = google_compute_network.foobar.self_link
+    region  = google_compute_subnetwork.foobar.region
+    stack_type = "IPV4_IPV6"
+  }
+  
+  resource "google_compute_external_vpn_gateway" "external_gateway" {
+    name            = "%s-external-gateway"
+    redundancy_type = "SINGLE_IP_INTERNALLY_REDUNDANT"
+    description     = "An externally managed VPN gateway"
+    interface {
+      id         = 0
+      ip_address = "8.8.8.8"
+    }
+  }
+  
+  resource "google_compute_router" "foobar" {
+    name    = "%s"
+    region  = google_compute_subnetwork.foobar.region
+    network = google_compute_network.foobar.self_link
+    bgp {
+      asn = 64514
+    }
+  }
+  
+  resource "google_compute_vpn_tunnel" "foobar" {
+    name               = "%s-tunnel"
+    region             = google_compute_subnetwork.foobar.region
+    vpn_gateway = google_compute_ha_vpn_gateway.foobar.id
+    peer_external_gateway           = google_compute_external_vpn_gateway.external_gateway.id
+    peer_external_gateway_interface = 0  
+    shared_secret      = "unguessable"
+    router             = google_compute_router.foobar.name
+    vpn_gateway_interface           = 0
+  }
+  
+  resource "google_compute_router_interface" "foobar" {
+    name       = "%s-interface"
+    router     = google_compute_router.foobar.name
+    region     = google_compute_router.foobar.region
+    vpn_tunnel = google_compute_vpn_tunnel.foobar.name
+    ip_range   = "fdff:1::1:1/126"
+  }
+  
+  resource "google_compute_router_peer" "foobar" {
+    name                      = "%s-peer"
+    router                    = google_compute_router.foobar.name
+    region                    = google_compute_router.foobar.region
+    peer_asn                  = 65515
+    advertised_route_priority = 100
+    interface                 = google_compute_router_interface.foobar.name
+    ip_address                = "fdff:1::1:1"
+    peer_ip_address           = "fdff:1::1:2"
+
+    enable_ipv4               = true
+    enable_ipv6               = true
+    ipv4_nexthop_address      = "169.254.1.2"
+    peer_ipv4_nexthop_address = "169.254.1.1"
+  }
+  `, routerName, routerName, routerName, routerName, routerName, routerName, routerName, routerName)
 }

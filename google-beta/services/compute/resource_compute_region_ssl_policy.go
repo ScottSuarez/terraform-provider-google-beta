@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -84,13 +85,6 @@ first character must be a lowercase letter, and all following
 characters must be a dash, lowercase letter, or digit, except the last
 character, which cannot be a dash.`,
 			},
-			"region": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-				Description:      `The region where the regional SSL policy resides.`,
-			},
 			"custom_features": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -134,6 +128,14 @@ See the [official documentation](https://cloud.google.com/compute/docs/load-bala
 for information on what cipher suites each profile provides. If
 'CUSTOM' is used, the 'custom_features' attribute **must be set**. Default value: "COMPATIBLE" Possible values: ["COMPATIBLE", "MODERN", "RESTRICTED", "CUSTOM"]`,
 				Default: "COMPATIBLE",
+			},
+			"region": {
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      `The region where the regional SSL policy resides.`,
 			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
@@ -240,6 +242,7 @@ func resourceComputeRegionSslPolicyCreate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -248,6 +251,7 @@ func resourceComputeRegionSslPolicyCreate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionSslPolicy: %s", err)
@@ -300,12 +304,14 @@ func resourceComputeRegionSslPolicyRead(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionSslPolicy %q", d.Id()))
@@ -396,6 +402,7 @@ func resourceComputeRegionSslPolicyUpdate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Updating RegionSslPolicy %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -410,6 +417,7 @@ func resourceComputeRegionSslPolicyUpdate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -450,13 +458,15 @@ func resourceComputeRegionSslPolicyDelete(d *schema.ResourceData, meta interface
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting RegionSslPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting RegionSslPolicy %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -465,6 +475,7 @@ func resourceComputeRegionSslPolicyDelete(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionSslPolicy")
@@ -545,7 +556,7 @@ func flattenComputeRegionSslPolicyRegion(v interface{}, d *schema.ResourceData, 
 	if v == nil {
 		return v
 	}
-	return tpgresource.ConvertSelfLinkToV1(v.(string))
+	return tpgresource.NameFromSelfLinkStateFunc(v)
 }
 
 func expandComputeRegionSslPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

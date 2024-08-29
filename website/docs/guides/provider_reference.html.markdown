@@ -1,7 +1,7 @@
 ---
-page_title: "Google Provider Configuration Reference"
+page_title: "Google Cloud Provider Configuration Reference"
 description: |-
-  Configuration reference for the Google provider for Terraform.
+  Configuration reference for the Terraform provider for Google Cloud.
 ---
 
 # Google Provider Configuration Reference
@@ -277,8 +277,9 @@ automatically to resources, and will be returned in the `terraform_labels`
 and `effective_labels` fields. This makes it possible to distinguish Terraform
 resources when using other tools like Cloud Console or gcloud.
 
-The default value is `false`. No label will be added unless the provider is
-explicitly configured to do so by setting the value to `true`.
+The default value is `true`. Unless explicitly configured (along with
+`terraform_attribution_label_addition_strategy`, described below) the label
+be added to newly provisioned resources.
 
 ---
 

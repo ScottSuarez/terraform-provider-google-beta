@@ -5,7 +5,7 @@ package notebooks_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
@@ -23,25 +23,28 @@ func TestAccNotebooksRuntime_update(t *testing.T) {
 				Config: testAccNotebooksRuntime_basic(context),
 			},
 			{
-				ResourceName:      "google_notebooks_runtime.runtime",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_notebooks_runtime.runtime",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNotebooksRuntime_update(context),
 			},
 			{
-				ResourceName:      "google_notebooks_runtime.runtime",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_notebooks_runtime.runtime",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 			{
 				Config: testAccNotebooksRuntime_basic(context),
 			},
 			{
-				ResourceName:      "google_notebooks_runtime.runtime",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_notebooks_runtime.runtime",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
 		},
 	})
@@ -100,6 +103,9 @@ resource "google_notebooks_runtime" "runtime" {
       }
       reserved_ip_range = "192.168.255.0/24"
     }
+  }
+  labels = {
+    k = "val"
   }
 }
 `, context)

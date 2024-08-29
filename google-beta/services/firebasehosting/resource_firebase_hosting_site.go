@@ -20,6 +20,7 @@ package firebasehosting
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -75,8 +76,8 @@ domain name label.`,
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. The fully-qualified resource name of the Hosting site, in the
-format: projects/PROJECT_IDENTIFIER/sites/SITE_ID PROJECT_IDENTIFIER: the
+				Description: `Output only. The fully-qualified resource name of the Hosting site, in
+the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID PROJECT_IDENTIFIER: the
 Firebase project's
 ['ProjectNumber'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its
 ['ProjectId'](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_id).
@@ -128,6 +129,34 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	// Check if the Firebase hostng site already exits. Do an update if so.
+
+	getUrl, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	if err != nil {
+		return err
+	}
+	_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    getUrl,
+		UserAgent: userAgent,
+		Headers:   headers,
+	})
+
+	if err == nil {
+		// Hosting site already exists
+		log.Printf("[DEBUG] Firebase hosting site already exists %s", d.Get("site_id"))
+		// Replace import id for the resource id
+		id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/sites/{{site_id}}")
+		if err != nil {
+			return fmt.Errorf("Error constructing id: %s", err)
+		}
+		d.SetId(id)
+		return resourceFirebaseHostingSiteUpdate(d, meta)
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -136,6 +165,7 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Site: %s", err)
@@ -181,12 +211,14 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseHostingSite %q", d.Id()))
@@ -238,6 +270,7 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Updating Site %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("app_id") {
@@ -265,6 +298,7 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -299,13 +333,15 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Site %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Site %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -314,6 +350,7 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Site")

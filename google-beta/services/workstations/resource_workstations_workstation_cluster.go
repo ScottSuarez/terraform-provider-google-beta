@@ -20,6 +20,7 @@ package workstations
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -187,6 +188,12 @@ To access workstations in the cluster, configure access to the managed service u
 					},
 				},
 			},
+			"control_plane_ip": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The private IP address of the control plane for this workstation cluster.
+Workstation VMs need access to this IP address to work with the service, so make sure that your firewall rules allow egress from the workstation VMs to this address.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -320,6 +327,7 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -328,6 +336,7 @@ func resourceWorkstationsWorkstationClusterCreate(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating WorkstationCluster: %s", err)
@@ -380,12 +389,14 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstationCluster %q", d.Id()))
@@ -408,6 +419,9 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
 	if err := d.Set("subnetwork", flattenWorkstationsWorkstationClusterSubnetwork(res["subnetwork"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
+	}
+	if err := d.Set("control_plane_ip", flattenWorkstationsWorkstationClusterControlPlaneIp(res["controlPlaneIp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationCluster: %s", err)
 	}
 	if err := d.Set("display_name", flattenWorkstationsWorkstationClusterDisplayName(res["displayName"], d, config)); err != nil {
@@ -506,6 +520,7 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Updating WorkstationCluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -553,6 +568,7 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -594,13 +610,15 @@ func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta i
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting WorkstationCluster %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting WorkstationCluster %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -609,6 +627,7 @@ func resourceWorkstationsWorkstationClusterDelete(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "WorkstationCluster")
@@ -674,6 +693,10 @@ func flattenWorkstationsWorkstationClusterNetwork(v interface{}, d *schema.Resou
 }
 
 func flattenWorkstationsWorkstationClusterSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationClusterControlPlaneIp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

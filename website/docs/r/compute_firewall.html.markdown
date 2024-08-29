@@ -18,7 +18,7 @@ description: |-
   instances.
 ---
 
-# google\_compute\_firewall
+# google_compute_firewall
 
 Each network has its own firewall controlling access to and from the
 instances.
@@ -41,7 +41,7 @@ To get more information about Firewall, see:
     * [Official Documentation](https://cloud.google.com/vpc/docs/firewalls)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=firewall_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=firewall_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -242,7 +242,7 @@ If logging is enabled, logs will be exported to Stackdriver. Deprecated in favor
   is only applicable for UDP or TCP protocol. Each entry must be
   either an integer or a range. If not specified, this rule
   applies to connections through any port.
-  Example inputs include: ["22"], ["80","443"], and
+  Example inputs include: [22], [80, 443], and
   ["12345-12349"].
 
 <a name="nested_deny"></a>The `deny` block supports:
@@ -260,7 +260,7 @@ If logging is enabled, logs will be exported to Stackdriver. Deprecated in favor
   is only applicable for UDP or TCP protocol. Each entry must be
   either an integer or a range. If not specified, this rule
   applies to connections through any port.
-  Example inputs include: ["22"], ["80","443"], and
+  Example inputs include: [22], [80, 443], and
   ["12345-12349"].
 
 <a name="nested_log_config"></a>The `log_config` block supports:

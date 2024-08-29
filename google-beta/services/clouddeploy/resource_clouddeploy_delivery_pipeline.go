@@ -69,7 +69,7 @@ func ResourceClouddeployDeliveryPipeline() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of the `DeliveryPipeline`. Format is [a-z][a-z0-9\\-]{0,62}.",
+				Description: "Name of the `DeliveryPipeline`. Format is `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`.",
 			},
 
 			"description": {
@@ -463,6 +463,27 @@ func ClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigC
 				Optional:    true,
 				Description: "Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user's behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.",
 			},
+
+			"canary_revision_tags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Optional. A list of tags that are added to the canary revision while the canary phase is in progress.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"prior_revision_tags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Optional. A list of tags that are added to the prior revision while the canary phase is in progress.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"stable_revision_tags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Optional. A list of tags that are added to the final stable revision when the stable phase is applied.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 		},
 	}
 }
@@ -510,10 +531,22 @@ func ClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigK
 				Description: "Required. Name of the Kubernetes Service.",
 			},
 
+			"pod_selector_label": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. The label to use when selecting Pods for the Deployment and Service resources. This label must already be present in both resources.",
+			},
+
 			"route_update_wait_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.",
+			},
+
+			"stable_cutback_duration": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.",
 			},
 		},
 	}
@@ -538,6 +571,12 @@ func ClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigK
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.",
+			},
+
+			"pod_selector_label": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. The label to use when selecting Pods for the Deployment resource. This label must already be present in the Deployment.",
 			},
 		},
 	}
@@ -1413,6 +1452,9 @@ func expandClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeC
 	obj := objArr[0].(map[string]interface{})
 	return &clouddeploy.DeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigCloudRun{
 		AutomaticTrafficControl: dcl.Bool(obj["automatic_traffic_control"].(bool)),
+		CanaryRevisionTags:      tpgdclresource.ExpandStringArray(obj["canary_revision_tags"]),
+		PriorRevisionTags:       tpgdclresource.ExpandStringArray(obj["prior_revision_tags"]),
+		StableRevisionTags:      tpgdclresource.ExpandStringArray(obj["stable_revision_tags"]),
 	}
 }
 
@@ -1422,6 +1464,9 @@ func flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntime
 	}
 	transformed := map[string]interface{}{
 		"automatic_traffic_control": obj.AutomaticTrafficControl,
+		"canary_revision_tags":      obj.CanaryRevisionTags,
+		"prior_revision_tags":       obj.PriorRevisionTags,
+		"stable_revision_tags":      obj.StableRevisionTags,
 	}
 
 	return []interface{}{transformed}
@@ -1466,10 +1511,12 @@ func expandClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeC
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &clouddeploy.DeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeConfigKubernetesGatewayServiceMesh{
-		Deployment:          dcl.String(obj["deployment"].(string)),
-		HttpRoute:           dcl.String(obj["http_route"].(string)),
-		Service:             dcl.String(obj["service"].(string)),
-		RouteUpdateWaitTime: dcl.String(obj["route_update_wait_time"].(string)),
+		Deployment:            dcl.String(obj["deployment"].(string)),
+		HttpRoute:             dcl.String(obj["http_route"].(string)),
+		Service:               dcl.String(obj["service"].(string)),
+		PodSelectorLabel:      dcl.String(obj["pod_selector_label"].(string)),
+		RouteUpdateWaitTime:   dcl.String(obj["route_update_wait_time"].(string)),
+		StableCutbackDuration: dcl.String(obj["stable_cutback_duration"].(string)),
 	}
 }
 
@@ -1478,10 +1525,12 @@ func flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntime
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"deployment":             obj.Deployment,
-		"http_route":             obj.HttpRoute,
-		"service":                obj.Service,
-		"route_update_wait_time": obj.RouteUpdateWaitTime,
+		"deployment":              obj.Deployment,
+		"http_route":              obj.HttpRoute,
+		"service":                 obj.Service,
+		"pod_selector_label":      obj.PodSelectorLabel,
+		"route_update_wait_time":  obj.RouteUpdateWaitTime,
+		"stable_cutback_duration": obj.StableCutbackDuration,
 	}
 
 	return []interface{}{transformed}
@@ -1501,6 +1550,7 @@ func expandClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntimeC
 		Deployment:                 dcl.String(obj["deployment"].(string)),
 		Service:                    dcl.String(obj["service"].(string)),
 		DisablePodOverprovisioning: dcl.Bool(obj["disable_pod_overprovisioning"].(bool)),
+		PodSelectorLabel:           dcl.String(obj["pod_selector_label"].(string)),
 	}
 }
 
@@ -1512,6 +1562,7 @@ func flattenClouddeployDeliveryPipelineSerialPipelineStagesStrategyCanaryRuntime
 		"deployment":                   obj.Deployment,
 		"service":                      obj.Service,
 		"disable_pod_overprovisioning": obj.DisablePodOverprovisioning,
+		"pod_selector_label":           obj.PodSelectorLabel,
 	}
 
 	return []interface{}{transformed}

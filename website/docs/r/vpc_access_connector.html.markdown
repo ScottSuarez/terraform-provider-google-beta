@@ -17,7 +17,7 @@ description: |-
   Serverless VPC Access connector resource.
 ---
 
-# google\_vpc\_access\_connector
+# google_vpc_access_connector
 
 Serverless VPC Access connector resource.
 
@@ -29,7 +29,7 @@ To get more information about Connector, see:
     * [Configuring Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=vpc_access_connector&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=vpc_access_connector&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -41,10 +41,12 @@ resource "google_vpc_access_connector" "connector" {
   name          = "vpc-con"
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
+  min_instances = 2
+  max_instances = 3
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=vpc_access_connector_shared_vpc&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=vpc_access_connector_shared_vpc&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -58,18 +60,15 @@ resource "google_vpc_access_connector" "connector" {
     name = google_compute_subnetwork.custom_test.name
   }
   machine_type = "e2-standard-4"
+  min_instances = 2
+  max_instances = 3
 }
 
 resource "google_compute_subnetwork" "custom_test" {
   name          = "vpc-con"
   ip_cidr_range = "10.2.0.0/28"
   region        = "us-central1"
-  network       = google_compute_network.custom_test.id
-}
-
-resource "google_compute_network" "custom_test" {
-  name                    = "vpc-con"
-  auto_create_subnetworks = false
+  network       = "default"
 }
 ```
 
@@ -100,19 +99,26 @@ The following arguments are supported:
 
 * `min_throughput` -
   (Optional)
-  Minimum throughput of the connector in Mbps. Default and min is 200.
+  Minimum throughput of the connector in Mbps. Default and min is 200. Refers to the expected throughput when using an e2-micro machine type.
+  Value must be a multiple of 100 from 200 through 900. Must be lower than the value specified by max_throughput. If both min_throughput and
+  min_instances are provided, min_instances takes precedence over min_throughput. The use of min_throughput is discouraged in favor of min_instances.
 
 * `min_instances` -
   (Optional)
-  Minimum value of instances in autoscaling group underlying the connector.
+  Minimum value of instances in autoscaling group underlying the connector. Value must be between 2 and 9, inclusive. Must be
+  lower than the value specified by max_instances.
 
 * `max_instances` -
   (Optional)
-  Maximum value of instances in autoscaling group underlying the connector.
+  Maximum value of instances in autoscaling group underlying the connector. Value must be between 3 and 10, inclusive. Must be
+  higher than the value specified by min_instances.
 
 * `max_throughput` -
   (Optional)
-  Maximum throughput of the connector in Mbps, must be greater than `min_throughput`. Default is 300.
+  Maximum throughput of the connector in Mbps, must be greater than `min_throughput`. Default is 300. Refers to the expected throughput
+  when using an e2-micro machine type. Value must be a multiple of 100 from 300 through 1000. Must be higher than the value specified by
+  min_throughput. If both max_throughput and max_instances are provided, max_instances takes precedence over max_throughput. The use of
+  max_throughput is discouraged in favor of max_instances.
 
 * `subnet` -
   (Optional)

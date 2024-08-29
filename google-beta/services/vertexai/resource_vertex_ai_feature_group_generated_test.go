@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccVertexAIFeatureGroup_vertexAiFeatureGroupExample(t *testing.T) {
 				ResourceName:            "google_vertex_ai_feature_group.feature_group",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "region", "description", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"description", "etag", "labels", "region", "terraform_labels"},
 			},
 		},
 	})

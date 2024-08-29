@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -62,6 +62,45 @@ resource "google_bigquery_analytics_hub_data_exchange" "data_exchange" {
   data_exchange_id = "tf_test_my_data_exchange%{random_suffix}"
   display_name     = "tf_test_my_data_exchange%{random_suffix}"
   description      = "example data exchange%{random_suffix}"
+}
+`, context)
+}
+
+func TestAccBigqueryAnalyticsHubDataExchange_bigqueryAnalyticshubDataExchangeDcrExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigqueryAnalyticsHubDataExchangeDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigqueryAnalyticsHubDataExchange_bigqueryAnalyticshubDataExchangeDcrExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_analytics_hub_data_exchange.data_exchange",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"data_exchange_id", "location"},
+			},
+		},
+	})
+}
+
+func testAccBigqueryAnalyticsHubDataExchange_bigqueryAnalyticshubDataExchangeDcrExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_analytics_hub_data_exchange" "data_exchange" {
+  location         = "US"
+  data_exchange_id = "tf_test_dcr_data_exchange%{random_suffix}"
+  display_name     = "tf_test_dcr_data_exchange%{random_suffix}"
+  description      = "example dcr data exchange%{random_suffix}"
+  sharing_environment_config  {
+    dcr_exchange_config {}
+  }
 }
 `, context)
 }

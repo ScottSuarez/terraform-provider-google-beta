@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -124,6 +125,12 @@ the schema as returned by the API.`,
 					},
 				},
 			},
+			"data_governance_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"DATA_MASKING", ""}),
+				Description:  `If set to DATA_MASKING, the function is validated and made available as a masking function. For more information, see https://cloud.google.com/bigquery/docs/user-defined-functions#custom-mask Possible values: ["DATA_MASKING"]`,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -149,6 +156,47 @@ imported JAVASCRIPT libraries.`,
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"SQL", "JAVASCRIPT", "PYTHON", "JAVA", "SCALA", ""}),
 				Description:  `The language of the routine. Possible values: ["SQL", "JAVASCRIPT", "PYTHON", "JAVA", "SCALA"]`,
+			},
+			"remote_function_options": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Remote function specific options.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connection": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Fully qualified name of the user-provided connection object which holds
+the authentication information to send requests to the remote service.
+Format: "projects/{projectId}/locations/{locationId}/connections/{connectionId}"`,
+						},
+						"endpoint": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Endpoint of the user-provided remote service, e.g.
+'https://us-east1-my_gcf_project.cloudfunctions.net/remote_add'`,
+						},
+						"max_batching_rows": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Max number of rows in each batch sent to the remote service. If absent or if 0,
+BigQuery dynamically decides the number of rows in a batch.`,
+						},
+						"user_defined_context": {
+							Type:     schema.TypeMap,
+							Computed: true,
+							Optional: true,
+							Description: `User-defined context as a set of key/value pairs, which will be sent as function
+invocation context together with batched arguments in the requests to the remote
+service. The total number of bytes of keys and values must be less than 8KB.
+
+An object containing a list of "key": value pairs. Example:
+'{ "name": "wrench", "mass": "1.3kg", "count": "3" }'.`,
+							Elem: &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
 			},
 			"return_table_type": {
 				Type:         schema.TypeString,
@@ -351,11 +399,23 @@ func resourceBigQueryRoutineCreate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("determinism_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(determinismLevelProp)) && (ok || !reflect.DeepEqual(v, determinismLevelProp)) {
 		obj["determinismLevel"] = determinismLevelProp
 	}
+	dataGovernanceTypeProp, err := expandBigQueryRoutineDataGovernanceType(d.Get("data_governance_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_governance_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(dataGovernanceTypeProp)) && (ok || !reflect.DeepEqual(v, dataGovernanceTypeProp)) {
+		obj["dataGovernanceType"] = dataGovernanceTypeProp
+	}
 	sparkOptionsProp, err := expandBigQueryRoutineSparkOptions(d.Get("spark_options"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("spark_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(sparkOptionsProp)) && (ok || !reflect.DeepEqual(v, sparkOptionsProp)) {
 		obj["sparkOptions"] = sparkOptionsProp
+	}
+	remoteFunctionOptionsProp, err := expandBigQueryRoutineRemoteFunctionOptions(d.Get("remote_function_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("remote_function_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(remoteFunctionOptionsProp)) && (ok || !reflect.DeepEqual(v, remoteFunctionOptionsProp)) {
+		obj["remoteFunctionOptions"] = remoteFunctionOptionsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines")
@@ -377,6 +437,7 @@ func resourceBigQueryRoutineCreate(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -385,6 +446,7 @@ func resourceBigQueryRoutineCreate(d *schema.ResourceData, meta interface{}) err
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Routine: %s", err)
@@ -427,12 +489,14 @@ func resourceBigQueryRoutineRead(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigQueryRoutine %q", d.Id()))
@@ -490,7 +554,13 @@ func resourceBigQueryRoutineRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("determinism_level", flattenBigQueryRoutineDeterminismLevel(res["determinismLevel"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Routine: %s", err)
 	}
+	if err := d.Set("data_governance_type", flattenBigQueryRoutineDataGovernanceType(res["dataGovernanceType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Routine: %s", err)
+	}
 	if err := d.Set("spark_options", flattenBigQueryRoutineSparkOptions(res["sparkOptions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Routine: %s", err)
+	}
+	if err := d.Set("remote_function_options", flattenBigQueryRoutineRemoteFunctionOptions(res["remoteFunctionOptions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Routine: %s", err)
 	}
 
@@ -573,11 +643,23 @@ func resourceBigQueryRoutineUpdate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("determinism_level"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, determinismLevelProp)) {
 		obj["determinismLevel"] = determinismLevelProp
 	}
+	dataGovernanceTypeProp, err := expandBigQueryRoutineDataGovernanceType(d.Get("data_governance_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_governance_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dataGovernanceTypeProp)) {
+		obj["dataGovernanceType"] = dataGovernanceTypeProp
+	}
 	sparkOptionsProp, err := expandBigQueryRoutineSparkOptions(d.Get("spark_options"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("spark_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sparkOptionsProp)) {
 		obj["sparkOptions"] = sparkOptionsProp
+	}
+	remoteFunctionOptionsProp, err := expandBigQueryRoutineRemoteFunctionOptions(d.Get("remote_function_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("remote_function_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, remoteFunctionOptionsProp)) {
+		obj["remoteFunctionOptions"] = remoteFunctionOptionsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}")
@@ -586,6 +668,7 @@ func resourceBigQueryRoutineUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	log.Printf("[DEBUG] Updating Routine %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -600,6 +683,7 @@ func resourceBigQueryRoutineUpdate(d *schema.ResourceData, meta interface{}) err
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -632,13 +716,15 @@ func resourceBigQueryRoutineDelete(d *schema.ResourceData, meta interface{}) err
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Routine %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Routine %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -647,6 +733,7 @@ func resourceBigQueryRoutineDelete(d *schema.ResourceData, meta interface{}) err
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Routine")
@@ -826,6 +913,10 @@ func flattenBigQueryRoutineDeterminismLevel(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenBigQueryRoutineDataGovernanceType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenBigQueryRoutineSparkOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -894,6 +985,41 @@ func flattenBigQueryRoutineSparkOptionsArchiveUris(v interface{}, d *schema.Reso
 }
 
 func flattenBigQueryRoutineSparkOptionsMainClass(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineRemoteFunctionOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["endpoint"] =
+		flattenBigQueryRoutineRemoteFunctionOptionsEndpoint(original["endpoint"], d, config)
+	transformed["connection"] =
+		flattenBigQueryRoutineRemoteFunctionOptionsConnection(original["connection"], d, config)
+	transformed["user_defined_context"] =
+		flattenBigQueryRoutineRemoteFunctionOptionsUserDefinedContext(original["userDefinedContext"], d, config)
+	transformed["max_batching_rows"] =
+		flattenBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(original["maxBatchingRows"], d, config)
+	return []interface{}{transformed}
+}
+func flattenBigQueryRoutineRemoteFunctionOptionsEndpoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineRemoteFunctionOptionsConnection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineRemoteFunctionOptionsUserDefinedContext(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1023,6 +1149,10 @@ func expandBigQueryRoutineDeterminismLevel(v interface{}, d tpgresource.Terrafor
 	return v, nil
 }
 
+func expandBigQueryRoutineDataGovernanceType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandBigQueryRoutineSparkOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -1149,5 +1279,68 @@ func expandBigQueryRoutineSparkOptionsArchiveUris(v interface{}, d tpgresource.T
 }
 
 func expandBigQueryRoutineSparkOptionsMainClass(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineRemoteFunctionOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEndpoint, err := expandBigQueryRoutineRemoteFunctionOptionsEndpoint(original["endpoint"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEndpoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["endpoint"] = transformedEndpoint
+	}
+
+	transformedConnection, err := expandBigQueryRoutineRemoteFunctionOptionsConnection(original["connection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedConnection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["connection"] = transformedConnection
+	}
+
+	transformedUserDefinedContext, err := expandBigQueryRoutineRemoteFunctionOptionsUserDefinedContext(original["user_defined_context"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUserDefinedContext); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["userDefinedContext"] = transformedUserDefinedContext
+	}
+
+	transformedMaxBatchingRows, err := expandBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(original["max_batching_rows"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxBatchingRows); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxBatchingRows"] = transformedMaxBatchingRows
+	}
+
+	return transformed, nil
+}
+
+func expandBigQueryRoutineRemoteFunctionOptionsEndpoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineRemoteFunctionOptionsConnection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineRemoteFunctionOptionsUserDefinedContext(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
+func expandBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -140,6 +140,7 @@ func createScopedPolicy(t *testing.T, org string) string {
 		project_id      = "acm-tf-test-%s"
 		name            = "acm-tf-test-%s"
 		org_id          = "%s"
+		deletion_policy = "DELETE"
 		}
 
 		resource "google_access_context_manager_access_policy" "access-policy" {

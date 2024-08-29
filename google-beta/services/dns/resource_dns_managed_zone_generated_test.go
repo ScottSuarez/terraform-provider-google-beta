@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -35,7 +35,7 @@ func TestAccDNSManagedZone_dnsManagedZoneQuickstartExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"dns_name":      "mz.gcp.tfacc.hashicorptest.com.",
+		"dns_name":      "m-z.gcp.tfacc.hashicorptest.com.",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -269,8 +269,8 @@ func TestAccDNSManagedZone_dnsManagedZonePrivateMultiprojectExample(t *testing.T
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -332,6 +332,7 @@ resource "google_project" "project_1" {
   project_id      = "tf-test-project-1%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project" "project_2" {
@@ -339,6 +340,7 @@ resource "google_project" "project_2" {
   project_id      = "tf-test-project-2%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_compute_network" "network_1_project_1" {

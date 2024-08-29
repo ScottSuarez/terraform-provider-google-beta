@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -35,8 +35,8 @@ func TestAccGKEHub2MembershipBinding_gkehubMembershipBindingBasicExample(t *test
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project":             envvar.GetTestProjectFromEnv(),
 		"location":            envvar.GetTestRegionFromEnv(),
+		"project":             envvar.GetTestProjectFromEnv(),
 		"deletion_protection": false,
 		"network_name":        acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name":     acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
@@ -55,7 +55,7 @@ func TestAccGKEHub2MembershipBinding_gkehubMembershipBindingBasicExample(t *test
 				ResourceName:            "google_gke_hub_membership_binding.membership_binding",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"membership_binding_id", "scope", "membership_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "membership_binding_id", "membership_id", "scope", "terraform_labels"},
 			},
 		},
 	})

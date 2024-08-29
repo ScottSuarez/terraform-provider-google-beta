@@ -17,7 +17,7 @@ description: |-
   A managed alloydb cluster.
 ---
 
-# google\_alloydb\_cluster
+# google_alloydb_cluster
 
 A managed alloydb cluster.
 
@@ -32,12 +32,19 @@ To get more information about Cluster, see:
 To promote, users have to set the `cluster_type` property as `PRIMARY` and remove the `secondary_config` field from cluster configuration.
 [See Example](https://github.com/hashicorp/terraform-provider-google/pull/16413).
 
+Switchover is supported in terraform by refreshing the state of the terraform configurations.
+The switchover operation still needs to be called outside of terraform.
+After the switchover operation is completed successfully:
+  1. Refresh the state of the AlloyDB resources by running `terraform apply -refresh-only --auto-approve` .
+  2. Manually update the terraform configuration file(s) to match the actual state of the resources by modifying the `cluster_type` and `secondary_config` fields.
+  3. Verify the sync of terraform state by running `terraform plan` and ensure that the infrastructure matches the configuration and no changes are required.
+
 ~> **Warning:** All arguments including the following potentially sensitive
 values will be stored in the raw state as plain text: `initial_user.password`.
 [Read more about sensitive data in state](https://www.terraform.io/language/state/sensitive-data).
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=alloydb_cluster_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=alloydb_cluster_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -48,7 +55,9 @@ values will be stored in the raw state as plain text: `initial_user.password`.
 resource "google_alloydb_cluster" "default" {
   cluster_id = "alloydb-cluster"
   location   = "us-central1"
-  network    = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
 }
 
 data "google_project" "project" {}
@@ -58,7 +67,7 @@ resource "google_compute_network" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=alloydb_cluster_full&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=alloydb_cluster_full&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -67,9 +76,11 @@ resource "google_compute_network" "default" {
 
 ```hcl
 resource "google_alloydb_cluster" "full" {
-  cluster_id   = "alloydb-cluster-full"
-  location     = "us-central1"
-  network      = google_compute_network.default.id
+  cluster_id = "alloydb-cluster-full"
+  location   = "us-central1"
+  network_config {
+    network = google_compute_network.default.id
+  }
   database_version = "POSTGRES_15"
 
   initial_user {
@@ -155,7 +166,9 @@ resource "google_alloydb_backup" "source" {
 resource "google_alloydb_cluster" "restored_from_backup" {
   cluster_id            = "alloydb-backup-restored"
   location              = "us-central1"
-  network               = data.google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   restore_backup_source {
     backup_name = google_alloydb_backup.source.name
   }
@@ -164,8 +177,9 @@ resource "google_alloydb_cluster" "restored_from_backup" {
 resource "google_alloydb_cluster" "restored_via_pitr" {
   cluster_id             = "alloydb-pitr-restored"
   location               = "us-central1"
-  network                = data.google_compute_network.default.id
-
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   restore_continuous_backup_source {
     cluster = google_alloydb_cluster.source.name
     point_in_time = "2023-08-03T19:19:00.094Z"
@@ -199,7 +213,9 @@ resource "google_service_networking_connection" "vpc_connection" {
 resource "google_alloydb_cluster" "primary" {
   cluster_id = "alloydb-primary-cluster"
   location   = "us-central1"
-  network    = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
 }
 
 resource "google_alloydb_instance" "primary" {
@@ -217,7 +233,9 @@ resource "google_alloydb_instance" "primary" {
 resource "google_alloydb_cluster" "secondary" {
   cluster_id   = "alloydb-secondary-cluster"
   location     = "us-east1"
-  network      = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
   cluster_type = "SECONDARY"
 
   continuous_backup_config {
@@ -280,13 +298,6 @@ The following arguments are supported:
   EncryptionConfig describes the encryption config of a cluster or a backup that is encrypted with a CMEK (customer-managed encryption key).
   Structure is [documented below](#nested_encryption_config).
 
-* `network` -
-  (Optional, Deprecated)
-  The relative resource name of the VPC network on which the instance can be accessed. It is specified in the following form:
-  "projects/{projectNumber}/global/networks/{network_id}".
-
-  ~> **Warning:** `network` is deprecated and will be removed in a future major release. Instead, use `network_config` to define the network configuration.
-
 * `network_config` -
   (Optional)
   Metadata related to network configuration.
@@ -311,6 +322,11 @@ The following arguments are supported:
 * `database_version` -
   (Optional)
   The database engine major version. This is an optional field and it's populated at the Cluster creation time. This field cannot be changed after cluster creation.
+
+* `psc_config` -
+  (Optional)
+  Configuration for Private Service Connect (PSC) for the cluster.
+  Structure is [documented below](#nested_psc_config).
 
 * `initial_user` -
   (Optional)
@@ -349,12 +365,23 @@ The following arguments are supported:
   Configuration of the secondary cluster for Cross Region Replication. This should be set if and only if the cluster is of type SECONDARY.
   Structure is [documented below](#nested_secondary_config).
 
+* `maintenance_update_policy` -
+  (Optional)
+  MaintenanceUpdatePolicy defines the policy for system updates.
+  Structure is [documented below](#nested_maintenance_update_policy).
+
+* `subscription_type` -
+  (Optional)
+  The subscrition type of cluster.
+  Possible values are: `TRIAL`, `STANDARD`.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
 * `deletion_policy` - (Optional) Policy to determine if the cluster should be deleted forcefully.
 Deleting a cluster forcefully, deletes the cluster and all its associated instances within the cluster.
 Deleting a Secondary cluster with a secondary instance REQUIRES setting deletion_policy = "FORCE" otherwise an error is returned. This is needed as there is no support to delete just the secondary instance, and the only way to delete secondary instance is to delete the associated secondary cluster forcefully which also deletes the secondary instance.
+Possible values: DEFAULT, FORCE
 
 
 <a name="nested_encryption_config"></a>The `encryption_config` block supports:
@@ -374,6 +401,12 @@ Deleting a Secondary cluster with a secondary instance REQUIRES setting deletion
   (Optional)
   The name of the allocated IP range for the private IP AlloyDB cluster. For example: "google-managed-services-default".
   If set, the instance IPs for this cluster will be created in the allocated range.
+
+<a name="nested_psc_config"></a>The `psc_config` block supports:
+
+* `psc_enabled` -
+  (Optional)
+  Create an instance that allows connections from Private Service Connect endpoints to the instance.
 
 <a name="nested_initial_user"></a>The `initial_user` block supports:
 
@@ -523,6 +556,45 @@ Deleting a Secondary cluster with a secondary instance REQUIRES setting deletion
   Name of the primary cluster must be in the format
   'projects/{project}/locations/{location}/clusters/{cluster_id}'
 
+<a name="nested_maintenance_update_policy"></a>The `maintenance_update_policy` block supports:
+
+* `maintenance_windows` -
+  (Optional)
+  Preferred windows to perform maintenance. Currently limited to 1.
+  Structure is [documented below](#nested_maintenance_windows).
+
+
+<a name="nested_maintenance_windows"></a>The `maintenance_windows` block supports:
+
+* `day` -
+  (Required)
+  Preferred day of the week for maintenance, e.g. MONDAY, TUESDAY, etc.
+  Possible values are: `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`, `SUNDAY`.
+
+* `start_time` -
+  (Required)
+  Preferred time to start the maintenance operation on the specified day. Maintenance will start within 1 hour of this time.
+  Structure is [documented below](#nested_start_time).
+
+
+<a name="nested_start_time"></a>The `start_time` block supports:
+
+* `hours` -
+  (Required)
+  Hours of day in 24 hour format. Should be from 0 to 23.
+
+* `minutes` -
+  (Optional)
+  Minutes of hour of day. Currently, only the value 0 is supported.
+
+* `seconds` -
+  (Optional)
+  Seconds of minutes of the time. Currently, only the value 0 is supported.
+
+* `nanos` -
+  (Optional)
+  Fractions of seconds in nanoseconds. Currently, only the value 0 is supported.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
@@ -558,6 +630,10 @@ In addition to the arguments listed above, the following computed attributes are
 * `migration_source` -
   Cluster created via DMS migration.
   Structure is [documented below](#nested_migration_source).
+
+* `trial_metadata` -
+  Contains information and all metadata related to TRIAL clusters.
+  Structure is [documented below](#nested_trial_metadata).
 
 * `terraform_labels` -
   The combination of labels configured directly on the resource
@@ -629,6 +705,24 @@ In addition to the arguments listed above, the following computed attributes are
 * `source_type` -
   (Optional)
   Type of migration source.
+
+<a name="nested_trial_metadata"></a>The `trial_metadata` block contains:
+
+* `start_time` -
+  (Optional)
+  Start time of the trial cluster.
+
+* `end_time` -
+  (Optional)
+  End time of the trial cluster.
+
+* `upgrade_time` -
+  (Optional)
+  Upgrade time of the trial cluster to standard cluster.
+
+* `grace_end_time` -
+  (Optional)
+  Grace end time of the trial cluster.
 
 ## Timeouts
 

@@ -17,7 +17,7 @@ description: |-
   An `Organization` is the top-level container in Apigee.
 ---
 
-# google\_apigee\_organization
+# google_apigee_organization
 
 An `Organization` is the top-level container in Apigee.
 
@@ -120,7 +120,7 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   crypto_key_id = google_kms_crypto_key.apigee_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  member = "serviceAccount:${google_project_service_identity.apigee_sa.email}"
+  member = google_project_service_identity.apigee_sa.member
 }
 
 resource "google_apigee_organization" "org" {
@@ -167,7 +167,7 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   crypto_key_id = google_kms_crypto_key.apigee_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  member = "serviceAccount:${google_project_service_identity.apigee_sa.email}"
+  member = google_project_service_identity.apigee_sa.member
 }
 
 resource "google_apigee_organization" "org" {
@@ -208,6 +208,21 @@ The following arguments are supported:
 * `analytics_region` -
   (Optional)
   Primary GCP region for analytics data storage. For valid values, see [Create an Apigee organization](https://cloud.google.com/apigee/docs/api-platform/get-started/create-org).
+
+* `api_consumer_data_location` -
+  (Optional)
+  This field is needed only for customers using non-default data residency regions.
+  Apigee stores some control plane data only in single region.
+  This field determines which single region Apigee should use.
+
+* `api_consumer_data_encryption_key_name` -
+  (Optional)
+  Cloud KMS key name used for encrypting API consumer data.
+
+* `control_plane_encryption_key_name` -
+  (Optional)
+  Cloud KMS key name used for encrypting control plane data that is stored in a multi region.
+  Only used for the data residency region "US" or "EU".
 
 * `authorized_network` -
   (Optional)

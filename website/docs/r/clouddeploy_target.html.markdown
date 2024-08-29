@@ -140,7 +140,7 @@ The following arguments are supported:
   
 * `name` -
   (Required)
-  Name of the `Target`. Format is [a-z][a-z0-9\-]{0,62}.
+  Name of the `Target`. Format is `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`.
   
 
 
@@ -156,6 +156,10 @@ Please refer to the field `effective_annotations` for all of the annotations pre
 * `anthos_cluster` -
   (Optional)
   Information specifying an Anthos Cluster.
+  
+* `custom_target` -
+  (Optional)
+  Optional. Information specifying a Custom Target.
   
 * `deploy_parameters` -
   (Optional)
@@ -204,6 +208,12 @@ The `anthos_cluster` block supports:
   (Optional)
   Membership of the GKE Hub-registered cluster to which to apply the Skaffold configuration. Format is `projects/{project}/locations/{location}/memberships/{membership_name}`.
     
+The `custom_target` block supports:
+    
+* `custom_target_type` -
+  (Required)
+  Required. The name of the CustomTargetType. Format must be `projects/{project}/locations/{location}/customTargetTypes/{custom_target_type}`.
+    
 The `execution_configs` block supports:
     
 * `artifact_storage` -
@@ -222,6 +232,10 @@ The `execution_configs` block supports:
   (Required)
   Required. Usages when this configuration should be applied.
     
+* `verbose` -
+  (Optional)
+  Optional. If true, additional logging will be enabled when running builds in this execution environment.
+    
 * `worker_pool` -
   (Optional)
   Optional. The resource name of the `WorkerPool`, with the format `projects/{project}/locations/{location}/workerPools/{worker_pool}`. If this optional field is unspecified, the default Cloud Build pool will be used.
@@ -235,6 +249,10 @@ The `gke` block supports:
 * `internal_ip` -
   (Optional)
   Optional. If true, `cluster` is accessed using the private IP address of the control plane endpoint. Otherwise, the default IP address of the control plane endpoint is used. The default IP address is the private IP address for clusters with private control-plane endpoints and the public IP address otherwise. Only specify this option when `cluster` is a [private GKE cluster](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept).
+    
+* `proxy_url` -
+  (Optional)
+  Optional. If set, used to configure a [proxy](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#proxy) to the Kubernetes server.
     
 The `multi_target` block supports:
     

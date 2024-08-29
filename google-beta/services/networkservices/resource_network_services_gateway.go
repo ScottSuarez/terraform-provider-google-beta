@@ -20,6 +20,7 @@ package networkservices
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -208,7 +209,6 @@ Gateways of type 'OPEN_MESH' listen on 0.0.0.0.`,
 			"certificate_urls": {
 				Type:     schema.TypeList,
 				Optional: true,
-				ForceNew: true,
 				Description: `A fully-qualified Certificates URL reference. The proxy presents a Certificate (selected based on SNI) when establishing a TLS connection.
 This feature only applies to gateways of type 'SECURE_WEB_GATEWAY'.`,
 				Elem: &schema.Schema{
@@ -223,7 +223,6 @@ This feature only applies to gateways of type 'SECURE_WEB_GATEWAY'.`,
 			"gateway_security_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 				Description: `A fully-qualified GatewaySecurityPolicy URL reference. Defines how a server should apply security policy to inbound (VM to Proxy) initiated connections.
 For example: 'projects/*/locations/*/gatewaySecurityPolicies/swg-policy'.
 This policy is specific to gateways of type 'SECURE_WEB_GATEWAY'.`,
@@ -306,9 +305,9 @@ Currently, this field is specific to gateways of type 'SECURE_WEB_GATEWAY.`,
 			"delete_swg_autogen_router_on_destroy": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 				Description: `When deleting a gateway of type 'SECURE_WEB_GATEWAY', this boolean option will also delete auto generated router by the gateway creation.
 If there is no other gateway of type 'SECURE_WEB_GATEWAY' remaining for that region and network it will be deleted.`,
+				Default: false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -415,6 +414,7 @@ func resourceNetworkServicesGatewayCreate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -423,6 +423,7 @@ func resourceNetworkServicesGatewayCreate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Gateway: %s", err)
@@ -475,12 +476,14 @@ func resourceNetworkServicesGatewayRead(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkServicesGateway %q", d.Id()))
@@ -576,6 +579,18 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("server_tls_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serverTlsPolicyProp)) {
 		obj["serverTlsPolicy"] = serverTlsPolicyProp
 	}
+	gatewaySecurityPolicyProp, err := expandNetworkServicesGatewayGatewaySecurityPolicy(d.Get("gateway_security_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("gateway_security_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gatewaySecurityPolicyProp)) {
+		obj["gatewaySecurityPolicy"] = gatewaySecurityPolicyProp
+	}
+	certificateUrlsProp, err := expandNetworkServicesGatewayCertificateUrls(d.Get("certificate_urls"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("certificate_urls"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, certificateUrlsProp)) {
+		obj["certificateUrls"] = certificateUrlsProp
+	}
 	labelsProp, err := expandNetworkServicesGatewayEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -589,6 +604,7 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Updating Gateway %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -599,6 +615,14 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 		updateMask = append(updateMask, "serverTlsPolicy")
 	}
 
+	if d.HasChange("gateway_security_policy") {
+		updateMask = append(updateMask, "gatewaySecurityPolicy")
+	}
+
+	if d.HasChange("certificate_urls") {
+		updateMask = append(updateMask, "certificateUrls")
+	}
+
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
@@ -607,6 +631,10 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
+	}
+	if d.Get("type") == "SECURE_WEB_GATEWAY" {
+		obj["name"] = d.Get("name")
+		obj["type"] = d.Get("type")
 	}
 
 	// err == nil indicates that the billing_project value was found
@@ -624,6 +652,7 @@ func resourceNetworkServicesGatewayUpdate(d *schema.ResourceData, meta interface
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -665,13 +694,15 @@ func resourceNetworkServicesGatewayDelete(d *schema.ResourceData, meta interface
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Gateway %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Gateway %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -680,6 +711,7 @@ func resourceNetworkServicesGatewayDelete(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Gateway")

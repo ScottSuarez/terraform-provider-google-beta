@@ -20,6 +20,7 @@ package datafusion
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -214,20 +215,64 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"connection_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"VPC_PEERING", "PRIVATE_SERVICE_CONNECT_INTERFACES", ""}),
+							Description: `Optional. Type of connection for establishing private IP connectivity between the Data Fusion customer project VPC and
+the corresponding tenant project from a predefined list of available connection modes.
+If this field is unspecified for a private instance, VPC peering is used. Possible values: ["VPC_PEERING", "PRIVATE_SERVICE_CONNECT_INTERFACES"]`,
+						},
 						"ip_allocation": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 							ForceNew: true,
 							Description: `The IP range in CIDR notation to use for the managed Data Fusion instance
 nodes. This range must not overlap with any other ranges used in the Data Fusion instance network.`,
 						},
 						"network": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 							ForceNew: true,
 							Description: `Name of the network in the project with which the tenant project
 will be peered for executing pipelines. In case of shared VPC where the network resides in another host
 project the network should specified in the form of projects/{host-project-id}/global/networks/{network}`,
+						},
+						"private_service_connect_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							ForceNew: true,
+							Description: `Optional. Configuration for Private Service Connect.
+This is required only when using connection type PRIVATE_SERVICE_CONNECT_INTERFACES.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"network_attachment": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `Optional. The reference to the network attachment used to establish private connectivity.
+It will be of the form projects/{project-id}/regions/{region}/networkAttachments/{network-attachment-id}.
+This is required only when using connection type PRIVATE_SERVICE_CONNECT_INTERFACES.`,
+									},
+									"unreachable_cidr_block": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `Optional. Input only. The CIDR block to which the CDF instance can't route traffic to in the consumer project VPC.
+The size of this block should be at least /25. This range should not overlap with the primary address range of any subnetwork used by the network attachment.
+This range can be used for other purposes in the consumer VPC as long as there is no requirement for CDF to reach destinations using these addresses.
+If this value is not provided, the server chooses a non RFC 1918 address range. The format of this field is governed by RFC 4632.`,
+									},
+									"effective_unreachable_cidr_block": {
+										Type:     schema.TypeString,
+										Computed: true,
+										Description: `Output only. The CIDR block to which the CDF instance can't route traffic to in the consumer project VPC.
+The size of this block is /25. The format of this field is governed by RFC 4632.`,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -480,6 +525,7 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -488,6 +534,7 @@ func resourceDataFusionInstanceCreate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Instance: %s", err)
@@ -554,12 +601,14 @@ func resourceDataFusionInstanceRead(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataFusionInstance %q", d.Id()))
@@ -733,6 +782,7 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Updating Instance %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("enable_stackdriver_logging") {
@@ -768,6 +818,7 @@ func resourceDataFusionInstanceUpdate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -808,13 +859,15 @@ func resourceDataFusionInstanceDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -823,6 +876,7 @@ func resourceDataFusionInstanceDelete(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Instance")
@@ -964,6 +1018,10 @@ func flattenDataFusionInstanceNetworkConfig(v interface{}, d *schema.ResourceDat
 		flattenDataFusionInstanceNetworkConfigIpAllocation(original["ipAllocation"], d, config)
 	transformed["network"] =
 		flattenDataFusionInstanceNetworkConfigNetwork(original["network"], d, config)
+	transformed["connection_type"] =
+		flattenDataFusionInstanceNetworkConfigConnectionType(original["connectionType"], d, config)
+	transformed["private_service_connect_config"] =
+		flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfig(original["privateServiceConnectConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -971,6 +1029,39 @@ func flattenDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d *schema
 }
 
 func flattenDataFusionInstanceNetworkConfigNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceNetworkConfigConnectionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["network_attachment"] =
+		flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigNetworkAttachment(original["networkAttachment"], d, config)
+	transformed["unreachable_cidr_block"] =
+		flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigUnreachableCidrBlock(original["unreachableCidrBlock"], d, config)
+	transformed["effective_unreachable_cidr_block"] =
+		flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigEffectiveUnreachableCidrBlock(original["effectiveUnreachableCidrBlock"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigNetworkAttachment(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigUnreachableCidrBlock(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return d.Get("network_config.0.private_service_connect_config.0.unreachable_cidr_block")
+}
+
+func flattenDataFusionInstanceNetworkConfigPrivateServiceConnectConfigEffectiveUnreachableCidrBlock(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1146,6 +1237,20 @@ func expandDataFusionInstanceNetworkConfig(v interface{}, d tpgresource.Terrafor
 		transformed["network"] = transformedNetwork
 	}
 
+	transformedConnectionType, err := expandDataFusionInstanceNetworkConfigConnectionType(original["connection_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedConnectionType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["connectionType"] = transformedConnectionType
+	}
+
+	transformedPrivateServiceConnectConfig, err := expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfig(original["private_service_connect_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPrivateServiceConnectConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["privateServiceConnectConfig"] = transformedPrivateServiceConnectConfig
+	}
+
 	return transformed, nil
 }
 
@@ -1154,6 +1259,55 @@ func expandDataFusionInstanceNetworkConfigIpAllocation(v interface{}, d tpgresou
 }
 
 func expandDataFusionInstanceNetworkConfigNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfigConnectionType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNetworkAttachment, err := expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigNetworkAttachment(original["network_attachment"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetworkAttachment); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["networkAttachment"] = transformedNetworkAttachment
+	}
+
+	transformedUnreachableCidrBlock, err := expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigUnreachableCidrBlock(original["unreachable_cidr_block"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUnreachableCidrBlock); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["unreachableCidrBlock"] = transformedUnreachableCidrBlock
+	}
+
+	transformedEffectiveUnreachableCidrBlock, err := expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigEffectiveUnreachableCidrBlock(original["effective_unreachable_cidr_block"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEffectiveUnreachableCidrBlock); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["effectiveUnreachableCidrBlock"] = transformedEffectiveUnreachableCidrBlock
+	}
+
+	return transformed, nil
+}
+
+func expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigNetworkAttachment(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigUnreachableCidrBlock(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataFusionInstanceNetworkConfigPrivateServiceConnectConfigEffectiveUnreachableCidrBlock(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

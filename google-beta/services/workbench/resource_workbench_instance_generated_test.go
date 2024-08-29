@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -50,7 +50,7 @@ func TestAccWorkbenchInstance_workbenchInstanceBasicExample(t *testing.T) {
 				ResourceName:            "google_workbench_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "instance_owners", "location", "instance_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"instance_id", "instance_owners", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -61,6 +61,47 @@ func testAccWorkbenchInstance_workbenchInstanceBasicExample(context map[string]i
 resource "google_workbench_instance" "instance" {
   name = "tf-test-workbench-instance%{random_suffix}"
   location = "us-west1-a"
+}
+`, context)
+}
+
+func TestAccWorkbenchInstance_workbenchInstanceBasicContainerExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckWorkbenchInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkbenchInstance_workbenchInstanceBasicContainerExample(context),
+			},
+			{
+				ResourceName:            "google_workbench_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"instance_id", "instance_owners", "labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccWorkbenchInstance_workbenchInstanceBasicContainerExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_workbench_instance" "instance" {
+  name = "tf-test-workbench-instance%{random_suffix}"
+  location = "us-west1-a"
+
+  gce_setup {
+    container_image {
+      repository = "us-docker.pkg.dev/deeplearning-platform-release/gcr.io/base-cu113.py310"
+      tag = "latest"
+    }
+  }
 }
 `, context)
 }
@@ -84,7 +125,7 @@ func TestAccWorkbenchInstance_workbenchInstanceBasicGpuExample(t *testing.T) {
 				ResourceName:            "google_workbench_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "instance_owners", "location", "instance_id", "gce_setup.0.vm_image", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"gce_setup.0.vm_image", "instance_id", "instance_owners", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -102,15 +143,15 @@ resource "google_workbench_instance" "instance" {
       core_count   = 1
     }
     vm_image {
-      project      = "deeplearning-platform-release"
-      family       = "tf-latest-gpu"
+      project      = "cloud-notebooks-managed"
+      family       = "workbench-instances"
     }
   }
 }
 `, context)
 }
 
-func TestAccWorkbenchInstance_workbenchInstanceLabelsExample(t *testing.T) {
+func TestAccWorkbenchInstance_workbenchInstanceLabelsStoppedExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -124,19 +165,19 @@ func TestAccWorkbenchInstance_workbenchInstanceLabelsExample(t *testing.T) {
 		CheckDestroy:             testAccCheckWorkbenchInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccWorkbenchInstance_workbenchInstanceLabelsExample(context),
+				Config: testAccWorkbenchInstance_workbenchInstanceLabelsStoppedExample(context),
 			},
 			{
 				ResourceName:            "google_workbench_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "instance_owners", "location", "instance_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"desired_state", "instance_id", "instance_owners", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
 }
 
-func testAccWorkbenchInstance_workbenchInstanceLabelsExample(context map[string]interface{}) string {
+func testAccWorkbenchInstance_workbenchInstanceLabelsStoppedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_workbench_instance" "instance" {
   name = "tf-test-workbench-instance%{random_suffix}"
@@ -144,6 +185,12 @@ resource "google_workbench_instance" "instance" {
 
   gce_setup {
     machine_type = "e2-standard-4"
+
+    shielded_instance_config {
+      enable_secure_boot = false
+      enable_vtpm = false
+      enable_integrity_monitoring = false
+    }
 
     service_accounts {
       email = "%{service_account}"
@@ -155,11 +202,11 @@ resource "google_workbench_instance" "instance" {
 
   }
 
-  instance_owners  = [ "%{service_account}"]
-
   labels = {
     k = "val"
   }
+
+  desired_state = "STOPPED"
 
 }
 `, context)
@@ -169,6 +216,7 @@ func TestAccWorkbenchInstance_workbenchInstanceFullExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"key_name":        acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 		"random_suffix":   acctest.RandString(t, 10),
@@ -186,7 +234,7 @@ func TestAccWorkbenchInstance_workbenchInstanceFullExample(t *testing.T) {
 				ResourceName:            "google_workbench_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "instance_owners", "location", "instance_id", "gce_setup.0.vm_image", "gce_setup.0.boot_disk.0.disk_encryption", "gce_setup.0.boot_disk.0.disk_type", "gce_setup.0.boot_disk.0.kms_key", "gce_setup.0.data_disks.0.disk_encryption", "gce_setup.0.data_disks.0.disk_type", "gce_setup.0.data_disks.0.kms_key", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"gce_setup.0.boot_disk.0.disk_type", "gce_setup.0.data_disks.0.disk_type", "gce_setup.0.vm_image", "instance_id", "instance_owners", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -206,6 +254,18 @@ resource "google_compute_subnetwork" "my_subnetwork" {
   ip_cidr_range = "10.0.1.0/24"
 }
 
+resource "google_compute_address" "static" {
+  name = "tf-test-wbi-test-default%{random_suffix}"
+}
+
+resource "google_service_account_iam_binding" "act_as_permission" {
+  service_account_id = "projects/%{project_id}/serviceAccounts/%{service_account}"
+  role               = "roles/iam.serviceAccountUser"
+  members = [
+    "user:example@example.com",
+  ]
+}
+
 resource "google_workbench_instance" "instance" {
   name = "tf-test-workbench-instance%{random_suffix}"
   location = "us-central1-a"
@@ -217,6 +277,12 @@ resource "google_workbench_instance" "instance" {
       core_count   = 1
     }
 
+    shielded_instance_config {
+      enable_secure_boot = true
+      enable_vtpm = true
+      enable_integrity_monitoring = true
+    }
+
     disable_public_ip = false
 
     service_accounts {
@@ -226,14 +292,14 @@ resource "google_workbench_instance" "instance" {
     boot_disk {
       disk_size_gb  = 310
       disk_type = "PD_SSD"
-      disk_encryption = "GMEK"
+      disk_encryption = "CMEK"
       kms_key = "%{key_name}"
     }
 
     data_disks {
       disk_size_gb  = 330
       disk_type = "PD_SSD"
-      disk_encryption = "GMEK"
+      disk_encryption = "CMEK"
       kms_key = "%{key_name}"
     }
 
@@ -241,6 +307,9 @@ resource "google_workbench_instance" "instance" {
       network = google_compute_network.my_network.id
       subnet = google_compute_subnetwork.my_subnetwork.id
       nic_type = "GVNIC"
+      access_configs {
+        external_ip = google_compute_address.static.address
+      }
     }
 
     metadata = {
@@ -255,11 +324,13 @@ resource "google_workbench_instance" "instance" {
 
   disable_proxy_access = "true"
 
-  instance_owners  = [ "%{service_account}"]
+  instance_owners  = ["example@example.com"]
 
   labels = {
     k = "val"
   }
+
+  desired_state = "ACTIVE"
 
 }
 `, context)

@@ -17,7 +17,7 @@ description: |-
   A set of configuration options describing how a workstation will be run.
 ---
 
-# google\_workstations\_workstation\_config
+# google_workstations_workstation_config
 
 A set of configuration options describing how a workstation will be run. Workstation configurations are intended to be shared across multiple workstations.
 
@@ -31,7 +31,7 @@ To get more information about WorkstationConfig, see:
     * [Workstations](https://cloud.google.com/workstations/docs/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -39,6 +39,18 @@ To get more information about WorkstationConfig, see:
 
 
 ```hcl
+resource "google_tags_tag_key" "tag_key1" {
+  provider   = google-beta
+  parent     = "organizations/123456789"
+  short_name = "keyname"
+}
+
+resource "google_tags_tag_value" "tag_value1" {
+  provider   = google-beta
+  parent     = "tagKeys/${google_tags_tag_key.tag_key1.name}"
+  short_name = "valuename"
+}
+
 resource "google_compute_network" "default" {
   provider                = google-beta
   name                    = "workstation-cluster"
@@ -92,12 +104,16 @@ resource "google_workstations_workstation_config" "default" {
       machine_type                = "e2-standard-4"
       boot_disk_size_gb           = 35
       disable_public_ip_addresses = true
+      disable_ssh                 = false
+      vm_tags = {
+        "tagKeys/${google_tags_tag_key.tag_key1.name}" = "tagValues/${google_tags_tag_value.tag_value1.name}"
+      }
     }
   }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_container&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_container&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -160,7 +176,7 @@ resource "google_workstations_workstation_config" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_persistent_directories&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_persistent_directories&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -228,7 +244,7 @@ resource "google_workstations_workstation_config" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_source_snapshot&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_source_snapshot&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -290,7 +306,7 @@ resource "google_workstations_workstation_config" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_shielded_instance_config&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_shielded_instance_config&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -348,7 +364,7 @@ resource "google_workstations_workstation_config" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_accelerators&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_accelerators&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -406,7 +422,76 @@ resource "google_workstations_workstation_config" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=workstation_config_encryption_key&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_boost&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Workstation Config Boost
+
+
+```hcl
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "workstation-cluster"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
+  name          = "workstation-cluster"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.name
+}
+
+resource "google_workstations_workstation_cluster" "default" {
+  provider               = google-beta
+  workstation_cluster_id = "workstation-cluster"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-central1"
+  
+  labels = {
+    "label" = "key"
+  }
+
+  annotations = {
+    label-one = "value-one"
+  }
+}
+
+resource "google_workstations_workstation_config" "default" {
+  provider               = google-beta
+  workstation_config_id  = "workstation-config"
+  workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
+  location               = "us-central1"
+
+  host {
+    gce_instance {
+      machine_type                = "e2-standard-4"
+      boot_disk_size_gb           = 35
+      disable_public_ip_addresses = true
+      boost_configs {
+        id           = "boost-1"
+        machine_type = "n1-standard-2"
+        accelerators {
+          type  = "nvidia-tesla-t4"
+          count = "1"
+        }
+      }
+      boost_configs {
+        id                           = "boost-2"
+        machine_type                 = "n1-standard-2"
+        pool_size                    = 2
+        boot_disk_size_gb            = 30
+        enable_nested_virtualization = true
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=workstation_config_encryption_key&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -560,6 +645,11 @@ The following arguments are supported:
   Directories to persist across workstation sessions.
   Structure is [documented below](#nested_persistent_directories).
 
+* `ephemeral_directories` -
+  (Optional)
+  Ephemeral directories which won't persist across workstation sessions.
+  Structure is [documented below](#nested_ephemeral_directories).
+
 * `container` -
   (Optional)
   Container that will be run for each workstation using this configuration when that workstation is started.
@@ -624,6 +714,10 @@ The following arguments are supported:
   (Optional)
   Whether instances have no public IP address.
 
+* `disable_ssh` -
+  (Optional)
+  Whether to disable SSH access to the VM.
+
 * `enable_nested_virtualization` -
   (Optional)
   Whether to enable nested virtualization on the Compute Engine VMs backing the Workstations.
@@ -643,6 +737,19 @@ The following arguments are supported:
   (Optional)
   An accelerator card attached to the instance.
   Structure is [documented below](#nested_accelerators).
+
+* `boost_configs` -
+  (Optional)
+  A list of the boost configurations that workstations created using this workstation configuration are allowed to use.
+  Structure is [documented below](#nested_boost_configs).
+
+* `vm_tags` -
+  (Optional)
+  Resource manager tags to be bound to the VM instances backing the Workstations.
+  Tag keys and values have the same definition as
+  https://cloud.google.com/resource-manager/docs/tags/tags-overview
+  Keys must be in the format `tagKeys/{tag_key_id}`, and
+  values are in the format `tagValues/456`.
 
 
 <a name="nested_shielded_instance_config"></a>The `shielded_instance_config` block supports:
@@ -664,6 +771,45 @@ The following arguments are supported:
 * `enable_confidential_compute` -
   (Optional)
   Whether the instance has confidential compute enabled.
+
+<a name="nested_accelerators"></a>The `accelerators` block supports:
+
+* `type` -
+  (Required)
+  Type of accelerator resource to attach to the instance, for example, "nvidia-tesla-p100".
+
+* `count` -
+  (Required)
+  Number of accelerator cards exposed to the instance.
+
+<a name="nested_boost_configs"></a>The `boost_configs` block supports:
+
+* `id` -
+  (Required)
+  The id to be used for the boost config.
+
+* `machine_type` -
+  (Optional)
+  The type of machine that boosted VM instances will use—for example, e2-standard-4. For more information about machine types that Cloud Workstations supports, see the list of available machine types https://cloud.google.com/workstations/docs/available-machine-types. Defaults to e2-standard-4.
+
+* `boot_disk_size_gb` -
+  (Optional)
+  Size of the boot disk in GB. The minimum boot disk size is `30` GB. Defaults to `50` GB.
+
+* `enable_nested_virtualization` -
+  (Optional)
+  Whether to enable nested virtualization on the Compute Engine VMs backing boosted Workstations.
+  See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization
+
+* `pool_size` -
+  (Optional)
+  Number of instances to pool for faster workstation boosting.
+
+* `accelerators` -
+  (Optional)
+  An accelerator card attached to the boost instance.
+  Structure is [documented below](#nested_accelerators).
+
 
 <a name="nested_accelerators"></a>The `accelerators` block supports:
 
@@ -710,6 +856,41 @@ The following arguments are supported:
 * `source_snapshot` -
   (Optional)
   Name of the snapshot to use as the source for the disk. This can be the snapshot's `self_link`, `id`, or a string in the format of `projects/{project}/global/snapshots/{snapshot}`. If set, `sizeGb` and `fsType` must be empty. Can only be updated if it has an existing value.
+
+<a name="nested_ephemeral_directories"></a>The `ephemeral_directories` block supports:
+
+* `mount_path` -
+  (Optional)
+  Location of this directory in the running workstation.
+
+* `gce_pd` -
+  (Optional)
+  An EphemeralDirectory backed by a Compute Engine persistent disk.
+  Structure is [documented below](#nested_gce_pd).
+
+
+<a name="nested_gce_pd"></a>The `gce_pd` block supports:
+
+* `disk_type` -
+  (Optional)
+  Type of the disk to use. Defaults to `"pd-standard"`.
+
+* `source_snapshot` -
+  (Optional)
+  Name of the snapshot to use as the source for the disk.
+  Must be empty if `sourceImage` is set.
+  Must be empty if `read_only` is false.
+  Updating `source_snapshot` will update content in the ephemeral directory after the workstation is restarted.
+
+* `source_image` -
+  (Optional)
+  Name of the disk image to use as the source for the disk.
+  Must be empty `sourceSnapshot` is set.
+  Updating `sourceImage` will update content in the ephemeral directory after the workstation is restarted.
+
+* `read_only` -
+  (Optional)
+  Whether the disk is read only. If true, the disk may be shared by multiple VMs and `sourceSnapshot` must be set.
 
 <a name="nested_container"></a>The `container` block supports:
 

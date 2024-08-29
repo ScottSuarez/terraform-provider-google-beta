@@ -21,17 +21,119 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+var NotebooksInstanceProvidedScopes = []string{
+	"https://www.googleapis.com/auth/cloud-platform",
+	"https://www.googleapis.com/auth/userinfo.email",
+}
+
+var NotebooksInstanceProvidedTags = []string{
+	"deeplearning-vm",
+	"notebook-instance",
+}
+
+func NotebooksInstanceScopesDiffSuppress(_, _, _ string, d *schema.ResourceData) bool {
+	return NotebooksDiffSuppressTemplate("service_account_scopes", NotebooksInstanceProvidedScopes, d)
+}
+
+func NotebooksInstanceTagsDiffSuppress(_, _, _ string, d *schema.ResourceData) bool {
+	return NotebooksDiffSuppressTemplate("tags", NotebooksInstanceProvidedTags, d)
+}
+
+func NotebooksDiffSuppressTemplate(field string, defaults []string, d *schema.ResourceData) bool {
+	old, new := d.GetChange(field)
+
+	oldValue := old.([]interface{})
+	newValue := new.([]interface{})
+	oldValueList := []string{}
+	newValueList := []string{}
+
+	for _, item := range oldValue {
+		oldValueList = append(oldValueList, item.(string))
+	}
+
+	for _, item := range newValue {
+		newValueList = append(newValueList, item.(string))
+	}
+	newValueList = append(newValueList, defaults...)
+
+	sort.Strings(oldValueList)
+	sort.Strings(newValueList)
+	if reflect.DeepEqual(oldValueList, newValueList) {
+		return true
+	}
+	return false
+}
+
+func NotebooksInstanceKmsDiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
+	if strings.HasPrefix(old, new) {
+		return true
+	}
+	return false
+}
+
+// waitForNotebooksInstanceActive waits for an Notebook instance to become "ACTIVE"
+func waitForNotebooksInstanceActive(d *schema.ResourceData, config *transport_tpg.Config, timeout time.Duration) error {
+	return retry.Retry(timeout, func() *retry.RetryError {
+		if err := resourceNotebooksInstanceRead(d, config); err != nil {
+			return retry.NonRetryableError(err)
+		}
+
+		name := d.Get("name").(string)
+		state := d.Get("state").(string)
+		if state == "ACTIVE" {
+			log.Printf("[DEBUG] Notebook Instance %q has state %q.", name, state)
+			return nil
+		} else {
+			return retry.RetryableError(fmt.Errorf("Notebook Instance %q has state %q. Waiting for ACTIVE state", name, state))
+		}
+
+	})
+}
+
+func modifyNotebooksInstanceState(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string, state string) (map[string]interface{}, error) {
+	url, err := tpgresource.ReplaceVars(d, config, "{{NotebooksBasePath}}projects/{{project}}/locations/{{location}}/instances/{{name}}:"+state)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to %q google_notebooks_instance %q: %s", state, d.Id(), err)
+	}
+	return res, nil
+}
+
+func waitForNotebooksOperation(config *transport_tpg.Config, d *schema.ResourceData, project string, billingProject string, userAgent string, response map[string]interface{}) error {
+	var opRes map[string]interface{}
+	err := NotebooksOperationWaitTimeWithResponse(
+		config, response, &opRes, project, "Modifying Notebook Instance state", userAgent,
+		d.Timeout(schema.TimeoutUpdate))
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func ResourceNotebooksInstance() *schema.Resource {
 	return &schema.Resource{
@@ -63,6 +165,8 @@ func ResourceNotebooksInstance() *schema.Resource {
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 		),
+
+		DeprecationMessage: "`google_notebook_instance` is deprecated and will be removed in a future major release. Use `google_workbench_instance` instead.",
 
 		Schema: map[string]*schema.Schema{
 			"location": {
@@ -176,6 +280,7 @@ If not specified, this defaults to 100.`,
 			},
 			"disk_encryption": {
 				Type:             schema.TypeString,
+				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
 				ValidateFunc:     verify.ValidateEnum([]string{"DISK_ENCRYPTION_UNSPECIFIED", "GMEK", "CMEK", ""}),
@@ -204,9 +309,10 @@ your VM instance's service account can use the instance.`,
 				},
 			},
 			"kms_key": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: NotebooksInstanceKmsDiffSuppress,
 				Description: `The KMS key used to encrypt the disks, only applicable if diskEncryption is CMEK.
 Format: projects/{project_id}/locations/{location}/keyRings/{key_ring_id}/cryptoKeys/{key_id}`,
 			},
@@ -315,9 +421,11 @@ permission to use the instance. If not specified,
 the Compute Engine default service account is used.`,
 			},
 			"service_account_scopes": {
-				Type:     schema.TypeList,
-				Optional: true,
-				ForceNew: true,
+				Type:             schema.TypeList,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: NotebooksInstanceScopesDiffSuppress,
 				Description: `Optional. The URIs of service account scopes to be included in Compute Engine instances.
 If not specified, the following scopes are defined:
 - https://www.googleapis.com/auth/cloud-platform
@@ -376,10 +484,12 @@ Enabled by default.`,
 Format: projects/{project_id}/regions/{region}/subnetworks/{subnetwork_id}`,
 			},
 			"tags": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `The Compute Engine tags to add to instance.`,
+				Type:             schema.TypeList,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: NotebooksInstanceTagsDiffSuppress,
+				Description:      `The Compute Engine tags to add to instance.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -452,6 +562,12 @@ the population of this value.`,
 				Computed:    true,
 				Optional:    true,
 				Description: `Instance update time.`,
+			},
+			"desired_state": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Desired state of the Notebook Instance. Set this field to 'ACTIVE' to start the Instance, and 'STOPPED' to stop the Instance.`,
+				Default:     "ACTIVE",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -654,6 +770,7 @@ func resourceNotebooksInstanceCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -662,6 +779,7 @@ func resourceNotebooksInstanceCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Instance: %s", err)
@@ -694,6 +812,20 @@ func resourceNotebooksInstanceCreate(d *schema.ResourceData, meta interface{}) e
 	}
 	d.SetId(id)
 
+	if err := waitForNotebooksInstanceActive(d, config, d.Timeout(schema.TimeoutCreate)-time.Minute); err != nil {
+		return fmt.Errorf("Notebook instance %q did not reach ACTIVE state: %q", d.Get("name").(string), err)
+	}
+
+	if p, ok := d.GetOk("desired_state"); ok && p.(string) == "STOPPED" {
+		dRes, err := modifyNotebooksInstanceState(config, d, project, billingProject, userAgent, "stop")
+		if err != nil {
+			return err
+		}
+		if err := waitForNotebooksOperation(config, d, project, billingProject, userAgent, dRes); err != nil {
+			return fmt.Errorf("Error stopping Notebook Instance: %s", err)
+		}
+	}
+
 	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
 
 	return resourceNotebooksInstanceRead(d, meta)
@@ -724,17 +856,25 @@ func resourceNotebooksInstanceRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NotebooksInstance %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("desired_state"); !ok {
+		if err := d.Set("desired_state", "ACTIVE"); err != nil {
+			return fmt.Errorf("Error setting desired_state: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -852,6 +992,8 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -865,6 +1007,7 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
@@ -899,6 +1042,8 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -912,6 +1057,7 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
@@ -929,6 +1075,27 @@ func resourceNotebooksInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 
 	d.Partial(false)
 
+	name := d.Get("name").(string)
+	state := d.Get("state").(string)
+	desired_state := d.Get("desired_state").(string)
+
+	if state != desired_state {
+		verb := "start"
+		if desired_state == "STOPPED" {
+			verb = "stop"
+		}
+		pRes, err := modifyNotebooksInstanceState(config, d, project, billingProject, userAgent, verb)
+		if err != nil {
+			return err
+		}
+
+		if err := waitForNotebooksOperation(config, d, project, billingProject, userAgent, pRes); err != nil {
+			return fmt.Errorf("Error waiting to modify Notebook Instance state: %s", err)
+		}
+
+	} else {
+		log.Printf("[DEBUG] Notebook Instance %q has state %q.", name, state)
+	}
 	return resourceNotebooksInstanceRead(d, meta)
 }
 
@@ -953,13 +1120,15 @@ func resourceNotebooksInstanceDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -968,6 +1137,7 @@ func resourceNotebooksInstanceDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Instance")
@@ -1001,6 +1171,11 @@ func resourceNotebooksInstanceImport(d *schema.ResourceData, meta interface{}) (
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("desired_state", "ACTIVE"); err != nil {
+		return nil, fmt.Errorf("Error setting desired_state: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

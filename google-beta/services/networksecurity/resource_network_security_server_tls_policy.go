@@ -20,6 +20,7 @@ package networksecurity
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -143,6 +144,7 @@ Defines a mechanism to provision server identity (public and private keys). Cann
 						"client_validation_mode": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: verify.ValidateEnum([]string{"CLIENT_VALIDATION_MODE_UNSPECIFIED", "ALLOW_INVALID_OR_MISSING_CLIENT_CERT", "REJECT_INVALID", ""}),
 							Description: `When the client presents an invalid certificate or no certificate to the load balancer, the clientValidationMode specifies how the client connection is handled.
 Required if the policy is to be used with the external HTTPS load balancing. For Traffic Director it must be empty. Possible values: ["CLIENT_VALIDATION_MODE_UNSPECIFIED", "ALLOW_INVALID_OR_MISSING_CLIENT_CERT", "REJECT_INVALID"]`,
@@ -150,6 +152,7 @@ Required if the policy is to be used with the external HTTPS load balancing. For
 						"client_validation_trust_config": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 							Description: `Reference to the TrustConfig from certificatemanager.googleapis.com namespace.
 If specified, the chain validation will be performed against certificates configured in the given TrustConfig.
 Allowed only if the policy is to be used with external HTTPS load balancers.`,
@@ -292,6 +295,7 @@ func resourceNetworkSecurityServerTlsPolicyCreate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -300,6 +304,7 @@ func resourceNetworkSecurityServerTlsPolicyCreate(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ServerTlsPolicy: %s", err)
@@ -352,12 +357,14 @@ func resourceNetworkSecurityServerTlsPolicyRead(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityServerTlsPolicy %q", d.Id()))
@@ -451,6 +458,7 @@ func resourceNetworkSecurityServerTlsPolicyUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Updating ServerTlsPolicy %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -494,6 +502,7 @@ func resourceNetworkSecurityServerTlsPolicyUpdate(d *schema.ResourceData, meta i
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -535,13 +544,15 @@ func resourceNetworkSecurityServerTlsPolicyDelete(d *schema.ResourceData, meta i
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ServerTlsPolicy %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ServerTlsPolicy %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -550,6 +561,7 @@ func resourceNetworkSecurityServerTlsPolicyDelete(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ServerTlsPolicy")

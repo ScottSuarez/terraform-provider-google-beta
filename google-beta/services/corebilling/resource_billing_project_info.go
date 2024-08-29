@@ -20,6 +20,7 @@ package corebilling
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -110,6 +111,7 @@ func resourceCoreBillingProjectInfoCreate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PUT",
@@ -118,13 +120,14 @@ func resourceCoreBillingProjectInfoCreate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ProjectInfo: %s", err)
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/billingInfo")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -160,12 +163,14 @@ func resourceCoreBillingProjectInfoRead(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("CoreBillingProjectInfo %q", d.Id()))
@@ -228,6 +233,7 @@ func resourceCoreBillingProjectInfoUpdate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Updating ProjectInfo %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -242,6 +248,7 @@ func resourceCoreBillingProjectInfoUpdate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -274,13 +281,15 @@ func resourceCoreBillingProjectInfoDelete(d *schema.ResourceData, meta interface
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ProjectInfo %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ProjectInfo %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PUT",
@@ -289,6 +298,7 @@ func resourceCoreBillingProjectInfoDelete(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ProjectInfo")
@@ -308,7 +318,7 @@ func resourceCoreBillingProjectInfoImport(d *schema.ResourceData, meta interface
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/billingInfo")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}

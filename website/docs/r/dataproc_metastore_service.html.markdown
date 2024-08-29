@@ -17,7 +17,7 @@ description: |-
   A managed metastore service that serves metadata queries.
 ---
 
-# google\_dataproc\_metastore\_service
+# google_dataproc_metastore_service
 
 A managed metastore service that serves metadata queries.
 
@@ -29,7 +29,7 @@ To get more information about Service, see:
     * [Official Documentation](https://cloud.google.com/dataproc-metastore/docs/overview)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=dataproc_metastore_service_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -157,7 +157,7 @@ resource "google_dataproc_metastore_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=dataproc_metastore_service_dpms2&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_dpms2&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -183,7 +183,7 @@ resource "google_dataproc_metastore_service" "dpms2" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=dataproc_metastore_service_dpms2_scaling_factor&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_dpms2_scaling_factor&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -205,6 +205,170 @@ resource "google_dataproc_metastore_service" "dpms2_scaling_factor" {
 
   scaling_config {
     scaling_factor = "2"
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_scheduled_backup&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dataproc Metastore Service Scheduled Backup
+
+
+```hcl
+resource "google_dataproc_metastore_service" "backup" {
+  service_id = "backup"
+  location   = "us-central1"
+  port       = 9080
+  tier       = "DEVELOPER"
+
+  maintenance_window {
+    hour_of_day = 2
+    day_of_week = "SUNDAY"
+  }
+
+  hive_metastore_config {
+    version = "2.3.6"
+  }
+
+  scheduled_backup {
+    enabled         = true
+    cron_schedule   = "0 0 * * *"
+    time_zone       = "UTC"
+    backup_location = "gs://${google_storage_bucket.bucket.name}"
+  }
+
+  labels = {
+    env = "test"
+  }
+}
+
+resource "google_storage_bucket" "bucket" {
+  name     = "backup"
+  location = "us-central1"
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_autoscaling_max_scaling_factor&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dataproc Metastore Service Autoscaling Max Scaling Factor
+
+
+```hcl
+resource "google_dataproc_metastore_service" "test_resource" {
+  service_id = "test-service"
+  location   = "us-central1"
+
+  # DPMS 2 requires SPANNER database type, and does not require
+  # a maintenance window.
+  database_type = "SPANNER"
+
+  hive_metastore_config {
+    version           = "3.1.2"
+  }
+
+  scaling_config {
+    autoscaling_config {
+      autoscaling_enabled = true
+      limit_config {
+        max_scaling_factor = 1.0
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_autoscaling_min_and_max_scaling_factor&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dataproc Metastore Service Autoscaling Min And Max Scaling Factor
+
+
+```hcl
+resource "google_dataproc_metastore_service" "test_resource" {
+  service_id = "test-service"
+  location   = "us-central1"
+
+  # DPMS 2 requires SPANNER database type, and does not require
+  # a maintenance window.
+  database_type = "SPANNER"
+
+  hive_metastore_config {
+    version           = "3.1.2"
+  }
+
+  scaling_config {
+    autoscaling_config {
+      autoscaling_enabled = true
+      limit_config {
+        min_scaling_factor = 0.1
+        max_scaling_factor = 1.0
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_autoscaling_min_scaling_factor&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dataproc Metastore Service Autoscaling Min Scaling Factor
+
+
+```hcl
+resource "google_dataproc_metastore_service" "test_resource" {
+  service_id = "test-service"
+  location   = "us-central1"
+
+  # DPMS 2 requires SPANNER database type, and does not require
+  # a maintenance window.
+  database_type = "SPANNER"
+
+  hive_metastore_config {
+    version           = "3.1.2"
+  }
+
+  scaling_config {
+    autoscaling_config {
+      autoscaling_enabled = true
+      limit_config {
+        min_scaling_factor = 0.1
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=dataproc_metastore_service_autoscaling_no_limit_config&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Dataproc Metastore Service Autoscaling No Limit Config
+
+
+```hcl
+resource "google_dataproc_metastore_service" "test_resource" {
+  provider = google-beta  
+  service_id = "test-service"
+  location   = "us-central1"
+
+  # DPMS 2 requires SPANNER database type, and does not require
+  # a maintenance window.
+  database_type = "SPANNER"
+
+  hive_metastore_config {
+    version           = "3.1.2"
+  }
+
+  scaling_config {
+    autoscaling_config {
+      autoscaling_enabled = true
+    }
   }
 }
 ```
@@ -248,6 +412,11 @@ The following arguments are supported:
   (Optional)
   Represents the scaling configuration of a metastore service.
   Structure is [documented below](#nested_scaling_config).
+
+* `scheduled_backup` -
+  (Optional)
+  The configuration of scheduled backup for the metastore service.
+  Structure is [documented below](#nested_scheduled_backup).
 
 * `maintenance_window` -
   (Optional)
@@ -313,6 +482,52 @@ The following arguments are supported:
 * `scaling_factor` -
   (Optional)
   Scaling factor, in increments of 0.1 for values less than 1.0, and increments of 1.0 for values greater than 1.0.
+
+* `autoscaling_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Represents the autoscaling configuration of a metastore service.
+  Structure is [documented below](#nested_autoscaling_config).
+
+
+<a name="nested_autoscaling_config"></a>The `autoscaling_config` block supports:
+
+* `autoscaling_enabled` -
+  (Optional)
+  Defines whether autoscaling is enabled. The default value is false.
+
+* `limit_config` -
+  (Optional)
+  Represents the limit configuration of a metastore service.
+  Structure is [documented below](#nested_limit_config).
+
+
+<a name="nested_limit_config"></a>The `limit_config` block supports:
+
+* `min_scaling_factor` -
+  (Optional)
+  The minimum scaling factor that the service will autoscale to. The default value is 0.1.
+
+* `max_scaling_factor` -
+  (Optional)
+  The maximum scaling factor that the service will autoscale to. The default value is 6.0.
+
+<a name="nested_scheduled_backup"></a>The `scheduled_backup` block supports:
+
+* `enabled` -
+  (Optional)
+  Defines whether the scheduled backup is enabled. The default value is false.
+
+* `cron_schedule` -
+  (Optional)
+  The scheduled interval in Cron format, see https://en.wikipedia.org/wiki/Cron The default is empty: scheduled backup is not enabled. Must be specified to enable scheduled backups.
+
+* `time_zone` -
+  (Optional)
+  Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. America/Los_Angeles or Africa/Abidjan. If left unspecified, the default is UTC.
+
+* `backup_location` -
+  (Required)
+  A Cloud Storage URI of a folder, in the format gs://<bucket_name>/<path_inside_bucket>. A sub-folder <backup_folder> containing backup files will be stored below it.
 
 <a name="nested_maintenance_window"></a>The `maintenance_window` block supports:
 

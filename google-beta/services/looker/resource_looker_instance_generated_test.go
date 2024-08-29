@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -59,7 +59,7 @@ func testAccLookerInstance_lookerInstanceBasicExample(context map[string]interfa
 	return acctest.Nprintf(`
 resource "google_looker_instance" "looker-instance" {
   name              = "tf-test-my-instance%{random_suffix}"
-  platform_edition  = "LOOKER_CORE_STANDARD"
+  platform_edition  = "LOOKER_CORE_STANDARD_ANNUAL"
   region            = "us-central1"
   oauth_config {
     client_id = "tf-test-my-client-id%{random_suffix}"
@@ -98,17 +98,11 @@ func testAccLookerInstance_lookerInstanceFullExample(context map[string]interfac
 	return acctest.Nprintf(`
 resource "google_looker_instance" "looker-instance" {
   name               = "tf-test-my-instance%{random_suffix}"
-  platform_edition   = "LOOKER_CORE_STANDARD"
+  platform_edition   = "LOOKER_CORE_STANDARD_ANNUAL"
   region             = "us-central1"
   public_ip_enabled  = true
   admin_settings {
     allowed_email_domains = ["google.com"]
-  }
-  // User metadata config is only available when platform edition is LOOKER_CORE_STANDARD.
-  user_metadata {
-    additional_developer_user_count = 10 
-    additional_standard_user_count  = 10
-    additional_viewer_user_count    = 10
   }
   maintenance_window {
     day_of_week = "THURSDAY"
@@ -149,9 +143,9 @@ func TestAccLookerInstance_lookerInstanceEnterpriseFullTestExample(t *testing.T)
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"address_name":  acctest.BootstrapSharedTestGlobalAddress(t, "looker-vpc-network-1", acctest.AddressWithPrefixLength(20)),
+		"address_name":  acctest.BootstrapSharedTestGlobalAddress(t, "looker-vpc-network-3", acctest.AddressWithPrefixLength(8)),
 		"kms_key_name":  acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "looker-vpc-network-1", acctest.ServiceNetworkWithPrefixLength(20)),
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "looker-vpc-network-3", acctest.ServiceNetworkWithPrefixLength(8)),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -220,6 +214,8 @@ resource "google_looker_instance" "looker-instance" {
     client_id = "tf-test-my-client-id%{random_suffix}"
     client_secret = "tf-test-my-client-secret%{random_suffix}"
   }
+
+  depends_on = [google_kms_crypto_key_iam_member.crypto_key]
 }
 
 data "google_compute_global_address" "looker_range" {
@@ -236,6 +232,50 @@ resource "google_kms_crypto_key_iam_member" "crypto_key" {
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-looker.iam.gserviceaccount.com"
+}
+`, context)
+}
+
+func TestAccLookerInstance_lookerInstanceCustomDomainExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckLookerInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccLookerInstance_lookerInstanceCustomDomainExample(context),
+			},
+			{
+				ResourceName:            "google_looker_instance.looker-instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "oauth_config", "region"},
+			},
+		},
+	})
+}
+
+func testAccLookerInstance_lookerInstanceCustomDomainExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_looker_instance" "looker-instance" {
+  name              = "tf-test-my-instance%{random_suffix}"
+  platform_edition  = "LOOKER_CORE_STANDARD_ANNUAL"
+  region            = "us-central1"
+  oauth_config {
+    client_id = "tf-test-my-client-id%{random_suffix}"
+    client_secret = "tf-test-my-client-secret%{random_suffix}"
+  }
+  // After your Looker (Google Cloud core) instance has been created, you can set up, view information about, or delete a custom domain for your instance. 
+  // Therefore 2 terraform applies, one to create the instance, then another to set up the custom domain. 
+  custom_domain {
+    domain = "tf-test-my-custom-domain%{random_suffix}.com"
+  }
 }
 `, context)
 }

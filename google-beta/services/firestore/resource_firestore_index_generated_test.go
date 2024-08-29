@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -35,7 +35,7 @@ func TestAccFirestoreIndex_firestoreIndexBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"project_id":    envvar.GetTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -55,7 +55,7 @@ func TestAccFirestoreIndex_firestoreIndexBasicExample(t *testing.T) {
 				ResourceName:            "google_firestore_index.my-index",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection"},
+				ImportStateVerifyIgnore: []string{"collection", "database"},
 			},
 		},
 	})
@@ -63,48 +63,20 @@ func TestAccFirestoreIndex_firestoreIndexBasicExample(t *testing.T) {
 
 func testAccFirestoreIndex_firestoreIndexBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  project_id = "tf-test-project-id%{random_suffix}"
-  name       = "tf-test-project-id%{random_suffix}"
-  org_id     = "%{org_id}"
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [google_project.project]
-
-  create_duration = "60s"
-}
-
-resource "google_project_service" "firestore" {
-  project = google_project.project.project_id
-  service = "firestore.googleapis.com"
-
-  # Needed for CI tests for permissions to propagate, should not be needed for actual usage
-  depends_on = [time_sleep.wait_60_seconds]
-}
-
 resource "google_firestore_database" "database" {
-  project     = google_project.project.project_id
-  name        = "(default)"
+  project     = "%{project_id}"
+  name        = "tf-test-database-id%{random_suffix}"
   location_id = "nam5"
   type        = "FIRESTORE_NATIVE"
 
-  depends_on = [google_project_service.firestore]
-}
-
-# Creating a document also creates its collection
-resource "google_firestore_document" "document" {
-  project     = google_project.project.project_id
-  database    = google_firestore_database.database.name
-  collection  = "somenewcollection"
-  document_id = ""
-  fields      = "{\"something\":{\"mapValue\":{\"fields\":{\"akey\":{\"stringValue\":\"avalue\"}}}}}"
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
 }
 
 resource "google_firestore_index" "my-index" {
-  project    = google_project.project.project_id
+  project     = "%{project_id}"
   database   = google_firestore_database.database.name
-  collection = google_firestore_document.document.collection
+  collection = "atestcollection"
 
   fields {
     field_path = "name"
@@ -115,7 +87,6 @@ resource "google_firestore_index" "my-index" {
     field_path = "description"
     order      = "DESCENDING"
   }
-
 }
 `, context)
 }
@@ -124,7 +95,7 @@ func TestAccFirestoreIndex_firestoreIndexDatastoreModeExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestFirestoreProjectFromEnv(t),
+		"project_id":    envvar.GetTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -140,7 +111,7 @@ func TestAccFirestoreIndex_firestoreIndexDatastoreModeExample(t *testing.T) {
 				ResourceName:            "google_firestore_index.my-index",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection"},
+				ImportStateVerifyIgnore: []string{"collection", "database"},
 			},
 		},
 	})
@@ -148,10 +119,20 @@ func TestAccFirestoreIndex_firestoreIndexDatastoreModeExample(t *testing.T) {
 
 func testAccFirestoreIndex_firestoreIndexDatastoreModeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_firestore_database" "database" {
+  project     = "%{project_id}"
+  name        = "tf-test-database-id-dm%{random_suffix}"
+  location_id = "nam5"
+  type        = "DATASTORE_MODE"
+
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
+}
+
 resource "google_firestore_index" "my-index" {
-  project    = "%{project_id}"
-  database   = "(default)"
-  collection = "chatrooms"
+  project     = "%{project_id}"
+  database   = google_firestore_database.database.name
+  collection = "atestcollection"
 
   query_scope = "COLLECTION_RECURSIVE"
   api_scope = "DATASTORE_MODE_API"
@@ -164,6 +145,70 @@ resource "google_firestore_index" "my-index" {
   fields {
     field_path = "description"
     order      = "DESCENDING"
+  }
+}
+`, context)
+}
+
+func TestAccFirestoreIndex_firestoreIndexVectorExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":    envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirestoreIndexDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirestoreIndex_firestoreIndexVectorExample(context),
+			},
+			{
+				ResourceName:            "google_firestore_index.my-index",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"collection", "database"},
+			},
+		},
+	})
+}
+
+func testAccFirestoreIndex_firestoreIndexVectorExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firestore_database" "database" {
+  project     = "%{project_id}"
+  name        = "tf-test-database-id-vector%{random_suffix}"
+  location_id = "nam5"
+  type        = "FIRESTORE_NATIVE"
+
+  delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy         = "DELETE"
+}
+
+resource "google_firestore_index" "my-index" {
+  project     = "%{project_id}"
+  database   = google_firestore_database.database.name
+  collection = "atestcollection"
+
+  fields {
+    field_path = "field_name"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "__name__"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "description"
+    vector_config {
+      dimension = 128
+      flat {}
+    }
   }
 }
 `, context)

@@ -20,6 +20,7 @@ package alloydb
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -327,16 +328,60 @@ If not set, defaults to 14 days.`,
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
-			"network": {
-				Type:             schema.TypeString,
-				Computed:         true,
-				Optional:         true,
-				Deprecated:       "`network` is deprecated and will be removed in a future major release. Instead, use `network_config` to define the network configuration.",
-				DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
-				Description: `The relative resource name of the VPC network on which the instance can be accessed. It is specified in the following form:
-
-"projects/{projectNumber}/global/networks/{network_id}".`,
-				ExactlyOneOf: []string{"network", "network_config.0.network"},
+			"maintenance_update_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `MaintenanceUpdatePolicy defines the policy for system updates.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"maintenance_windows": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Preferred windows to perform maintenance. Currently limited to 1.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"day": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
+										Description:  `Preferred day of the week for maintenance, e.g. MONDAY, TUESDAY, etc. Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]`,
+									},
+									"start_time": {
+										Type:        schema.TypeList,
+										Required:    true,
+										Description: `Preferred time to start the maintenance operation on the specified day. Maintenance will start within 1 hour of this time.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"hours": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: `Hours of day in 24 hour format. Should be from 0 to 23.`,
+												},
+												"minutes": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Minutes of hour of day. Currently, only the value 0 is supported.`,
+												},
+												"nanos": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Fractions of seconds in nanoseconds. Currently, only the value 0 is supported.`,
+												},
+												"seconds": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Seconds of minutes of the time. Currently, only the value 0 is supported.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"network_config": {
 				Type:        schema.TypeList,
@@ -358,7 +403,22 @@ If set, the instance IPs for this cluster will be created in the allocated range
 							DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
 							Description: `The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster.
 It is specified in the form: "projects/{projectNumber}/global/networks/{network_id}".`,
-							ExactlyOneOf: []string{"network", "network_config.0.network"},
+							ExactlyOneOf: []string{"network_config.0.network", "psc_config.0.psc_enabled"},
+						},
+					},
+				},
+			},
+			"psc_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration for Private Service Connect (PSC) for the cluster.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"psc_enabled": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Create an instance that allows connections from Private Service Connect endpoints to the instance.`,
 						},
 					},
 				},
@@ -420,6 +480,13 @@ It is specified in the form: "projects/{projectNumber}/global/networks/{network_
 						},
 					},
 				},
+			},
+			"subscription_type": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"TRIAL", "STANDARD", ""}),
+				Description:  `The subscrition type of cluster. Possible values: ["TRIAL", "STANDARD"]`,
 			},
 			"backup_source": {
 				Type:        schema.TypeList,
@@ -566,6 +633,35 @@ This can happen due to user-triggered updates or system actions like failover or
  and default labels configured on the provider.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"trial_metadata": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `Contains information and all metadata related to TRIAL clusters.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"end_time": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `End time of the trial cluster.`,
+						},
+						"grace_end_time": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Grace end time of the trial cluster.`,
+						},
+						"start_time": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Start time of the trial cluster.`,
+						},
+						"upgrade_time": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Upgrade time of the trial cluster to standard cluster.`,
+						},
+					},
+				},
+			},
 			"uid": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -574,10 +670,11 @@ This can happen due to user-triggered updates or system actions like failover or
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DEFAULT",
 				Description: `Policy to determine if the cluster should be deleted forcefully.
 Deleting a cluster forcefully, deletes the cluster and all its associated instances within the cluster.
-Deleting a Secondary cluster with a secondary instance REQUIRES setting deletion_policy = "FORCE" otherwise an error is returned. This is needed as there is no support to delete just the secondary instance, and the only way to delete secondary instance is to delete the associated secondary cluster forcefully which also deletes the secondary instance.`,
+Deleting a Secondary cluster with a secondary instance REQUIRES setting deletion_policy = "FORCE" otherwise an error is returned. This is needed as there is no support to delete just the secondary instance, and the only way to delete secondary instance is to delete the associated secondary cluster forcefully which also deletes the secondary instance.
+Possible values: DEFAULT, FORCE`,
+				Default: "DEFAULT",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -604,12 +701,6 @@ func resourceAlloydbClusterCreate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("encryption_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(encryptionConfigProp)) && (ok || !reflect.DeepEqual(v, encryptionConfigProp)) {
 		obj["encryptionConfig"] = encryptionConfigProp
 	}
-	networkProp, err := expandAlloydbClusterNetwork(d.Get("network"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
-		obj["network"] = networkProp
-	}
 	networkConfigProp, err := expandAlloydbClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
 		return err
@@ -633,6 +724,12 @@ func resourceAlloydbClusterCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	} else if v, ok := d.GetOkExists("database_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(databaseVersionProp)) && (ok || !reflect.DeepEqual(v, databaseVersionProp)) {
 		obj["databaseVersion"] = databaseVersionProp
+	}
+	pscConfigProp, err := expandAlloydbClusterPscConfig(d.Get("psc_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("psc_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(pscConfigProp)) && (ok || !reflect.DeepEqual(v, pscConfigProp)) {
+		obj["pscConfig"] = pscConfigProp
 	}
 	initialUserProp, err := expandAlloydbClusterInitialUser(d.Get("initial_user"), d, config)
 	if err != nil {
@@ -676,6 +773,18 @@ func resourceAlloydbClusterCreate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("secondary_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(secondaryConfigProp)) && (ok || !reflect.DeepEqual(v, secondaryConfigProp)) {
 		obj["secondaryConfig"] = secondaryConfigProp
 	}
+	maintenanceUpdatePolicyProp, err := expandAlloydbClusterMaintenanceUpdatePolicy(d.Get("maintenance_update_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_update_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(maintenanceUpdatePolicyProp)) && (ok || !reflect.DeepEqual(v, maintenanceUpdatePolicyProp)) {
+		obj["maintenanceUpdatePolicy"] = maintenanceUpdatePolicyProp
+	}
+	subscriptionTypeProp, err := expandAlloydbClusterSubscriptionType(d.Get("subscription_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subscription_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(subscriptionTypeProp)) && (ok || !reflect.DeepEqual(v, subscriptionTypeProp)) {
+		obj["subscriptionType"] = subscriptionTypeProp
+	}
 	labelsProp, err := expandAlloydbClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -708,6 +817,7 @@ func resourceAlloydbClusterCreate(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	// Read the restore variables from obj and remove them, since they do not map to anything in the cluster
 	var backupSource interface{}
 	var continuousBackupSource interface{}
@@ -780,6 +890,7 @@ func resourceAlloydbClusterCreate(d *schema.ResourceData, meta interface{}) erro
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Cluster: %s", err)
@@ -832,12 +943,14 @@ func resourceAlloydbClusterRead(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("AlloydbCluster %q", d.Id()))
@@ -871,9 +984,6 @@ func resourceAlloydbClusterRead(d *schema.ResourceData, meta interface{}) error 
 	if err := d.Set("continuous_backup_info", flattenAlloydbClusterContinuousBackupInfo(res["continuousBackupInfo"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
-	if err := d.Set("network", flattenAlloydbClusterNetwork(res["network"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Cluster: %s", err)
-	}
 	if err := d.Set("network_config", flattenAlloydbClusterNetworkConfig(res["networkConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
@@ -895,6 +1005,9 @@ func resourceAlloydbClusterRead(d *schema.ResourceData, meta interface{}) error 
 	if err := d.Set("database_version", flattenAlloydbClusterDatabaseVersion(res["databaseVersion"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
+	if err := d.Set("psc_config", flattenAlloydbClusterPscConfig(res["pscConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
 	if err := d.Set("continuous_backup_config", flattenAlloydbClusterContinuousBackupConfig(res["continuousBackupConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
@@ -911,6 +1024,15 @@ func resourceAlloydbClusterRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
 	if err := d.Set("secondary_config", flattenAlloydbClusterSecondaryConfig(res["secondaryConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("maintenance_update_policy", flattenAlloydbClusterMaintenanceUpdatePolicy(res["maintenanceUpdatePolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("subscription_type", flattenAlloydbClusterSubscriptionType(res["subscriptionType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Cluster: %s", err)
+	}
+	if err := d.Set("trial_metadata", flattenAlloydbClusterTrialMetadata(res["trialMetadata"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Cluster: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenAlloydbClusterTerraformLabels(res["labels"], d, config)); err != nil {
@@ -948,12 +1070,6 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("encryption_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, encryptionConfigProp)) {
 		obj["encryptionConfig"] = encryptionConfigProp
 	}
-	networkProp, err := expandAlloydbClusterNetwork(d.Get("network"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
-		obj["network"] = networkProp
-	}
 	networkConfigProp, err := expandAlloydbClusterNetworkConfig(d.Get("network_config"), d, config)
 	if err != nil {
 		return err
@@ -977,6 +1093,12 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	} else if v, ok := d.GetOkExists("database_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, databaseVersionProp)) {
 		obj["databaseVersion"] = databaseVersionProp
+	}
+	pscConfigProp, err := expandAlloydbClusterPscConfig(d.Get("psc_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("psc_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, pscConfigProp)) {
+		obj["pscConfig"] = pscConfigProp
 	}
 	initialUserProp, err := expandAlloydbClusterInitialUser(d.Get("initial_user"), d, config)
 	if err != nil {
@@ -1008,6 +1130,18 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 	} else if v, ok := d.GetOkExists("secondary_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, secondaryConfigProp)) {
 		obj["secondaryConfig"] = secondaryConfigProp
 	}
+	maintenanceUpdatePolicyProp, err := expandAlloydbClusterMaintenanceUpdatePolicy(d.Get("maintenance_update_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_update_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maintenanceUpdatePolicyProp)) {
+		obj["maintenanceUpdatePolicy"] = maintenanceUpdatePolicyProp
+	}
+	subscriptionTypeProp, err := expandAlloydbClusterSubscriptionType(d.Get("subscription_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subscription_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, subscriptionTypeProp)) {
+		obj["subscriptionType"] = subscriptionTypeProp
+	}
 	labelsProp, err := expandAlloydbClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1027,14 +1161,11 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Updating Cluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("encryption_config") {
 		updateMask = append(updateMask, "encryptionConfig")
-	}
-
-	if d.HasChange("network") {
-		updateMask = append(updateMask, "network")
 	}
 
 	if d.HasChange("network_config") {
@@ -1051,6 +1182,10 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	if d.HasChange("database_version") {
 		updateMask = append(updateMask, "databaseVersion")
+	}
+
+	if d.HasChange("psc_config") {
+		updateMask = append(updateMask, "pscConfig")
 	}
 
 	if d.HasChange("initial_user") {
@@ -1073,6 +1208,14 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 		updateMask = append(updateMask, "secondaryConfig")
 	}
 
+	if d.HasChange("maintenance_update_policy") {
+		updateMask = append(updateMask, "maintenanceUpdatePolicy")
+	}
+
+	if d.HasChange("subscription_type") {
+		updateMask = append(updateMask, "subscriptionType")
+	}
+
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
@@ -1086,11 +1229,6 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return err
 	}
-	// Restrict modification of cluster_type from PRIMARY to SECONDARY as it is an invalid operation
-	if d.HasChange("cluster_type") && d.Get("cluster_type") == "SECONDARY" {
-		return fmt.Errorf("Can not convert a primary cluster to a secondary cluster.")
-	}
-
 	// Restrict setting secondary_config if cluster_type is PRIMARY
 	if d.Get("cluster_type") == "PRIMARY" && !tpgresource.IsEmptyValue(reflect.ValueOf(d.Get("secondary_config"))) {
 		return fmt.Errorf("Can not set secondary config for primary cluster.")
@@ -1174,6 +1312,7 @@ func resourceAlloydbClusterUpdate(d *schema.ResourceData, meta interface{}) erro
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1215,17 +1354,19 @@ func resourceAlloydbClusterDelete(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	var obj map[string]interface{}
-	// Forcefully delete the secondary cluster and the dependent instances because deletion of secondary instance is not supported.
-	if deletionPolicy := d.Get("deletion_policy"); deletionPolicy == "FORCE" {
-		url = url + "?force=true"
-	}
-	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	// Forcefully delete the secondary cluster and the dependent instances because deletion of secondary instance is not supported.
+	if deletionPolicy := d.Get("deletion_policy"); deletionPolicy == "FORCE" {
+		url = url + "?force=true"
+	}
+
+	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1234,6 +1375,7 @@ func resourceAlloydbClusterDelete(d *schema.ResourceData, meta interface{}) erro
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Cluster")
@@ -1394,10 +1536,6 @@ func flattenAlloydbClusterContinuousBackupInfoEncryptionInfoKmsKeyVersions(v int
 	return v
 }
 
-func flattenAlloydbClusterNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
 func flattenAlloydbClusterNetworkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -1453,6 +1591,23 @@ func flattenAlloydbClusterAnnotations(v interface{}, d *schema.ResourceData, con
 }
 
 func flattenAlloydbClusterDatabaseVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterPscConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["psc_enabled"] =
+		flattenAlloydbClusterPscConfigPscEnabled(original["pscEnabled"], d, config)
+	return []interface{}{transformed}
+}
+func flattenAlloydbClusterPscConfigPscEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1794,6 +1949,168 @@ func flattenAlloydbClusterSecondaryConfigPrimaryClusterName(v interface{}, d *sc
 	return v
 }
 
+func flattenAlloydbClusterMaintenanceUpdatePolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["maintenance_windows"] =
+		flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindows(original["maintenanceWindows"], d, config)
+	return []interface{}{transformed}
+}
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindows(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"day":        flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsDay(original["day"], d, config),
+			"start_time": flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTime(original["startTime"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsDay(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["hours"] =
+		flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeHours(original["hours"], d, config)
+	transformed["minutes"] =
+		flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeMinutes(original["minutes"], d, config)
+	transformed["seconds"] =
+		flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeSeconds(original["seconds"], d, config)
+	transformed["nanos"] =
+		flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeNanos(original["nanos"], d, config)
+	return []interface{}{transformed}
+}
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeHours(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeMinutes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeSeconds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeNanos(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenAlloydbClusterSubscriptionType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterTrialMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["start_time"] =
+		flattenAlloydbClusterTrialMetadataStartTime(original["startTime"], d, config)
+	transformed["end_time"] =
+		flattenAlloydbClusterTrialMetadataEndTime(original["endTime"], d, config)
+	transformed["upgrade_time"] =
+		flattenAlloydbClusterTrialMetadataUpgradeTime(original["upgradeTime"], d, config)
+	transformed["grace_end_time"] =
+		flattenAlloydbClusterTrialMetadataGraceEndTime(original["graceEndTime"], d, config)
+	return []interface{}{transformed}
+}
+func flattenAlloydbClusterTrialMetadataStartTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterTrialMetadataEndTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterTrialMetadataUpgradeTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbClusterTrialMetadataGraceEndTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenAlloydbClusterTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1840,10 +2157,6 @@ func expandAlloydbClusterEncryptionConfigKmsKeyName(v interface{}, d tpgresource
 	return v, nil
 }
 
-func expandAlloydbClusterNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
 func expandAlloydbClusterNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -1887,6 +2200,29 @@ func expandAlloydbClusterEtag(v interface{}, d tpgresource.TerraformResourceData
 }
 
 func expandAlloydbClusterDatabaseVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterPscConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPscEnabled, err := expandAlloydbClusterPscConfigPscEnabled(original["psc_enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPscEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["pscEnabled"] = transformedPscEnabled
+	}
+
+	return transformed, nil
+}
+
+func expandAlloydbClusterPscConfigPscEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -2318,6 +2654,118 @@ func expandAlloydbClusterSecondaryConfig(v interface{}, d tpgresource.TerraformR
 }
 
 func expandAlloydbClusterSecondaryConfigPrimaryClusterName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMaintenanceWindows, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindows(original["maintenance_windows"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaintenanceWindows); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maintenanceWindows"] = transformedMaintenanceWindows
+	}
+
+	return transformed, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindows(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedDay, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsDay(original["day"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedDay); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["day"] = transformedDay
+		}
+
+		transformedStartTime, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTime(original["start_time"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedStartTime); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["startTime"] = transformedStartTime
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsDay(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTime(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedHours, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeHours(original["hours"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHours); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["hours"] = transformedHours
+	}
+
+	transformedMinutes, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeMinutes(original["minutes"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMinutes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["minutes"] = transformedMinutes
+	}
+
+	transformedSeconds, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeSeconds(original["seconds"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSeconds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["seconds"] = transformedSeconds
+	}
+
+	transformedNanos, err := expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeNanos(original["nanos"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNanos); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["nanos"] = transformedNanos
+	}
+
+	return transformed, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeHours(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeMinutes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeSeconds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterMaintenanceUpdatePolicyMaintenanceWindowsStartTimeNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbClusterSubscriptionType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

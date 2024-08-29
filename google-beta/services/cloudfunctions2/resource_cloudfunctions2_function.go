@@ -20,6 +20,7 @@ package cloudfunctions2
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -31,6 +32,21 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// Suppress diffs for the system environment variables
+func environmentVariablesDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if k == "service_config.0.environment_variables.LOG_EXECUTION_ID" && new == "" {
+		return true
+	}
+
+	// Let diff be determined by environment_variables (above)
+	if strings.HasPrefix(k, "service_config.0.environment_variables.%") {
+		return true
+	}
+
+	// For other keys, don't suppress diff.
+	return false
+}
 
 func ResourceCloudfunctions2function() *schema.Resource {
 	return &schema.Resource{
@@ -76,6 +92,18 @@ from the given source.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"automatic_update_policy": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Optional: true,
+							Description: `Security patches are applied automatically to the runtime without requiring
+the function to be redeployed.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{},
+							},
+							ExactlyOneOf: []string{},
+						},
 						"docker_repository": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -98,11 +126,33 @@ function exported by the module specified in source_location.`,
 							Description: `User-provided build-time environment variables for the function.`,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
+						"on_deploy_update_policy": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Security patches are only applied when a function is redeployed.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"runtime_version": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `The runtime version which was used during latest function deployment.`,
+									},
+								},
+							},
+							ExactlyOneOf: []string{},
+						},
 						"runtime": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Description: `The runtime in which to run the function. Required when deploying a new
 function, optional when updating an existing function.`,
+						},
+						"service_account": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: `The fully-qualified name of the service account to be used for building the container.`,
 						},
 						"source": {
 							Type:        schema.TypeList,
@@ -257,6 +307,7 @@ Compute Engine default service account: {project_number}-compute@developer.gserv
 						},
 						"trigger_region": {
 							Type:     schema.TypeString,
+							Computed: true,
 							Optional: true,
 							Description: `The region that the trigger will be in. The trigger will only receive
 events originating in this region. It can be the same
@@ -315,10 +366,12 @@ Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is
 supplied the value is interpreted as bytes.`,
 						},
 						"environment_variables": {
-							Type:        schema.TypeMap,
-							Optional:    true,
-							Description: `Environment variables that shall be available during function execution.`,
-							Elem:        &schema.Schema{Type: schema.TypeString},
+							Type:             schema.TypeMap,
+							Computed:         true,
+							Optional:         true,
+							DiffSuppressFunc: environmentVariablesDiffSuppress,
+							Description:      `Environment variables that shall be available during function execution.`,
+							Elem:             &schema.Schema{Type: schema.TypeString},
 						},
 						"ingress_settings": {
 							Type:         schema.TypeString,
@@ -587,6 +640,11 @@ func resourceCloudfunctions2functionCreate(d *schema.ResourceData, meta interfac
 		obj["labels"] = labelsProp
 	}
 
+	obj, err = resourceCloudfunctions2functionEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVars(d, config, "{{Cloudfunctions2BasePath}}projects/{{project}}/locations/{{location}}/functions?functionId={{name}}")
 	if err != nil {
 		return err
@@ -606,6 +664,7 @@ func resourceCloudfunctions2functionCreate(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -614,6 +673,7 @@ func resourceCloudfunctions2functionCreate(d *schema.ResourceData, meta interfac
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating function: %s", err)
@@ -677,12 +737,14 @@ func resourceCloudfunctions2functionRead(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("Cloudfunctions2function %q", d.Id()))
@@ -788,12 +850,18 @@ func resourceCloudfunctions2functionUpdate(d *schema.ResourceData, meta interfac
 		obj["labels"] = labelsProp
 	}
 
+	obj, err = resourceCloudfunctions2functionEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVars(d, config, "{{Cloudfunctions2BasePath}}projects/{{project}}/locations/{{location}}/functions/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	log.Printf("[DEBUG] Updating function %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -841,6 +909,7 @@ func resourceCloudfunctions2functionUpdate(d *schema.ResourceData, meta interfac
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -882,13 +951,15 @@ func resourceCloudfunctions2functionDelete(d *schema.ResourceData, meta interfac
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting function %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting function %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -897,6 +968,7 @@ func resourceCloudfunctions2functionDelete(d *schema.ResourceData, meta interfac
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "function")
@@ -980,6 +1052,12 @@ func flattenCloudfunctions2functionBuildConfig(v interface{}, d *schema.Resource
 		flattenCloudfunctions2functionBuildConfigEnvironmentVariables(original["environmentVariables"], d, config)
 	transformed["docker_repository"] =
 		flattenCloudfunctions2functionBuildConfigDockerRepository(original["dockerRepository"], d, config)
+	transformed["service_account"] =
+		flattenCloudfunctions2functionBuildConfigServiceAccount(original["serviceAccount"], d, config)
+	transformed["automatic_update_policy"] =
+		flattenCloudfunctions2functionBuildConfigAutomaticUpdatePolicy(original["automaticUpdatePolicy"], d, config)
+	transformed["on_deploy_update_policy"] =
+		flattenCloudfunctions2functionBuildConfigOnDeployUpdatePolicy(original["onDeployUpdatePolicy"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudfunctions2functionBuildConfigBuild(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1062,6 +1140,16 @@ func flattenCloudfunctions2functionBuildConfigSourceStorageSourceObject(v interf
 }
 
 func flattenCloudfunctions2functionBuildConfigSourceStorageSourceGeneration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// This flatten function is shared between the resource and the datasource.
+	// TF Input will use the generation from the source object
+	// GET Response will use the generation from the automatically created object
+	// As TF Input and GET response values have different format,
+	// we will return TF Input value to prevent state drift.
+
+	if genVal, ok := d.GetOk("build_config.0.source.0.storage_source.0.generation"); ok {
+		v = genVal
+	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1140,6 +1228,32 @@ func flattenCloudfunctions2functionBuildConfigEnvironmentVariables(v interface{}
 }
 
 func flattenCloudfunctions2functionBuildConfigDockerRepository(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudfunctions2functionBuildConfigServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudfunctions2functionBuildConfigAutomaticUpdatePolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenCloudfunctions2functionBuildConfigOnDeployUpdatePolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["runtime_version"] =
+		flattenCloudfunctions2functionBuildConfigOnDeployUpdatePolicyRuntimeVersion(original["runtimeVersion"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudfunctions2functionBuildConfigOnDeployUpdatePolicyRuntimeVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1586,6 +1700,27 @@ func expandCloudfunctions2functionBuildConfig(v interface{}, d tpgresource.Terra
 		transformed["dockerRepository"] = transformedDockerRepository
 	}
 
+	transformedServiceAccount, err := expandCloudfunctions2functionBuildConfigServiceAccount(original["service_account"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServiceAccount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["serviceAccount"] = transformedServiceAccount
+	}
+
+	transformedAutomaticUpdatePolicy, err := expandCloudfunctions2functionBuildConfigAutomaticUpdatePolicy(original["automatic_update_policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["automaticUpdatePolicy"] = transformedAutomaticUpdatePolicy
+	}
+
+	transformedOnDeployUpdatePolicy, err := expandCloudfunctions2functionBuildConfigOnDeployUpdatePolicy(original["on_deploy_update_policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["onDeployUpdatePolicy"] = transformedOnDeployUpdatePolicy
+	}
+
 	return transformed, nil
 }
 
@@ -1777,6 +1912,53 @@ func expandCloudfunctions2functionBuildConfigEnvironmentVariables(v interface{},
 }
 
 func expandCloudfunctions2functionBuildConfigDockerRepository(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudfunctions2functionBuildConfigServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudfunctions2functionBuildConfigAutomaticUpdatePolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
+func expandCloudfunctions2functionBuildConfigOnDeployUpdatePolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRuntimeVersion, err := expandCloudfunctions2functionBuildConfigOnDeployUpdatePolicyRuntimeVersion(original["runtime_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRuntimeVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["runtimeVersion"] = transformedRuntimeVersion
+	}
+
+	return transformed, nil
+}
+
+func expandCloudfunctions2functionBuildConfigOnDeployUpdatePolicyRuntimeVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -2276,4 +2458,22 @@ func expandCloudfunctions2functionEffectiveLabels(v interface{}, d tpgresource.T
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceCloudfunctions2functionEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	if obj == nil || obj["buildConfig"] == nil {
+		return obj, nil
+	}
+
+	build_config := obj["buildConfig"].(map[string]interface{})
+
+	// Automatic Update policy is the default from API, unset it if the data
+	// contains the on-deploy policy.
+	if build_config["onDeployUpdatePolicy"] != nil {
+		delete(build_config, "automaticUpdatePolicy")
+	}
+
+	obj["buildConfig"] = build_config
+
+	return obj, nil
 }

@@ -17,7 +17,7 @@ description: |-
   A volume is a file system container in a storage pool that stores application, database, and user data.
 ---
 
-# google\_netapp\_volume
+# google_netapp_volume
 
 A volume is a file system container in a storage pool that stores application, database, and user data.
 
@@ -30,15 +30,15 @@ To get more information about Volume, see:
 
 * [API documentation](https://cloud.google.com/netapp/volumes/docs/reference/rest/v1/projects.locations.volumes)
 * How-to Guides
-    * [Quickstart](https://cloud.google.com/netapp/volumes/docs/get-started/quickstarts/create-volume)
     * [Documentation](https://cloud.google.com/netapp/volumes/docs/configure-and-use/volumes/overview)
+    * [Quickstart](https://cloud.google.com/netapp/volumes/docs/get-started/quickstarts/create-volume)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=volume_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=netapp_volume_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
-## Example Usage - Volume Basic
+## Example Usage - Netapp Volume Basic
 
 
 ```hcl
@@ -138,6 +138,11 @@ The following arguments are supported:
   (Optional)
   Flag indicating if the volume is a kerberos volume or not, export policy rules control kerberos security modes (krb5, krb5i, krb5p).
 
+* `restore_parameters` -
+  (Optional)
+  Used to create this volume from a snapshot (= cloning) or an backup.
+  Structure is [documented below](#nested_restore_parameters).
+
 * `restricted_actions` -
   (Optional)
   List of actions that are restricted on this volume.
@@ -149,12 +154,18 @@ The following arguments are supported:
   To disable automatic snapshot creation you have to remove the whole snapshot_policy block.
   Structure is [documented below](#nested_snapshot_policy).
 
+* `backup_config` -
+  (Optional)
+  Backup configuration for the volume.
+  Structure is [documented below](#nested_backup_config).
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
 * `deletion_policy` - (Optional) Policy to determine if the volume should be deleted forcefully.
 Volumes may have nested snapshot resources. Deleting such a volume will fail.
 Setting this parameter to FORCE will delete volumes including nested snapshots.
+Possible values: DEFAULT, FORCE.
 
 
 <a name="nested_export_policy"></a>The `export_policy` block supports:
@@ -211,6 +222,20 @@ Setting this parameter to FORCE will delete volumes including nested snapshots.
 * `kerberos5p_read_write` -
   (Optional)
   If enabled (true) the rule defines read and write access for clients matching the 'allowedClients' specification. It enables nfs clients to mount using 'privacy' kerberos security mode. The 'kerberos5pReadOnly' value is ignored if this is enabled.
+
+<a name="nested_restore_parameters"></a>The `restore_parameters` block supports:
+
+* `source_snapshot` -
+  (Optional)
+  Full name of the snapshot to use for creating this volume.
+  `source_snapshot` and `source_backup` cannot be used simultaneously.
+  Format: `projects/{{project}}/locations/{{location}}/volumes/{{volume}}/snapshots/{{snapshot}}`.
+
+* `source_backup` -
+  (Optional)
+  Full name of the snapshot to use for creating this volume.
+  `source_snapshot` and `source_backup` cannot be used simultaneously.
+  Format: `projects/{{project}}/locations/{{location}}/backupVaults/{{backupVaultId}}/backups/{{backup}}`.
 
 <a name="nested_snapshot_policy"></a>The `snapshot_policy` block supports:
 
@@ -300,11 +325,35 @@ Setting this parameter to FORCE will delete volumes including nested snapshots.
   (Optional)
   Set the day or days of the month to make a snapshot (1-31). Accepts a comma separated number of days. Defaults to '1'.
 
+<a name="nested_backup_config"></a>The `backup_config` block supports:
+
+* `backup_policies` -
+  (Optional)
+  Specify a single backup policy ID for scheduled backups. Format: `projects/{{projectId}}/locations/{{location}}/backupPolicies/{{backupPolicyName}}`
+
+* `backup_vault` -
+  (Optional)
+  ID of the backup vault to use. A backup vault is reqired to create manual or scheduled backups.
+  Format: `projects/{{projectId}}/locations/{{location}}/backupVaults/{{backupVaultName}}`
+
+* `scheduled_backup_enabled` -
+  (Optional)
+  When set to true, scheduled backup is enabled on the volume. Omit if no backup_policy is specified.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
 * `id` - an identifier for the resource with format `projects/{{project}}/locations/{{location}}/volumes/{{name}}`
+
+* `state` -
+  State of the volume.
+
+* `state_details` -
+  State details of the volume.
+
+* `create_time` -
+  Create time of the volume. A timestamp in RFC3339 UTC "Zulu" format. Examples: "2023-06-22T09:13:01.617Z".
 
 * `psa_range` -
   Name of the Private Service Access allocated range. Inherited from storage pool.
@@ -313,7 +362,7 @@ In addition to the arguments listed above, the following computed attributes are
   VPC network name with format: `projects/{{project}}/global/networks/{{network}}`. Inherited from storage pool.
 
 * `service_level` -
-  Service level of the volume. Inherited from storage pool.
+  Service level of the volume. Inherited from storage pool. Supported values are : PREMIUM, EXTERME, STANDARD, FLEX.
 
 * `used_gib` -
   Used capacity of the volume (in GiB). This is computed periodically and it does not represent the realtime usage.
@@ -336,6 +385,14 @@ In addition to the arguments listed above, the following computed attributes are
 * `mount_options` -
   Reports mount instructions for this volume.
   Structure is [documented below](#nested_mount_options).
+
+* `zone` -
+  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Specifies the active zone for regional volume.
+
+* `replica_zone` -
+  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Specifies the replica zone for regional volume.
 
 * `terraform_labels` -
   The combination of labels configured directly on the resource

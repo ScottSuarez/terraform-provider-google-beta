@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -35,8 +35,8 @@ func TestAccGKEHubMembership_gkehubMembershipRegionalExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project":         envvar.GetTestProjectFromEnv(),
 		"location":        envvar.GetTestRegionFromEnv(),
+		"project":         envvar.GetTestProjectFromEnv(),
 		"network_name":    acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name": acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
 		"random_suffix":   acctest.RandString(t, 10),
@@ -54,7 +54,7 @@ func TestAccGKEHubMembership_gkehubMembershipRegionalExample(t *testing.T) {
 				ResourceName:            "google_gke_hub_membership.membership",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"membership_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "membership_id", "terraform_labels"},
 			},
 		},
 	})
@@ -105,7 +105,7 @@ func TestAccGKEHubMembership_gkehubMembershipBasicExample(t *testing.T) {
 				ResourceName:            "google_gke_hub_membership.membership",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"membership_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "membership_id", "terraform_labels"},
 			},
 		},
 	})
@@ -160,7 +160,7 @@ func TestAccGKEHubMembership_gkehubMembershipIssuerExample(t *testing.T) {
 				ResourceName:            "google_gke_hub_membership.membership",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"membership_id", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "membership_id", "terraform_labels"},
 			},
 		},
 	})

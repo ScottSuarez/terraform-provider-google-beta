@@ -20,23 +20,98 @@ package vmwareengine
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"google.golang.org/api/googleapi"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
-func vmwareenginePrivateCloudStandardTypeDiffSuppressFunc(_, old, new string, _ *schema.ResourceData) bool {
+func vmwareenginePrivateCloudStandardTypeDiffSuppressFunc(_, old, new string, d *schema.ResourceData) bool {
 	if (old == "STANDARD" && new == "") || (old == "" && new == "STANDARD") {
 		return true
 	}
+	if isMultiNodePrivateCloud(d) && old == "TIME_LIMITED" && new == "STANDARD" {
+		log.Printf("[DEBUG] Multinode Private Cloud found, facilitating TYPE change to STANDARD")
+		return true
+	}
 	return false
+}
+
+func isMultiNodePrivateCloud(d *schema.ResourceData) bool {
+	nodeConfigMap := d.Get("management_cluster.0.node_type_configs").(*schema.Set).List()
+	totalNodeCount := 0
+	for _, nodeConfig := range nodeConfigMap {
+		configMap, ok := nodeConfig.(map[string]interface{})
+		if !ok {
+			log.Printf("[DEBUG] Invalid node configuration format for private cloud.")
+			continue
+		}
+		nodeCount, ok := configMap["node_count"].(int)
+		if !ok {
+			log.Printf("[DEBUG] Invalid node_count format for private cloud.")
+			continue
+		}
+		totalNodeCount += nodeCount
+	}
+	log.Printf("[DEBUG] The node count of the private cloud is found to be %v nodes.", totalNodeCount)
+	if totalNodeCount > 2 {
+		return true
+	}
+	return false
+}
+
+func isPrivateCloudInDeletedState(config *transport_tpg.Config, d *schema.ResourceData, billingProject string, userAgent string) (bool, error) {
+	baseurl, err := tpgresource.ReplaceVars(d, config, "{{VmwareengineBasePath}}projects/{{project}}/locations/{{location}}/privateClouds/{{name}}")
+	if err != nil {
+		return false, err
+	}
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    baseurl,
+		UserAgent: userAgent,
+	})
+	if err != nil {
+		if gerr, ok := err.(*googleapi.Error); ok && gerr.Code == 404 {
+			log.Printf("[DEBUG] No existing private cloud found")
+			return false, nil
+		}
+		return false, err
+	}
+	// if resource exists but is marked for deletion
+	v, ok := res["state"]
+	if ok && v.(string) == "DELETED" {
+		log.Printf("[DEBUG] The Private cloud exists and is marked for deletion.")
+		return true, nil
+	}
+	return false, nil
+}
+
+// Check if private cloud is absent or if it exists in a deleted state.
+func pollCheckForPrivateCloudAbsence(resp map[string]interface{}, respErr error) transport_tpg.PollResult {
+	if respErr != nil {
+		if transport_tpg.IsGoogleApiErrorWithCode(respErr, 404) {
+			return transport_tpg.SuccessPollResult()
+		}
+		return transport_tpg.ErrorPollResult(respErr)
+	}
+	// if resource exists but is marked for deletion
+	log.Printf("[DEBUG] Fetching state of the private cloud.")
+	v, ok := resp["state"]
+	if ok && v.(string) == "DELETED" {
+		log.Printf("[DEBUG] The Private cloud has been successfully marked for delayed deletion.")
+		return transport_tpg.SuccessPollResult()
+	}
+	return transport_tpg.PendingStatusPollResult("found")
 }
 
 func ResourceVmwareenginePrivateCloud() *schema.Resource {
@@ -112,6 +187,26 @@ This cannot be changed once the PrivateCloud is created.`,
 								},
 							},
 						},
+						"stretched_cluster_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `The stretched cluster configuration for the private cloud.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"preferred_location": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Zone that will remain operational when connection between the two zones is lost.`,
+									},
+									"secondary_location": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Additional zone for a higher level of availability and load balancing.`,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -174,9 +269,9 @@ the form: projects/{project_number}/locations/{location}/vmwareEngineNetworks/{v
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				ValidateFunc:     verify.ValidateEnum([]string{"STANDARD", "TIME_LIMITED", ""}),
+				ValidateFunc:     verify.ValidateEnum([]string{"STANDARD", "TIME_LIMITED", "STRETCHED", ""}),
 				DiffSuppressFunc: vmwareenginePrivateCloudStandardTypeDiffSuppressFunc,
-				Description:      `Initial type of the private cloud. Possible values: ["STANDARD", "TIME_LIMITED"]`,
+				Description:      `Initial type of the private cloud. Possible values: ["STANDARD", "TIME_LIMITED", "STRETCHED"]`,
 			},
 			"hcx": {
 				Type:        schema.TypeList,
@@ -278,6 +373,16 @@ the form: projects/{project_number}/locations/{location}/vmwareEngineNetworks/{v
 					},
 				},
 			},
+			"deletion_delay_hours": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: `The number of hours to delay this request. You can set this value to an hour between 0 to 8, where setting it to 0 starts the deletion request immediately. If no value is set, a default value is set at the API Level.`,
+			},
+			"send_deletion_delay_hours_if_zero": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `While set true, deletion_delay_hours value will be sent in the request even for zero value of the field. This field is only useful for setting 0 value to the deletion_delay_hours field. It can be used both alone and together with deletion_delay_hours.`,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -341,6 +446,22 @@ func resourceVmwareenginePrivateCloudCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	// Check if the project exists in a deleted state
+	pcMarkedForDeletion, err := isPrivateCloudInDeletedState(config, d, billingProject, userAgent)
+	if err != nil {
+		return fmt.Errorf("Error checking if Private Cloud exists and is marked for deletion: %s", err)
+	}
+	if pcMarkedForDeletion {
+		log.Printf("[DEBUG] Private Cloud exists and is marked for deletion. Triggering UNDELETE of the Private Cloud.\n")
+		url, err = tpgresource.ReplaceVars(d, config, "{{VmwareengineBasePath}}projects/{{project}}/locations/{{location}}/privateClouds/{{name}}:undelete")
+		if err != nil {
+			return err
+		}
+		obj = make(map[string]interface{})
+	} else {
+		log.Printf("[DEBUG] Private Cloud is not found to be marked for deletion. Triggering CREATE of the Private Cloud.\n")
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "POST",
@@ -349,6 +470,7 @@ func resourceVmwareenginePrivateCloudCreate(d *schema.ResourceData, meta interfa
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
 		ErrorAbortPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.Is429QuotaError},
 	})
 	if err != nil {
@@ -402,12 +524,14 @@ func resourceVmwareenginePrivateCloudRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "GET",
 		Project:              billingProject,
 		RawURL:               url,
 		UserAgent:            userAgent,
+		Headers:              headers,
 		ErrorAbortPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.Is429QuotaError},
 	})
 	if err != nil {
@@ -426,6 +550,7 @@ func resourceVmwareenginePrivateCloudRead(d *schema.ResourceData, meta interface
 		return nil
 	}
 
+	// Explicitly set virtual fields to default values if unset
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading PrivateCloud: %s", err)
 	}
@@ -498,6 +623,7 @@ func resourceVmwareenginePrivateCloudUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Updating PrivateCloud %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -512,6 +638,7 @@ func resourceVmwareenginePrivateCloudUpdate(d *schema.ResourceData, meta interfa
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutUpdate),
+		Headers:              headers,
 		ErrorAbortPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.Is429QuotaError},
 	})
 
@@ -601,19 +728,29 @@ func resourceVmwareenginePrivateCloudDelete(d *schema.ResourceData, meta interfa
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VmwareengineBasePath}}projects/{{project}}/locations/{{location}}/privateClouds/{{name}}?delay_hours=0")
+	url, err := tpgresource.ReplaceVars(d, config, "{{VmwareengineBasePath}}projects/{{project}}/locations/{{location}}/privateClouds/{{name}}")
 	if err != nil {
 		return err
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting PrivateCloud %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	// Delay deletion of the Private Cloud if delationDelayHours value is set
+	delationDelayHours := d.Get("deletion_delay_hours").(int)
+	if delationDelayHours > 0 || (delationDelayHours == 0 && d.Get("send_deletion_delay_hours_if_zero").(bool) == true) {
+		log.Printf("[DEBUG] Triggering delete of the Private Cloud with a delay of %v hours.\n", delationDelayHours)
+		url = url + "?delay_hours=" + fmt.Sprintf("%v", delationDelayHours)
+	} else {
+		log.Printf("[DEBUG] No deletion delay provided, triggering DELETE API without setting delay hours.\n")
+	}
+
+	log.Printf("[DEBUG] Deleting PrivateCloud %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "DELETE",
@@ -622,6 +759,7 @@ func resourceVmwareenginePrivateCloudDelete(d *schema.ResourceData, meta interfa
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutDelete),
+		Headers:              headers,
 		ErrorAbortPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.Is429QuotaError},
 	})
 	if err != nil {
@@ -670,7 +808,7 @@ func resourceVmwareenginePrivateCloudDelete(d *schema.ResourceData, meta interfa
 		}
 	}
 
-	err = transport_tpg.PollingWaitTime(privateCloudPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting PrivateCloud", d.Timeout(schema.TimeoutDelete), 10)
+	err = transport_tpg.PollingWaitTime(privateCloudPollRead(d, meta), pollCheckForPrivateCloudAbsence, "Deleting PrivateCloud", d.Timeout(schema.TimeoutDelete), 10)
 	if err != nil {
 		return fmt.Errorf("Error waiting to delete PrivateCloud: %s", err)
 	}
@@ -695,6 +833,8 @@ func resourceVmwareenginePrivateCloudImport(d *schema.ResourceData, meta interfa
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -778,6 +918,8 @@ func flattenVmwareenginePrivateCloudManagementCluster(v interface{}, d *schema.R
 		flattenVmwareenginePrivateCloudManagementClusterClusterId(original["clusterId"], d, config)
 	transformed["node_type_configs"] =
 		flattenVmwareenginePrivateCloudManagementClusterNodeTypeConfigs(original["nodeTypeConfigs"], d, config)
+	transformed["stretched_cluster_config"] =
+		flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfig(original["stretchedClusterConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVmwareenginePrivateCloudManagementClusterClusterId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -832,6 +974,29 @@ func flattenVmwareenginePrivateCloudManagementClusterNodeTypeConfigsCustomCoreCo
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["preferred_location"] =
+		flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfigPreferredLocation(original["preferredLocation"], d, config)
+	transformed["secondary_location"] =
+		flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfigSecondaryLocation(original["secondaryLocation"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfigPreferredLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVmwareenginePrivateCloudManagementClusterStretchedClusterConfigSecondaryLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenVmwareenginePrivateCloudHcx(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1033,6 +1198,13 @@ func expandVmwareenginePrivateCloudManagementCluster(v interface{}, d tpgresourc
 		transformed["nodeTypeConfigs"] = transformedNodeTypeConfigs
 	}
 
+	transformedStretchedClusterConfig, err := expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfig(original["stretched_cluster_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedStretchedClusterConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["stretchedClusterConfig"] = transformedStretchedClusterConfig
+	}
+
 	return transformed, nil
 }
 
@@ -1077,6 +1249,40 @@ func expandVmwareenginePrivateCloudManagementClusterNodeTypeConfigsNodeCount(v i
 }
 
 func expandVmwareenginePrivateCloudManagementClusterNodeTypeConfigsCustomCoreCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPreferredLocation, err := expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfigPreferredLocation(original["preferred_location"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPreferredLocation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["preferredLocation"] = transformedPreferredLocation
+	}
+
+	transformedSecondaryLocation, err := expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfigSecondaryLocation(original["secondary_location"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSecondaryLocation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["secondaryLocation"] = transformedSecondaryLocation
+	}
+
+	return transformed, nil
+}
+
+func expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfigPreferredLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVmwareenginePrivateCloudManagementClusterStretchedClusterConfigSecondaryLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

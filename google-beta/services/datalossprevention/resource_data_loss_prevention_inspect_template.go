@@ -20,6 +20,7 @@ package datalossprevention
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -335,9 +336,14 @@ at https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built
 										Description: `Configuration of findings limit given for specified infoTypes.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
+												"max_findings": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: `Max findings limit for the given infoType.`,
+												},
 												"info_type": {
 													Type:     schema.TypeList,
-													Required: true,
+													Optional: true,
 													Description: `Type of information the findings limit applies to. Only one limit per infoType should be provided. If InfoTypeLimit does
 not have an infoType, the DLP API applies the limit against all infoTypes that are found but not
 specified in another InfoTypeLimit.`,
@@ -373,11 +379,6 @@ at https://cloud.google.com/dlp/docs/infotypes-reference when specifying a built
 															},
 														},
 													},
-												},
-												"max_findings": {
-													Type:        schema.TypeInt,
-													Required:    true,
-													Description: `Max findings limit for the given infoType.`,
 												},
 											},
 										},
@@ -789,6 +790,7 @@ func resourceDataLossPreventionInspectTemplateCreate(d *schema.ResourceData, met
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -797,6 +799,7 @@ func resourceDataLossPreventionInspectTemplateCreate(d *schema.ResourceData, met
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating InspectTemplate: %s", err)
@@ -836,12 +839,14 @@ func resourceDataLossPreventionInspectTemplateRead(d *schema.ResourceData, meta 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataLossPreventionInspectTemplate %q", d.Id()))
@@ -915,6 +920,7 @@ func resourceDataLossPreventionInspectTemplateUpdate(d *schema.ResourceData, met
 	}
 
 	log.Printf("[DEBUG] Updating InspectTemplate %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -950,6 +956,7 @@ func resourceDataLossPreventionInspectTemplateUpdate(d *schema.ResourceData, met
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -978,13 +985,15 @@ func resourceDataLossPreventionInspectTemplateDelete(d *schema.ResourceData, met
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting InspectTemplate %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting InspectTemplate %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -993,6 +1002,7 @@ func resourceDataLossPreventionInspectTemplateDelete(d *schema.ResourceData, met
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "InspectTemplate")

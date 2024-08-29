@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(t *tes
 				ResourceName:            "google_firebase_database_instance.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id"},
+				ImportStateVerifyIgnore: []string{"instance_id", "region"},
 			},
 		},
 	})
@@ -88,7 +88,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceFullExample(t *test
 				ResourceName:            "google_firebase_database_instance.full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id", "desired_state"},
+				ImportStateVerifyIgnore: []string{"desired_state", "instance_id", "region"},
 			},
 		},
 	})
@@ -127,7 +127,7 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExam
 				ResourceName:            "google_firebase_database_instance.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "instance_id"},
+				ImportStateVerifyIgnore: []string{"instance_id", "region"},
 			},
 		},
 	})
@@ -140,6 +140,7 @@ resource "google_project" "default" {
   project_id = "tf-test-rtdb-project%{random_suffix}"
   name       = "tf-test-rtdb-project%{random_suffix}"
   org_id     = "%{org_id}"
+  deletion_policy = "DELETE"
   labels     = {
     "firebase" = "enabled"
   }

@@ -20,6 +20,7 @@ package bigqueryanalyticshub
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -56,6 +57,7 @@ func ResourceBigqueryAnalyticsHubListing() *schema.Resource {
 			"bigquery_dataset": {
 				Type:        schema.TypeList,
 				Required:    true,
+				ForceNew:    true,
 				Description: `Shared dataset i.e. BigQuery dataset source.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -63,8 +65,26 @@ func ResourceBigqueryAnalyticsHubListing() *schema.Resource {
 						"dataset": {
 							Type:             schema.TypeString,
 							Required:         true,
+							ForceNew:         true,
 							DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
 							Description:      `Resource name of the dataset source for this listing. e.g. projects/myproject/datasets/123`,
+						},
+						"selected_resources": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Resource in this dataset that is selectively shared. This field is required for data clean room exchanges.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"table": {
+										Type:             schema.TypeString,
+										Optional:         true,
+										ForceNew:         true,
+										DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
+										Description:      `Format: For table: projects/{projectId}/datasets/{datasetId}/tables/{tableId} Example:"projects/test_project/datasets/test_dataset/tables/test_table"`,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -182,6 +202,11 @@ func ResourceBigqueryAnalyticsHubListing() *schema.Resource {
 							Optional:    true,
 							Description: `If true, restrict export of query result derived from restricted linked dataset table.`,
 						},
+						"restrict_direct_table_access": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: `If true, restrict direct table access(read api/tabledata.list) on linked table.`,
+						},
 					},
 				},
 			},
@@ -295,6 +320,7 @@ func resourceBigqueryAnalyticsHubListingCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -303,6 +329,7 @@ func resourceBigqueryAnalyticsHubListingCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Listing: %s", err)
@@ -348,12 +375,14 @@ func resourceBigqueryAnalyticsHubListingRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigqueryAnalyticsHubListing %q", d.Id()))
@@ -473,12 +502,6 @@ func resourceBigqueryAnalyticsHubListingUpdate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("categories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, categoriesProp)) {
 		obj["categories"] = categoriesProp
 	}
-	bigqueryDatasetProp, err := expandBigqueryAnalyticsHubListingBigqueryDataset(d.Get("bigquery_dataset"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("bigquery_dataset"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, bigqueryDatasetProp)) {
-		obj["bigqueryDataset"] = bigqueryDatasetProp
-	}
 	restrictedExportConfigProp, err := expandBigqueryAnalyticsHubListingRestrictedExportConfig(d.Get("restricted_export_config"), d, config)
 	if err != nil {
 		return err
@@ -492,6 +515,7 @@ func resourceBigqueryAnalyticsHubListingUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating Listing %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -530,10 +554,6 @@ func resourceBigqueryAnalyticsHubListingUpdate(d *schema.ResourceData, meta inte
 		updateMask = append(updateMask, "categories")
 	}
 
-	if d.HasChange("bigquery_dataset") {
-		updateMask = append(updateMask, "bigqueryDataset")
-	}
-
 	if d.HasChange("restricted_export_config") {
 		updateMask = append(updateMask, "restrictedExportConfig")
 	}
@@ -559,6 +579,7 @@ func resourceBigqueryAnalyticsHubListingUpdate(d *schema.ResourceData, meta inte
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -593,13 +614,15 @@ func resourceBigqueryAnalyticsHubListingDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Listing %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Listing %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -608,6 +631,7 @@ func resourceBigqueryAnalyticsHubListingDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Listing")
@@ -726,9 +750,33 @@ func flattenBigqueryAnalyticsHubListingBigqueryDataset(v interface{}, d *schema.
 	transformed := make(map[string]interface{})
 	transformed["dataset"] =
 		flattenBigqueryAnalyticsHubListingBigqueryDatasetDataset(original["dataset"], d, config)
+	transformed["selected_resources"] =
+		flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(original["selectedResources"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBigqueryAnalyticsHubListingBigqueryDatasetDataset(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"table": flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(original["table"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -743,11 +791,17 @@ func flattenBigqueryAnalyticsHubListingRestrictedExportConfig(v interface{}, d *
 	transformed := make(map[string]interface{})
 	transformed["enabled"] =
 		flattenBigqueryAnalyticsHubListingRestrictedExportConfigEnabled(original["enabled"], d, config)
+	transformed["restrict_direct_table_access"] =
+		flattenBigqueryAnalyticsHubListingRestrictedExportConfigRestrictDirectTableAccess(original["restrictDirectTableAccess"], d, config)
 	transformed["restrict_query_result"] =
 		flattenBigqueryAnalyticsHubListingRestrictedExportConfigRestrictQueryResult(original["restrictQueryResult"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBigqueryAnalyticsHubListingRestrictedExportConfigEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigqueryAnalyticsHubListingRestrictedExportConfigRestrictDirectTableAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -867,10 +921,43 @@ func expandBigqueryAnalyticsHubListingBigqueryDataset(v interface{}, d tpgresour
 		transformed["dataset"] = transformedDataset
 	}
 
+	transformedSelectedResources, err := expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(original["selected_resources"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSelectedResources); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["selectedResources"] = transformedSelectedResources
+	}
+
 	return transformed, nil
 }
 
 func expandBigqueryAnalyticsHubListingBigqueryDatasetDataset(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedTable, err := expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(original["table"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedTable); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["table"] = transformedTable
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -890,6 +977,13 @@ func expandBigqueryAnalyticsHubListingRestrictedExportConfig(v interface{}, d tp
 		transformed["enabled"] = transformedEnabled
 	}
 
+	transformedRestrictDirectTableAccess, err := expandBigqueryAnalyticsHubListingRestrictedExportConfigRestrictDirectTableAccess(original["restrict_direct_table_access"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRestrictDirectTableAccess); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["restrictDirectTableAccess"] = transformedRestrictDirectTableAccess
+	}
+
 	transformedRestrictQueryResult, err := expandBigqueryAnalyticsHubListingRestrictedExportConfigRestrictQueryResult(original["restrict_query_result"], d, config)
 	if err != nil {
 		return nil, err
@@ -901,6 +995,10 @@ func expandBigqueryAnalyticsHubListingRestrictedExportConfig(v interface{}, d tp
 }
 
 func expandBigqueryAnalyticsHubListingRestrictedExportConfigEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryAnalyticsHubListingRestrictedExportConfigRestrictDirectTableAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

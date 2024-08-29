@@ -17,7 +17,7 @@ description: |-
   Fleet contains information about a group of clusters.
 ---
 
-# google\_gke\_hub\_fleet
+# google_gke_hub_fleet
 
 Fleet contains information about a group of clusters.
 
@@ -105,7 +105,7 @@ The following arguments are supported:
 * `mode` -
   (Optional)
   Sets which mode to use for Security Posture features.
-  Possible values are: `DISABLED`, `BASIC`.
+  Possible values are: `DISABLED`, `BASIC`, `ENTERPRISE`.
 
 * `vulnerability_mode` -
   (Optional)

@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -160,6 +161,7 @@ func resourceComputeNetworkEndpointCreate(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -168,6 +170,7 @@ func resourceComputeNetworkEndpointCreate(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating NetworkEndpoint: %s", err)
@@ -220,12 +223,14 @@ func resourceComputeNetworkEndpointRead(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeNetworkEndpoint %q", d.Id()))
@@ -308,6 +313,13 @@ func resourceComputeNetworkEndpointDelete(d *schema.ResourceData, meta interface
 	}
 
 	var obj map[string]interface{}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
 	toDelete := make(map[string]interface{})
 	instanceProp, err := expandNestedComputeNetworkEndpointInstance(d.Get("instance"), d, config)
 	if err != nil {
@@ -334,13 +346,8 @@ func resourceComputeNetworkEndpointDelete(d *schema.ResourceData, meta interface
 	obj = map[string]interface{}{
 		"networkEndpoints": []map[string]interface{}{toDelete},
 	}
+
 	log.Printf("[DEBUG] Deleting NetworkEndpoint %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -349,6 +356,7 @@ func resourceComputeNetworkEndpointDelete(d *schema.ResourceData, meta interface
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "NetworkEndpoint")

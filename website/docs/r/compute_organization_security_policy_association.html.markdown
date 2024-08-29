@@ -17,7 +17,7 @@ description: |-
   An association for the OrganizationSecurityPolicy.
 ---
 
-# google\_compute\_organization\_security\_policy\_association
+# google_compute_organization_security_policy_association
 
 An association for the OrganizationSecurityPolicy.
 
@@ -38,6 +38,7 @@ resource "google_folder" "security_policy_target" {
   provider     = google-beta
   display_name = "tf-test-secpol-%{random_suffix}"
   parent       = "organizations/123456789"
+  deletion_protection = false
 }
 
 resource "google_compute_organization_security_policy" "policy" {

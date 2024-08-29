@@ -17,18 +17,18 @@ description: |-
   Represents the Instance membership to the Instance Group.
 ---
 
-# google\_compute\_instance\_group\_membership
+# google_compute_instance_group_membership
 
 Represents the Instance membership to the Instance Group.
 
-**NOTE** You can use this resource instead of the `instances` field in the
+-> **NOTE** You can use this resource instead of the `instances` field in the
 `google_compute_instance_group`, however it's not recommended to use it alongside this field.
 It might cause inconsistencies, as they can end up competing over control.
 
-**NOTE** This resource has been added to avoid a situation, where after
+-> **NOTE** This resource has been added to avoid a situation, where after
 Instance is recreated, it's removed from Instance Group and it's needed to
 perform `apply` twice. To avoid situations like this, please use this resource
-with the lifecycle `update_triggered_by` method, with the passed Instance's ID.
+with the lifecycle `replace_triggered_by` method, with the passed Instance's ID.
 
 
 To get more information about InstanceGroupMembership, see:
@@ -36,8 +36,8 @@ To get more information about InstanceGroupMembership, see:
 * [API documentation](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroups)
 * How-to Guides
     * [Add instances](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroups/addInstances)
-    * [Remove instances](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroups/removeInstances)
     * [List instances](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroups/listInstances)
+    * [Remove instances](https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroups/removeInstances)
 
 ## Example Usage - Instance Group Membership
 

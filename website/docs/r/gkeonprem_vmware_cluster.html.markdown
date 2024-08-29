@@ -17,7 +17,7 @@ description: |-
   A Google VMware User Cluster.
 ---
 
-# google\_gkeonprem\_vmware\_cluster
+# google_gkeonprem_vmware_cluster
 
 A Google VMware User Cluster.
 
@@ -95,6 +95,7 @@ resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
         gateway="test-gateway"
       }
     }
+    vcenter_network = "test-vcenter-network"
   }
   control_plane_node {
      cpus = 4
@@ -122,6 +123,7 @@ resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
   }
   vm_tracking_enabled = true
   enable_control_plane_v2 = true
+  disable_bundled_ingress = true
   authorization {
     admin_users {
       username = "testuser@gmail.com"
@@ -373,6 +375,10 @@ The following arguments are supported:
   (Optional)
   Enable control plane V2. Default to false.
 
+* `disable_bundled_ingress` -
+  (Optional)
+  Disable bundled ingress.
+
 * `upgrade_policy` -
   (Optional)
   Specifies upgrade policy for the cluster.
@@ -427,7 +433,7 @@ The following arguments are supported:
   Structure is [documented below](#nested_dhcp_ip_config).
 
 * `vcenter_network` -
-  (Output)
+  (Optional)
   vcenter_network specifies vCenter network name. Inherited from the admin cluster.
 
 * `host_config` -

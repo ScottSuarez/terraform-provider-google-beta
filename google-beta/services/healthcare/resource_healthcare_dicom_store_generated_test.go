@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBasicExample(t *testing.T) 
 				ResourceName:            "google_healthcare_dicom_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -101,7 +101,7 @@ func TestAccHealthcareDicomStore_healthcareDicomStoreBqStreamExample(t *testing.
 				ResourceName:            "google_healthcare_dicom_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -116,7 +116,8 @@ resource "google_healthcare_dicom_store" "default" {
   dataset = google_healthcare_dataset.dataset.id
 
   notification_config {
-    pubsub_topic = google_pubsub_topic.topic.id
+    pubsub_topic         = google_pubsub_topic.topic.id
+    send_for_bulk_import = true
   }
 
   labels = {

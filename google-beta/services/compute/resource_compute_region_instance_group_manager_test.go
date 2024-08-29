@@ -7,9 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccRegionInstanceGroupManager_basic(t *testing.T) {
@@ -84,6 +85,9 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_update(template1, target1, igm),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_region_instance_group_manager.igm-update", "instance_lifecycle_policy.0.default_action_on_failure", "DO_NOTHING"),
+				),
 			},
 			{
 				ResourceName:            "google_compute_region_instance_group_manager.igm-update",
@@ -93,6 +97,9 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 			},
 			{
 				Config: testAccRegionInstanceGroupManager_update2(template1, target1, target2, template2, igm),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_region_instance_group_manager.igm-update", "instance_lifecycle_policy.0.default_action_on_failure", "REPAIR"),
+				),
 			},
 			{
 				ResourceName:            "google_compute_region_instance_group_manager.igm-update",
@@ -102,6 +109,9 @@ func TestAccRegionInstanceGroupManager_update(t *testing.T) {
 			},
 			{
 				Config: testAccRegionInstanceGroupManager_update3(template1, target1, target2, template2, igm),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_region_instance_group_manager.igm-update", "instance_lifecycle_policy.0.default_action_on_failure", "REPAIR"),
+				),
 			},
 			{
 				ResourceName:            "google_compute_region_instance_group_manager.igm-update",
@@ -324,8 +334,6 @@ func TestAccRegionInstanceGroupManager_distributionPolicy(t *testing.T) {
 }
 
 func TestAccRegionInstanceGroupManager_stateful(t *testing.T) {
-	// TODO: Flaky test due to ordering of IPs https://github.com/hashicorp/terraform-provider-google/issues/13430
-	t.Skip()
 	t.Parallel()
 
 	template := fmt.Sprintf("tf-test-rigm-%s", acctest.RandString(t, 10))
@@ -368,6 +376,40 @@ func TestAccRegionInstanceGroupManager_stateful(t *testing.T) {
 	})
 }
 
+func TestAccRegionInstanceGroupManager_stoppedSuspendedTargetSize(t *testing.T) {
+	t.Parallel()
+
+	template := fmt.Sprintf("tf-test-rigm-%s", acctest.RandString(t, 10))
+	igm := fmt.Sprintf("tf-test-rigm-%s", acctest.RandString(t, 10))
+	network := fmt.Sprintf("tf-test-igm-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckRegionInstanceGroupManagerDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRegionInstanceGroupManager_stoppedSuspendedTargetSize(template, network, igm),
+			},
+			{
+				ResourceName:            "google_compute_region_instance_group_manager.sr-igm",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"status"},
+			},
+			{
+				Config: testAccRegionInstanceGroupManager_stoppedSuspendedTargetSizeUpdate(template, network, igm),
+			},
+			{
+				ResourceName:            "google_compute_region_instance_group_manager.sr-igm",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"status"},
+			},
+		},
+	})
+}
+
 func TestAccRegionInstanceGroupManager_APISideListRecordering(t *testing.T) {
 	t.Parallel()
 
@@ -382,6 +424,32 @@ func TestAccRegionInstanceGroupManager_APISideListRecordering(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccRegionInstanceGroupManager_statefulUnordered(context),
+			},
+		},
+	})
+}
+
+func TestAccRegionInstanceGroupManager_resourceManagerTags(t *testing.T) {
+	t.Parallel()
+
+	tag_name := fmt.Sprintf("tf-test-igm-%s", acctest.RandString(t, 10))
+	template_name := fmt.Sprintf("tf-test-igm-%s", acctest.RandString(t, 10))
+	igm_name := fmt.Sprintf("tf-test-igm-%s", acctest.RandString(t, 10))
+	project_id := envvar.GetTestProjectFromEnv()
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckInstanceGroupManagerDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRegionInstanceGroupManager_resourceManagerTags(template_name, tag_name, igm_name, project_id),
+			},
+			{
+				ResourceName:            "google_compute_region_instance_group_manager.rigm-tags",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"status", "params"},
 			},
 		},
 	})
@@ -576,6 +644,7 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
 
   instance_lifecycle_policy {
     force_update_on_repair = "YES"
+    default_action_on_failure = "DO_NOTHING"
   }
 }
 `, template, target, igm)
@@ -680,6 +749,7 @@ resource "google_compute_region_instance_group_manager" "igm-update" {
 
   instance_lifecycle_policy {
     force_update_on_repair = "NO"
+    default_action_on_failure = "REPAIR"
   }
 }
 `, template1, target1, target2, template2, igm)
@@ -1672,4 +1742,167 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
 
 }
 `, context)
+}
+
+func testAccRegionInstanceGroupManager_stoppedSuspendedTargetSize(network, template, igm string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "sr-igm" {
+  name = "%s"
+}
+
+resource "google_compute_instance_template" "sr-igm" {
+  name           = "%s"
+  machine_type   = "e2-medium"
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+    device_name  = "stateful-disk"
+  }
+  network_interface {
+    network = "default"
+  }
+}
+
+resource "google_compute_region_instance_group_manager" "sr-igm" {
+  description = "Terraform test instance group manager"
+  name        = "%s"
+
+  version {
+    instance_template = google_compute_instance_template.sr-igm.self_link
+    name              = "primary"
+  }
+
+  base_instance_name        = "tf-test-sr-igm"
+  region                    = "us-central1"
+  target_size               = 2
+  distribution_policy_target_shape = "ANY_SINGLE_ZONE"
+  update_policy {
+    instance_redistribution_type = "NONE"
+    type                         = "OPPORTUNISTIC"
+    minimal_action               = "REPLACE"
+    max_surge_fixed              = 0
+    max_unavailable_fixed        = 6
+  }
+  standby_policy {
+    initial_delay_sec           = 20
+    mode                        = "SCALE_OUT_POOL"
+  }
+  target_suspended_size         = 2
+  target_stopped_size           = 1
+}
+`, network, template, igm)
+}
+
+func testAccRegionInstanceGroupManager_stoppedSuspendedTargetSizeUpdate(network, template, igm string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "sr-igm" {
+  name = "%s"
+}
+
+resource "google_compute_instance_template" "sr-igm" {
+  name           = "%s"
+  machine_type   = "e2-medium"
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+    device_name  = "stateful-disk"
+  }
+  network_interface {
+    network = "default"
+  }
+}
+
+resource "google_compute_region_instance_group_manager" "sr-igm" {
+  description = "Terraform test instance group manager"
+  name        = "%s"
+
+  version {
+    instance_template = google_compute_instance_template.sr-igm.self_link
+    name              = "primary"
+  }
+
+  base_instance_name        = "tf-test-sr-igm"
+  region                    = "us-central1"
+  target_size               = 2
+  distribution_policy_target_shape = "ANY_SINGLE_ZONE"
+  update_policy {
+    instance_redistribution_type = "NONE"
+    type                         = "OPPORTUNISTIC"
+    minimal_action               = "REPLACE"
+    max_surge_fixed              = 0
+    max_unavailable_fixed        = 6
+  }
+  standby_policy {
+    initial_delay_sec           = 30
+  }
+  target_suspended_size         = 1
+  target_stopped_size           = 2
+}
+`, network, template, igm)
+}
+
+func testAccRegionInstanceGroupManager_resourceManagerTags(template_name, tag_name, igm_name, project_id string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "rigm-tags" {
+  name           = "%s"
+  description    = "Terraform test instance template."
+  machine_type   = "e2-medium"
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+  }
+
+  network_interface {
+    network = "default"
+  }
+}
+
+resource "google_tags_tag_key" "rigm-key" {
+  description = "Terraform test tag key."
+  parent = "projects/%s"
+  short_name = "%s"
+}
+
+resource "google_tags_tag_value" "rigm-value" {
+  description = "Terraform test tag value."
+  parent = "tagKeys/${google_tags_tag_key.rigm-key.name}"
+  short_name = "%s"
+}
+
+resource "google_compute_region_instance_group_manager" "rigm-tags" {
+  description        = "Terraform test instance group manager."
+  name               = "%s"
+  base_instance_name = "tf-rigm-tags-test"
+  region             = "us-central1"
+  target_size        = 0
+
+  version {
+    name              = "prod"
+    instance_template = google_compute_instance_template.rigm-tags.self_link
+  }
+
+  params {
+    resource_manager_tags = {
+      "tagKeys/${google_tags_tag_key.rigm-key.name}" = "tagValues/${google_tags_tag_value.rigm-value.name}"
+    }
+  }
+}
+`, template_name, project_id, tag_name, tag_name, igm_name)
 }

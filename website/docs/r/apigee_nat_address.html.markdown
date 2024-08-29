@@ -17,7 +17,7 @@ description: |-
   Apigee NAT (network address translation) address.
 ---
 
-# google\_apigee\_nat\_address
+# google_apigee_nat_address
 
 Apigee NAT (network address translation) address. A NAT address is a static external IP address used for Internet egress traffic. This is not avaible for Apigee hybrid.
 Apigee NAT addresses are not automatically activated because they might require explicit allow entries on the target systems first. See https://cloud.google.com/apigee/docs/reference/apis/apigee/rest/v1/organizations.instances.natAddresses/activate
@@ -77,7 +77,7 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   crypto_key_id = google_kms_crypto_key.apigee_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  member = "serviceAccount:${google_project_service_identity.apigee_sa.email}"
+  member = google_project_service_identity.apigee_sa.member
 }
 
 resource "google_apigee_organization" "apigee_org" {

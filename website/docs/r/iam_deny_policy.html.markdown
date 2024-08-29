@@ -17,7 +17,7 @@ description: |-
   Represents a collection of denial policies to apply to a given resource.
 ---
 
-# google\_iam\_deny\_policy
+# google_iam_deny_policy
 
 Represents a collection of denial policies to apply to a given resource.
 
@@ -37,6 +37,7 @@ resource "google_project" "project" {
   name            = "my-project"
   org_id          = "123456789"
   billing_account = "000000-0000000-0000000-000000"
+  deletion_policy = "DELETE"
 }
 
 resource "google_iam_deny_policy" "example" {

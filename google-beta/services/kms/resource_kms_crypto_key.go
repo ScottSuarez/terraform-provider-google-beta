@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
@@ -79,13 +80,21 @@ Format: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyRing}}''.`,
 				ForceNew:    true,
 				Description: `The resource name for the CryptoKey.`,
 			},
+			"crypto_key_backend": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `The resource name of the backend environment associated with all CryptoKeyVersions within this CryptoKey.
+The resource name is in the format "projects/*/locations/*/ekmConnections/*" and only applies to "EXTERNAL_VPC" keys.`,
+			},
 			"destroy_scheduled_duration": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
 				ForceNew: true,
 				Description: `The period of time that versions of this key spend in the DESTROY_SCHEDULED state before transitioning to DESTROYED.
-If not specified at creation time, the default duration is 24 hours.`,
+If not specified at creation time, the default duration is 30 days.`,
 			},
 			"import_only": {
 				Type:        schema.TypeBool,
@@ -93,6 +102,34 @@ If not specified at creation time, the default duration is 24 hours.`,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `Whether this key may contain imported versions only.`,
+			},
+			"key_access_justifications_policy": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Description: `The policy used for Key Access Justifications Policy Enforcement. If this
+field is present and this key is enrolled in Key Access Justifications
+Policy Enforcement, the policy will be evaluated in encrypt, decrypt, and
+sign operations, and the operation will fail if rejected by the policy. The
+policy is defined by specifying zero or more allowed justification codes.
+https://cloud.google.com/assured-workloads/key-access-justifications/docs/justification-codes
+By default, this field is absent, and all justification codes are allowed.
+This field is currently in beta and is subject to change.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allowed_access_reasons": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `The list of allowed reasons for access to this CryptoKey. Zero allowed
+access reasons means all encrypt, decrypt, and sign operations for
+this CryptoKey will fail.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -128,7 +165,8 @@ letter 's' (seconds). It must be greater than a day (ie, 86400).`,
 				Optional: true,
 				ForceNew: true,
 				Description: `If set to true, the request will create a CryptoKey without any CryptoKeyVersions.
-You must use the 'google_kms_key_ring_import_job' resource to import the CryptoKeyVersion.`,
+You must use the 'google_kms_crypto_key_version' resource to create a new CryptoKeyVersion
+or 'google_kms_key_ring_import_job' resource to import the CryptoKeyVersion.`,
 			},
 			"version_template": {
 				Type:        schema.TypeList,
@@ -230,6 +268,18 @@ func resourceKMSCryptoKeyCreate(d *schema.ResourceData, meta interface{}) error 
 	} else if v, ok := d.GetOkExists("import_only"); !tpgresource.IsEmptyValue(reflect.ValueOf(importOnlyProp)) && (ok || !reflect.DeepEqual(v, importOnlyProp)) {
 		obj["importOnly"] = importOnlyProp
 	}
+	cryptoKeyBackendProp, err := expandKMSCryptoKeyCryptoKeyBackend(d.Get("crypto_key_backend"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("crypto_key_backend"); !tpgresource.IsEmptyValue(reflect.ValueOf(cryptoKeyBackendProp)) && (ok || !reflect.DeepEqual(v, cryptoKeyBackendProp)) {
+		obj["cryptoKeyBackend"] = cryptoKeyBackendProp
+	}
+	keyAccessJustificationsPolicyProp, err := expandKMSCryptoKeyKeyAccessJustificationsPolicy(d.Get("key_access_justifications_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("key_access_justifications_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(keyAccessJustificationsPolicyProp)) && (ok || !reflect.DeepEqual(v, keyAccessJustificationsPolicyProp)) {
+		obj["keyAccessJustificationsPolicy"] = keyAccessJustificationsPolicyProp
+	}
 	labelsProp, err := expandKMSCryptoKeyEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -259,6 +309,7 @@ func resourceKMSCryptoKeyCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -267,6 +318,7 @@ func resourceKMSCryptoKeyCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating CryptoKey: %s", err)
@@ -307,12 +359,14 @@ func resourceKMSCryptoKeyRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("KMSCryptoKey %q", d.Id()))
@@ -351,6 +405,12 @@ func resourceKMSCryptoKeyRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("import_only", flattenKMSCryptoKeyImportOnly(res["importOnly"], d, config)); err != nil {
 		return fmt.Errorf("Error reading CryptoKey: %s", err)
 	}
+	if err := d.Set("crypto_key_backend", flattenKMSCryptoKeyCryptoKeyBackend(res["cryptoKeyBackend"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CryptoKey: %s", err)
+	}
+	if err := d.Set("key_access_justifications_policy", flattenKMSCryptoKeyKeyAccessJustificationsPolicy(res["keyAccessJustificationsPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CryptoKey: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenKMSCryptoKeyTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading CryptoKey: %s", err)
 	}
@@ -383,6 +443,12 @@ func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error 
 	} else if v, ok := d.GetOkExists("version_template"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, versionTemplateProp)) {
 		obj["versionTemplate"] = versionTemplateProp
 	}
+	keyAccessJustificationsPolicyProp, err := expandKMSCryptoKeyKeyAccessJustificationsPolicy(d.Get("key_access_justifications_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("key_access_justifications_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, keyAccessJustificationsPolicyProp)) {
+		obj["keyAccessJustificationsPolicy"] = keyAccessJustificationsPolicyProp
+	}
 	labelsProp, err := expandKMSCryptoKeyEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -401,6 +467,7 @@ func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Updating CryptoKey %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("rotation_period") {
@@ -410,6 +477,10 @@ func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error 
 
 	if d.HasChange("version_template") {
 		updateMask = append(updateMask, "versionTemplate.algorithm")
+	}
+
+	if d.HasChange("key_access_justifications_policy") {
+		updateMask = append(updateMask, "keyAccessJustificationsPolicy")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -440,6 +511,7 @@ func resourceKMSCryptoKeyUpdate(d *schema.ResourceData, meta interface{}) error 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -593,6 +665,27 @@ func flattenKMSCryptoKeyImportOnly(v interface{}, d *schema.ResourceData, config
 	return v
 }
 
+func flattenKMSCryptoKeyCryptoKeyBackend(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenKMSCryptoKeyKeyAccessJustificationsPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["allowed_access_reasons"] =
+		flattenKMSCryptoKeyKeyAccessJustificationsPolicyAllowedAccessReasons(original["allowedAccessReasons"], d, config)
+	return []interface{}{transformed}
+}
+func flattenKMSCryptoKeyKeyAccessJustificationsPolicyAllowedAccessReasons(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenKMSCryptoKeyTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -659,6 +752,33 @@ func expandKMSCryptoKeyDestroyScheduledDuration(v interface{}, d tpgresource.Ter
 }
 
 func expandKMSCryptoKeyImportOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandKMSCryptoKeyCryptoKeyBackend(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandKMSCryptoKeyKeyAccessJustificationsPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAllowedAccessReasons, err := expandKMSCryptoKeyKeyAccessJustificationsPolicyAllowedAccessReasons(original["allowed_access_reasons"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAllowedAccessReasons); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["allowedAccessReasons"] = transformedAllowedAccessReasons
+	}
+
+	return transformed, nil
+}
+
+func expandKMSCryptoKeyKeyAccessJustificationsPolicyAllowedAccessReasons(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

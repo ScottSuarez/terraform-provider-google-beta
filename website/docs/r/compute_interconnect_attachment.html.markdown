@@ -17,7 +17,7 @@ description: |-
   Represents an InterconnectAttachment (VLAN attachment) resource.
 ---
 
-# google\_compute\_interconnect\_attachment
+# google_compute_interconnect_attachment
 
 Represents an InterconnectAttachment (VLAN attachment) resource. For more
 information, see Creating VLAN Attachments.
@@ -25,7 +25,7 @@ information, see Creating VLAN Attachments.
 
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=interconnect_attachment_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=interconnect_attachment_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -55,7 +55,7 @@ resource "google_compute_network" "foobar" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=compute_interconnect_attachment_ipsec_encryption&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=compute_interconnect_attachment_ipsec_encryption&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -224,6 +224,15 @@ The following arguments are supported:
   interconnect attachment operations.
   Possible values are: `IPV4_IPV6`, `IPV4_ONLY`.
 
+* `subnet_length` -
+  (Optional)
+  Length of the IPv4 subnet mask. Allowed values: 29 (default), 30. The default value is 29,
+  except for Cross-Cloud Interconnect connections that use an InterconnectRemoteLocation with a
+  constraints.subnetLengthRange.min equal to 30. For example, connections that use an Azure
+  remote location fall into this category. In these cases, the default value is 30, and
+  requesting 29 returns an error. Where both 29 and 30 are allowed, 29 is preferred, because it
+  gives Google Cloud Support more debugging visibility.
+
 * `region` -
   (Optional)
   Region where the regional interconnect attachment resides.
@@ -270,6 +279,14 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `creation_timestamp` -
   Creation timestamp in RFC3339 text format.
+
+* `cloud_router_ipv6_address` -
+  IPv6 address + prefix length to be configured on Cloud Router
+  Interface for this interconnect attachment.
+
+* `customer_router_ipv6_address` -
+  IPv6 address + prefix length to be configured on the customer
+  router subinterface for this interconnect attachment.
 * `self_link` - The URI of the created resource.
 
 

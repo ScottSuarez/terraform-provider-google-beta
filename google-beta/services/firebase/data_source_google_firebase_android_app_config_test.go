@@ -4,8 +4,8 @@ package firebase_test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"testing"
@@ -18,7 +18,7 @@ func TestAccDataSourceGoogleFirebaseAndroidAppConfig(t *testing.T) {
 
 	context := map[string]interface{}{
 		"project_id":   envvar.GetTestProjectFromEnv(),
-		"package_name": "android.app." + acctest.RandString(t, 5),
+		"package_name": "android.package.app" + acctest.RandString(t, 5),
 		"display_name": "tf-test Display Name AndroidAppConfig DataSource",
 	}
 

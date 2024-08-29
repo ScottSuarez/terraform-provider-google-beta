@@ -20,7 +20,9 @@ package firestore
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 
@@ -57,16 +59,19 @@ func ResourceFirestoreField() *schema.Resource {
 			"collection": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The id of the collection group to configure.`,
 			},
 			"field": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The id of the field to configure.`,
 			},
 			"database": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: `The Firestore database id. Defaults to '"(default)"'.`,
 				Default:     "(default)",
 			},
@@ -199,6 +204,7 @@ func resourceFirestoreFieldCreate(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "PATCH",
@@ -207,6 +213,7 @@ func resourceFirestoreFieldCreate(d *schema.ResourceData, meta interface{}) erro
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.FirestoreField409RetryUnderlyingDataChanged},
 	})
 	if err != nil {
@@ -274,12 +281,14 @@ func resourceFirestoreFieldRead(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "GET",
 		Project:              billingProject,
 		RawURL:               url,
 		UserAgent:            userAgent,
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.FirestoreField409RetryUnderlyingDataChanged},
 	})
 	if err != nil {
@@ -343,6 +352,7 @@ func resourceFirestoreFieldUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	log.Printf("[DEBUG] Updating Field %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("index_config") {
@@ -374,6 +384,7 @@ func resourceFirestoreFieldUpdate(d *schema.ResourceData, meta interface{}) erro
 			UserAgent:            userAgent,
 			Body:                 obj,
 			Timeout:              d.Timeout(schema.TimeoutUpdate),
+			Headers:              headers,
 			ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.FirestoreField409RetryUnderlyingDataChanged},
 		})
 
@@ -468,24 +479,26 @@ func resourceFirestoreFieldImport(d *schema.ResourceData, meta interface{}) ([]*
 		return nil, err
 	}
 
-	stringParts := strings.Split(d.Get("name").(string), "/")
-	if len(stringParts) != 8 {
-		return nil, fmt.Errorf(
-			"Saw %s when the name is expected to have shape %s",
-			d.Get("name"),
-			"projects/{{project}}/databases/{{database}}/collectionGroups/{{collection}}/indexes/{{server_generated_id}}",
-		)
+	// Re-populate split fields from the name.
+	re := regexp.MustCompile("^projects/([^/]+)/databases/([^/]+)/collectionGroups/([^/]+)/fields/(.+)$")
+	match := re.FindStringSubmatch(d.Get("name").(string))
+	if len(match) > 0 {
+		if err := d.Set("project", match[1]); err != nil {
+			return nil, fmt.Errorf("Error setting project: %s", err)
+		}
+		if err := d.Set("database", match[2]); err != nil {
+			return nil, fmt.Errorf("Error setting database: %s", err)
+		}
+		if err := d.Set("collection", match[3]); err != nil {
+			return nil, fmt.Errorf("Error setting collection: %s", err)
+		}
+		if err := d.Set("field", match[4]); err != nil {
+			return nil, fmt.Errorf("Error setting field: %s", err)
+		}
+	} else {
+		return nil, fmt.Errorf("import did not match the regex ^projects/([^/]+)/databases/([^/]+)/collectionGroups/([^/]+)/fields/(.+)$")
 	}
 
-	if err := d.Set("project", stringParts[1]); err != nil {
-		return nil, fmt.Errorf("Error setting project: %s", err)
-	}
-	if err := d.Set("database", stringParts[3]); err != nil {
-		return nil, fmt.Errorf("Error setting database: %s", err)
-	}
-	if err := d.Set("collection", stringParts[5]); err != nil {
-		return nil, fmt.Errorf("Error setting collection: %s", err)
-	}
 	return []*schema.ResourceData{d}, nil
 }
 

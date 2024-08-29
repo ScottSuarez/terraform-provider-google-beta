@@ -20,6 +20,7 @@ package bigqueryconnection
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -262,6 +263,13 @@ func ResourceBigqueryConnectionConnection() *schema.Resource {
 				Optional:    true,
 				Description: `A descriptive name for the connection`,
 			},
+			"kms_key_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Optional. The Cloud KMS key that is used for encryption.
+
+Example: projects/[kms_project_id]/locations/[region]/keyRings/[key_region]/cryptoKeys/[key]`,
+			},
 			"location": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -368,6 +376,12 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
+	kmsKeyNameProp, err := expandBigqueryConnectionConnectionKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(kmsKeyNameProp)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
+	}
 	cloudSqlProp, err := expandBigqueryConnectionConnectionCloudSql(d.Get("cloud_sql"), d, config)
 	if err != nil {
 		return err
@@ -429,6 +443,7 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -437,6 +452,7 @@ func resourceBigqueryConnectionConnectionCreate(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Connection: %s", err)
@@ -497,12 +513,14 @@ func resourceBigqueryConnectionConnectionRead(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigqueryConnectionConnection %q", d.Id()))
@@ -525,6 +543,9 @@ func resourceBigqueryConnectionConnectionRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading Connection: %s", err)
 	}
 	if err := d.Set("has_credential", flattenBigqueryConnectionConnectionHasCredential(res["hasCredential"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Connection: %s", err)
+	}
+	if err := d.Set("kms_key_name", flattenBigqueryConnectionConnectionKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Connection: %s", err)
 	}
 	if err := d.Set("cloud_sql", flattenBigqueryConnectionConnectionCloudSql(res["cloudSql"], d, config)); err != nil {
@@ -577,6 +598,12 @@ func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta int
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
+	kmsKeyNameProp, err := expandBigqueryConnectionConnectionKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
+	}
 	cloudSqlProp, err := expandBigqueryConnectionConnectionCloudSql(d.Get("cloud_sql"), d, config)
 	if err != nil {
 		return err
@@ -625,6 +652,7 @@ func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta int
 	}
 
 	log.Printf("[DEBUG] Updating Connection %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("friendly_name") {
@@ -633,6 +661,10 @@ func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta int
 
 	if d.HasChange("description") {
 		updateMask = append(updateMask, "description")
+	}
+
+	if d.HasChange("kms_key_name") {
+		updateMask = append(updateMask, "kmsKeyName")
 	}
 
 	if d.HasChange("cloud_sql") {
@@ -681,6 +713,7 @@ func resourceBigqueryConnectionConnectionUpdate(d *schema.ResourceData, meta int
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -715,13 +748,15 @@ func resourceBigqueryConnectionConnectionDelete(d *schema.ResourceData, meta int
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Connection %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Connection %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -730,6 +765,7 @@ func resourceBigqueryConnectionConnectionDelete(d *schema.ResourceData, meta int
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Connection")
@@ -777,6 +813,10 @@ func flattenBigqueryConnectionConnectionDescription(v interface{}, d *schema.Res
 }
 
 func flattenBigqueryConnectionConnectionHasCredential(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigqueryConnectionConnectionKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1056,6 +1096,10 @@ func expandBigqueryConnectionConnectionFriendlyName(v interface{}, d tpgresource
 }
 
 func expandBigqueryConnectionConnectionDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryConnectionConnectionKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

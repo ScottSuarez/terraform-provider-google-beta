@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -109,6 +109,52 @@ func TestAccComputeRouterInterface_withPrivateIpAddress(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRouterInterfaceWithPrivateIpAddress(routerName),
+				Check: testAccCheckComputeRouterInterfaceExists(
+					t, "google_compute_router_interface.foobar"),
+			},
+			{
+				ResourceName:      "google_compute_router_interface.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeRouterInterface_withIPVersionV4(t *testing.T) {
+	t.Parallel()
+
+	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRouterInterfaceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouterInterfaceWithIpVersionIPV4(routerName),
+				Check: testAccCheckComputeRouterInterfaceExists(
+					t, "google_compute_router_interface.foobar"),
+			},
+			{
+				ResourceName:      "google_compute_router_interface.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccComputeRouterInterface_withIPVersionV6(t *testing.T) {
+	t.Parallel()
+
+	routerName := fmt.Sprintf("tf-test-router-%s", acctest.RandString(t, 10))
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRouterInterfaceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRouterInterfaceWithIpVersionIPV6(routerName),
 				Check: testAccCheckComputeRouterInterfaceExists(
 					t, "google_compute_router_interface.foobar"),
 			},
@@ -512,4 +558,64 @@ resource "google_compute_router_interface" "foobar" {
   private_ip_address = google_compute_address.foobar.address
 }
 `, routerName, routerName, routerName, routerName, routerName)
+}
+
+func testAccComputeRouterInterfaceWithIpVersionIPV6(routerName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_network" "foobar" {
+  name = "%s-net"
+}
+
+resource "google_compute_subnetwork" "foobar" {
+  name          = "%s-subnet"
+  network       = google_compute_network.foobar.self_link
+  ip_cidr_range = "10.0.0.0/16"
+}
+
+resource "google_compute_router" "foobar" {
+  name    = "%s"
+  network = google_compute_network.foobar.self_link
+  bgp {
+    asn = 64514
+  }
+}
+
+resource "google_compute_router_interface" "foobar" {
+  name     = "%s-interface"
+  router   = google_compute_router.foobar.name
+  region   = google_compute_router.foobar.region
+  ip_range = "fdff:1::1:1/126"
+  ip_version = "IPV6"
+}
+`, routerName, routerName, routerName, routerName)
+}
+
+func testAccComputeRouterInterfaceWithIpVersionIPV4(routerName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_network" "foobar" {
+  name = "%s-net"
+}
+
+resource "google_compute_subnetwork" "foobar" {
+  name          = "%s-subnet"
+  network       = google_compute_network.foobar.self_link
+  ip_cidr_range = "10.0.0.0/16"
+}
+
+resource "google_compute_router" "foobar" {
+  name    = "%s"
+  network = google_compute_network.foobar.self_link
+  bgp {
+    asn = 64514
+  }
+}
+
+resource "google_compute_router_interface" "foobar" {
+  name     = "%s-interface"
+  router   = google_compute_router.foobar.name
+  region   = google_compute_router.foobar.region
+  ip_range = "169.254.3.1/30"
+  ip_version = "IPV4"
+}
+`, routerName, routerName, routerName, routerName)
 }

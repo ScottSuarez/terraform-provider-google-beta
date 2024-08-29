@@ -21,12 +21,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -262,6 +263,7 @@ func resourceWorkflowsWorkflowCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -270,6 +272,7 @@ func resourceWorkflowsWorkflowCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Workflow: %s", err)
@@ -336,12 +339,14 @@ func resourceWorkflowsWorkflowRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("WorkflowsWorkflow %q", d.Id()))
@@ -467,6 +472,7 @@ func resourceWorkflowsWorkflowUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Updating Workflow %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -518,6 +524,7 @@ func resourceWorkflowsWorkflowUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -559,13 +566,15 @@ func resourceWorkflowsWorkflowDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Workflow %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Workflow %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -574,6 +583,7 @@ func resourceWorkflowsWorkflowDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Workflow")
@@ -723,9 +733,14 @@ func resourceWorkflowsWorkflowEncoder(d *schema.ResourceData, meta interface{}, 
 	if v, ok := d.GetOk("name"); ok {
 		ResName = v.(string)
 	} else if v, ok := d.GetOk("name_prefix"); ok {
-		ResName = resource.PrefixedUniqueId(v.(string))
+		prefix := v.(string)
+		if len(prefix) > 37 {
+			ResName = tpgresource.ReducedPrefixedUniqueId(prefix)
+		} else {
+			ResName = id.PrefixedUniqueId(prefix)
+		}
 	} else {
-		ResName = resource.UniqueId()
+		ResName = id.UniqueId()
 	}
 
 	if err := d.Set("name", ResName); err != nil {

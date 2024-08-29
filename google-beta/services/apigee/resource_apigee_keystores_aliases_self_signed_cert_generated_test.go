@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -36,8 +36,8 @@ func TestAccApigeeKeystoresAliasesSelfSignedCert_apigeeEnvKeystoreAliasSelfSigne
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -53,7 +53,7 @@ func TestAccApigeeKeystoresAliasesSelfSignedCert_apigeeEnvKeystoreAliasSelfSigne
 				ResourceName:            "google_apigee_keystores_aliases_self_signed_cert.apigee_environment_keystore_ss_alias",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"org_id", "environment", "keystore", "key_size", "sig_alg", "subject", "cert_validity_in_days"},
+				ImportStateVerifyIgnore: []string{"cert_validity_in_days", "environment", "key_size", "keystore", "org_id", "sig_alg", "subject"},
 			},
 		},
 	})
@@ -66,6 +66,7 @@ resource "google_project" "project" {
   name            = "tf-test-my-project%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {

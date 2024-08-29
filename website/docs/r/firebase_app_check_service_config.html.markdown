@@ -17,7 +17,7 @@ description: |-
   The enforcement configuration for a service supported by App Check.
 ---
 
-# google\_firebase\_app\_check\_service\_config
+# google_firebase_app_check_service_config
 
 The enforcement configuration for a service supported by App Check.
 
@@ -75,7 +75,7 @@ resource "google_project_service" "appcheck" {
 
 resource "google_firebase_app_check_service_config" "default" {
   project = "my-project-name"
-  service_id = "firebasedatabase.googleapis.com"
+  service_id = "identitytoolkit.googleapis.com"
   enforcement_mode = "UNENFORCED"
 
   depends_on = [google_project_service.appcheck]

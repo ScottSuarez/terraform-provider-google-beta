@@ -17,7 +17,7 @@ description: |-
   Represents a Regional SSL policy.
 ---
 
-# google\_compute\_region\_ssl\_policy
+# google_compute_region_ssl_policy
 
 Represents a Regional SSL policy. SSL policies give you the ability to control the
 features of SSL that your SSL proxy or HTTPS load balancer negotiates.
@@ -43,10 +43,6 @@ The following arguments are supported:
   first character must be a lowercase letter, and all following
   characters must be a dash, lowercase letter, or digit, except the last
   character, which cannot be a dash.
-
-* `region` -
-  (Required)
-  The region where the regional SSL policy resides.
 
 
 - - -
@@ -84,6 +80,10 @@ The following arguments are supported:
   for which ciphers are available to use. **Note**: this argument
   *must* be present when using the `CUSTOM` profile. This argument
   *must not* be present when using any other profile.
+
+* `region` -
+  (Optional)
+  The region where the regional SSL policy resides.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.

@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -30,6 +31,16 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// Use this method when subnet is optioanl and auto_create_subnetworks = true
+// API sometimes choose a subnet so the diff needs to be ignored
+func compareOptionalSubnet(_, old, new string, _ *schema.ResourceData) bool {
+	if tpgresource.IsEmptyValue(reflect.ValueOf(new)) {
+		return true
+	}
+	// otherwise compare as self links
+	return tpgresource.CompareSelfLinkOrResourceName("", old, new, nil)
+}
 
 func ResourceComputeNetworkEndpointGroup() *schema.Resource {
 	return &schema.Resource{
@@ -107,7 +118,7 @@ Possible values include: GCE_VM_IP, GCE_VM_IP_PORT, NON_GCP_PRIVATE_IP_PORT, INT
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareOptionalSubnet,
+				DiffSuppressFunc: compareOptionalSubnet,
 				Description:      `Optional subnetwork to which all network endpoints in the NEG belong.`,
 			},
 			"zone": {
@@ -208,6 +219,7 @@ func resourceComputeNetworkEndpointGroupCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -216,6 +228,7 @@ func resourceComputeNetworkEndpointGroupCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating NetworkEndpointGroup: %s", err)
@@ -268,12 +281,14 @@ func resourceComputeNetworkEndpointGroupRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeNetworkEndpointGroup %q", d.Id()))
@@ -340,13 +355,15 @@ func resourceComputeNetworkEndpointGroupDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting NetworkEndpointGroup %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting NetworkEndpointGroup %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -355,6 +372,7 @@ func resourceComputeNetworkEndpointGroupDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "NetworkEndpointGroup")

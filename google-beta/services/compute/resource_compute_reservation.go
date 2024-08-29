@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -212,6 +213,7 @@ for information on available CPU platforms.`,
 							Type:         schema.TypeString,
 							Computed:     true,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: verify.ValidateEnum([]string{"LOCAL", "SPECIFIC_PROJECTS", ""}),
 							Description:  `Type of sharing for this shared-reservation Possible values: ["LOCAL", "SPECIFIC_PROJECTS"]`,
 						},
@@ -322,6 +324,7 @@ func resourceComputeReservationCreate(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -330,6 +333,7 @@ func resourceComputeReservationCreate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Reservation: %s", err)
@@ -382,12 +386,14 @@ func resourceComputeReservationRead(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeReservation %q", d.Id()))
@@ -462,6 +468,7 @@ func resourceComputeReservationUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Updating Reservation %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("share_settings") {
@@ -500,6 +507,7 @@ func resourceComputeReservationUpdate(d *schema.ResourceData, meta interface{}) 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -538,6 +546,7 @@ func resourceComputeReservationUpdate(d *schema.ResourceData, meta interface{}) 
 			return err
 		}
 
+		headers := make(http.Header)
 		if d.HasChange("share_settings") {
 			url, err = tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/reservations/{{name}}")
 			if err != nil {
@@ -563,6 +572,7 @@ func resourceComputeReservationUpdate(d *schema.ResourceData, meta interface{}) 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Reservation %q: %s", d.Id(), err)
@@ -604,13 +614,15 @@ func resourceComputeReservationDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Reservation %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Reservation %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -619,6 +631,7 @@ func resourceComputeReservationDelete(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Reservation")
@@ -1116,10 +1129,27 @@ func resourceComputeReservationUpdateEncoder(d *schema.ResourceData, meta interf
 		// Set project_map.
 		projectMap := make(map[string]interface{})
 		old, new := d.GetChange("share_settings")
-		oldMap := old.([]interface{})[0].(map[string]interface{})["project_map"]
-		newMap := new.([]interface{})[0].(map[string]interface{})["project_map"]
-		before := oldMap.(*schema.Set)
-		after := newMap.(*schema.Set)
+
+		var before *schema.Set
+		if oldSlice, ok := old.([]interface{}); ok && len(oldSlice) > 0 {
+			if oldMap, ok := oldSlice[0].(map[string]interface{})["project_map"]; ok {
+				before = oldMap.(*schema.Set)
+			} else {
+				before = schema.NewSet(schema.HashString, []interface{}{})
+			}
+		} else {
+			before = schema.NewSet(schema.HashString, []interface{}{})
+		}
+		var after *schema.Set
+		if newSlice, ok := new.([]interface{}); ok && len(newSlice) > 0 {
+			if newMap, ok := newSlice[0].(map[string]interface{})["project_map"]; ok {
+				after = newMap.(*schema.Set)
+			} else {
+				after = schema.NewSet(schema.HashString, []interface{}{})
+			}
+		} else {
+			after = schema.NewSet(schema.HashString, []interface{}{})
+		}
 
 		for _, raw := range after.Difference(before).List() {
 			original := raw.(map[string]interface{})
@@ -1135,10 +1165,10 @@ func resourceComputeReservationUpdateEncoder(d *schema.ResourceData, meta interf
 			}
 			projectMap[transformedId] = singleProject
 			// add added projects to updateMask
-			if firstProject != true {
-				maskId = fmt.Sprintf("%s%s", "&paths=shareSettings.projectMap.", original["project_id"])
+			if !firstProject {
+				maskId = fmt.Sprintf("%s%s", "&paths=shareSettings.projectMap.", original["id"])
 			} else {
-				maskId = fmt.Sprintf("%s%s", "?paths=shareSettings.projectMap.", original["project_id"])
+				maskId = fmt.Sprintf("%s%s", "?paths=shareSettings.projectMap.", original["id"])
 				firstProject = false
 			}
 			decodedPath, _ := url.QueryUnescape(maskId)
@@ -1165,7 +1195,7 @@ func resourceComputeReservationUpdateEncoder(d *schema.ResourceData, meta interf
 				projectNum := project.ProjectNumber
 				projectIdOrNum = fmt.Sprintf("%d", projectNum)
 			}
-			if firstProject != true {
+			if !firstProject {
 				maskId = fmt.Sprintf("%s%s", "&paths=shareSettings.projectMap.", projectIdOrNum)
 			} else {
 				maskId = fmt.Sprintf("%s%s", "?paths=shareSettings.projectMap.", projectIdOrNum)

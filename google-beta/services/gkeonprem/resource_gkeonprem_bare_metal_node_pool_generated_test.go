@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolBasicExample(t 
 				ResourceName:            "google_gkeonprem_bare_metal_node_pool.nodepool-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "bare_metal_cluster", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "bare_metal_cluster", "location", "name"},
 			},
 		},
 	})
@@ -160,7 +160,7 @@ func TestAccGkeonpremBareMetalNodePool_gkeonpremBareMetalNodePoolFullExample(t *
 				ResourceName:            "google_gkeonprem_bare_metal_node_pool.nodepool-full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "bare_metal_cluster", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "bare_metal_cluster", "location", "name"},
 			},
 		},
 	})

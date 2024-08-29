@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -159,12 +160,12 @@ The [CHANNEL_ID] is automatically assigned by the server on creation.`,
 			"force_delete": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 				Description: `If true, the notification channel will be deleted regardless
 of its use in alert policies (the policies will be updated
 to remove the channel). If false, channels that are still
 referenced by an existing alerting policy will fail to be
 deleted in a delete operation.`,
+				Default: false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -253,6 +254,7 @@ func resourceMonitoringNotificationChannelCreate(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "POST",
@@ -261,6 +263,7 @@ func resourceMonitoringNotificationChannelCreate(d *schema.ResourceData, meta in
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsMonitoringConcurrentEditError},
 	})
 	if err != nil {
@@ -325,12 +328,14 @@ func resourceMonitoringNotificationChannelRead(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "GET",
 		Project:              billingProject,
 		RawURL:               url,
 		UserAgent:            userAgent,
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsMonitoringConcurrentEditError},
 	})
 	if err != nil {
@@ -458,6 +463,7 @@ func resourceMonitoringNotificationChannelUpdate(d *schema.ResourceData, meta in
 	}
 
 	log.Printf("[DEBUG] Updating NotificationChannel %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -472,6 +478,7 @@ func resourceMonitoringNotificationChannelUpdate(d *schema.ResourceData, meta in
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutUpdate),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsMonitoringConcurrentEditError},
 	})
 
@@ -512,13 +519,15 @@ func resourceMonitoringNotificationChannelDelete(d *schema.ResourceData, meta in
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting NotificationChannel %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting NotificationChannel %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "DELETE",
@@ -527,6 +536,7 @@ func resourceMonitoringNotificationChannelDelete(d *schema.ResourceData, meta in
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutDelete),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsMonitoringConcurrentEditError},
 	})
 	if err != nil {

@@ -20,12 +20,13 @@ package integrationconnectors
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -36,16 +37,16 @@ import (
 // waitforConnectionReady waits for an connecion to leave the
 // "CREATING" state, to indicate that it's ready.
 func waitforConnectionReady(d *schema.ResourceData, config *transport_tpg.Config, timeout time.Duration) error {
-	return resource.Retry(timeout, func() *resource.RetryError {
+	return retry.Retry(timeout, func() *retry.RetryError {
 		if err := resourceIntegrationConnectorsConnectionRead(d, config); err != nil {
-			return resource.NonRetryableError(err)
+			return retry.NonRetryableError(err)
 		}
 		name := d.Get("name").(string)
 		status := d.Get("status").([]interface{})
 		state := status[0].(map[string]interface{})["state"]
 		log.Printf("[DEBUG] Connection %q has state %v.", name, state)
 		if state == "CREATING" || state == "UPDATING" {
-			return resource.RetryableError(fmt.Errorf("Connection %q has state %q.", name, state))
+			return retry.RetryableError(fmt.Errorf("Connection %q has state %q.", name, state))
 		}
 		log.Printf("[DEBUG] Connection %q has state %q.", name, state)
 		return nil
@@ -137,8 +138,8 @@ func ResourceIntegrationConnectorsConnection() *schema.Resource {
 												"kms_key_name": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Description: `The [KMS key name] with which the content of the Operation is encrypted. The expected
-format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+													Description: `The [KMS key name] with which the content of the Operation is encrypted. The
+expected format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
 Will be empty string if google managed.`,
 												},
 											},
@@ -433,8 +434,8 @@ format as: projects/*/secrets/*/versions/*.`,
 									"kms_key_name": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Description: `The [KMS key name] with which the content of the Operation is encrypted. The expected
-format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+										Description: `The [KMS key name] with which the content of the Operation is encrypted. The
+expected format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
 Will be empty string if google managed.`,
 									},
 								},
@@ -583,8 +584,8 @@ Will be empty string if google managed.`,
 												"kms_key_name": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Description: `The [KMS key name] with which the content of the Operation is encrypted. The expected
-format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+													Description: `The [KMS key name] with which the content of the Operation is encrypted. The
+expected format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
 Will be empty string if google managed.`,
 												},
 												"type": {
@@ -694,8 +695,8 @@ format as: projects/*/secrets/*/versions/*.`,
 															"kms_key_name": {
 																Type:     schema.TypeString,
 																Optional: true,
-																Description: `The [KMS key name] with which the content of the Operation is encrypted. The expected
-format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+																Description: `The [KMS key name] with which the content of the Operation is encrypted. The
+expected format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
 Will be empty string if google managed.`,
 															},
 															"type": {
@@ -870,8 +871,8 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 												"kms_key_name": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Description: `The [KMS key name] with which the content of the Operation is encrypted. The expected
-format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
+													Description: `The [KMS key name] with which the content of the Operation is encrypted. The
+expected format: projects/*/locations/*/keyRings/*/cryptoKeys/*.
 Will be empty string if google managed.`,
 												},
 												"type": {
@@ -1010,7 +1011,7 @@ Will be empty string if google managed.`,
 			"connector_version_infra_config": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: `This cofiguration provides infra configs like rate limit threshold which need to be configurable for every connector version.`,
+				Description: `This configuration provides infra configs like rate limit threshold which need to be configurable for every connector version.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"ratelimit_threshold": {
@@ -1240,6 +1241,7 @@ func resourceIntegrationConnectorsConnectionCreate(d *schema.ResourceData, meta 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1248,6 +1250,7 @@ func resourceIntegrationConnectorsConnectionCreate(d *schema.ResourceData, meta 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Connection: %s", err)
@@ -1314,12 +1317,14 @@ func resourceIntegrationConnectorsConnectionRead(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IntegrationConnectorsConnection %q", d.Id()))
@@ -1515,6 +1520,7 @@ func resourceIntegrationConnectorsConnectionUpdate(d *schema.ResourceData, meta 
 	}
 
 	log.Printf("[DEBUG] Updating Connection %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -1594,6 +1600,7 @@ func resourceIntegrationConnectorsConnectionUpdate(d *schema.ResourceData, meta 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1638,13 +1645,15 @@ func resourceIntegrationConnectorsConnectionDelete(d *schema.ResourceData, meta 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Connection %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Connection %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1653,6 +1662,7 @@ func resourceIntegrationConnectorsConnectionDelete(d *schema.ResourceData, meta 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Connection")

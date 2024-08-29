@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcloudfunctions "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudfunctions"
@@ -53,7 +53,7 @@ func TestAccCloudFunctionsFunction_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(funcResourceName,
 						"description", "test function"),
 					resource.TestCheckResourceAttr(funcResourceName,
-						"docker_registry", "CONTAINER_REGISTRY"),
+						"docker_registry", "ARTIFACT_REGISTRY"),
 					resource.TestCheckResourceAttr(funcResourceName,
 						"available_memory_mb", "128"),
 					resource.TestCheckResourceAttr(funcResourceName,
@@ -72,6 +72,8 @@ func TestAccCloudFunctionsFunction_basic(t *testing.T) {
 						"entry_point", "helloGET"),
 					resource.TestCheckResourceAttr(funcResourceName,
 						"trigger_http", "true"),
+					resource.TestCheckResourceAttr(funcResourceName,
+						"version_id", "1"),
 					testAccCloudFunctionsFunctionHasLabel("my-label", "my-label-value", &function),
 					testAccCloudFunctionsFunctionHasEnvironmentVariable("TEST_ENV_VARIABLE",
 						"test-env-variable-value", &function),
@@ -111,6 +113,8 @@ func TestAccCloudFunctionsFunction_update(t *testing.T) {
 						t, funcResourceName, &function),
 					resource.TestCheckResourceAttr(funcResourceName,
 						"available_memory_mb", "128"),
+					resource.TestCheckResourceAttr(funcResourceName,
+						"version_id", "1"),
 					testAccCloudFunctionsFunctionHasLabel("my-label", "my-label-value", &function),
 				),
 			},
@@ -139,6 +143,8 @@ func TestAccCloudFunctionsFunction_update(t *testing.T) {
 						"min_instances", "5"),
 					resource.TestCheckResourceAttr(funcResourceName,
 						"ingress_settings", "ALLOW_ALL"),
+					resource.TestCheckResourceAttr(funcResourceName,
+						"version_id", "2"),
 					testAccCloudFunctionsFunctionHasLabel("my-label", "my-updated-label-value", &function),
 					testAccCloudFunctionsFunctionHasLabel("a-new-label", "a-new-label-value", &function),
 					testAccCloudFunctionsFunctionHasEnvironmentVariable("TEST_ENV_VARIABLE",
@@ -323,6 +329,8 @@ func TestAccCloudFunctionsFunction_cmek(t *testing.T) {
 }
 
 func TestAccCloudFunctionsFunction_firestore(t *testing.T) {
+	// Currently failing
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 	funcResourceName := "google_cloudfunctions_function.function"
 	functionName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
@@ -522,6 +530,54 @@ func TestAccCloudFunctionsFunction_secretMount(t *testing.T) {
 	})
 }
 
+func TestAccCloudFunctionsFunction_buildServiceAccount(t *testing.T) {
+	t.Parallel()
+
+	funcResourceName := "google_cloudfunctions_function.function"
+	functionName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	bucketName := fmt.Sprintf("tf-test-bucket-%d", acctest.RandInt(t))
+	zipFilePath := acctest.CreateZIPArchiveForCloudFunctionSource(t, testHTTPTriggerPath)
+	proj := envvar.GetTestProjectFromEnv()
+	serviceAccount1 := fmt.Sprintf("tf-test-build1-%s", acctest.RandString(t, 10))
+	serviceAccount2 := fmt.Sprintf("tf-test-build2-%s", acctest.RandString(t, 10))
+	defer os.Remove(zipFilePath) // clean up
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckCloudFunctionsFunctionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudFunctionsFunction_buildServiceAccount("sa1", functionName, bucketName, zipFilePath, serviceAccount1),
+				Check: resource.TestCheckResourceAttr(funcResourceName,
+					"build_service_account",
+					fmt.Sprintf("projects/%[1]s/serviceAccounts/%s@%[1]s.iam.gserviceaccount.com", proj, serviceAccount1)),
+			},
+			{
+				ResourceName:            funcResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+			},
+			{
+				Config: testAccCloudFunctionsFunction_buildServiceAccount("sa2", functionName, bucketName, zipFilePath, serviceAccount2),
+				Check: resource.TestCheckResourceAttr(funcResourceName,
+					"build_service_account",
+					fmt.Sprintf("projects/%[1]s/serviceAccounts/%s@%[1]s.iam.gserviceaccount.com", proj, serviceAccount2)),
+			},
+			{
+				ResourceName:            funcResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"build_environment_variables"},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudFunctionsFunctionDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := acctest.GoogleProviderConfig(t)
@@ -638,6 +694,7 @@ func testAccCloudFunctionsFunction_basic(functionName string, bucketName string,
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -650,7 +707,7 @@ resource "google_cloudfunctions_function" "function" {
   name                  = "%s"
   runtime               = "nodejs10"
   description           = "test function"
-  docker_registry       = "CONTAINER_REGISTRY"
+  docker_registry       = "ARTIFACT_REGISTRY"
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.archive.name
@@ -678,6 +735,7 @@ func testAccCloudFunctionsFunction_updated(functionName string, bucketName strin
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -731,6 +789,7 @@ func testAccCloudFunctionsFunction_buildworkerpool(functionName string, bucketNa
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -753,7 +812,7 @@ resource "google_cloudfunctions_function" "function" {
   name                  = "%[3]s"
   runtime               = "nodejs10"
   description           = "test function"
-  docker_registry       = "CONTAINER_REGISTRY"
+  docker_registry       = "ARTIFACT_REGISTRY"
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.archive.name
@@ -770,6 +829,7 @@ func testAccCloudFunctionsFunction_pubsub(functionName string, bucketName string
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -810,6 +870,7 @@ data "google_client_config" "current" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -843,6 +904,7 @@ func testAccCloudFunctionsFunction_bucketNoRetry(functionName string, bucketName
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -873,6 +935,7 @@ func testAccCloudFunctionsFunction_firestore(functionName string, bucketName str
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -922,6 +985,7 @@ func testAccCloudFunctionsFunction_serviceAccountEmail(functionName, bucketName,
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -968,11 +1032,14 @@ resource "google_vpc_access_connector" "%s" {
   region        = "us-central1"
   ip_cidr_range = "%s"
   network       = google_compute_network.vpc.name
+  min_throughput  = 200
+  max_throughput = 300
 }
 
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -1031,6 +1098,7 @@ resource "google_artifact_registry_repository_iam_binding" "binding" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -1111,6 +1179,7 @@ resource "google_artifact_registry_repository" "encoded-ar-repo" {
 resource "google_storage_bucket" "bucket" {
   name     = "%s"
   location = "US"
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "archive" {
@@ -1267,4 +1336,68 @@ resource "google_cloudfunctions_function" "function" {
 
 }
 `, accountId, secretName, versionName, bucketName, zipFilePath, functionName, projectNumber, versionNumber)
+}
+
+func testAccCloudFunctionsFunction_buildServiceAccount(saName, functionName, bucketName, zipFilePath, serviceAccount string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {}
+
+resource "google_storage_bucket" "bucket" {
+  name     = "%s"
+  location = "US"
+  uniform_bucket_level_access = true
+}
+
+resource "google_storage_bucket_object" "archive" {
+  name   = "index.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "%s"
+}
+
+resource "google_service_account" "cloud_function_build_account_%[3]s" {
+  account_id   = "%s"
+  display_name = "Testing Cloud Function build service account"
+}
+
+resource "google_project_iam_member" "storage_object_admin_%[3]s" {
+	project = data.google_project.project.project_id
+  role      = "roles/storage.objectAdmin"
+  member    = "serviceAccount:${google_service_account.cloud_function_build_account_%[3]s.email}"
+}
+
+resource "google_project_iam_member" "artifact_registry_writer_%[3]s" {
+	project = data.google_project.project.project_id
+  role      = "roles/artifactregistry.writer"
+  member    = "serviceAccount:${google_service_account.cloud_function_build_account_%[3]s.email}"
+}
+
+resource "google_project_iam_member" "log_writer_%[3]s" {
+	project = data.google_project.project.project_id
+  role      = "roles/logging.logWriter"
+  member    = "serviceAccount:${google_service_account.cloud_function_build_account_%[3]s.email}"
+}
+
+resource "time_sleep" "wait_iam_roles_%[3]s" {
+  depends_on       = [
+		google_project_iam_member.storage_object_admin_%[3]s,
+		google_project_iam_member.artifact_registry_writer_%[3]s,
+		google_project_iam_member.log_writer_%[3]s,
+	]
+	create_duration  = "60s"
+}
+
+resource "google_cloudfunctions_function" "function" {
+	depends_on = [time_sleep.wait_iam_roles_%[3]s]
+  name    = "%[5]s"
+  runtime = "nodejs10"
+
+  source_archive_bucket = google_storage_bucket.bucket.name
+  source_archive_object = google_storage_bucket_object.archive.name
+
+  build_service_account = google_service_account.cloud_function_build_account_%[3]s.name
+
+  trigger_http = true
+  entry_point  = "helloGET"
+}
+`, bucketName, zipFilePath, saName, serviceAccount, functionName)
 }

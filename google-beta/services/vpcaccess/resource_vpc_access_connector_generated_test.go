@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -34,6 +34,7 @@ func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "vpc-access-connector"),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -49,7 +50,7 @@ func TestAccVPCAccessConnector_vpcAccessConnectorExample(t *testing.T) {
 				ResourceName:            "google_vpc_access_connector.connector",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "region"},
+				ImportStateVerifyIgnore: []string{"region", "self_link"},
 			},
 		},
 	})
@@ -60,7 +61,9 @@ func testAccVPCAccessConnector_vpcAccessConnectorExample(context map[string]inte
 resource "google_vpc_access_connector" "connector" {
   name          = "tf-test-vpc-con%{random_suffix}"
   ip_cidr_range = "10.8.0.0/28"
-  network       = "default"
+  network       = "%{network_name}"
+  min_instances = 2
+  max_instances = 3
 }
 `, context)
 }
@@ -69,6 +72,7 @@ func TestAccVPCAccessConnector_vpcAccessConnectorSharedVpcExample(t *testing.T) 
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "vpc-access-connector"),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -84,7 +88,7 @@ func TestAccVPCAccessConnector_vpcAccessConnectorSharedVpcExample(t *testing.T) 
 				ResourceName:            "google_vpc_access_connector.connector",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "region"},
+				ImportStateVerifyIgnore: []string{"region", "self_link"},
 			},
 		},
 	})
@@ -98,18 +102,15 @@ resource "google_vpc_access_connector" "connector" {
     name = google_compute_subnetwork.custom_test.name
   }
   machine_type = "e2-standard-4"
+  min_instances = 2
+  max_instances = 3
 }
 
 resource "google_compute_subnetwork" "custom_test" {
   name          = "tf-test-vpc-con%{random_suffix}"
   ip_cidr_range = "10.2.0.0/28"
   region        = "us-central1"
-  network       = google_compute_network.custom_test.id
-}
-
-resource "google_compute_network" "custom_test" {
-  name                    = "tf-test-vpc-con%{random_suffix}"
-  auto_create_subnetworks = false
+  network       = "%{network_name}"
 }
 `, context)
 }

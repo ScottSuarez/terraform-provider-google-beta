@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureOnlineStoreExample(t *test
 				ResourceName:            "google_vertex_ai_feature_online_store.feature_online_store",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "force_destroy", "labels", "name", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -74,7 +74,7 @@ resource "google_vertex_ai_feature_online_store" "feature_online_store" {
 `, context)
 }
 
-func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(t *testing.T) {
+func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -83,26 +83,26 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsO
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context),
+				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context),
 			},
 			{
 				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "force_destroy", "labels", "name", "region", "terraform_labels"},
 			},
 		},
 	})
 }
 
-func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsOptimizedExample(context map[string]interface{}) string {
+func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  provider = google-beta
+  provider = google
   name     = "tf_test_example_feature_online_store_optimized%{random_suffix}"
   labels = {
     foo = "bar"
@@ -118,12 +118,13 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
+  provider = google
 }
 `, context)
 }
 
 func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsBigtableExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -142,7 +143,7 @@ func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsB
 				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "etag", "region", "force_destroy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "force_destroy", "labels", "name", "region", "terraform_labels"},
 			},
 		},
 	})

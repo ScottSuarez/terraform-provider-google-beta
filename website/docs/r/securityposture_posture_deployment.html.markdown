@@ -17,7 +17,7 @@ description: |-
   Represents a deployment of a security posture on a resource.
 ---
 
-# google\_securityposture\_posture\_deployment
+# google_securityposture_posture_deployment
 
 Represents a deployment of a security posture on a resource. A posture contains user curated policy sets. A posture can
 be deployed on a project or on a folder or on an organization. To deploy a posture we need to populate the posture's name
@@ -30,44 +30,6 @@ To get more information about PostureDeployment, see:
 
 * How-to Guides
     * [Create and deploy a posture](https://cloud.google.com/security-command-center/docs/how-to-use-security-posture)
-
-## Example Usage - Securityposture Posture Deployment Basic
-
-
-```hcl
-resource "google_securityposture_posture" "posture1" {
-    posture_id          = "posture_1"
-    parent = "organizations/123456789"
-    location = "global"
-    state = "ACTIVE"
-    description = "a new posture"
-    policy_sets {
-        policy_set_id = "org_policy_set"
-        description = "set of org policies"
-        policies {
-            policy_id = "policy_1"
-            constraint {
-                org_policy_constraint {
-                    canned_constraint_id = "storage.uniformBucketLevelAccess"
-                    policy_rules {
-                        enforce = true
-                    }
-                }
-            }
-        }
-    }
-}
-
-resource "google_securityposture_posture_deployment" "postureDeployment" {
-    posture_deployment_id          = "posture_deployment_1"
-    parent = "organizations/123456789"
-    location = "global"
-    description = "a new posture deployment"
-    target_resource = "projects/1111111111111"
-    posture_id = google_securityposture_posture.posture1.name
-    posture_revision_id = google_securityposture_posture.posture1.revision_id
-}
-```
 
 ## Argument Reference
 

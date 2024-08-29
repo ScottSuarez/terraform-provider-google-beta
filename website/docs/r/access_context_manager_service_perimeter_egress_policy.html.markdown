@@ -14,11 +14,12 @@
 # ----------------------------------------------------------------------------
 subcategory: "Access Context Manager (VPC Service Controls)"
 description: |-
-  EgressPolicies match requests based on egressFrom and egressTo stanzas.
+  Manage a single EgressPolicy in the status (enforced) configuration for a service perimeter.
 ---
 
-# google\_access\_context\_manager\_service\_perimeter\_egress\_policy
+# google_access_context_manager_service_perimeter_egress_policy
 
+Manage a single EgressPolicy in the status (enforced) configuration for a service perimeter.
 EgressPolicies match requests based on egressFrom and egressTo stanzas.
 For an EgressPolicy to match, both egressFrom and egressTo stanzas must be matched.
 If an EgressPolicy matches a request, the request is allowed to span the ServicePerimeter
@@ -27,10 +28,56 @@ within the ServicePerimeter to access a defined set of projects outside the
 perimeter in certain contexts (e.g. to read data from a Cloud Storage bucket
 or query against a BigQuery dataset).
 
+~> **Note:** By default, updates to this resource will remove the EgressPolicy from the
+from the perimeter and add it back in a non-atomic manner. To ensure that the new EgressPolicy
+is added before the old one is removed, add a `lifecycle` block with `create_before_destroy = true` to this resource.
+
 
 To get more information about ServicePerimeterEgressPolicy, see:
 
 * [API documentation](https://cloud.google.com/access-context-manager/docs/reference/rest/v1/accessPolicies.servicePerimeters#egresspolicy)
+
+## Example Usage - Access Context Manager Service Perimeter Egress Policy
+
+
+```hcl
+resource "google_access_context_manager_service_perimeter" "storage-perimeter" {
+  parent = "accesspolicies/${google_access_context_manager_access_policy.access-policy.name}"
+  name   = "accesspolicies/${google_access_context_manager_access_policy.access-policy.name}/serviceperimeters/storage-perimeter"
+  title  = "Storage Perimeter"
+  status {
+    restricted_services = ["storage.googleapis.com"]
+  }
+  lifecycle {
+    ignore_changes = [status[0].resources]
+  }
+}
+
+resource "google_access_context_manager_service_perimeter_egress_policy" "egress_policy" {
+  perimeter = "${google_access_context_manager_service_perimeter.storage-perimeter.name}"
+  egress_from {
+    identity_type = "ANY_IDENTITY"
+  }
+  egress_to {
+    resources = ["*"]
+    operations {
+      service_name = "bigquery.googleapis.com"
+      method_selectors {
+        method = "*"
+      }
+    }
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+resource "google_access_context_manager_access_policy" "access-policy" {
+  parent = "organizations/123456789"
+  title  = "Storage Policy"
+}
+```
 
 ## Argument Reference
 
@@ -155,28 +202,8 @@ This resource provides the following
 [Timeouts](https://developer.hashicorp.com/terraform/plugin/sdkv2/resources/retries-and-customizable-timeouts) configuration options:
 
 - `create` - Default is 20 minutes.
-- `update` - Default is 20 minutes.
 - `delete` - Default is 20 minutes.
 
 ## Import
 
-
-ServicePerimeterEgressPolicy can be imported using any of these accepted formats:
-
-* `{{perimeter}}`
-
-
-In Terraform v1.5.0 and later, use an [`import` block](https://developer.hashicorp.com/terraform/language/import) to import ServicePerimeterEgressPolicy using one of the formats above. For example:
-
-```tf
-import {
-  id = "{{perimeter}}"
-  to = google_access_context_manager_service_perimeter_egress_policy.default
-}
-```
-
-When using the [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import), ServicePerimeterEgressPolicy can be imported using one of the formats above. For example:
-
-```
-$ terraform import google_access_context_manager_service_perimeter_egress_policy.default {{perimeter}}
-```
+This resource does not support import.

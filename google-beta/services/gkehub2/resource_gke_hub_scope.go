@@ -20,6 +20,7 @@ package gkehub2
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -68,6 +69,16 @@ func ResourceGKEHub2Scope() *schema.Resource {
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"namespace_labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Scope-level cluster namespace labels. For the member clusters bound
+to the Scope, these labels are applied to each namespace under the
+Scope. Scope-level labels take precedence over Namespace-level
+labels ('namespace_labels' in the Fleet Namespace resource) if they
+share a key. Keys and values must be Kubernetes-conformant.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"create_time": {
@@ -141,6 +152,12 @@ func resourceGKEHub2ScopeCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	obj := make(map[string]interface{})
+	namespaceLabelsProp, err := expandGKEHub2ScopeNamespaceLabels(d.Get("namespace_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("namespace_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(namespaceLabelsProp)) && (ok || !reflect.DeepEqual(v, namespaceLabelsProp)) {
+		obj["namespaceLabels"] = namespaceLabelsProp
+	}
 	labelsProp, err := expandGKEHub2ScopeEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -167,6 +184,7 @@ func resourceGKEHub2ScopeCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -175,6 +193,7 @@ func resourceGKEHub2ScopeCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Scope: %s", err)
@@ -241,12 +260,14 @@ func resourceGKEHub2ScopeRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GKEHub2Scope %q", d.Id()))
@@ -272,6 +293,9 @@ func resourceGKEHub2ScopeRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Scope: %s", err)
 	}
 	if err := d.Set("state", flattenGKEHub2ScopeState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Scope: %s", err)
+	}
+	if err := d.Set("namespace_labels", flattenGKEHub2ScopeNamespaceLabels(res["namespaceLabels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Scope: %s", err)
 	}
 	if err := d.Set("labels", flattenGKEHub2ScopeLabels(res["labels"], d, config)); err != nil {
@@ -303,6 +327,12 @@ func resourceGKEHub2ScopeUpdate(d *schema.ResourceData, meta interface{}) error 
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	namespaceLabelsProp, err := expandGKEHub2ScopeNamespaceLabels(d.Get("namespace_labels"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("namespace_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, namespaceLabelsProp)) {
+		obj["namespaceLabels"] = namespaceLabelsProp
+	}
 	labelsProp, err := expandGKEHub2ScopeEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -316,7 +346,12 @@ func resourceGKEHub2ScopeUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Updating Scope %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("namespace_labels") {
+		updateMask = append(updateMask, "namespaceLabels")
+	}
 
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
@@ -343,6 +378,7 @@ func resourceGKEHub2ScopeUpdate(d *schema.ResourceData, meta interface{}) error 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -384,13 +420,15 @@ func resourceGKEHub2ScopeDelete(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Scope %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Scope %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -399,6 +437,7 @@ func resourceGKEHub2ScopeDelete(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Scope")
@@ -473,6 +512,10 @@ func flattenGKEHub2ScopeStateCode(v interface{}, d *schema.ResourceData, config 
 	return v
 }
 
+func flattenGKEHub2ScopeNamespaceLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenGKEHub2ScopeLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -505,6 +548,17 @@ func flattenGKEHub2ScopeTerraformLabels(v interface{}, d *schema.ResourceData, c
 
 func flattenGKEHub2ScopeEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func expandGKEHub2ScopeNamespaceLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandGKEHub2ScopeEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {

@@ -20,6 +20,7 @@ package accesscontextmanager
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -688,7 +689,10 @@ If * is specified, then all IngressSources will be allowed.`,
 																Optional: true,
 																Description: `A Google Cloud resource that is allowed to ingress the perimeter.
 Requests from these resources will be allowed to access perimeter data.
-Currently only projects are allowed. Format 'projects/{project_number}'
+Currently only projects and VPCs are allowed.
+Project format: 'projects/{projectNumber}'
+VPC network format:
+'//compute.googleapis.com/projects/{PROJECT_ID}/global/networks/{NAME}'.
 The project may be in any Google Cloud organization, not just the
 organization that the perimeter is defined in. '*' is not allowed, the case
 of allowing all Google Cloud resources only is not supported.`,
@@ -937,6 +941,7 @@ func resourceAccessContextManagerServicePerimeterCreate(d *schema.ResourceData, 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -945,6 +950,7 @@ func resourceAccessContextManagerServicePerimeterCreate(d *schema.ResourceData, 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ServicePerimeter: %s", err)
@@ -1005,12 +1011,14 @@ func resourceAccessContextManagerServicePerimeterRead(d *schema.ResourceData, me
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("AccessContextManagerServicePerimeter %q", d.Id()))
@@ -1106,6 +1114,7 @@ func resourceAccessContextManagerServicePerimeterUpdate(d *schema.ResourceData, 
 	}
 
 	log.Printf("[DEBUG] Updating ServicePerimeter %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("title") {
@@ -1149,6 +1158,7 @@ func resourceAccessContextManagerServicePerimeterUpdate(d *schema.ResourceData, 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1191,13 +1201,15 @@ func resourceAccessContextManagerServicePerimeterDelete(d *schema.ResourceData, 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ServicePerimeter %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ServicePerimeter %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1206,6 +1218,7 @@ func resourceAccessContextManagerServicePerimeterDelete(d *schema.ResourceData, 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ServicePerimeter")

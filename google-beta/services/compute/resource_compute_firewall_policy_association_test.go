@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -42,11 +42,13 @@ func testAccComputeFirewallPolicyAssociation_basic(context map[string]interface{
 resource "google_folder" "folder" {
   display_name = "tf-test-folder-%{random_suffix}"
   parent       = "%{org_name}"
+  deletion_protection = false
 }
 
 resource "google_folder" "target_folder" {
   display_name = "tf-test-target-%{random_suffix}"
   parent       = "%{org_name}"
+  deletion_protection = false
 }
 
 resource "google_compute_firewall_policy" "default" {

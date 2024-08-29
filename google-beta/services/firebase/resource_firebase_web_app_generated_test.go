@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -53,7 +53,7 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 				ResourceName:            "google_firebase_web_app.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})
@@ -116,7 +116,7 @@ func TestAccFirebaseWebApp_firebaseWebAppCustomApiKeyExample(t *testing.T) {
 				ResourceName:            "google_firebase_web_app.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})

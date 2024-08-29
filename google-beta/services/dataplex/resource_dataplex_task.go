@@ -20,6 +20,7 @@ package dataplex
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -50,7 +51,7 @@ func ResourceDataplexTask() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
-			tpgresource.SetLabelsDiff,
+			tpgresource.SetLabelsDiffWithoutAttributionLabel,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -640,6 +641,7 @@ func resourceDataplexTaskCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -648,6 +650,7 @@ func resourceDataplexTaskCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Task: %s", err)
@@ -700,12 +703,14 @@ func resourceDataplexTaskRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataplexTask %q", d.Id()))
@@ -829,6 +834,7 @@ func resourceDataplexTaskUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Updating Task %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -880,6 +886,7 @@ func resourceDataplexTaskUpdate(d *schema.ResourceData, meta interface{}) error 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -921,13 +928,15 @@ func resourceDataplexTaskDelete(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Task %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Task %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -936,6 +945,7 @@ func resourceDataplexTaskDelete(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Task")

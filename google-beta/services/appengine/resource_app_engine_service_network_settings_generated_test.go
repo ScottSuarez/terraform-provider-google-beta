@@ -20,7 +20,7 @@ package appengine_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -66,7 +66,7 @@ resource "google_app_engine_standard_app_version" "internalapp" {
   service = "internalapp"
   delete_service_on_destroy = true
 
-  runtime = "nodejs10"
+  runtime = "nodejs20"
   entrypoint {
     shell = "node ./app.js"
   }

@@ -17,7 +17,7 @@ description: |-
   The GatewaySecurityPolicy resource contains a collection of GatewaySecurityPolicyRules and associated metadata.
 ---
 
-# google\_network\_security\_gateway\_security\_policy
+# google_network_security_gateway_security_policy
 
 The GatewaySecurityPolicy resource contains a collection of GatewaySecurityPolicyRules and associated metadata.
 
@@ -27,7 +27,7 @@ To get more information about GatewaySecurityPolicy, see:
 * [API documentation](https://cloud.google.com/secure-web-proxy/docs/reference/network-security/rest/v1/projects.locations.gatewaySecurityPolicies)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_gateway_security_policy_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_gateway_security_policy_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -42,7 +42,7 @@ resource "google_network_security_gateway_security_policy" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_gateway_security_policy_tls_inspection_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_gateway_security_policy_tls_inspection_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -113,10 +113,8 @@ resource "google_privateca_certificate_authority" "default" {
   }
 }
 
-resource "google_project_service_identity" "ns_sa" {
+data "google_project" "project" {
   provider = google-beta
-
-  service = "networksecurity.googleapis.com"
 }
 
 resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
@@ -124,7 +122,7 @@ resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
 
   ca_pool = google_privateca_ca_pool.default.id
   role = "roles/privateca.certificateManager"
-  member = "serviceAccount:${google_project_service_identity.ns_sa.email}"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-networksecurity.iam.gserviceaccount.com"
 }
 
 resource "google_network_security_tls_inspection_policy" "default" {

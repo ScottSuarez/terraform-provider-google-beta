@@ -5,7 +5,7 @@ package logging_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -39,6 +39,7 @@ func testAccLoggingFolderSettings_datasource(context map[string]interface{}) str
 resource "google_folder" "default" {
 	display_name = "%{folder_name}"
 	parent       = "organizations/%{org_id}"
+	deletion_protection = false
 }
 
 data "google_logging_folder_settings" "settings" {

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreBasicExample(t *testing.T) {
 				ResourceName:            "google_healthcare_fhir_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -69,7 +69,7 @@ resource "google_healthcare_fhir_store" "default" {
   enable_history_import          = false
   default_search_handling_strict = false
 
-  notification_config {
+  notification_configs {
     pubsub_topic = google_pubsub_topic.topic.id
   }
 
@@ -109,7 +109,7 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreStreamingConfigExample(t *tes
 				ResourceName:            "google_healthcare_fhir_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -184,7 +184,7 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreNotificationConfigExample(t *
 				ResourceName:            "google_healthcare_fhir_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -231,7 +231,7 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreNotificationConfigsExample(t 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckHealthcareFhirStoreDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -241,7 +241,7 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreNotificationConfigsExample(t 
 				ResourceName:            "google_healthcare_fhir_store.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -250,7 +250,6 @@ func TestAccHealthcareFhirStore_healthcareFhirStoreNotificationConfigsExample(t 
 func testAccHealthcareFhirStore_healthcareFhirStoreNotificationConfigsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_healthcare_fhir_store" "default" {
-  provider = google-beta
   name     = "tf-test-example-fhir-store%{random_suffix}"
   dataset  = google_healthcare_dataset.dataset.id
   version  = "R4"
@@ -259,7 +258,6 @@ resource "google_healthcare_fhir_store" "default" {
   disable_referential_integrity = false
   disable_resource_versioning   = false
   enable_history_import         = false
-  enable_history_modifications  = false
 
   labels = {
     label1 = "labelvalue1"
@@ -273,12 +271,10 @@ resource "google_healthcare_fhir_store" "default" {
 }
 
 resource "google_pubsub_topic" "topic" {
-  provider = google-beta
   name     = "tf-test-fhir-notifications%{random_suffix}"
 }
 
 resource "google_healthcare_dataset" "dataset" {
-  provider = google-beta
   name     = "tf-test-example-dataset%{random_suffix}"
   location = "us-central1"
 }

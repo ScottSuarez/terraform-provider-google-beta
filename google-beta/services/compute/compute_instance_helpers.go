@@ -51,15 +51,28 @@ func expandAliasIpRanges(ranges []interface{}) []*compute.AliasIpRange {
 	return ipRanges
 }
 
-func flattenAliasIpRange(ranges []*compute.AliasIpRange) []map[string]interface{} {
-	rangesSchema := make([]map[string]interface{}, 0, len(ranges))
+func flattenAliasIpRange(d *schema.ResourceData, ranges []*compute.AliasIpRange, i int) []map[string]interface{} {
+	prefix := fmt.Sprintf("network_interface.%d", i)
+
+	configData := []map[string]interface{}{}
+	for _, item := range d.Get(prefix + ".alias_ip_range").([]interface{}) {
+		configData = append(configData, item.(map[string]interface{}))
+	}
+
+	apiData := make([]map[string]interface{}, 0, len(ranges))
 	for _, ipRange := range ranges {
-		rangesSchema = append(rangesSchema, map[string]interface{}{
+		apiData = append(apiData, map[string]interface{}{
 			"ip_cidr_range":         ipRange.IpCidrRange,
 			"subnetwork_range_name": ipRange.SubnetworkRangeName,
 		})
 	}
-	return rangesSchema
+
+	//permadiff fix
+	sorted, err := tpgresource.SortMapsByConfigOrder(configData, apiData, "ip_cidr_range")
+	if err != nil {
+		return apiData
+	}
+	return sorted
 }
 
 func expandScheduling(v interface{}) (*compute.Scheduling, error) {
@@ -133,14 +146,20 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 	}
 	if v, ok := original["max_run_duration"]; ok {
 		transformedMaxRunDuration, err := expandComputeMaxRunDuration(v)
-		if scheduling.InstanceTerminationAction == "STOP" && transformedMaxRunDuration != nil {
-			return nil, fmt.Errorf("Can not set MaxRunDuration on instance with STOP InstanceTerminationAction, it is not supported by terraform.")
-		}
 		if err != nil {
 			return nil, err
 		}
 		scheduling.MaxRunDuration = transformedMaxRunDuration
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "MaxRunDuration")
+	}
+
+	if v, ok := original["on_instance_stop_action"]; ok {
+		transformedOnInstanceStopAction, err := expandComputeOnInstanceStopAction(v)
+		if err != nil {
+			return nil, err
+		}
+		scheduling.OnInstanceStopAction = transformedOnInstanceStopAction
+		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "OnInstanceStopAction")
 	}
 	if v, ok := original["maintenance_interval"]; ok {
 		scheduling.MaintenanceInterval = v.(string)
@@ -188,6 +207,24 @@ func expandComputeMaxRunDurationNanos(v interface{}) (interface{}, error) {
 
 func expandComputeMaxRunDurationSeconds(v interface{}) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeOnInstanceStopAction(v interface{}) (*compute.SchedulingOnInstanceStopAction, error) {
+	l := v.([]interface{})
+	onInstanceStopAction := compute.SchedulingOnInstanceStopAction{}
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	if d, ok := original["discard_local_ssd"]; ok {
+		onInstanceStopAction.DiscardLocalSsd = d.(bool)
+	} else {
+		return nil, nil
+	}
+
+	return &onInstanceStopAction, nil
 }
 
 func expandComputeLocalSsdRecoveryTimeout(v interface{}) (*compute.Duration, error) {
@@ -239,6 +276,11 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	if resp.MaxRunDuration != nil {
 		schedulingMap["max_run_duration"] = flattenComputeMaxRunDuration(resp.MaxRunDuration)
 	}
+
+	if resp.OnInstanceStopAction != nil {
+		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(resp.OnInstanceStopAction)
+	}
+
 	if resp.MaintenanceInterval != "" {
 		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
 	}
@@ -267,6 +309,15 @@ func flattenComputeMaxRunDuration(v *compute.Duration) []interface{} {
 	transformed := make(map[string]interface{})
 	transformed["nanos"] = v.Nanos
 	transformed["seconds"] = v.Seconds
+	return []interface{}{transformed}
+}
+
+func flattenOnInstanceStopAction(v *compute.SchedulingOnInstanceStopAction) []interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["discard_local_ssd"] = v.DiscardLocalSsd
 	return []interface{}{transformed}
 }
 
@@ -338,7 +389,7 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 			"subnetwork":         tpgresource.ConvertSelfLinkToV1(iface.Subnetwork),
 			"subnetwork_project": subnet.Project,
 			"access_config":      ac,
-			"alias_ip_range":     flattenAliasIpRange(iface.AliasIpRanges),
+			"alias_ip_range":     flattenAliasIpRange(d, iface.AliasIpRanges, i),
 			"nic_type":           iface.NicType,
 			"stack_type":         iface.StackType,
 			"ipv6_access_config": flattenIpv6AccessConfigs(iface.Ipv6AccessConfigs),
@@ -544,8 +595,7 @@ func expandConfidentialInstanceConfig(d tpgresource.TerraformResourceData) *comp
 	prefix := "confidential_instance_config.0"
 	return &compute.ConfidentialInstanceConfig{
 		EnableConfidentialCompute: d.Get(prefix + ".enable_confidential_compute").(bool),
-
-		ConfidentialInstanceType: d.Get(prefix + ".confidential_instance_type").(string),
+		ConfidentialInstanceType:  d.Get(prefix + ".confidential_instance_type").(string),
 	}
 }
 
@@ -556,8 +606,7 @@ func flattenConfidentialInstanceConfig(ConfidentialInstanceConfig *compute.Confi
 
 	return []map[string]interface{}{{
 		"enable_confidential_compute": ConfidentialInstanceConfig.EnableConfidentialCompute,
-
-		"confidential_instance_type": ConfidentialInstanceConfig.ConfidentialInstanceType,
+		"confidential_instance_type":  ConfidentialInstanceConfig.ConfidentialInstanceType,
 	}}
 }
 
@@ -621,7 +670,7 @@ func schedulingHasChangeRequiringReboot(d *schema.ResourceData) bool {
 	oScheduling := o.([]interface{})[0].(map[string]interface{})
 	newScheduling := n.([]interface{})[0].(map[string]interface{})
 
-	return hasNodeAffinitiesChanged(oScheduling, newScheduling)
+	return hasNodeAffinitiesChanged(oScheduling, newScheduling) || hasMaxRunDurationChanged(oScheduling, newScheduling)
 }
 
 // Terraform doesn't correctly calculate changes on schema.Set, so we do it manually
@@ -652,15 +701,35 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 		return true
 	}
 
-	if oScheduling["min_node_cpus"] != newScheduling["min_node_cpus"] {
-		return true
-	}
-
 	if oScheduling["provisioning_model"] != newScheduling["provisioning_model"] {
 		return true
 	}
 
 	if oScheduling["instance_termination_action"] != newScheduling["instance_termination_action"] {
+		return true
+	}
+
+	return false
+}
+
+func hasMaxRunDurationChanged(oScheduling, nScheduling map[string]interface{}) bool {
+	oMrd := oScheduling["max_run_duration"].([]interface{})
+	nMrd := nScheduling["max_run_duration"].([]interface{})
+
+	if (len(oMrd) == 0 || oMrd[0] == nil) && (len(nMrd) == 0 || nMrd[0] == nil) {
+		return false
+	}
+	if (len(oMrd) == 0 || oMrd[0] == nil) || (len(nMrd) == 0 || nMrd[0] == nil) {
+		return true
+	}
+
+	oldMrd := oMrd[0].(map[string]interface{})
+	newMrd := nMrd[0].(map[string]interface{})
+
+	if oldMrd["seconds"] != newMrd["seconds"] {
+		return true
+	}
+	if oldMrd["nanos"] != newMrd["nanos"] {
 		return true
 	}
 

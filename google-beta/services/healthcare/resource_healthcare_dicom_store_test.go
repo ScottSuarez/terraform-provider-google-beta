@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccHealthcareDicomStoreIdParsing(t *testing.T) {
@@ -144,7 +144,8 @@ resource "google_healthcare_dicom_store" "default" {
   dataset  = google_healthcare_dataset.dataset.id
 
   notification_config {
-    pubsub_topic = google_pubsub_topic.topic.id
+    pubsub_topic         = google_pubsub_topic.topic.id
+	send_for_bulk_import = true
   }
 
   labels = {
@@ -191,6 +192,10 @@ func testAccCheckGoogleHealthcareDicomStoreUpdate(t *testing.T, pubsubTopic stri
 			topicName := path.Base(response.NotificationConfig.PubsubTopic)
 			if topicName != pubsubTopic {
 				return fmt.Errorf("dicomStore 'NotificationConfig' not updated ('%s' != '%s'): %s", topicName, pubsubTopic, gcpResourceUri)
+			}
+
+			if !response.NotificationConfig.SendForBulkImport {
+				return fmt.Errorf("dicomStore 'NotificationConfig.SendForBulkImport' not changed to true: %s", gcpResourceUri)
 			}
 		}
 

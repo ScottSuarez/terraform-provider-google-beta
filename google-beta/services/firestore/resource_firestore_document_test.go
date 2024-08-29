@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -50,6 +50,7 @@ resource "google_project" "project" {
 	project_id = "tf-test%s"
 	name       = "tf-test%s"
 	org_id     = "%s"
+	deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {

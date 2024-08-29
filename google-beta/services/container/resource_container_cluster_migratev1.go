@@ -558,6 +558,13 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 								},
 							},
 						},
+						"auto_provisioning_locations": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: `The list of Google Compute Engine zones in which the NodePool's nodes can be created by NAP.`,
+						},
 						"autoscaling_profile": {
 							Type:             schema.TypeString,
 							Default:          "BALANCED",
@@ -783,7 +790,7 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 										Type:             schema.TypeString,
 										Required:         true,
 										ValidateFunc:     verify.ValidateRFC3339Time,
-										DiffSuppressFunc: tpgresource.Rfc3339TimeDiffSuppress,
+										DiffSuppressFunc: Rfc3339TimeDiffSuppress,
 									},
 									"duration": {
 										Type:     schema.TypeString,
@@ -919,8 +926,8 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Computed:         true,
-							ValidateFunc:     validation.StringInSlice([]string{"DISABLED", "BASIC", "MODE_UNSPECIFIED"}, false),
-							Description:      `Sets the mode of the Kubernetes security posture API's off-cluster features. Available options include DISABLED and BASIC.`,
+							ValidateFunc:     validation.StringInSlice([]string{"DISABLED", "BASIC", "ENTERPRISE", "MODE_UNSPECIFIED"}, false),
+							Description:      `Sets the mode of the Kubernetes security posture API's off-cluster features. Available options include DISABLED, BASIC, and ENTERPRISE.`,
 							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("MODE_UNSPECIFIED"),
 						},
 						"vulnerability_mode": {
@@ -946,7 +953,7 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
-							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET and WORKLOADS.`,
+							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, WORKLOADS and DCGM.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -979,6 +986,11 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 										Type:        schema.TypeBool,
 										Required:    true,
 										Description: `Whether or not the advanced datapath metrics are enabled.`,
+									},
+									"enable_relay": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Whether or not Relay is enabled.`,
 									},
 									"relay_mode": {
 										Type:         schema.TypeString,
@@ -1559,7 +1571,7 @@ func resourceContainerClusterResourceV1() *schema.Resource {
 						"enabled": {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: `When enabled, services with exterenal ips specified will be allowed.`,
+							Description: `When enabled, services with external ips specified will be allowed.`,
 						},
 					},
 				},

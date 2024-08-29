@@ -20,6 +20,7 @@ package gkeonprem
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -135,9 +136,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 													Elem: &schema.Schema{Type: schema.TypeString},
 												},
 												"node_configs": {
@@ -156,9 +157,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																Elem: &schema.Schema{Type: schema.TypeString},
 															},
 															"node_ip": {
@@ -392,15 +393,15 @@ assigned to the node will be derived from this parameter.`,
 							Type:     schema.TypeString,
 							Required: true,
 							Description: `Specifies the address of your proxy server.
-Examples: http://domain
+For Example: http://domain
 WARNING: Do not provide credentials in the format
-http://(username:password@)domain these will be rejected by the server.`,
+of http://(username:password@)domain these will be rejected by the server.`,
 						},
 						"no_proxy": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Description: `A list of IPs, hostnames, and domains that should skip the proxy.
-Examples: ["127.0.0.1", "example.com", ".corp", "localhost"].`,
+For example: ["127.0.0.1", "example.com", ".corp", "localhost"].`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -828,6 +829,7 @@ func resourceGkeonpremBareMetalAdminClusterCreate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -836,6 +838,7 @@ func resourceGkeonpremBareMetalAdminClusterCreate(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating BareMetalAdminCluster: %s", err)
@@ -895,12 +898,14 @@ func resourceGkeonpremBareMetalAdminClusterRead(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GkeonpremBareMetalAdminCluster %q", d.Id()))
@@ -1093,6 +1098,7 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Updating BareMetalAdminCluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -1168,6 +1174,7 @@ func resourceGkeonpremBareMetalAdminClusterUpdate(d *schema.ResourceData, meta i
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -50,7 +50,7 @@ func TestAccAlloydbUser_alloydbUserBuiltinTestExample(t *testing.T) {
 				ResourceName:            "google_alloydb_user.user1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"password", "cluster", "user_id", "password"},
+				ImportStateVerifyIgnore: []string{"cluster", "password", "password", "user_id"},
 			},
 		},
 	})
@@ -67,8 +67,9 @@ resource "google_alloydb_instance" "default" {
 resource "google_alloydb_cluster" "default" {
   cluster_id = "tf-test-alloydb-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = data.google_compute_network.default.id
-
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   initial_user {
     password = "tf_test_cluster_secret%{random_suffix}"
   }
@@ -113,7 +114,7 @@ func TestAccAlloydbUser_alloydbUserIamTestExample(t *testing.T) {
 				ResourceName:            "google_alloydb_user.user2",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"password", "cluster", "user_id"},
+				ImportStateVerifyIgnore: []string{"cluster", "password", "user_id"},
 			},
 		},
 	})
@@ -130,8 +131,9 @@ resource "google_alloydb_instance" "default" {
 resource "google_alloydb_cluster" "default" {
   cluster_id = "tf-test-alloydb-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = data.google_compute_network.default.id
-
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   initial_user {
     password = "tf_test_cluster_secret%{random_suffix}"
   }

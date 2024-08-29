@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -206,6 +206,9 @@ resource "google_monitoring_uptime_check_config" "https" {
     port = "443"
     use_ssl = true
     validate_ssl = true
+    service_agent_authentication {
+      type = "OIDC_TOKEN"
+    }
   }
 
   monitored_resource {

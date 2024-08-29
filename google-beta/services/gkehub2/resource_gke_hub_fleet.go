@@ -20,6 +20,7 @@ package gkehub2
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -103,8 +104,8 @@ platform policies have the following format:
 									"mode": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										ValidateFunc: verify.ValidateEnum([]string{"DISABLED", "BASIC", ""}),
-										Description:  `Sets which mode to use for Security Posture features. Possible values: ["DISABLED", "BASIC"]`,
+										ValidateFunc: verify.ValidateEnum([]string{"DISABLED", "BASIC", "ENTERPRISE", ""}),
+										Description:  `Sets which mode to use for Security Posture features. Possible values: ["DISABLED", "BASIC", "ENTERPRISE"]`,
 									},
 									"vulnerability_mode": {
 										Type:         schema.TypeString,
@@ -211,6 +212,7 @@ func resourceGKEHub2FleetCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -219,6 +221,7 @@ func resourceGKEHub2FleetCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Fleet: %s", err)
@@ -271,12 +274,14 @@ func resourceGKEHub2FleetRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GKEHub2Fleet %q", d.Id()))
@@ -346,6 +351,7 @@ func resourceGKEHub2FleetUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	log.Printf("[DEBUG] Updating Fleet %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -377,6 +383,7 @@ func resourceGKEHub2FleetUpdate(d *schema.ResourceData, meta interface{}) error 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -418,13 +425,15 @@ func resourceGKEHub2FleetDelete(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Fleet %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Fleet %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -433,6 +442,7 @@ func resourceGKEHub2FleetDelete(d *schema.ResourceData, meta interface{}) error 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Fleet")

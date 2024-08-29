@@ -20,6 +20,7 @@ package bigquery
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -60,20 +61,28 @@ func resourceBigQueryDatasetAccessIamMemberDiffSuppress(k, old, new string, d *s
 		}
 
 		if memberInState := d.Get("user_by_email").(string); memberInState != "" {
-			return strings.ToUpper(memberInState) == strings.ToUpper(strippedIamMember)
+			return strings.ToLower(memberInState) == strings.ToLower(strippedIamMember)
 		}
 
 		if memberInState := d.Get("group_by_email").(string); memberInState != "" {
-			return strings.ToUpper(memberInState) == strings.ToUpper(strippedIamMember)
+			return strings.ToLower(memberInState) == strings.ToLower(strippedIamMember)
 		}
 
 		if memberInState := d.Get("domain").(string); memberInState != "" {
-			return strings.ToUpper(memberInState) == strings.ToUpper(strippedIamMember)
+			return strings.ToLower(memberInState) == strings.ToLower(strippedIamMember)
 		}
 
 		if memberInState := d.Get("special_group").(string); memberInState != "" {
-			return strings.ToUpper(memberInState) == strings.ToUpper(strippedIamMember)
+			return strings.ToLower(memberInState) == strings.ToLower(strippedIamMember)
 		}
+	}
+
+	if memberInState := d.Get("user_by_email").(string); memberInState != "" {
+		return strings.ToLower(old) == strings.ToLower(new)
+	}
+
+	if memberInState := d.Get("group_by_email").(string); memberInState != "" {
+		return strings.ToLower(old) == strings.ToLower(new)
 	}
 
 	return false
@@ -295,17 +304,9 @@ is 256 characters.`,
 				ForceNew:         true,
 				DiffSuppressFunc: resourceBigQueryDatasetAccessIamMemberDiffSuppress,
 				Description: `A special group to grant access to. Possible values include:
-
-
 * 'projectOwners': Owners of the enclosing project.
-
-
 * 'projectReaders': Readers of the enclosing project.
-
-
 * 'projectWriters': Writers of the enclosing project.
-
-
 * 'allAuthenticatedUsers': All authenticated BigQuery users.`,
 				ExactlyOneOf: []string{"user_by_email", "group_by_email", "domain", "special_group", "iam_member", "view", "dataset", "routine"},
 			},
@@ -470,6 +471,7 @@ func resourceBigQueryDatasetAccessCreate(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "PATCH",
@@ -478,6 +480,7 @@ func resourceBigQueryDatasetAccessCreate(d *schema.ResourceData, meta interface{
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsBigqueryIAMQuotaError},
 	})
 	if err != nil {
@@ -549,12 +552,14 @@ func resourceBigQueryDatasetAccessRead(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "GET",
 		Project:              billingProject,
 		RawURL:               url,
 		UserAgent:            userAgent,
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsBigqueryIAMQuotaError},
 	})
 	if err != nil {
@@ -641,13 +646,15 @@ func resourceBigQueryDatasetAccessDelete(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "DatasetAccess")
 	}
-	log.Printf("[DEBUG] Deleting DatasetAccess %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting DatasetAccess %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "PATCH",
@@ -656,6 +663,7 @@ func resourceBigQueryDatasetAccessDelete(d *schema.ResourceData, meta interface{
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutDelete),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsBigqueryIAMQuotaError},
 	})
 	if err != nil {
@@ -806,11 +814,19 @@ func expandNestedBigQueryDatasetAccessRole(v interface{}, d tpgresource.Terrafor
 }
 
 func expandNestedBigQueryDatasetAccessUserByEmail(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
+	if v == nil {
+		return nil, nil
+	}
+
+	return strings.ToLower(v.(string)), nil
 }
 
 func expandNestedBigQueryDatasetAccessGroupByEmail(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
+	if v == nil {
+		return nil, nil
+	}
+
+	return strings.ToLower(v.(string)), nil
 }
 
 func expandNestedBigQueryDatasetAccessDomain(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

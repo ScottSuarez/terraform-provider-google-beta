@@ -18,9 +18,12 @@
 package compute
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
+	"net"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -50,6 +53,57 @@ func forwardingRuleCustomizeDiff(_ context.Context, diff *schema.ResourceDiff, v
 	return nil
 }
 
+// Port range '80' and '80-80' is equivalent.
+// `old` is read from the server and always has the full range format (e.g. '80-80', '1024-2048').
+// `new` can be either a single port or a port range.
+func PortRangeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	return old == new+"-"+new
+}
+
+// Suppresses diff for IPv4 and IPv6 different formats.
+// It also suppresses diffs if an IP is changing to a reference.
+func InternalIpDiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
+	addr_equality := false
+	netmask_equality := false
+
+	addr_netmask_old := strings.Split(old, "/")
+	addr_netmask_new := strings.Split(new, "/")
+
+	// Check if old or new are IPs (with or without netmask)
+	var addr_old net.IP
+	if net.ParseIP(addr_netmask_old[0]) == nil {
+		addr_old = net.ParseIP(old)
+	} else {
+		addr_old = net.ParseIP(addr_netmask_old[0])
+	}
+	var addr_new net.IP
+	if net.ParseIP(addr_netmask_new[0]) == nil {
+		addr_new = net.ParseIP(new)
+	} else {
+		addr_new = net.ParseIP(addr_netmask_new[0])
+	}
+
+	if addr_old != nil {
+		if addr_new == nil {
+			// old is an IP and new is a reference
+			addr_equality = true
+		} else {
+			// old and new are IP addresses
+			addr_equality = bytes.Equal(addr_old, addr_new)
+		}
+	}
+
+	// If old and new both have a netmask compare them, otherwise suppress
+	// This is not technically correct but prevents the permadiff described in https://github.com/hashicorp/terraform-provider-google/issues/16400
+	if (len(addr_netmask_old)) == 2 && (len(addr_netmask_new) == 2) {
+		netmask_equality = addr_netmask_old[1] == addr_netmask_new[1]
+	} else {
+		netmask_equality = true
+	}
+
+	return addr_equality && netmask_equality
+}
+
 func ResourceComputeForwardingRule() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeForwardingRuleCreate,
@@ -69,7 +123,7 @@ func ResourceComputeForwardingRule() *schema.Resource {
 
 		CustomizeDiff: customdiff.All(
 			forwardingRuleCustomizeDiff,
-			tpgresource.SetLabelsDiff,
+			tpgresource.SetLabelsDiffWithoutAttributionLabel,
 			tpgresource.DefaultProviderProject,
 		),
 
@@ -97,7 +151,7 @@ lowercase letters and numbers and must start with a letter.`,
 				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.InternalIpDiffSuppress,
+				DiffSuppressFunc: InternalIpDiffSuppress,
 				Description: `IP address for which this forwarding rule accepts traffic. When a client
 sends traffic to this IP address, the forwarding rule directs the traffic
 to the referenced 'target' or 'backendService'.
@@ -110,7 +164,6 @@ required under the following circumstances:
 'IPAddress' should be set to '0.0.0.0'.
 * When the 'target' is a Private Service Connect Google APIs
 bundle, you must specify an 'IPAddress'.
-
 
 Otherwise, you can optionally specify an IP address that references an
 existing static (reserved) IP address resource. When omitted, Google Cloud
@@ -128,7 +181,6 @@ forwarding rule:
   * 'regions/region/addresses/address-name'
   * 'global/addresses/address-name'
   * 'address-name'
-
 
 The forwarding rule's 'target' or 'backendService',
 and in most cases, also the 'loadBalancingScheme', determine the
@@ -306,7 +358,7 @@ networkTier of the Address. Possible values: ["PREMIUM", "STANDARD"]`,
 				Computed:         true,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.PortRangeDiffSuppress,
+				DiffSuppressFunc: PortRangeDiffSuppress,
 				Description: `The 'ports', 'portRange', and 'allPorts' fields are mutually exclusive.
 Only packets addressed to ports in the specified range will be forwarded
 to the backends configured with this forwarding rule.
@@ -458,7 +510,6 @@ The forwarded traffic must be of a type appropriate to the target object.
   *  'vpc-sc' - [ APIs that support VPC Service Controls](https://cloud.google.com/vpc-service-controls/docs/supported-products).
   *  'all-apis' - [All supported Google APIs](https://cloud.google.com/vpc/docs/private-service-connect#supported-apis).
 
-
 For Private Service Connect forwarding rules that forward traffic to managed services, the target must be a service attachment.`,
 			},
 			"base_forwarding_rule": {
@@ -476,6 +527,11 @@ For Private Service Connect forwarding rules that forward traffic to managed ser
 				Computed:    true,
 				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"forwarding_rule_id": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: `The unique identifier number for the resource. This identifier is defined by the server.`,
 			},
 			"label_fingerprint": {
 				Type:     schema.TypeString,
@@ -510,8 +566,8 @@ This field is only used for INTERNAL load balancing.`,
 			"recreate_closed_psc": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
 				Description: `This is used in PSC consumer ForwardingRule to make terraform recreate the ForwardingRule when the status is closed`,
+				Default:     false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -608,17 +664,17 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("target"); !tpgresource.IsEmptyValue(reflect.ValueOf(targetProp)) && (ok || !reflect.DeepEqual(v, targetProp)) {
 		obj["target"] = targetProp
 	}
-	allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
-		obj["allowGlobalAccess"] = allowGlobalAccessProp
-	}
 	labelFingerprintProp, err := expandComputeForwardingRuleLabelFingerprint(d.Get("label_fingerprint"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("label_fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
 		obj["labelFingerprint"] = labelFingerprintProp
+	}
+	allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
+		obj["allowGlobalAccess"] = allowGlobalAccessProp
 	}
 	allPortsProp, err := expandComputeForwardingRuleAllPorts(d.Get("all_ports"), d, config)
 	if err != nil {
@@ -700,6 +756,13 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	// Labels cannot be set in a create for PSC forwarding rules, so remove it from the CREATE request.
+	if targetProp != nil && strings.Contains(targetProp.(string), "/serviceAttachments/") {
+		if _, ok := obj["labels"]; ok {
+			delete(obj, "labels")
+		}
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -708,6 +771,7 @@ func resourceComputeForwardingRuleCreate(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ForwardingRule: %s", err)
@@ -820,12 +884,14 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeForwardingRule %q", d.Id()))
@@ -845,6 +911,9 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
 	if err := d.Set("is_mirroring_collector", flattenComputeForwardingRuleIsMirroringCollector(res["isMirroringCollector"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ForwardingRule: %s", err)
+	}
+	if err := d.Set("forwarding_rule_id", flattenComputeForwardingRuleForwardingRuleId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
 	if err := d.Set("psc_connection_id", flattenComputeForwardingRulePscConnectionId(res["pscConnectionId"], d, config)); err != nil {
@@ -886,13 +955,13 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("target", flattenComputeForwardingRuleTarget(res["target"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
+	if err := d.Set("label_fingerprint", flattenComputeForwardingRuleLabelFingerprint(res["labelFingerprint"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ForwardingRule: %s", err)
+	}
 	if err := d.Set("allow_global_access", flattenComputeForwardingRuleAllowGlobalAccess(res["allowGlobalAccess"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
 	if err := d.Set("labels", flattenComputeForwardingRuleLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ForwardingRule: %s", err)
-	}
-	if err := d.Set("label_fingerprint", flattenComputeForwardingRuleLabelFingerprint(res["labelFingerprint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
 	if err := d.Set("all_ports", flattenComputeForwardingRuleAllPorts(res["allPorts"], d, config)); err != nil {
@@ -970,6 +1039,8 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -983,48 +1054,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
-		})
-		if err != nil {
-			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
-		} else {
-			log.Printf("[DEBUG] Finished updating ForwardingRule %q: %#v", d.Id(), res)
-		}
-
-		err = ComputeOperationWaitTime(
-			config, res, tpgresource.GetResourceNameFromSelfLink(project), "Updating ForwardingRule", userAgent,
-			d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return err
-		}
-	}
-	if d.HasChange("allow_global_access") {
-		obj := make(map[string]interface{})
-
-		allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
-			obj["allowGlobalAccess"] = allowGlobalAccessProp
-		}
-
-		url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "PATCH",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
@@ -1060,6 +1090,8 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -1073,6 +1105,52 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating ForwardingRule %q: %#v", d.Id(), res)
+		}
+
+		err = ComputeOperationWaitTime(
+			config, res, tpgresource.GetResourceNameFromSelfLink(project), "Updating ForwardingRule", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+	if d.HasChange("allow_global_access") {
+		obj := make(map[string]interface{})
+
+		allowGlobalAccessProp, err := expandComputeForwardingRuleAllowGlobalAccess(d.Get("allow_global_access"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("allow_global_access"); ok || !reflect.DeepEqual(v, allowGlobalAccessProp) {
+			obj["allowGlobalAccess"] = allowGlobalAccessProp
+		}
+
+		url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/forwardingRules/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		headers := make(http.Header)
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
@@ -1125,6 +1203,8 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -1138,6 +1218,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating ForwardingRule %q: %s", d.Id(), err)
@@ -1179,13 +1260,15 @@ func resourceComputeForwardingRuleDelete(d *schema.ResourceData, meta interface{
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting ForwardingRule %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting ForwardingRule %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1194,6 +1277,7 @@ func resourceComputeForwardingRuleDelete(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "ForwardingRule")
@@ -1243,6 +1327,23 @@ func flattenComputeForwardingRuleCreationTimestamp(v interface{}, d *schema.Reso
 
 func flattenComputeForwardingRuleIsMirroringCollector(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenComputeForwardingRuleForwardingRuleId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenComputeForwardingRulePscConnectionId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1309,6 +1410,10 @@ func flattenComputeForwardingRuleTarget(v interface{}, d *schema.ResourceData, c
 	return v
 }
 
+func flattenComputeForwardingRuleLabelFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeForwardingRuleAllowGlobalAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1326,10 +1431,6 @@ func flattenComputeForwardingRuleLabels(v interface{}, d *schema.ResourceData, c
 	}
 
 	return transformed
-}
-
-func flattenComputeForwardingRuleLabelFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenComputeForwardingRuleAllPorts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1531,11 +1632,11 @@ func expandComputeForwardingRuleTarget(v interface{}, d tpgresource.TerraformRes
 	return url + v.(string), nil
 }
 
-func expandComputeForwardingRuleAllowGlobalAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeForwardingRuleLabelFingerprint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandComputeForwardingRuleLabelFingerprint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandComputeForwardingRuleAllowGlobalAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -23,6 +23,68 @@ var defaultOauthScopes = []string{
 	"https://www.googleapis.com/auth/trace.append",
 }
 
+func schemaContainerdConfig() *schema.Schema {
+	return &schema.Schema{
+		Type:        schema.TypeList,
+		Optional:    true,
+		Description: "Parameters for containerd configuration.",
+		MaxItems:    1,
+		Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+			"private_registry_access_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Parameters for private container registries configuration.",
+				MaxItems:    1,
+				Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:        schema.TypeBool,
+						Required:    true,
+						Description: "Whether or not private registries are configured.",
+					},
+					"certificate_authority_domain_config": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Parameters for configuring CA certificate and domains.",
+						Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+							"fqdns": {
+								Type:        schema.TypeList,
+								Required:    true,
+								Description: "List of fully-qualified-domain-names. IPv4s and port specification are supported.",
+								Elem:        &schema.Schema{Type: schema.TypeString},
+							},
+							"gcp_secret_manager_certificate_config": {
+								Type:        schema.TypeList,
+								Required:    true,
+								Description: "Parameters for configuring a certificate hosted in GCP SecretManager.",
+								MaxItems:    1,
+								Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+									"secret_uri": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "URI for the secret that hosts a certificate. Must be in the format 'projects/PROJECT_NUM/secrets/SECRET_NAME/versions/VERSION_OR_LATEST'.",
+									},
+								}},
+							},
+						}},
+					},
+				}},
+			},
+		}},
+	}
+}
+
+// Note: this is a bool internally, but implementing as an enum internally to
+// make it easier to accept API level defaults.
+func schemaInsecureKubeletReadonlyPortEnabled() *schema.Schema {
+	return &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Computed:     true,
+		Description:  "Controls whether the kubelet read-only port is enabled. It is strongly recommended to set this to `FALSE`. Possible values: `TRUE`, `FALSE`.",
+		ValidateFunc: validation.StringInSlice([]string{"FALSE", "TRUE"}, false),
+	}
+}
+
 func schemaLoggingVariant() *schema.Schema {
 	return &schema.Schema{
 		Type:         schema.TypeString,
@@ -63,6 +125,7 @@ func schemaNodeConfig() *schema.Schema {
 		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
+				"containerd_config": schemaContainerdConfig(),
 				"disk_size_gb": {
 					Type:         schema.TypeInt,
 					Optional:     true,
@@ -79,13 +142,10 @@ func schemaNodeConfig() *schema.Schema {
 				},
 
 				"guest_accelerator": {
-					Type:     schema.TypeList,
-					Optional: true,
-					Computed: true,
-					ForceNew: true,
-					// Legacy config mode allows removing GPU's from an existing resource
-					// See https://www.terraform.io/docs/configuration/attr-as-blocks.html
-					ConfigMode:  schema.SchemaConfigModeAttr,
+					Type:        schema.TypeList,
+					Optional:    true,
+					Computed:    true,
+					ForceNew:    true,
 					Description: `List of the type and count of accelerator cards attached to the instance.`,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
@@ -106,8 +166,8 @@ func schemaNodeConfig() *schema.Schema {
 								Type:        schema.TypeList,
 								MaxItems:    1,
 								Optional:    true,
+								Computed:    true,
 								ForceNew:    true,
-								ConfigMode:  schema.SchemaConfigModeAttr,
 								Description: `Configuration for auto installation of GPU driver.`,
 								Elem: &schema.Resource{
 									Schema: map[string]*schema.Schema{
@@ -132,7 +192,6 @@ func schemaNodeConfig() *schema.Schema {
 								MaxItems:    1,
 								Optional:    true,
 								ForceNew:    true,
-								ConfigMode:  schema.SchemaConfigModeAttr,
 								Description: `Configuration for GPU sharing.`,
 								Elem: &schema.Resource{
 									Schema: map[string]*schema.Schema{
@@ -243,6 +302,30 @@ func schemaNodeConfig() *schema.Schema {
 								ForceNew:     true,
 								ValidateFunc: validation.IntAtLeast(0),
 								Description:  `Number of raw-block local NVMe SSD disks to be attached to the node. Each local SSD is 375 GB in size.`,
+							},
+						},
+					},
+				},
+
+				"secondary_boot_disks": {
+					Type:        schema.TypeList,
+					Optional:    true,
+					MaxItems:    127,
+					Description: `Secondary boot disks for preloading data or container images.`,
+					ForceNew:    true,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"disk_image": {
+								Type:        schema.TypeString,
+								Required:    true,
+								ForceNew:    true,
+								Description: `Disk image to create the secondary boot disk from`,
+							},
+							"mode": {
+								Type:        schema.TypeString,
+								Optional:    true,
+								ForceNew:    true,
+								Description: `Mode for how the secondary boot disk is used.`,
 							},
 						},
 					},
@@ -515,6 +598,7 @@ func schemaNodeConfig() *schema.Schema {
 								Optional:    true,
 								Description: `Set the CPU CFS quota period value 'cpu.cfs_period_us'.`,
 							},
+							"insecure_kubelet_readonly_port_enabled": schemaInsecureKubeletReadonlyPortEnabled(),
 							"pod_pids_limit": {
 								Type:        schema.TypeInt,
 								Optional:    true,
@@ -568,6 +652,12 @@ func schemaNodeConfig() *schema.Schema {
 								Required:    true,
 								ForceNew:    true,
 								Description: `The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.`,
+							},
+							"enable_nested_virtualization": {
+								Type:        schema.TypeBool,
+								Optional:    true,
+								ForceNew:    true,
+								Description: `Whether the node should have nested virtualization enabled.`,
 							},
 						},
 					},
@@ -664,6 +754,11 @@ func schemaNodeConfig() *schema.Schema {
 						},
 					},
 				},
+				"resource_manager_tags": {
+					Type:        schema.TypeMap,
+					Optional:    true,
+					Description: `A map of resource manager tags. Resource manager tag keys and values have the same definition as resource manager tags. Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/456. The field is ignored (both PUT & PATCH) when empty.`,
+				},
 				"enable_confidential_storage": {
 					Type:        schema.TypeBool,
 					Optional:    true,
@@ -683,6 +778,13 @@ func expandNodeConfigDefaults(configured interface{}) *container.NodeConfigDefau
 	config := configs[0].(map[string]interface{})
 
 	nodeConfigDefaults := &container.NodeConfigDefaults{}
+	nodeConfigDefaults.ContainerdConfig = expandContainerdConfig(config["containerd_config"])
+	if v, ok := config["insecure_kubelet_readonly_port_enabled"]; ok {
+		nodeConfigDefaults.NodeKubeletConfig = &container.NodeKubeletConfig{
+			InsecureKubeletReadonlyPortEnabled: expandInsecureKubeletReadonlyPortEnabled(v),
+			ForceSendFields:                    []string{"InsecureKubeletReadonlyPortEnabled"},
+		}
+	}
 	if variant, ok := config["logging_variant"]; ok {
 		nodeConfigDefaults.LoggingConfig = &container.NodePoolLoggingConfig{
 			VariantConfig: &container.LoggingVariantConfig{
@@ -710,6 +812,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 	}
 
 	nodeConfig := nodeConfigs[0].(map[string]interface{})
+
+	if v, ok := nodeConfig["containerd_config"]; ok {
+		nc.ContainerdConfig = expandContainerdConfig(v)
+	}
 
 	if v, ok := nodeConfig["machine_type"]; ok {
 		nc.MachineType = v.(string)
@@ -786,6 +892,28 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		conf := v.([]interface{})[0].(map[string]interface{})
 		nc.EphemeralStorageLocalSsdConfig = &container.EphemeralStorageLocalSsdConfig{
 			LocalSsdCount: int64(conf["local_ssd_count"].(int)),
+		}
+	}
+
+	if v, ok := nodeConfig["secondary_boot_disks"]; ok && len(v.([]interface{})) > 0 {
+		conf, confOK := v.([]interface{})[0].(map[string]interface{})
+		if confOK {
+			modeValue, modeOK := conf["mode"]
+			diskImage := conf["disk_image"].(string)
+			if modeOK {
+				nc.SecondaryBootDisks = append(nc.SecondaryBootDisks, &container.SecondaryBootDisk{
+					DiskImage: diskImage,
+					Mode:      modeValue.(string),
+				})
+			} else {
+				nc.SecondaryBootDisks = append(nc.SecondaryBootDisks, &container.SecondaryBootDisk{
+					DiskImage: diskImage,
+				})
+			}
+		} else {
+			nc.SecondaryBootDisks = append(nc.SecondaryBootDisks, &container.SecondaryBootDisk{
+				DiskImage: "",
+			})
 		}
 	}
 
@@ -867,6 +995,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.ResourceLabels = m
 	}
 
+	if v, ok := nodeConfig["resource_manager_tags"]; ok && len(v.(map[string]interface{})) > 0 {
+		nc.ResourceManagerTags = expandResourceManagerTags(v)
+	}
+
 	if v, ok := nodeConfig["tags"]; ok {
 		tagsList := v.([]interface{})
 		tags := []string{}
@@ -942,7 +1074,8 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 	if v, ok := nodeConfig["advanced_machine_features"]; ok && len(v.([]interface{})) > 0 {
 		advanced_machine_features := v.([]interface{})[0].(map[string]interface{})
 		nc.AdvancedMachineFeatures = &container.AdvancedMachineFeatures{
-			ThreadsPerCore: int64(advanced_machine_features["threads_per_core"].(int)),
+			ThreadsPerCore:             int64(advanced_machine_features["threads_per_core"].(int)),
+			EnableNestedVirtualization: advanced_machine_features["enable_nested_virtualization"].(bool),
 		}
 	}
 
@@ -965,6 +1098,23 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 	return nc
 }
 
+func expandResourceManagerTags(v interface{}) *container.ResourceManagerTags {
+	if v == nil {
+		return nil
+	}
+
+	rmts := make(map[string]string)
+
+	if v != nil {
+		rmts = tpgresource.ConvertStringMap(v.(map[string]interface{}))
+	}
+
+	return &container.ResourceManagerTags{
+		Tags:            rmts,
+		ForceSendFields: []string{"Tags"},
+	}
+}
+
 func expandWorkloadMetadataConfig(v interface{}) *container.WorkloadMetadataConfig {
 	if v == nil {
 		return nil
@@ -982,6 +1132,13 @@ func expandWorkloadMetadataConfig(v interface{}) *container.WorkloadMetadataConf
 	}
 
 	return wmc
+}
+
+func expandInsecureKubeletReadonlyPortEnabled(v interface{}) bool {
+	if v == "TRUE" {
+		return true
+	}
+	return false
 }
 
 func expandKubeletConfig(v interface{}) *container.NodeKubeletConfig {
@@ -1003,6 +1160,10 @@ func expandKubeletConfig(v interface{}) *container.NodeKubeletConfig {
 	}
 	if cpuCfsQuotaPeriod, ok := cfg["cpu_cfs_quota_period"]; ok {
 		kConfig.CpuCfsQuotaPeriod = cpuCfsQuotaPeriod.(string)
+	}
+	if insecureKubeletReadonlyPortEnabled, ok := cfg["insecure_kubelet_readonly_port_enabled"]; ok {
+		kConfig.InsecureKubeletReadonlyPortEnabled = expandInsecureKubeletReadonlyPortEnabled(insecureKubeletReadonlyPortEnabled)
+		kConfig.ForceSendFields = append(kConfig.ForceSendFields, "InsecureKubeletReadonlyPortEnabled")
 	}
 	if podPidsLimit, ok := cfg["pod_pids_limit"]; ok {
 		kConfig.PodPidsLimit = int64(podPidsLimit.(int))
@@ -1055,6 +1216,92 @@ func expandCgroupMode(cfg map[string]interface{}) string {
 	}
 
 	return cgroupMode.(string)
+}
+
+func expandContainerdConfig(v interface{}) *container.ContainerdConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	if ls[0] == nil {
+		return &container.ContainerdConfig{}
+	}
+	cfg := ls[0].(map[string]interface{})
+
+	cc := &container.ContainerdConfig{}
+	cc.PrivateRegistryAccessConfig = expandPrivateRegistryAccessConfig(cfg["private_registry_access_config"])
+	return cc
+}
+
+func expandPrivateRegistryAccessConfig(v interface{}) *container.PrivateRegistryAccessConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	if ls[0] == nil {
+		return &container.PrivateRegistryAccessConfig{}
+	}
+	cfg := ls[0].(map[string]interface{})
+
+	pracc := &container.PrivateRegistryAccessConfig{}
+	if enabled, ok := cfg["enabled"]; ok {
+		pracc.Enabled = enabled.(bool)
+	}
+	if caCfgRaw, ok := cfg["certificate_authority_domain_config"]; ok {
+		ls := caCfgRaw.([]interface{})
+		pracc.CertificateAuthorityDomainConfig = make([]*container.CertificateAuthorityDomainConfig, len(ls))
+		for i, caCfg := range ls {
+			pracc.CertificateAuthorityDomainConfig[i] = expandCADomainConfig(caCfg)
+		}
+	}
+
+	return pracc
+}
+
+func expandCADomainConfig(v interface{}) *container.CertificateAuthorityDomainConfig {
+	if v == nil {
+		return nil
+	}
+	cfg := v.(map[string]interface{})
+
+	caConfig := &container.CertificateAuthorityDomainConfig{}
+	if v, ok := cfg["fqdns"]; ok {
+		fqdns := v.([]interface{})
+		caConfig.Fqdns = make([]string, len(fqdns))
+		for i, dn := range fqdns {
+			caConfig.Fqdns[i] = dn.(string)
+		}
+	}
+
+	caConfig.GcpSecretManagerCertificateConfig = expandGCPSecretManagerCertificateConfig(cfg["gcp_secret_manager_certificate_config"])
+
+	return caConfig
+}
+
+func expandGCPSecretManagerCertificateConfig(v interface{}) *container.GCPSecretManagerCertificateConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+	if ls[0] == nil {
+		return &container.GCPSecretManagerCertificateConfig{}
+	}
+	cfg := ls[0].(map[string]interface{})
+
+	gcpSMConfig := &container.GCPSecretManagerCertificateConfig{}
+	if v, ok := cfg["secret_uri"]; ok {
+		gcpSMConfig.SecretUri = v.(string)
+	}
+	return gcpSMConfig
 }
 
 func expandSoleTenantConfig(v interface{}) *container.SoleTenantConfig {
@@ -1122,6 +1369,10 @@ func flattenNodeConfigDefaults(c *container.NodeConfigDefaults) []map[string]int
 
 	result = append(result, map[string]interface{}{})
 
+	result[0]["containerd_config"] = flattenContainerdConfig(c.ContainerdConfig)
+
+	result[0]["insecure_kubelet_readonly_port_enabled"] = flattenInsecureKubeletReadonlyPortEnabled(c.NodeKubeletConfig)
+
 	result[0]["logging_variant"] = flattenLoggingVariant(c.LoggingConfig)
 
 	result[0]["gcfs_config"] = flattenGcfsConfig(c.GcfsConfig)
@@ -1148,6 +1399,7 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 
 	config = append(config, map[string]interface{}{
 		"machine_type":                       c.MachineType,
+		"containerd_config":                  flattenContainerdConfig(c.ContainerdConfig),
 		"disk_size_gb":                       c.DiskSizeGb,
 		"disk_type":                          c.DiskType,
 		"guest_accelerator":                  flattenContainerGuestAccelerators(c.Accelerators),
@@ -1166,6 +1418,7 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 		"resource_labels":                    c.ResourceLabels,
 		"tags":                               c.Tags,
 		"preemptible":                        c.Preemptible,
+		"secondary_boot_disks":               flattenSecondaryBootDisks(c.SecondaryBootDisks),
 		"spot":                               c.Spot,
 		"min_cpu_platform":                   c.MinCpuPlatform,
 		"shielded_instance_config":           flattenShieldedInstanceConfig(c.ShieldedInstanceConfig),
@@ -1182,8 +1435,8 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 		"advanced_machine_features":          flattenAdvancedMachineFeaturesConfig(c.AdvancedMachineFeatures),
 		"sole_tenant_config":                 flattenSoleTenantConfig(c.SoleTenantConfig),
 		"fast_socket":                        flattenFastSocket(c.FastSocket),
-
-		"enable_confidential_storage": c.EnableConfidentialStorage,
+		"resource_manager_tags":              flattenResourceManagerTags(c.ResourceManagerTags),
+		"enable_confidential_storage":        c.EnableConfidentialStorage,
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -1193,11 +1446,28 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 	return config
 }
 
+func flattenResourceManagerTags(c *container.ResourceManagerTags) map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+
+	rmt := make(map[string]interface{})
+
+	if c != nil {
+		for k, v := range c.Tags {
+			rmt[k] = v
+		}
+	}
+
+	return rmt
+}
+
 func flattenAdvancedMachineFeaturesConfig(c *container.AdvancedMachineFeatures) []map[string]interface{} {
 	result := []map[string]interface{}{}
 	if c != nil {
 		result = append(result, map[string]interface{}{
-			"threads_per_core": c.ThreadsPerCore,
+			"threads_per_core":             c.ThreadsPerCore,
+			"enable_nested_virtualization": c.EnableNestedVirtualization,
 		})
 	}
 	return result
@@ -1270,6 +1540,28 @@ func flattenEphemeralStorageLocalSsdConfig(c *container.EphemeralStorageLocalSsd
 		})
 	}
 	return result
+}
+
+func flattenSecondaryBootDisks(c []*container.SecondaryBootDisk) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		for _, disk := range c {
+			secondaryBootDisk := map[string]interface{}{
+				"disk_image": disk.DiskImage,
+				"mode":       disk.Mode,
+			}
+			result = append(result, secondaryBootDisk)
+		}
+	}
+	return result
+}
+
+func flattenInsecureKubeletReadonlyPortEnabled(c *container.NodeKubeletConfig) string {
+	// Convert bool from the API to the enum values used internally
+	if c != nil && c.InsecureKubeletReadonlyPortEnabled {
+		return "TRUE"
+	}
+	return "FALSE"
 }
 
 func flattenLoggingVariant(c *container.NodePoolLoggingConfig) string {
@@ -1419,10 +1711,11 @@ func flattenKubeletConfig(c *container.NodeKubeletConfig) []map[string]interface
 	result := []map[string]interface{}{}
 	if c != nil {
 		result = append(result, map[string]interface{}{
-			"cpu_cfs_quota":        c.CpuCfsQuota,
-			"cpu_cfs_quota_period": c.CpuCfsQuotaPeriod,
-			"cpu_manager_policy":   c.CpuManagerPolicy,
-			"pod_pids_limit":       c.PodPidsLimit,
+			"cpu_cfs_quota":                          c.CpuCfsQuota,
+			"cpu_cfs_quota_period":                   c.CpuCfsQuotaPeriod,
+			"cpu_manager_policy":                     c.CpuManagerPolicy,
+			"insecure_kubelet_readonly_port_enabled": flattenInsecureKubeletReadonlyPortEnabled(c),
+			"pod_pids_limit":                         c.PodPidsLimit,
 		})
 	}
 	return result
@@ -1437,6 +1730,74 @@ func flattenLinuxNodeConfig(c *container.LinuxNodeConfig) []map[string]interface
 		})
 	}
 	return result
+}
+
+func flattenContainerdConfig(c *container.ContainerdConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c == nil {
+		return result
+	}
+	r := map[string]interface{}{}
+	if c.PrivateRegistryAccessConfig != nil {
+		r["private_registry_access_config"] = flattenPrivateRegistryAccessConfig(c.PrivateRegistryAccessConfig)
+	}
+	return append(result, r)
+}
+
+func flattenPrivateRegistryAccessConfig(c *container.PrivateRegistryAccessConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c == nil {
+		return result
+	}
+	r := map[string]interface{}{
+		"enabled": c.Enabled,
+	}
+	if c.CertificateAuthorityDomainConfig != nil {
+		caConfigs := make([]interface{}, len(c.CertificateAuthorityDomainConfig))
+		for i, caCfg := range c.CertificateAuthorityDomainConfig {
+			caConfigs[i] = flattenCADomainConfig(caCfg)
+		}
+		r["certificate_authority_domain_config"] = caConfigs
+	}
+	return append(result, r)
+}
+
+//  func flattenCADomainConfig(c *container.CertificateAuthorityDomainConfig) []map[string]interface{} {
+//  	result := []map[string]interface{}{}
+//  	if c == nil {
+//  		return result
+//  	}
+//  	r := map[string]interface{}{
+//  		"fqdns": c.Fqdns,
+//  	}
+//  	if c.GcpSecretManagerCertificateConfig != nil {
+//  		r["gcp_secret_manager_certificate_config"] = flattenGCPSecretManagerCertificateConfig(c.GcpSecretManagerCertificateConfig)
+//  	}
+//  	return append(result, r)
+//  }
+
+func flattenCADomainConfig(c *container.CertificateAuthorityDomainConfig) map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	r := map[string]interface{}{
+		"fqdns": c.Fqdns,
+	}
+	if c.GcpSecretManagerCertificateConfig != nil {
+		r["gcp_secret_manager_certificate_config"] = flattenGCPSecretManagerCertificateConfig(c.GcpSecretManagerCertificateConfig)
+	}
+	return r
+}
+
+func flattenGCPSecretManagerCertificateConfig(c *container.GCPSecretManagerCertificateConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c == nil {
+		return result
+	}
+	r := map[string]interface{}{
+		"secret_uri": c.SecretUri,
+	}
+	return append(result, r)
 }
 
 func flattenConfidentialNodes(c *container.ConfidentialNodes) []map[string]interface{} {

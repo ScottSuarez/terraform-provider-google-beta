@@ -20,6 +20,7 @@ package discoveryengine
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -44,9 +45,9 @@ func ResourceDiscoveryEngineDataStore() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(20 * time.Minute),
+			Update: schema.DefaultTimeout(20 * time.Minute),
+			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
 		CustomizeDiff: customdiff.All(
@@ -77,8 +78,8 @@ string with a length limit of 128 characters.`,
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"GENERIC", "MEDIA"}),
-				Description:  `The industry vertical that the data store registers. Possible values: ["GENERIC", "MEDIA"]`,
+				ValidateFunc: verify.ValidateEnum([]string{"GENERIC", "MEDIA", "HEALTHCARE_FHIR"}),
+				Description:  `The industry vertical that the data store registers. Possible values: ["GENERIC", "MEDIA", "HEALTHCARE_FHIR"]`,
 			},
 			"location": {
 				Type:     schema.TypeString,
@@ -95,14 +96,175 @@ data store is not configured as site search (GENERIC vertical and
 PUBLIC_WEBSITE contentConfig), this flag will be ignored.`,
 				Default: false,
 			},
+			"document_processing_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Configuration for Document understanding and enrichment.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"chunking_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Whether chunking mode is enabled.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"layout_based_chunking_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configuration for the layout based chunking.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"chunk_size": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													Description: `The token size limit for each chunk.
+Supported values: 100-500 (inclusive). Default value: 500.`,
+												},
+												"include_ancestor_headings": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Description: `Whether to include appending different levels of headings to chunks from the middle of the document to prevent context loss.
+Default value: False.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						"default_parsing_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Configurations for default Document parser. If not specified, this resource
+will be configured to use a default DigitalParsingConfig, and the default parsing
+config will be applied to all file types for Document parsing.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"digital_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to digital parser.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
+										ExactlyOneOf: []string{},
+									},
+									"layout_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to layout parser.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
+										ExactlyOneOf: []string{},
+									},
+									"ocr_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to OCR parser. Currently it only applies to PDFs.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"use_native_text": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `If true, will use native text instead of OCR text on pages containing native text.`,
+												},
+											},
+										},
+										ExactlyOneOf: []string{},
+									},
+								},
+							},
+						},
+						"parsing_config_overrides": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Description: `Map from file type to override the default parsing configuration based on the file type. Supported keys:
+  * 'pdf': Override parsing config for PDF files, either digital parsing, ocr parsing or layout parsing is supported.
+  * 'html': Override parsing config for HTML files, only digital parsing and or layout parsing are supported.
+  * 'docx': Override parsing config for DOCX files, only digital parsing and or layout parsing are supported.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"file_type": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"digital_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to digital parser.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
+										ExactlyOneOf: []string{},
+									},
+									"layout_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to layout parser.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
+										ExactlyOneOf: []string{},
+									},
+									"ocr_parsing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Configurations applied to OCR parser. Currently it only applies to PDFs.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"use_native_text": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `If true, will use native text instead of OCR text on pages containing native text.`,
+												},
+											},
+										},
+										ExactlyOneOf: []string{},
+									},
+								},
+							},
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The full resource name of the Document Processing Config. Format:
+'projects/{project}/locations/{location}/collections/{collection_id}/dataStores/{data_store_id}/documentProcessingConfig'.`,
+						},
+					},
+				},
+			},
+			"skip_default_schema_creation": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `A boolean flag indicating whether to skip the default schema creation for
+the data store. Only enable this flag if you are certain that the default
+schema is incompatible with your use case.
+If set to true, you must manually create a schema for the data store
+before any documents can be ingested.
+This flag cannot be specified if 'data_store.starting_schema' is
+specified.`,
+				Default: false,
+			},
 			"solution_types": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ForceNew:    true,
-				Description: `The solutions that the data store enrolls. Possible values: ["SOLUTION_TYPE_RECOMMENDATION", "SOLUTION_TYPE_SEARCH", "SOLUTION_TYPE_CHAT"]`,
+				Description: `The solutions that the data store enrolls. Possible values: ["SOLUTION_TYPE_RECOMMENDATION", "SOLUTION_TYPE_SEARCH", "SOLUTION_TYPE_CHAT", "SOLUTION_TYPE_GENERATIVE_CHAT"]`,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: verify.ValidateEnum([]string{"SOLUTION_TYPE_RECOMMENDATION", "SOLUTION_TYPE_SEARCH", "SOLUTION_TYPE_CHAT"}),
+					ValidateFunc: verify.ValidateEnum([]string{"SOLUTION_TYPE_RECOMMENDATION", "SOLUTION_TYPE_SEARCH", "SOLUTION_TYPE_CHAT", "SOLUTION_TYPE_GENERATIVE_CHAT"}),
 				},
 			},
 			"create_time": {
@@ -166,8 +328,14 @@ func resourceDiscoveryEngineDataStoreCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("content_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(contentConfigProp)) && (ok || !reflect.DeepEqual(v, contentConfigProp)) {
 		obj["contentConfig"] = contentConfigProp
 	}
+	documentProcessingConfigProp, err := expandDiscoveryEngineDataStoreDocumentProcessingConfig(d.Get("document_processing_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("document_processing_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(documentProcessingConfigProp)) && (ok || !reflect.DeepEqual(v, documentProcessingConfigProp)) {
+		obj["documentProcessingConfig"] = documentProcessingConfigProp
+	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DiscoveryEngineBasePath}}projects/{{project}}/locations/{{location}}/collections/default_collection/dataStores?dataStoreId={{data_store_id}}&createAdvancedSiteSearch={{create_advanced_site_search}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DiscoveryEngineBasePath}}projects/{{project}}/locations/{{location}}/collections/default_collection/dataStores?dataStoreId={{data_store_id}}&createAdvancedSiteSearch={{create_advanced_site_search}}&skipDefaultSchemaCreation={{skip_default_schema_creation}}")
 	if err != nil {
 		return err
 	}
@@ -186,6 +354,7 @@ func resourceDiscoveryEngineDataStoreCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -194,6 +363,7 @@ func resourceDiscoveryEngineDataStoreCreate(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating DataStore: %s", err)
@@ -246,12 +416,14 @@ func resourceDiscoveryEngineDataStoreRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DiscoveryEngineDataStore %q", d.Id()))
@@ -277,6 +449,9 @@ func resourceDiscoveryEngineDataStoreRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading DataStore: %s", err)
 	}
 	if err := d.Set("content_config", flattenDiscoveryEngineDataStoreContentConfig(res["contentConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataStore: %s", err)
+	}
+	if err := d.Set("document_processing_config", flattenDiscoveryEngineDataStoreDocumentProcessingConfig(res["documentProcessingConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DataStore: %s", err)
 	}
 	if err := d.Set("create_time", flattenDiscoveryEngineDataStoreCreateTime(res["createTime"], d, config)); err != nil {
@@ -315,6 +490,7 @@ func resourceDiscoveryEngineDataStoreUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Updating DataStore %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -342,6 +518,7 @@ func resourceDiscoveryEngineDataStoreUpdate(d *schema.ResourceData, meta interfa
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -350,13 +527,6 @@ func resourceDiscoveryEngineDataStoreUpdate(d *schema.ResourceData, meta interfa
 			log.Printf("[DEBUG] Finished updating DataStore %q: %#v", d.Id(), res)
 		}
 
-		err = DiscoveryEngineOperationWaitTime(
-			config, res, project, "Updating DataStore", userAgent,
-			d.Timeout(schema.TimeoutUpdate))
-
-		if err != nil {
-			return err
-		}
 	}
 
 	return resourceDiscoveryEngineDataStoreRead(d, meta)
@@ -383,13 +553,15 @@ func resourceDiscoveryEngineDataStoreDelete(d *schema.ResourceData, meta interfa
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting DataStore %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting DataStore %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -398,6 +570,7 @@ func resourceDiscoveryEngineDataStoreDelete(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "DataStore")
@@ -459,6 +632,175 @@ func flattenDiscoveryEngineDataStoreContentConfig(v interface{}, d *schema.Resou
 	return v
 }
 
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["name"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigName(original["name"], d, config)
+	transformed["chunking_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfig(original["chunkingConfig"], d, config)
+	transformed["default_parsing_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfig(original["defaultParsingConfig"], d, config)
+	transformed["parsing_config_overrides"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverrides(original["parsingConfigOverrides"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["layout_based_chunking_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig(original["layoutBasedChunkingConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["chunk_size"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigChunkSize(original["chunkSize"], d, config)
+	transformed["include_ancestor_headings"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigIncludeAncestorHeadings(original["includeAncestorHeadings"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigChunkSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigIncludeAncestorHeadings(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["digital_parsing_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigDigitalParsingConfig(original["digitalParsingConfig"], d, config)
+	transformed["ocr_parsing_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfig(original["ocrParsingConfig"], d, config)
+	transformed["layout_parsing_config"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigLayoutParsingConfig(original["layoutParsingConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigDigitalParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["use_native_text"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfigUseNativeText(original["useNativeText"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfigUseNativeText(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigLayoutParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverrides(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.(map[string]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for k, raw := range l {
+		original := raw.(map[string]interface{})
+		transformed = append(transformed, map[string]interface{}{
+			"file_type":              k,
+			"digital_parsing_config": flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesDigitalParsingConfig(original["digitalParsingConfig"], d, config),
+			"ocr_parsing_config":     flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfig(original["ocrParsingConfig"], d, config),
+			"layout_parsing_config":  flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesLayoutParsingConfig(original["layoutParsingConfig"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesDigitalParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["use_native_text"] =
+		flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfigUseNativeText(original["useNativeText"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfigUseNativeText(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesLayoutParsingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
 func flattenDiscoveryEngineDataStoreCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -477,4 +819,284 @@ func expandDiscoveryEngineDataStoreSolutionTypes(v interface{}, d tpgresource.Te
 
 func expandDiscoveryEngineDataStoreContentConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedName, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigName(original["name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["name"] = transformedName
+	}
+
+	transformedChunkingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfig(original["chunking_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedChunkingConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["chunkingConfig"] = transformedChunkingConfig
+	}
+
+	transformedDefaultParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfig(original["default_parsing_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDefaultParsingConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["defaultParsingConfig"] = transformedDefaultParsingConfig
+	}
+
+	transformedParsingConfigOverrides, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverrides(original["parsing_config_overrides"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedParsingConfigOverrides); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["parsingConfigOverrides"] = transformedParsingConfigOverrides
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedLayoutBasedChunkingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig(original["layout_based_chunking_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["layoutBasedChunkingConfig"] = transformedLayoutBasedChunkingConfig
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedChunkSize, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigChunkSize(original["chunk_size"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedChunkSize); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["chunkSize"] = transformedChunkSize
+	}
+
+	transformedIncludeAncestorHeadings, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigIncludeAncestorHeadings(original["include_ancestor_headings"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIncludeAncestorHeadings); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["includeAncestorHeadings"] = transformedIncludeAncestorHeadings
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigChunkSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfigIncludeAncestorHeadings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDigitalParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigDigitalParsingConfig(original["digital_parsing_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["digitalParsingConfig"] = transformedDigitalParsingConfig
+	}
+
+	transformedOcrParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfig(original["ocr_parsing_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedOcrParsingConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ocrParsingConfig"] = transformedOcrParsingConfig
+	}
+
+	transformedLayoutParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigLayoutParsingConfig(original["layout_parsing_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["layoutParsingConfig"] = transformedLayoutParsingConfig
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigDigitalParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedUseNativeText, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfigUseNativeText(original["use_native_text"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUseNativeText); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["useNativeText"] = transformedUseNativeText
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigOcrParsingConfigUseNativeText(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigDefaultParsingConfigLayoutParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverrides(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]interface{}, error) {
+	if v == nil {
+		return map[string]interface{}{}, nil
+	}
+	m := make(map[string]interface{})
+	for _, raw := range v.(*schema.Set).List() {
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedDigitalParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesDigitalParsingConfig(original["digital_parsing_config"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["digitalParsingConfig"] = transformedDigitalParsingConfig
+		}
+
+		transformedOcrParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfig(original["ocr_parsing_config"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedOcrParsingConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["ocrParsingConfig"] = transformedOcrParsingConfig
+		}
+
+		transformedLayoutParsingConfig, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesLayoutParsingConfig(original["layout_parsing_config"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["layoutParsingConfig"] = transformedLayoutParsingConfig
+		}
+
+		transformedFileType, err := tpgresource.ExpandString(original["file_type"], d, config)
+		if err != nil {
+			return nil, err
+		}
+		m[transformedFileType] = transformed
+	}
+	return m, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesDigitalParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedUseNativeText, err := expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfigUseNativeText(original["use_native_text"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUseNativeText); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["useNativeText"] = transformedUseNativeText
+	}
+
+	return transformed, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesOcrParsingConfigUseNativeText(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDiscoveryEngineDataStoreDocumentProcessingConfigParsingConfigOverridesLayoutParsingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
 }

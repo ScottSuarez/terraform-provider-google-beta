@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -50,7 +50,7 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(t *testing.T)
 				ResourceName:            "google_vertex_ai_index_endpoint.index_endpoint",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "public_endpoint_enabled", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -95,7 +95,7 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithPscExample(t *testing
 				ResourceName:            "google_vertex_ai_index_endpoint.index_endpoint",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "public_endpoint_enabled", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -179,7 +179,7 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithPublicEndpointExample
 				ResourceName:            "google_vertex_ai_index_endpoint.index_endpoint",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "public_endpoint_enabled", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
 			},
 		},
 	})

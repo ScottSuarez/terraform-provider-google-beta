@@ -17,7 +17,7 @@ description: |-
   A set of reusable connection configurations to be used as a source or destination for a stream.
 ---
 
-# google\_datastream\_connection\_profile
+# google_datastream_connection_profile
 
 A set of reusable connection configurations to be used as a source or destination for a stream.
 
@@ -29,11 +29,11 @@ To get more information about ConnectionProfile, see:
     * [Official Documentation](https://cloud.google.com/datastream/docs/create-connection-profiles)
 
 ~> **Warning:** All arguments including the following potentially sensitive
-values will be stored in the raw state as plain text: `oracle_profile.password`, `mysql_profile.password`, `mysql_profile.ssl_config.client_key`, `mysql_profile.ssl_config.client_certificate`, `mysql_profile.ssl_config.ca_certificate`, `postgresql_profile.password`, `forward_ssh_connectivity.password`, `forward_ssh_connectivity.private_key`.
+values will be stored in the raw state as plain text: `oracle_profile.password`, `mysql_profile.password`, `mysql_profile.ssl_config.client_key`, `mysql_profile.ssl_config.client_certificate`, `mysql_profile.ssl_config.ca_certificate`, `postgresql_profile.password`, `sql_server_profile.password`, `forward_ssh_connectivity.password`, `forward_ssh_connectivity.private_key`.
 [Read more about sensitive data in state](https://www.terraform.io/language/state/sensitive-data).
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=datastream_connection_profile_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=datastream_connection_profile_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -53,7 +53,7 @@ resource "google_datastream_connection_profile" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=datastream_connection_profile_postgresql_private_connection&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=datastream_connection_profile_postgresql_private_connection&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -149,7 +149,7 @@ resource "google_datastream_connection_profile" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=datastream_connection_profile_full&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=datastream_connection_profile_full&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -246,6 +246,70 @@ resource "google_datastream_connection_profile" "default" {
     }
 }
 ```
+## Example Usage - Datastream Connection Profile Sql Server
+
+
+```hcl
+resource "google_sql_database_instance" "instance" {
+    name                = "sql-server"
+    database_version    = "SQLSERVER_2019_STANDARD"
+    region              = "us-central1"
+    root_password       = "root-password"
+    deletion_protection = "true"
+
+    settings {
+        tier = "db-custom-2-4096"
+        ip_configuration {
+            // Datastream IPs will vary by region.
+            // https://cloud.google.com/datastream/docs/ip-allowlists-and-regions
+            authorized_networks {
+                value = "34.71.242.81"
+            }
+
+            authorized_networks {
+                value = "34.72.28.29"
+            }
+
+            authorized_networks {
+                value = "34.67.6.157"
+            }
+
+            authorized_networks {
+                value = "34.67.234.134"
+            }
+
+            authorized_networks {
+                value = "34.72.239.218"
+            }
+        }
+    }
+}
+
+resource "google_sql_database" "db" {
+    name       = "db"
+    instance   = google_sql_database_instance.instance.name
+}
+
+resource "google_sql_user" "user" {
+    name     = "user"
+    instance = google_sql_database_instance.instance.name
+    password = "password"
+}
+
+resource "google_datastream_connection_profile" "default" {
+    display_name          = "SQL Server Source"
+    location              = "us-central1"
+    connection_profile_id = "source-profile"
+
+    sql_server_profile {
+        hostname = google_sql_database_instance.instance.public_ip_address
+        port     = 1433
+        username = google_sql_user.user.name
+        password = google_sql_user.user.password
+        database = google_sql_database.db.name
+    }
+}
+```
 
 ## Argument Reference
 
@@ -298,6 +362,11 @@ The following arguments are supported:
   PostgreSQL database profile.
   Structure is [documented below](#nested_postgresql_profile).
 
+* `sql_server_profile` -
+  (Optional)
+  SQL Server database profile.
+  Structure is [documented below](#nested_sql_server_profile).
+
 * `forward_ssh_connectivity` -
   (Optional)
   Forward SSH tunnel connectivity.
@@ -307,6 +376,10 @@ The following arguments are supported:
   (Optional)
   Private connectivity.
   Structure is [documented below](#nested_private_connectivity).
+
+* `create_without_validation` -
+  (Optional)
+  Create the connection profile without validating it.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
@@ -431,6 +504,29 @@ The following arguments are supported:
 * `database` -
   (Required)
   Database for the PostgreSQL connection.
+
+<a name="nested_sql_server_profile"></a>The `sql_server_profile` block supports:
+
+* `hostname` -
+  (Required)
+  Hostname for the SQL Server connection.
+
+* `port` -
+  (Optional)
+  Port for the SQL Server connection.
+
+* `username` -
+  (Required)
+  Username for the SQL Server connection.
+
+* `password` -
+  (Required)
+  Password for the SQL Server connection.
+  **Note**: This property is sensitive and will not be displayed in the plan.
+
+* `database` -
+  (Required)
+  Database for the SQL Server connection.
 
 <a name="nested_forward_ssh_connectivity"></a>The `forward_ssh_connectivity` block supports:
 

@@ -20,6 +20,7 @@ package gkeonprem
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -100,9 +101,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 													Elem: &schema.Schema{Type: schema.TypeString},
 												},
 												"node_configs": {
@@ -121,7 +122,7 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
 Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																Elem: &schema.Schema{Type: schema.TypeString},
@@ -390,9 +391,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																Elem: &schema.Schema{Type: schema.TypeString},
 															},
 															"node_configs": {
@@ -411,9 +412,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																			Elem: &schema.Schema{Type: schema.TypeString},
 																		},
 																		"node_ip": {
@@ -548,9 +549,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																Elem: &schema.Schema{Type: schema.TypeString},
 															},
 															"node_configs": {
@@ -569,9 +570,9 @@ label keys, the applied set may differ depending on the Kubernetes
 version -- it's best to assume the behavior is undefined and
 conflicts should be avoided. For more information, including usage
 and the valid values, see:
-  http://kubernetes.io/v1.1/docs/user-guide/labels.html
+  - http://kubernetes.io/v1.1/docs/user-guide/labels.html
 An object containing a list of "key": value pairs.
-Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+For example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 																			Elem: &schema.Schema{Type: schema.TypeString},
 																		},
 																		"node_ip": {
@@ -929,15 +930,15 @@ bare metal machines.`,
 							Type:     schema.TypeString,
 							Required: true,
 							Description: `Specifies the address of your proxy server.
-Examples: http://domain
+For example: http://domain
 WARNING: Do not provide credentials in the format
-http://(username:password@)domain these will be rejected by the server.`,
+of http://(username:password@)domain these will be rejected by the server.`,
 						},
 						"no_proxy": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Description: `A list of IPs, hostnames, and domains that should skip the proxy.
-Examples: ["127.0.0.1", "example.com", ".corp", "localhost"].`,
+For example ["127.0.0.1", "example.com", ".corp", "localhost"].`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -1336,6 +1337,7 @@ func resourceGkeonpremBareMetalClusterCreate(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1344,6 +1346,7 @@ func resourceGkeonpremBareMetalClusterCreate(d *schema.ResourceData, meta interf
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating BareMetalCluster: %s", err)
@@ -1403,12 +1406,14 @@ func resourceGkeonpremBareMetalClusterRead(d *schema.ResourceData, meta interfac
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GkeonpremBareMetalCluster %q", d.Id()))
@@ -1631,6 +1636,7 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 	}
 
 	log.Printf("[DEBUG] Updating BareMetalCluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -1718,6 +1724,7 @@ func resourceGkeonpremBareMetalClusterUpdate(d *schema.ResourceData, meta interf
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1759,13 +1766,15 @@ func resourceGkeonpremBareMetalClusterDelete(d *schema.ResourceData, meta interf
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting BareMetalCluster %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting BareMetalCluster %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1774,6 +1783,7 @@ func resourceGkeonpremBareMetalClusterDelete(d *schema.ResourceData, meta interf
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "BareMetalCluster")

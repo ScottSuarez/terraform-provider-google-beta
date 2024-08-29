@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -71,7 +71,7 @@ resource "google_app_engine_application_url_dispatch_rules" "web_service" {
 resource "google_app_engine_standard_app_version" "admin_v3" {
   version_id = "v3"
   service    = "admin"
-  runtime    = "nodejs10"
+  runtime    = "nodejs20"
 
   entrypoint {
     shell = "node ./app.js"

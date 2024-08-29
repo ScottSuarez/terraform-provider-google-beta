@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -304,9 +304,9 @@ resource "google_compute_network" "vertex_network" {
 data "google_project" "project" {}
 
 resource "google_vertex_ai_endpoint_iam_binding" "foo" {
-project = google_vertex_ai_endpoint.endpoint.project
-location = google_vertex_ai_endpoint.endpoint.location
-endpoint = google_vertex_ai_endpoint.endpoint.name
+  project = google_vertex_ai_endpoint.endpoint.project
+  location = google_vertex_ai_endpoint.endpoint.location
+  endpoint = google_vertex_ai_endpoint.endpoint.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
 }

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterBasicExample(t *testing
 				ResourceName:            "google_gkeonprem_vmware_cluster.cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name"},
 			},
 		},
 	})
@@ -119,7 +119,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterF5lbExample(t *testing.
 				ResourceName:            "google_gkeonprem_vmware_cluster.cluster-f5lb",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name"},
 			},
 		},
 	})
@@ -150,6 +150,7 @@ resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
         gateway="test-gateway"
       }
     }
+    vcenter_network = "test-vcenter-network"
   }
   control_plane_node {
      cpus = 4
@@ -177,6 +178,7 @@ resource "google_gkeonprem_vmware_cluster" "cluster-f5lb" {
   }
   vm_tracking_enabled = true
   enable_control_plane_v2 = true
+  disable_bundled_ingress = true
   authorization {
     admin_users {
       username = "testuser@gmail.com"
@@ -214,7 +216,7 @@ func TestAccGkeonpremVmwareCluster_gkeonpremVmwareClusterManuallbExample(t *test
 				ResourceName:            "google_gkeonprem_vmware_cluster.cluster-manuallb",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name"},
 			},
 		},
 	})

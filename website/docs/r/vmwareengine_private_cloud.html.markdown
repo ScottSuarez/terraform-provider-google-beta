@@ -17,7 +17,7 @@ description: |-
   Represents a private cloud resource.
 ---
 
-# google\_vmwareengine\_private\_cloud
+# google_vmwareengine_private_cloud
 
 Represents a private cloud resource. Private clouds are zonal resources.
 
@@ -38,7 +38,6 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
     management_cidr       = "192.168.30.0/24"
     vmware_engine_network = google_vmwareengine_network.pc-nw.id
   }
-
   management_cluster {
     cluster_id = "sample-mgmt-cluster"
     node_type_configs {
@@ -68,7 +67,6 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
     management_cidr       = "192.168.30.0/24"
     vmware_engine_network = google_vmwareengine_network.pc-nw.id
   }
-
   management_cluster {
     cluster_id = "sample-mgmt-cluster"
     node_type_configs {
@@ -77,6 +75,8 @@ resource "google_vmwareengine_private_cloud" "vmw-engine-pc" {
       custom_core_count = 32
     }
   }
+  deletion_delay_hours = 0
+  send_deletion_delay_hours_if_zero = true
 }
 
 resource "google_vmwareengine_network" "pc-nw" {
@@ -158,6 +158,11 @@ The following arguments are supported:
   where the key is canonical identifier of the node type (corresponds to the NodeType).
   Structure is [documented below](#nested_node_type_configs).
 
+* `stretched_cluster_config` -
+  (Optional)
+  The stretched cluster configuration for the private cloud.
+  Structure is [documented below](#nested_stretched_cluster_config).
+
 
 <a name="nested_node_type_configs"></a>The `node_type_configs` block supports:
 
@@ -174,6 +179,16 @@ The following arguments are supported:
   If zero is provided max value from `nodeType.availableCustomCoreCounts` will be used.
   This cannot be changed once the PrivateCloud is created.
 
+<a name="nested_stretched_cluster_config"></a>The `stretched_cluster_config` block supports:
+
+* `preferred_location` -
+  (Optional)
+  Zone that will remain operational when connection between the two zones is lost.
+
+* `secondary_location` -
+  (Optional)
+  Additional zone for a higher level of availability and load balancing.
+
 - - -
 
 
@@ -184,10 +199,14 @@ The following arguments are supported:
 * `type` -
   (Optional)
   Initial type of the private cloud.
-  Possible values are: `STANDARD`, `TIME_LIMITED`.
+  Possible values are: `STANDARD`, `TIME_LIMITED`, `STRETCHED`.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
+
+* `deletion_delay_hours` - (Optional) The number of hours to delay this request. You can set this value to an hour between 0 to 8, where setting it to 0 starts the deletion request immediately. If no value is set, a default value is set at the API Level.
+
+* `send_deletion_delay_hours_if_zero` - (Optional) While set true, deletion_delay_hours value will be sent in the request even for zero value of the field. This field is only useful for setting 0 value to the deletion_delay_hours field. It can be used both alone and together with deletion_delay_hours.
 
 
 ## Attributes Reference

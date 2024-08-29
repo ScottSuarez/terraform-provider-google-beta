@@ -17,7 +17,7 @@ description: |-
   Datasets allow you to organize and control access to your tables.
 ---
 
-# google\_bigquery\_dataset
+# google_bigquery_dataset
 
 Datasets allow you to organize and control access to your tables.
 
@@ -33,7 +33,7 @@ The API does accept both formats but it will always return the legacy format whi
 showing permanent diff on each plan and apply operation.
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=bigquery_dataset_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=bigquery_dataset_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -94,7 +94,7 @@ resource "google_kms_key_ring" "key_ring" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=bigquery_dataset_authorized_dataset&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=bigquery_dataset_authorized_dataset&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -203,12 +203,11 @@ resource "google_bigquery_dataset" "private" {
   }
 }
 ```
-## Example Usage - Bigquery Dataset External Reference Aws Docs
+## Example Usage - Bigquery Dataset External Reference Aws
 
 
 ```hcl
 resource "google_bigquery_dataset" "dataset" {
-  provider                    = google-beta
   dataset_id                  = "example_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
@@ -249,7 +248,6 @@ The following arguments are supported:
   (Optional)
   The default lifetime of all tables in the dataset, in milliseconds.
   The minimum value is 3600000 milliseconds (one hour).
-
   Once this property is set, all newly-created tables in the dataset
   will have an `expirationTime` property set to the creation time plus
   the value in this property, and changing the value will only affect
@@ -264,7 +262,6 @@ The following arguments are supported:
   (Optional)
   The default partition expiration for all partitioned tables in
   the dataset, in milliseconds.
-
   Once this property is set, all newly-created partitioned tables in
   the dataset will have an `expirationMs` property in the `timePartitioning`
   settings set to this value, and changing the value will only
@@ -282,7 +279,7 @@ The following arguments are supported:
   A user-friendly description of the dataset
 
 * `external_dataset_reference` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   Information about the external metadata storage where the dataset is defined.
   Structure is [documented below](#nested_external_dataset_reference).
 
@@ -302,12 +299,10 @@ The following arguments are supported:
   (Optional)
   The geographic location where the dataset should reside.
   See [official docs](https://cloud.google.com/bigquery/docs/dataset-locations).
-
   There are two types of locations, regional or multi-regional. A regional
   location is a specific geographic place, such as Tokyo, and a multi-regional
   location is a large geographic area, such as the United States, that
   contains at least two geographic places.
-
   The default value is multi-regional location `US`.
   Changing this forces a new resource to be created.
 
@@ -343,6 +338,14 @@ The following arguments are supported:
   or to PHYSICAL to use physical bytes instead.
   LOGICAL is the default if this flag isn't specified.
 
+* `resource_tags` -
+  (Optional)
+  The tags attached to this table. Tag keys are globally unique. Tag key is expected to be
+  in the namespaced format, for example "123456789012/environment" where 123456789012 is the
+  ID of the parent organization or project resource for this tag key. Tag value is expected
+  to be the short name, for example "Production". See [Tag definitions](/iam/docs/tags-access-control#definitions)
+  for more details.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
@@ -373,13 +376,9 @@ destroying the resource will fail if tables are present.
 * `special_group` -
   (Optional)
   A special group to grant access to. Possible values include:
-
   * `projectOwners`: Owners of the enclosing project.
-
   * `projectReaders`: Readers of the enclosing project.
-
   * `projectWriters`: Writers of the enclosing project.
-
   * `allAuthenticatedUsers`: All authenticated BigQuery users.
 
 * `iam_member` -

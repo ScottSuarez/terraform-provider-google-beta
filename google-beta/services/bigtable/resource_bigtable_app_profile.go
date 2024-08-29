@@ -20,6 +20,7 @@ package bigtable
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -60,6 +61,23 @@ func ResourceBigtableAppProfile() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The unique name of the app profile in the form '[_a-zA-Z0-9][-_.a-zA-Z0-9]*'.`,
+			},
+			"data_boost_isolation_read_only": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Specifies that this app profile is intended for read-only usage via the Data Boost feature.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"compute_billing_owner": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"HOST_PAYS"}),
+							Description:  `The Compute Billing Owner for this Data Boost App Profile. Possible values: ["HOST_PAYS"]`,
+						},
+					},
+				},
+				ConflictsWith: []string{"standard_isolation"},
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -125,6 +143,7 @@ It is unsafe to send these requests to the same table/row/column in multiple clu
 						},
 					},
 				},
+				ConflictsWith: []string{"data_boost_isolation_read_only"},
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -183,6 +202,12 @@ func resourceBigtableAppProfileCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("standard_isolation"); !tpgresource.IsEmptyValue(reflect.ValueOf(standardIsolationProp)) && (ok || !reflect.DeepEqual(v, standardIsolationProp)) {
 		obj["standardIsolation"] = standardIsolationProp
 	}
+	dataBoostIsolationReadOnlyProp, err := expandBigtableAppProfileDataBoostIsolationReadOnly(d.Get("data_boost_isolation_read_only"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_boost_isolation_read_only"); !tpgresource.IsEmptyValue(reflect.ValueOf(dataBoostIsolationReadOnlyProp)) && (ok || !reflect.DeepEqual(v, dataBoostIsolationReadOnlyProp)) {
+		obj["dataBoostIsolationReadOnly"] = dataBoostIsolationReadOnlyProp
+	}
 
 	obj, err = resourceBigtableAppProfileEncoder(d, meta, obj)
 	if err != nil {
@@ -208,6 +233,7 @@ func resourceBigtableAppProfileCreate(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -216,6 +242,7 @@ func resourceBigtableAppProfileCreate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating AppProfile: %s", err)
@@ -261,12 +288,14 @@ func resourceBigtableAppProfileRead(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigtableAppProfile %q", d.Id()))
@@ -289,6 +318,9 @@ func resourceBigtableAppProfileRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading AppProfile: %s", err)
 	}
 	if err := d.Set("standard_isolation", flattenBigtableAppProfileStandardIsolation(res["standardIsolation"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppProfile: %s", err)
+	}
+	if err := d.Set("data_boost_isolation_read_only", flattenBigtableAppProfileDataBoostIsolationReadOnly(res["dataBoostIsolationReadOnly"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AppProfile: %s", err)
 	}
 
@@ -335,6 +367,12 @@ func resourceBigtableAppProfileUpdate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("standard_isolation"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, standardIsolationProp)) {
 		obj["standardIsolation"] = standardIsolationProp
 	}
+	dataBoostIsolationReadOnlyProp, err := expandBigtableAppProfileDataBoostIsolationReadOnly(d.Get("data_boost_isolation_read_only"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("data_boost_isolation_read_only"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dataBoostIsolationReadOnlyProp)) {
+		obj["dataBoostIsolationReadOnly"] = dataBoostIsolationReadOnlyProp
+	}
 
 	obj, err = resourceBigtableAppProfileEncoder(d, meta, obj)
 	if err != nil {
@@ -347,6 +385,7 @@ func resourceBigtableAppProfileUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Updating AppProfile %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -363,6 +402,10 @@ func resourceBigtableAppProfileUpdate(d *schema.ResourceData, meta interface{}) 
 
 	if d.HasChange("standard_isolation") {
 		updateMask = append(updateMask, "standardIsolation")
+	}
+
+	if d.HasChange("data_boost_isolation_read_only") {
+		updateMask = append(updateMask, "dataBoostIsolationReadOnly")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -390,6 +433,16 @@ func resourceBigtableAppProfileUpdate(d *schema.ResourceData, meta interface{}) 
 			}
 		}
 	}
+
+	_, hasStandardIsolation := obj["standardIsolation"]
+	_, hasDataBoostIsolationReadOnly := obj["dataBoostIsolationReadOnly"]
+	if hasStandardIsolation && hasDataBoostIsolationReadOnly {
+		// Due to the "conflicts" both fields should be present only if neither was
+		// previously specified and the user is now manually adding dataBoostIsolationReadOnly.
+		delete(obj, "standardIsolation")
+		updateMask = append(updateMask, "dataBoostIsolationReadOnly")
+	}
+
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
@@ -412,6 +465,7 @@ func resourceBigtableAppProfileUpdate(d *schema.ResourceData, meta interface{}) 
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -446,13 +500,15 @@ func resourceBigtableAppProfileDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting AppProfile %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting AppProfile %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -461,6 +517,7 @@ func resourceBigtableAppProfileDelete(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "AppProfile")
@@ -556,6 +613,23 @@ func flattenBigtableAppProfileStandardIsolationPriority(v interface{}, d *schema
 	return v
 }
 
+func flattenBigtableAppProfileDataBoostIsolationReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["compute_billing_owner"] =
+		flattenBigtableAppProfileDataBoostIsolationReadOnlyComputeBillingOwner(original["computeBillingOwner"], d, config)
+	return []interface{}{transformed}
+}
+func flattenBigtableAppProfileDataBoostIsolationReadOnlyComputeBillingOwner(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandBigtableAppProfileDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -630,6 +704,29 @@ func expandBigtableAppProfileStandardIsolation(v interface{}, d tpgresource.Terr
 }
 
 func expandBigtableAppProfileStandardIsolationPriority(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigtableAppProfileDataBoostIsolationReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedComputeBillingOwner, err := expandBigtableAppProfileDataBoostIsolationReadOnlyComputeBillingOwner(original["compute_billing_owner"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedComputeBillingOwner); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["computeBillingOwner"] = transformedComputeBillingOwner
+	}
+
+	return transformed, nil
+}
+
+func expandBigtableAppProfileDataBoostIsolationReadOnlyComputeBillingOwner(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

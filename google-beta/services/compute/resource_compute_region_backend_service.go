@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -422,7 +423,7 @@ Defaults to 3.`,
 				Optional: true,
 				Description: `Time for which instance will be drained (not accept new
 connections, but still work to finish started).`,
-				Default: 0,
+				Default: 300,
 			},
 
 			"connection_tracking_policy": {
@@ -656,14 +657,19 @@ or serverless NEG as a backend.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Whether the serving infrastructure will authenticate and authorize all incoming requests.`,
+						},
 						"oauth2_client_id": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: `OAuth2 Client ID for IAP`,
 						},
 						"oauth2_client_secret": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: `OAuth2 Client Secret for IAP`,
 							Sensitive:   true,
 						},
@@ -731,7 +737,6 @@ The possible values are:
                      UNAVAILABLE_WEIGHT. Otherwise, Load Balancing remains
                      equal-weight.
 
-
 This field is applicable to either:
 
 * A regional backend service with the service_protocol set to HTTP, HTTPS, or HTTP2,
@@ -740,7 +745,6 @@ This field is applicable to either:
 * A regional backend service with loadBalancingScheme set to EXTERNAL (External Network
   Load Balancing). Only MAGLEV and WEIGHTED_MAGLEV values are possible for External
   Network Load Balancing. The default is MAGLEV.
-
 
 If session_affinity is not NONE, and this field is not set to MAGLEV, WEIGHTED_MAGLEV,
 or RING_HASH, session affinity settings will not take effect.
@@ -826,7 +830,6 @@ less than one second are represented with a 0 'seconds' field and a positive
 							Description: `Number of errors before a host is ejected from the connection pool. When the
 backend host is accessed over HTTP, a 5xx return code qualifies as an error.
 Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"consecutive_gateway_failure": {
@@ -835,7 +838,6 @@ Defaults to 5.`,
 							Description: `The number of consecutive gateway failures (502, 503, 504 status or connection
 errors that are mapped to one of those status codes) before a consecutive
 gateway failure ejection occurs. Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_errors": {
@@ -844,7 +846,6 @@ gateway failure ejection occurs. Defaults to 5.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive 5xx. This setting can be used to disable
 ejection or to ramp it up slowly. Defaults to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_gateway_failure": {
@@ -853,7 +854,6 @@ ejection or to ramp it up slowly. Defaults to 100.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive gateway failures. This setting can be
 used to disable ejection or to ramp it up slowly. Defaults to 0.`,
-							Default:      0,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_success_rate": {
@@ -862,7 +862,6 @@ used to disable ejection or to ramp it up slowly. Defaults to 0.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through success rate statistics. This setting can be used to
 disable ejection or to ramp it up slowly. Defaults to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"interval": {
@@ -895,7 +894,6 @@ less than one second are represented with a 0 'seconds' field and a positive
 							Optional: true,
 							Description: `Maximum percentage of hosts in the load balancing pool for the backend service
 that can be ejected. Defaults to 10%.`,
-							Default:      10,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_minimum_hosts": {
@@ -905,7 +903,6 @@ that can be ejected. Defaults to 10%.`,
 success rate outliers. If the number of hosts is less than this setting, outlier
 detection via success rate statistics is not performed for any host in the
 cluster. Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_request_volume": {
@@ -916,7 +913,6 @@ defined by the interval duration above) to include this host in success rate
 based outlier detection. If the volume is lower than this setting, outlier
 detection via success rate statistics is not performed for that host. Defaults
 to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_stdev_factor": {
@@ -928,7 +924,6 @@ rate, and the product of this factor and the standard deviation of the mean
 success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
 by a thousand to get a double. That is, if the desired factor is 1.9, the
 runtime value should be 1900. Defaults to 1900.`,
-							Default:      1900,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 					},
@@ -997,8 +992,10 @@ not applicable if the protocol is UDP. Possible values: ["NONE", "CLIENT_IP", "C
 				Type:     schema.TypeInt,
 				Computed: true,
 				Optional: true,
-				Description: `How many seconds to wait for the backend before considering it a
-failed request. Default is 30 seconds. Valid range is [1, 86400].`,
+				Description: `The backend service timeout has a different meaning depending on the type of load balancer.
+For more information see, [Backend service settings](https://cloud.google.com/compute/docs/reference/rest/v1/backendServices).
+The default is 30 seconds.
+The full range of timeout values allowed goes from 1 through 2,147,483,647 seconds.`,
 			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
@@ -1010,6 +1007,11 @@ failed request. Default is 30 seconds. Valid range is [1, 86400].`,
 				Computed: true,
 				Description: `Fingerprint of this resource. A hash of the contents stored in this
 object. This field is used in optimistic locking.`,
+			},
+			"generated_id": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: `The unique identifier for the resource. This identifier is defined by the server.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -1061,8 +1063,8 @@ partial URL.`,
 				Description: `Specifies the balancing mode for this backend.
 
 See the [Backend Services Overview](https://cloud.google.com/load-balancing/docs/backend-service#balancing-mode)
-for an explanation of load balancing modes. Default value: "CONNECTION" Possible values: ["UTILIZATION", "RATE", "CONNECTION"]`,
-				Default: "CONNECTION",
+for an explanation of load balancing modes. Default value: "UTILIZATION" Possible values: ["UTILIZATION", "RATE", "CONNECTION"]`,
+				Default: "UTILIZATION",
 			},
 			"capacity_scaler": {
 				Type:     schema.TypeFloat,
@@ -1355,6 +1357,7 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1363,6 +1366,7 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionBackendService: %s", err)
@@ -1453,12 +1457,14 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionBackendService %q", d.Id()))
@@ -1526,6 +1532,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	if err := d.Set("health_checks", flattenComputeRegionBackendServiceHealthChecks(res["healthChecks"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
+	if err := d.Set("generated_id", flattenComputeRegionBackendServiceGeneratedId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	if err := d.Set("iap", flattenComputeRegionBackendServiceIap(res["iap"], d, config)); err != nil {
@@ -1758,6 +1767,7 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating RegionBackendService %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -1772,6 +1782,7 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1804,6 +1815,8 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -1817,6 +1830,7 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating RegionBackendService %q: %s", d.Id(), err)
@@ -1858,13 +1872,15 @@ func resourceComputeRegionBackendServiceDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting RegionBackendService %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting RegionBackendService %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1873,6 +1889,7 @@ func resourceComputeRegionBackendServiceDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionBackendService")
@@ -2639,6 +2656,23 @@ func flattenComputeRegionBackendServiceHealthChecks(v interface{}, d *schema.Res
 	return tpgresource.ConvertAndMapStringArr(v.([]interface{}), tpgresource.ConvertSelfLinkToV1)
 }
 
+func flattenComputeRegionBackendServiceGeneratedId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
 func flattenComputeRegionBackendServiceIap(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -2648,6 +2682,8 @@ func flattenComputeRegionBackendServiceIap(v interface{}, d *schema.ResourceData
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeRegionBackendServiceIapEnabled(original["enabled"], d, config)
 	transformed["oauth2_client_id"] =
 		flattenComputeRegionBackendServiceIapOauth2ClientId(original["oauth2ClientId"], d, config)
 	transformed["oauth2_client_secret"] =
@@ -2656,6 +2692,10 @@ func flattenComputeRegionBackendServiceIap(v interface{}, d *schema.ResourceData
 		flattenComputeRegionBackendServiceIapOauth2ClientSecretSha256(original["oauth2ClientSecretSha256"], d, config)
 	return []interface{}{transformed}
 }
+func flattenComputeRegionBackendServiceIapEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionBackendServiceIapOauth2ClientId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -3782,6 +3822,13 @@ func expandComputeRegionBackendServiceIap(v interface{}, d tpgresource.Terraform
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedEnabled, err := expandComputeRegionBackendServiceIapEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
 	transformedOauth2ClientId, err := expandComputeRegionBackendServiceIapOauth2ClientId(original["oauth2_client_id"], d, config)
 	if err != nil {
 		return nil, err
@@ -3804,6 +3851,10 @@ func expandComputeRegionBackendServiceIap(v interface{}, d tpgresource.Terraform
 	}
 
 	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceIapEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeRegionBackendServiceIapOauth2ClientId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -4173,23 +4224,6 @@ func expandComputeRegionBackendServiceRegion(v interface{}, d tpgresource.Terraf
 }
 
 func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
-	// The RegionBackendService API's Update / PUT API is badly formed and behaves like
-	// a PATCH field for at least IAP. When sent a `null` `iap` field, the API
-	// doesn't disable an existing field. To work around this, we need to emulate
-	// the old Terraform behaviour of always sending the block (at both update and
-	// create), and force sending each subfield as empty when the block isn't
-	// present in config.
-
-	iapVal := obj["iap"]
-	if iapVal == nil {
-		data := map[string]interface{}{}
-		data["enabled"] = false
-		obj["iap"] = data
-	} else {
-		iap := iapVal.(map[string]interface{})
-		iap["enabled"] = true
-		obj["iap"] = iap
-	}
 
 	if d.Get("load_balancing_scheme").(string) == "EXTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_MANAGED" {
 		return obj, nil
@@ -4242,21 +4276,10 @@ func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta int
 }
 
 func resourceComputeRegionBackendServiceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	// We need to pretend IAP isn't there if it's disabled for Terraform to maintain
-	// BC behaviour with the handwritten resource.
-	v, ok := res["iap"]
-	if !ok || v == nil {
-		delete(res, "iap")
-		return res, nil
-	}
-	m := v.(map[string]interface{})
-	if ok && m["enabled"] == false {
-		delete(res, "iap")
-	}
 
 	// Since we add in a NONE subsetting policy, we need to remove it in some
 	// cases for backwards compatibility with the config
-	v, ok = res["subsetting"]
+	v, ok := res["subsetting"]
 	if ok && v != nil {
 		subsetting := v.(map[string]interface{})
 		policy, ok := subsetting["policy"]

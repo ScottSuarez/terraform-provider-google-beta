@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeRegionDisk_regionDiskBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_region_disk.regiondisk",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"type", "interface", "region", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "region", "snapshot", "terraform_labels", "type"},
 			},
 		},
 	})
@@ -102,7 +102,7 @@ func TestAccComputeRegionDisk_regionDiskAsyncExample(t *testing.T) {
 				ResourceName:            "google_compute_region_disk.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"type", "interface", "region", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "region", "snapshot", "terraform_labels", "type"},
 			},
 		},
 	})
@@ -153,7 +153,7 @@ func TestAccComputeRegionDisk_regionDiskFeaturesExample(t *testing.T) {
 				ResourceName:            "google_compute_region_disk.regiondisk",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"type", "interface", "region", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "region", "snapshot", "terraform_labels", "type"},
 			},
 		},
 	})

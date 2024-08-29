@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -50,7 +50,7 @@ func TestAccComputeRegionSslCertificate_regionSslCertificateBasicExample(t *test
 				ResourceName:            "google_compute_region_ssl_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"private_key", "region", "name_prefix"},
+				ImportStateVerifyIgnore: []string{"name_prefix", "private_key", "region"},
 			},
 		},
 	})
@@ -152,7 +152,7 @@ func TestAccComputeRegionSslCertificate_regionSslCertificateTargetHttpsProxiesEx
 				ResourceName:            "google_compute_region_ssl_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"private_key", "region", "name_prefix"},
+				ImportStateVerifyIgnore: []string{"name_prefix", "private_key", "region"},
 			},
 		},
 	})

@@ -17,7 +17,7 @@ description: |-
   Service acts as a top-level container that manages a set of configurations and revision templates which implement a network service.
 ---
 
-# google\_cloud\_run\_v2\_service
+# google_cloud_run_v2_service
 
 Service acts as a top-level container that manages a set of configurations and revision templates which implement a network service. Service exists to provide a singular abstraction which can be access controlled, reasoned about, and which encapsulates software lifecycle decisions such as rollout policy and team resource ownership.
 
@@ -29,7 +29,7 @@ To get more information about Service, see:
     * [Official Documentation](https://cloud.google.com/run/docs/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -40,6 +40,7 @@ To get more information about Service, see:
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
   
   template {
@@ -50,7 +51,7 @@ resource "google_cloud_run_v2_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_limits&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_limits&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -61,6 +62,7 @@ resource "google_cloud_run_v2_service" "default" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
 
   template {
@@ -77,7 +79,7 @@ resource "google_cloud_run_v2_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_sql&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_sql&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -88,6 +90,7 @@ resource "google_cloud_run_v2_service" "default" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
   
   template {
@@ -166,7 +169,7 @@ resource "google_sql_database_instance" "instance" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_vpcaccess&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_vpcaccess&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -177,6 +180,7 @@ resource "google_sql_database_instance" "instance" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     containers {
@@ -211,7 +215,7 @@ resource "google_compute_network" "custom_test" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_directvpc&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_directvpc&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -222,7 +226,8 @@ resource "google_compute_network" "custom_test" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
-  launch_stage = "BETA"
+  deletion_protection = false
+  launch_stage = "GA"
   template {
     containers {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
@@ -233,13 +238,12 @@ resource "google_cloud_run_v2_service" "default" {
         subnetwork = "default"
         tags = ["tag1", "tag2", "tag3"]
       }
-      egress = "ALL_TRAFFIC"
     }
   }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_probes&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_probes&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -250,6 +254,7 @@ resource "google_cloud_run_v2_service" "default" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     containers {
@@ -273,7 +278,7 @@ resource "google_cloud_run_v2_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_secret&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_secret&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -284,6 +289,7 @@ resource "google_cloud_run_v2_service" "default" {
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
 
   template {
@@ -332,7 +338,7 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_multicontainer&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_multicontainer&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -344,6 +350,7 @@ resource "google_cloud_run_v2_service" "default" {
   provider = google-beta
   name     = "cloudrun-service"
   location = "us-central1"
+  deletion_protection = false
   launch_stage = "BETA"
   ingress = "INGRESS_TRAFFIC_ALL"
   template {
@@ -356,12 +363,21 @@ resource "google_cloud_run_v2_service" "default" {
       depends_on = ["hello-2"]
       volume_mounts {
         name = "empty-dir-volume"
-	mount_path = "/mnt"
+        mount_path = "/mnt"
       }
     }
     containers {
       name = "hello-2"
       image = "us-docker.pkg.dev/cloudrun/container/hello"
+      env {
+        name = "PORT"
+        value = "8081"
+      }
+      startup_probe {
+        http_get {
+          port = 8081
+        }
+      }
     }
     volumes {
       name = "empty-dir-volume"
@@ -374,7 +390,7 @@ resource "google_cloud_run_v2_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_mount_gcs&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_mount_gcs&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -386,6 +402,7 @@ resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
 
   location     = "us-central1"
+  deletion_protection = false
   launch_stage = "BETA"
 
   template {
@@ -415,7 +432,7 @@ resource "google_storage_bucket" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_service_mount_nfs&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_service_mount_nfs&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -427,6 +444,7 @@ resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
 
   location     = "us-central1"
+  deletion_protection = false
   ingress      = "INGRESS_TRAFFIC_ALL"
   launch_stage = "BETA"
 
@@ -554,6 +572,7 @@ The following arguments are supported:
 * `max_instance_request_concurrency` -
   (Optional)
   Sets the maximum number of requests that each serving instance can receive.
+  If not specified or 0, defaults to 80 when requested CPU >= 1 and defaults to 1 when requested CPU < 1.
 
 * `session_affinity` -
   (Optional)
@@ -621,7 +640,7 @@ The following arguments are supported:
 
 * `args` -
   (Optional)
-  Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+  Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references are not supported in Cloud Run.
 
 * `env` -
   (Optional)
@@ -667,11 +686,11 @@ The following arguments are supported:
 
 * `name` -
   (Required)
-  Name of the environment variable. Must be a C_IDENTIFIER, and mnay not exceed 32768 characters.
+  Name of the environment variable. Must be a C_IDENTIFIER, and may not exceed 32768 characters.
 
 * `value` -
   (Optional)
-  Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "", and the maximum length is 32768 bytes
+  Literal value of the environment variable. Defaults to "" and the maximum allowed length is 32768 characters. Variable references are not supported in Cloud Run.
 
 * `value_source` -
   (Optional)
@@ -705,7 +724,8 @@ The following arguments are supported:
 
 * `cpu_idle` -
   (Optional)
-  Determines whether CPU should be throttled or not outside of requests.
+  Determines whether CPU is only allocated during requests. True by default if the parent `resources` field is not set. However, if
+  `resources` is set, this field must be explicitly set to true to preserve the default behavior.
 
 * `startup_cpu_boost` -
   (Optional)
@@ -917,7 +937,7 @@ The following arguments are supported:
 
 * `gcs` -
   (Optional)
-  Represents a GCS Bucket mounted as a volume.
+  Cloud Storage bucket mounted as a volume using GCSFuse. This feature is only supported in the gen2 execution environment and requires launch-stage to be set to ALPHA or BETA.
   Structure is [documented below](#nested_gcs).
 
 * `nfs` -
@@ -1053,6 +1073,15 @@ The following arguments are supported:
   One or more custom audiences that you want this service to support. Specify each custom audience as the full URL in a string. The custom audiences are encoded in the token and used to authenticate requests.
   For more information, see https://cloud.google.com/run/docs/configuring/custom-audiences.
 
+* `scaling` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Scaling settings that apply to the whole service
+  Structure is [documented below](#nested_scaling).
+
+* `default_uri_disabled` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Disables public resolution of the default URI of this service.
+
 * `traffic` -
   (Optional)
   Specifies how to distribute traffic over a collection of Revisions belonging to the Service. If traffic is empty or not provided, defaults to 100% traffic to the latest Ready Revision.
@@ -1060,6 +1089,13 @@ The following arguments are supported:
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
+
+* `deletion_protection` - (Optional) Whether Terraform will be prevented from destroying the service. Defaults to true.
+When a`terraform destroy` or `terraform apply` would delete the service,
+the command will fail if this field is not set to false in Terraform state.
+When the field is set to true or unset in Terraform state, a `terraform apply`
+or `terraform destroy` that would delete the service will fail.
+When the field is set to false, deleting the service is allowed.
 
 
 <a name="nested_binary_authorization"></a>The `binary_authorization` block supports:
@@ -1071,6 +1107,16 @@ The following arguments are supported:
 * `use_default` -
   (Optional)
   If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.
+
+* `policy` -
+  (Optional)
+  The path to a binary authorization policy. Format: projects/{project}/platforms/cloudRun/{policy-name}
+
+<a name="nested_scaling"></a>The `scaling` block supports:
+
+* `min_instance_count` -
+  (Optional)
+  Minimum number of instances for the service, to be divided among all revisions receiving traffic.
 
 <a name="nested_traffic"></a>The `traffic` block supports:
 

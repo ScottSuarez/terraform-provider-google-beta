@@ -20,6 +20,7 @@ package workstations
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -173,6 +174,61 @@ If the encryption key is revoked, the workstation session will automatically be 
 					},
 				},
 			},
+			"ephemeral_directories": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `Ephemeral directories which won't persist across workstation sessions.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"gce_pd": {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Optional:    true,
+							Description: `An EphemeralDirectory backed by a Compute Engine persistent disk.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"disk_type": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: `Type of the disk to use. Defaults to '"pd-standard"'.`,
+									},
+									"read_only": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Whether the disk is read only. If true, the disk may be shared by multiple VMs and 'sourceSnapshot' must be set.`,
+									},
+									"source_image": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Name of the disk image to use as the source for the disk.
+
+Must be empty 'sourceSnapshot' is set.
+Updating 'sourceImage' will update content in the ephemeral directory after the workstation is restarted.`,
+									},
+									"source_snapshot": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `Name of the snapshot to use as the source for the disk.
+
+Must be empty if 'sourceImage' is set.
+Must be empty if 'read_only' is false.
+Updating 'source_snapshot' will update content in the ephemeral directory after the workstation is restarted.`,
+									},
+								},
+							},
+						},
+						"mount_path": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: `Location of this directory in the running workstation.`,
+						},
+					},
+				},
+			},
 			"host": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -208,6 +264,65 @@ If the encryption key is revoked, the workstation session will automatically be 
 											},
 										},
 									},
+									"boost_configs": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `A list of the boost configurations that workstations created using this workstation configuration are allowed to use.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"id": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `The id to be used for the boost config.`,
+												},
+												"accelerators": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `An accelerator card attached to the boost instance.`,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"count": {
+																Type:        schema.TypeInt,
+																Required:    true,
+																Description: `Number of accelerator cards exposed to the instance.`,
+															},
+															"type": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Type of accelerator resource to attach to the instance, for example, "nvidia-tesla-p100".`,
+															},
+														},
+													},
+												},
+												"boot_disk_size_gb": {
+													Type:        schema.TypeInt,
+													Computed:    true,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `Size of the boot disk in GB. The minimum boot disk size is '30' GB. Defaults to '50' GB.`,
+												},
+												"enable_nested_virtualization": {
+													Type:     schema.TypeBool,
+													Computed: true,
+													Optional: true,
+													Description: `Whether to enable nested virtualization on the Compute Engine VMs backing boosted Workstations.
+
+See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
+												},
+												"machine_type": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: `The type of machine that boosted VM instances will use—for example, e2-standard-4. For more information about machine types that Cloud Workstations supports, see the list of available machine types https://cloud.google.com/workstations/docs/available-machine-types. Defaults to e2-standard-4.`,
+												},
+												"pool_size": {
+													Type:        schema.TypeInt,
+													Computed:    true,
+													Optional:    true,
+													Description: `Number of instances to pool for faster workstation boosting.`,
+												},
+											},
+										},
+									},
 									"boot_disk_size_gb": {
 										Type:        schema.TypeInt,
 										Computed:    true,
@@ -235,6 +350,12 @@ If the encryption key is revoked, the workstation session will automatically be 
 										Type:        schema.TypeBool,
 										Optional:    true,
 										Description: `Whether instances have no public IP address.`,
+									},
+									"disable_ssh": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Whether to disable SSH access to the VM.`,
+										Default:     true,
 									},
 									"enable_nested_virtualization": {
 										Type:     schema.TypeBool,
@@ -304,6 +425,16 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
+									},
+									"vm_tags": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Description: `Resource manager tags to be bound to the VM instances backing the Workstations.
+Tag keys and values have the same definition as
+https://cloud.google.com/resource-manager/docs/tags/tags-overview
+Keys must be in the format 'tagKeys/{tag_key_id}', and
+values are in the format 'tagValues/456'.`,
+										Elem: &schema.Schema{Type: schema.TypeString},
 									},
 								},
 							},
@@ -564,6 +695,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(persistentDirectoriesProp)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
 		obj["persistentDirectories"] = persistentDirectoriesProp
 	}
+	ephemeralDirectoriesProp, err := expandWorkstationsWorkstationConfigEphemeralDirectories(d.Get("ephemeral_directories"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ephemeral_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(ephemeralDirectoriesProp)) && (ok || !reflect.DeepEqual(v, ephemeralDirectoriesProp)) {
+		obj["ephemeralDirectories"] = ephemeralDirectoriesProp
+	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
@@ -620,6 +757,7 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -628,6 +766,7 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating WorkstationConfig: %s", err)
@@ -680,12 +819,14 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstationConfig %q", d.Id()))
@@ -729,6 +870,9 @@ func resourceWorkstationsWorkstationConfigRead(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err := d.Set("persistent_directories", flattenWorkstationsWorkstationConfigPersistentDirectories(res["persistentDirectories"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
+	if err := d.Set("ephemeral_directories", flattenWorkstationsWorkstationConfigEphemeralDirectories(res["ephemeralDirectories"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err := d.Set("container", flattenWorkstationsWorkstationConfigContainer(res["container"], d, config)); err != nil {
@@ -820,6 +964,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("persistent_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, persistentDirectoriesProp)) {
 		obj["persistentDirectories"] = persistentDirectoriesProp
 	}
+	ephemeralDirectoriesProp, err := expandWorkstationsWorkstationConfigEphemeralDirectories(d.Get("ephemeral_directories"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ephemeral_directories"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ephemeralDirectoriesProp)) {
+		obj["ephemeralDirectories"] = ephemeralDirectoriesProp
+	}
 	containerProp, err := expandWorkstationsWorkstationConfigContainer(d.Get("container"), d, config)
 	if err != nil {
 		return err
@@ -857,6 +1007,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	}
 
 	log.Printf("[DEBUG] Updating WorkstationConfig %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -890,11 +1041,18 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			"host.gceInstance.shieldedInstanceConfig.enableVtpm",
 			"host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring",
 			"host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute",
-			"host.gceInstance.accelerators")
+			"host.gceInstance.accelerators",
+			"host.gceInstance.boostConfigs",
+			"host.gceInstance.disableSsh",
+			"host.gceInstance.vmTags")
 	}
 
 	if d.HasChange("persistent_directories") {
 		updateMask = append(updateMask, "persistentDirectories")
+	}
+
+	if d.HasChange("ephemeral_directories") {
+		updateMask = append(updateMask, "ephemeralDirectories")
 	}
 
 	if d.HasChange("container") {
@@ -943,6 +1101,7 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -984,13 +1143,15 @@ func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta in
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting WorkstationConfig %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting WorkstationConfig %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -999,6 +1160,7 @@ func resourceWorkstationsWorkstationConfigDelete(d *schema.ResourceData, meta in
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "WorkstationConfig")
@@ -1134,6 +1296,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceTags(original["tags"], d, config)
 	transformed["disable_public_ip_addresses"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(original["disablePublicIpAddresses"], d, config)
+	transformed["disable_ssh"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceDisableSsh(original["disableSsh"], d, config)
 	transformed["enable_nested_virtualization"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enableNestedVirtualization"], d, config)
 	transformed["shielded_instance_config"] =
@@ -1142,6 +1306,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstance(v interface{}, d *schem
 		flattenWorkstationsWorkstationConfigHostGceInstanceConfidentialInstanceConfig(original["confidentialInstanceConfig"], d, config)
 	transformed["accelerators"] =
 		flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(original["accelerators"], d, config)
+	transformed["boost_configs"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(original["boostConfigs"], d, config)
+	transformed["vm_tags"] =
+		flattenWorkstationsWorkstationConfigHostGceInstanceVmTags(original["vmTags"], d, config)
 	return []interface{}{transformed}
 }
 func flattenWorkstationsWorkstationConfigHostGceInstanceMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1195,6 +1363,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d *s
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceDisableSsh(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1286,6 +1458,119 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v inte
 	return v // let terraform core handle it otherwise
 }
 
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"id":                           flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config),
+			"machine_type":                 flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machineType"], d, config),
+			"boot_disk_size_gb":            flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(original["bootDiskSizeGb"], d, config),
+			"enable_nested_virtualization": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(original["enableNestedVirtualization"], d, config),
+			"pool_size":                    flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(original["poolSize"], d, config),
+			"accelerators":                 flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"type":  flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(original["type"], d, config),
+			"count": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(original["count"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceVmTags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1360,6 +1645,64 @@ func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy
 }
 
 func flattenWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectories(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"mount_path": flattenWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(original["mountPath"], d, config),
+			"gce_pd":     flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(original["gcePd"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["disk_type"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(original["diskType"], d, config)
+	transformed["source_snapshot"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(original["sourceSnapshot"], d, config)
+	transformed["source_image"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(original["sourceImage"], d, config)
+	transformed["read_only"] =
+		flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(original["readOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1663,6 +2006,13 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		transformed["disablePublicIpAddresses"] = transformedDisablePublicIpAddresses
 	}
 
+	transformedDisableSsh, err := expandWorkstationsWorkstationConfigHostGceInstanceDisableSsh(original["disable_ssh"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["disableSsh"] = transformedDisableSsh
+	}
+
 	transformedEnableNestedVirtualization, err := expandWorkstationsWorkstationConfigHostGceInstanceEnableNestedVirtualization(original["enable_nested_virtualization"], d, config)
 	if err != nil {
 		return nil, err
@@ -1689,6 +2039,20 @@ func expandWorkstationsWorkstationConfigHostGceInstance(v interface{}, d tpgreso
 		return nil, err
 	} else if val := reflect.ValueOf(transformedAccelerators); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["accelerators"] = transformedAccelerators
+	}
+
+	transformedBoostConfigs, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(original["boost_configs"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBoostConfigs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["boostConfigs"] = transformedBoostConfigs
+	}
+
+	transformedVmTags, err := expandWorkstationsWorkstationConfigHostGceInstanceVmTags(original["vm_tags"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVmTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["vmTags"] = transformedVmTags
 	}
 
 	return transformed, nil
@@ -1719,6 +2083,10 @@ func expandWorkstationsWorkstationConfigHostGceInstanceTags(v interface{}, d tpg
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceDisablePublicIpAddresses(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceDisableSsh(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1831,6 +2199,131 @@ func expandWorkstationsWorkstationConfigHostGceInstanceAcceleratorsCount(v inter
 	return v, nil
 }
 
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedId, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
+		transformedMachineType, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(original["machine_type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMachineType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["machineType"] = transformedMachineType
+		}
+
+		transformedBootDiskSizeGb, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(original["boot_disk_size_gb"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedBootDiskSizeGb); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["bootDiskSizeGb"] = transformedBootDiskSizeGb
+		}
+
+		transformedEnableNestedVirtualization, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(original["enable_nested_virtualization"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEnableNestedVirtualization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["enableNestedVirtualization"] = transformedEnableNestedVirtualization
+		}
+
+		transformedPoolSize, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(original["pool_size"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPoolSize); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["poolSize"] = transformedPoolSize
+		}
+
+		transformedAccelerators, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedAccelerators); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["accelerators"] = transformedAccelerators
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsMachineType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedType, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(original["type"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["type"] = transformedType
+		}
+
+		transformedCount, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(original["count"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["count"] = transformedCount
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAcceleratorsCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceVmTags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
 func expandWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
@@ -1928,6 +2421,95 @@ func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdReclaimPolicy(
 }
 
 func expandWorkstationsWorkstationConfigPersistentDirectoriesGcePdSourceSnapshot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectories(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedMountPath, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(original["mount_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMountPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["mountPath"] = transformedMountPath
+		}
+
+		transformedGcePd, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(original["gce_pd"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGcePd); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["gcePd"] = transformedGcePd
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesMountPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDiskType, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(original["disk_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDiskType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["diskType"] = transformedDiskType
+	}
+
+	transformedSourceSnapshot, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(original["source_snapshot"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceSnapshot); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceSnapshot"] = transformedSourceSnapshot
+	}
+
+	transformedSourceImage, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(original["source_image"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceImage); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceImage"] = transformedSourceImage
+	}
+
+	transformedReadOnly, err := expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	return transformed, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdDiskType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceSnapshot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdSourceImage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigEphemeralDirectoriesGcePdReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

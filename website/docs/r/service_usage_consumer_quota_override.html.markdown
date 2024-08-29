@@ -17,7 +17,7 @@ description: |-
   A consumer override is applied to the consumer on its own authority to limit its own quota usage.
 ---
 
-# google\_service\_usage\_consumer\_quota\_override
+# google_service_usage_consumer_quota_override
 
 A consumer override is applied to the consumer on its own authority to limit its own quota usage.
 Consumer overrides cannot be used to grant more quota than would be allowed by admin overrides,
@@ -41,6 +41,7 @@ resource "google_project" "my_project" {
   name       = "tf-test-project"
   project_id = "quota"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_service_usage_consumer_quota_override" "override" {
@@ -62,6 +63,7 @@ resource "google_project" "my_project" {
   name       = "tf-test-project"
   project_id = "quota"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_service_usage_consumer_quota_override" "override" {
@@ -86,6 +88,7 @@ resource "google_project" "my_project" {
   name       = "tf-test-project"
   project_id = "quota"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_service_usage_consumer_quota_override" "override" {

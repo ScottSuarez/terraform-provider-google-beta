@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -128,11 +128,12 @@ func testAccCloudRunV2JobIamMember_basicGenerated(context map[string]interface{}
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -153,11 +154,12 @@ func testAccCloudRunV2JobIamPolicy_basicGenerated(context map[string]interface{}
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -193,11 +195,12 @@ func testAccCloudRunV2JobIamPolicy_emptyBinding(context map[string]interface{}) 
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -220,11 +223,12 @@ func testAccCloudRunV2JobIamBinding_basicGenerated(context map[string]interface{
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -245,11 +249,12 @@ func testAccCloudRunV2JobIamBinding_updateGenerated(context map[string]interface
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }

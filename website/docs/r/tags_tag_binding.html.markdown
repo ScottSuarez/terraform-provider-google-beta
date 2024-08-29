@@ -17,7 +17,7 @@ description: |-
   A TagBinding represents a connection between a TagValue and a cloud resource (currently project, folder, or organization).
 ---
 
-# google\_tags\_tag\_binding
+# google_tags_tag_binding
 
 A TagBinding represents a connection between a TagValue and a cloud resource (currently project, folder, or organization). Once a TagBinding is created, the TagValue is applied to all the descendants of the cloud resource.
 
@@ -36,6 +36,7 @@ resource "google_project" "project" {
 	project_id = "project_id"
 	name       = "project_id"
 	org_id     = "123456789"
+	deletion_policy = "DELETE"
 }
 
 resource "google_tags_tag_key" "key" {

@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -217,8 +218,8 @@ The URL of the network to which all network endpoints in the NEG belong. Uses
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"SERVERLESS", "PRIVATE_SERVICE_CONNECT", "INTERNET_IP_PORT", "INTERNET_FQDN_PORT", ""}),
-				Description:  `Type of network endpoints in this network endpoint group. Defaults to SERVERLESS. Default value: "SERVERLESS" Possible values: ["SERVERLESS", "PRIVATE_SERVICE_CONNECT", "INTERNET_IP_PORT", "INTERNET_FQDN_PORT"]`,
+				ValidateFunc: verify.ValidateEnum([]string{"SERVERLESS", "PRIVATE_SERVICE_CONNECT", "INTERNET_IP_PORT", "INTERNET_FQDN_PORT", "GCE_VM_IP_PORTMAP", ""}),
+				Description:  `Type of network endpoints in this network endpoint group. Defaults to SERVERLESS. Default value: "SERVERLESS" Possible values: ["SERVERLESS", "PRIVATE_SERVICE_CONNECT", "INTERNET_IP_PORT", "INTERNET_FQDN_PORT", "GCE_VM_IP_PORTMAP"]`,
 				Default:      "SERVERLESS",
 			},
 			"psc_target_service": {
@@ -352,7 +353,7 @@ func resourceComputeRegionNetworkEndpointGroupCreate(d *schema.ResourceData, met
 	appEngineProp, err := expandComputeRegionNetworkEndpointGroupAppEngine(d.Get("app_engine"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("app_engine"); !tpgresource.IsEmptyValue(reflect.ValueOf(appEngineProp)) && (ok || !reflect.DeepEqual(v, appEngineProp)) {
+	} else if v, ok := d.GetOkExists("app_engine"); ok || !reflect.DeepEqual(v, appEngineProp) {
 		obj["appEngine"] = appEngineProp
 	}
 	cloudFunctionProp, err := expandComputeRegionNetworkEndpointGroupCloudFunction(d.Get("cloud_function"), d, config)
@@ -364,7 +365,7 @@ func resourceComputeRegionNetworkEndpointGroupCreate(d *schema.ResourceData, met
 	serverlessDeploymentProp, err := expandComputeRegionNetworkEndpointGroupServerlessDeployment(d.Get("serverless_deployment"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("serverless_deployment"); !tpgresource.IsEmptyValue(reflect.ValueOf(serverlessDeploymentProp)) && (ok || !reflect.DeepEqual(v, serverlessDeploymentProp)) {
+	} else if v, ok := d.GetOkExists("serverless_deployment"); ok || !reflect.DeepEqual(v, serverlessDeploymentProp) {
 		obj["serverlessDeployment"] = serverlessDeploymentProp
 	}
 	regionProp, err := expandComputeRegionNetworkEndpointGroupRegion(d.Get("region"), d, config)
@@ -393,6 +394,7 @@ func resourceComputeRegionNetworkEndpointGroupCreate(d *schema.ResourceData, met
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -401,6 +403,7 @@ func resourceComputeRegionNetworkEndpointGroupCreate(d *schema.ResourceData, met
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionNetworkEndpointGroup: %s", err)
@@ -453,12 +456,14 @@ func resourceComputeRegionNetworkEndpointGroupRead(d *schema.ResourceData, meta 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionNetworkEndpointGroup %q", d.Id()))
@@ -529,13 +534,15 @@ func resourceComputeRegionNetworkEndpointGroupDelete(d *schema.ResourceData, met
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting RegionNetworkEndpointGroup %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting RegionNetworkEndpointGroup %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -544,6 +551,7 @@ func resourceComputeRegionNetworkEndpointGroupDelete(d *schema.ResourceData, met
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionNetworkEndpointGroup")

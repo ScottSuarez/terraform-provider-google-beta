@@ -10,8 +10,8 @@ import (
 
 	"google.golang.org/api/idtoken"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -75,7 +75,7 @@ func TestAccDataSourceGoogleServiceAccountIdToken_impersonation(t *testing.T) {
 
 	resourceName := "data.google_service_account_id_token.default"
 	serviceAccount := envvar.GetTestServiceAccountFromEnv(t)
-	targetServiceAccountEmail := acctest.BootstrapServiceAccount(t, envvar.GetTestProjectFromEnv(), serviceAccount)
+	targetServiceAccountEmail := acctest.BootstrapServiceAccount(t, "idtoken-imp", serviceAccount)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },

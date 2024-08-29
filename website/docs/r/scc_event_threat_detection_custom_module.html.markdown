@@ -18,7 +18,7 @@ description: |-
   its full module name, display name, enablement state, andlast updated time.
 ---
 
-# google\_scc\_event\_threat\_detection\_custom\_module
+# google_scc_event_threat_detection_custom_module
 
 Represents an instance of an Event Threat Detection custom module, including
 its full module name, display name, enablement state, andlast updated time.
@@ -41,7 +41,7 @@ resource "google_scc_event_threat_detection_custom_module" "example" {
   enablement_state = "ENABLED"
   type = "CONFIGURABLE_BAD_IP"
   description = "My Event Threat Detection Custom Module"
-  cofig = jsonencode({
+  config = jsonencode({
     "metadata": {
       "severity": "LOW",
       "description": "Flagged by Forcepoint as malicious",

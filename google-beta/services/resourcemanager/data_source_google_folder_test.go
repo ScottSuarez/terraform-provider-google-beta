@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccDataSourceGoogleFolder_byFullName(t *testing.T) {
@@ -125,6 +125,7 @@ func testAccCheckGoogleFolder_byFullNameConfig(parent string, displayName string
 resource "google_folder" "foobar" {
   parent       = "%s"
   display_name = "%s"
+  deletion_protection = false
 }
 
 data "google_folder" "folder" {
@@ -138,6 +139,7 @@ func testAccCheckGoogleFolder_byShortNameConfig(parent string, displayName strin
 resource "google_folder" "foobar" {
   parent       = "%s"
   display_name = "%s"
+  deletion_protection = false
 }
 
 data "google_folder" "folder" {
@@ -151,6 +153,7 @@ func testAccCheckGoogleFolder_lookupOrganizationConfig(parent string, displayNam
 resource "google_folder" "foobar" {
   parent       = "%s"
   display_name = "%s"
+  deletion_protection = false
 }
 
 data "google_folder" "folder" {

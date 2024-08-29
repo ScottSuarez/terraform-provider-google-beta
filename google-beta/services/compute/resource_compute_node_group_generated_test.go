@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -50,7 +50,7 @@ func TestAccComputeNodeGroup_nodeGroupBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_node_group.nodes",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"node_template", "initial_size", "zone"},
+				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
 		},
 	})
@@ -94,7 +94,7 @@ func TestAccComputeNodeGroup_nodeGroupMaintenanceIntervalExample(t *testing.T) {
 				ResourceName:            "google_compute_node_group.nodes",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"node_template", "initial_size", "zone"},
+				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
 		},
 	})
@@ -142,7 +142,7 @@ func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 				ResourceName:            "google_compute_node_group.nodes",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"node_template", "initial_size", "zone"},
+				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
 		},
 	})
@@ -195,7 +195,7 @@ func TestAccComputeNodeGroup_nodeGroupShareSettingsExample(t *testing.T) {
 				ResourceName:            "google_compute_node_group.nodes",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"node_template", "initial_size", "zone"},
+				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
 		},
 	})
@@ -207,6 +207,7 @@ resource "google_project" "guest_project" {
   project_id      = "tf-test-project-id%{random_suffix}"
   name            = "tf-test-project-name%{random_suffix}"
   org_id          = "%{org_id}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_compute_node_template" "soletenant-tmpl" {

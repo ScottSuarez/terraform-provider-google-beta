@@ -17,7 +17,7 @@ description: |-
   A Cloud Run Job resource that references a container image which is run to completion.
 ---
 
-# google\_cloud\_run\_v2\_job
+# google_cloud_run_v2_job
 
 A Cloud Run Job resource that references a container image which is run to completion.
 
@@ -29,7 +29,7 @@ To get more information about Job, see:
     * [Official Documentation](https://cloud.google.com/run/docs/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -40,18 +40,19 @@ To get more information about Job, see:
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_limits&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_limits&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -62,11 +63,12 @@ resource "google_cloud_run_v2_job" "default" {
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
         resources {
           limits = {
             cpu    = "2"
@@ -85,7 +87,7 @@ resource "google_cloud_run_v2_job" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_sql&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_sql&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -96,7 +98,7 @@ resource "google_cloud_run_v2_job" "default" {
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
-  
+  deletion_protection = false
   template {
     template{
       volumes {
@@ -107,7 +109,7 @@ resource "google_cloud_run_v2_job" "default" {
       }
 
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
 
         env {
           name = "FOO"
@@ -165,7 +167,7 @@ resource "google_sql_database_instance" "instance" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_vpcaccess&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_vpcaccess&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -176,11 +178,12 @@ resource "google_sql_database_instance" "instance" {
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template{
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
       vpc_access{
         connector = google_vpc_access_connector.connector.id
@@ -212,7 +215,7 @@ resource "google_compute_network" "custom_test" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_directvpc&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_directvpc&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -223,7 +226,8 @@ resource "google_compute_network" "custom_test" {
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
-  launch_stage = "BETA"
+  deletion_protection = false
+  launch_stage = "GA"
   template {
     template{
       containers {
@@ -235,14 +239,13 @@ resource "google_cloud_run_v2_job" "default" {
           subnetwork = "default"
           tags = ["tag1", "tag2", "tag3"]
         }
-        egress = "ALL_TRAFFIC"
       }
     }
   }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_secret&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_secret&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -253,6 +256,7 @@ resource "google_cloud_run_v2_job" "default" {
 resource "google_cloud_run_v2_job" "default" {
   name     = "cloudrun-job"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
@@ -269,7 +273,7 @@ resource "google_cloud_run_v2_job" "default" {
         }
       }
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
         volume_mounts {
           name = "a-volume"
           mount_path = "/secrets"
@@ -307,7 +311,7 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloudrunv2_job_emptydir&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_emptydir&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -319,11 +323,12 @@ resource "google_cloud_run_v2_job" "default" {
   provider = google-beta
   name     = "cloudrun-job"
   location = "us-central1"
+  deletion_protection = false
   launch_stage = "BETA"
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
 	volume_mounts {
 	  name = "empty-dir-volume"
 	  mount_path = "/mnt"
@@ -335,6 +340,30 @@ resource "google_cloud_run_v2_job" "default" {
 	  medium = "MEMORY"
 	  size_limit = "128Mi"
 	}
+      }
+    }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloudrunv2_job_run_job&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Cloudrunv2 Job Run Job
+
+
+```hcl
+resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
+  name     = "cloudrun-job"
+  location = "us-central1"
+  deletion_protection = false
+  start_execution_token = "start-once-created"
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -447,7 +476,7 @@ The following arguments are supported:
 
 * `args` -
   (Optional)
-  Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+  Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references are not supported in Cloud Run.
 
 * `env` -
   (Optional)
@@ -483,7 +512,7 @@ The following arguments are supported:
 
 * `value` -
   (Optional)
-  Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "", and the maximum length is 32768 bytes
+  Literal value of the environment variable. Defaults to "" and the maximum allowed length is 32768 characters. Variable references are not supported in Cloud Run.
 
 * `value_source` -
   (Optional)
@@ -556,6 +585,16 @@ The following arguments are supported:
   Ephemeral storage used as a shared volume.
   Structure is [documented below](#nested_empty_dir).
 
+* `gcs` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Cloud Storage bucket mounted as a volume using GCSFuse. This feature requires the launch stage to be set to ALPHA or BETA.
+  Structure is [documented below](#nested_gcs).
+
+* `nfs` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  NFS share mounted as a volume. This feature requires the launch stage to be set to ALPHA or BETA.
+  Structure is [documented below](#nested_nfs).
+
 
 <a name="nested_secret"></a>The `secret` block supports:
 
@@ -604,6 +643,30 @@ The following arguments are supported:
 * `size_limit` -
   (Optional)
   Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir.
+
+<a name="nested_gcs"></a>The `gcs` block supports:
+
+* `bucket` -
+  (Required)
+  Name of the cloud storage bucket to back the volume. The resource service account must have permission to access the bucket.
+
+* `read_only` -
+  (Optional)
+  If true, mount this volume as read-only in all mounts. If false, mount this volume as read-write.
+
+<a name="nested_nfs"></a>The `nfs` block supports:
+
+* `server` -
+  (Required)
+  Hostname or IP address of the NFS server.
+
+* `path` -
+  (Optional)
+  Path that is exported by the NFS server.
+
+* `read_only` -
+  (Optional)
+  If true, mount this volume as read-only in all mounts.
 
 <a name="nested_vpc_access"></a>The `vpc_access` block supports:
 
@@ -681,8 +744,25 @@ The following arguments are supported:
   Settings for the Binary Authorization feature.
   Structure is [documented below](#nested_binary_authorization).
 
+* `start_execution_token` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  A unique string used as a suffix creating a new execution upon job create or update. The Job will become ready when the execution is successfully started.
+  The sum of job name and token length must be fewer than 63 characters.
+
+* `run_execution_token` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  A unique string used as a suffix creating a new execution upon job create or update. The Job will become ready when the execution is successfully completed.
+  The sum of job name and token length must be fewer than 63 characters.
+
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
+
+* `deletion_protection` - (Optional) Whether Terraform will be prevented from destroying the job. Defaults to true.
+When a`terraform destroy` or `terraform apply` would delete the job,
+the command will fail if this field is not set to false in Terraform state.
+When the field is set to true or unset in Terraform state, a `terraform apply`
+or `terraform destroy` that would delete the job will fail.
+When the field is set to false, deleting the job is allowed.
 
 
 <a name="nested_binary_authorization"></a>The `binary_authorization` block supports:
@@ -694,6 +774,10 @@ The following arguments are supported:
 * `use_default` -
   (Optional)
   If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.
+
+* `policy` -
+  (Optional)
+  The path to a binary authorization policy. Format: projects/{project}/platforms/cloudRun/{policy-name}
 
 ## Attributes Reference
 

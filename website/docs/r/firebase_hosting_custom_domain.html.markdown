@@ -17,7 +17,7 @@ description: |-
   Manages Custom Domains for Firebase Hosting.
 ---
 
-# google\_firebase\_hosting\_custom\_domain
+# google_firebase_hosting_custom_domain
 
 Manages Custom Domains for Firebase Hosting. Custom Domains link your
 domain names with Firebase Hosting sites, allowing Hosting to serve content
@@ -91,6 +91,8 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  deletion_protection = "true"
 }
 
 resource "google_firebase_hosting_version" "default" {

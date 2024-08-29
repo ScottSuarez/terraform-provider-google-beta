@@ -20,6 +20,7 @@ package dataprocmetastore
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -322,18 +323,88 @@ There must be at least one IP address available in the subnet's primary range. T
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"autoscaling_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Represents the autoscaling configuration of a metastore service.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"autoscaling_enabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Defines whether autoscaling is enabled. The default value is false.`,
+									},
+									"limit_config": {
+										Type:        schema.TypeList,
+										Computed:    true,
+										Optional:    true,
+										Description: `Represents the limit configuration of a metastore service.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"max_scaling_factor": {
+													Type:        schema.TypeFloat,
+													Computed:    true,
+													Optional:    true,
+													Description: `The maximum scaling factor that the service will autoscale to. The default value is 6.0.`,
+												},
+												"min_scaling_factor": {
+													Type:        schema.TypeFloat,
+													Computed:    true,
+													Optional:    true,
+													Description: `The minimum scaling factor that the service will autoscale to. The default value is 0.1.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 						"instance_size": {
 							Type:          schema.TypeString,
 							Optional:      true,
 							ValidateFunc:  verify.ValidateEnum([]string{"EXTRA_SMALL", "SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE", ""}),
 							Description:   `Metastore instance sizes. Possible values: ["EXTRA_SMALL", "SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE"]`,
 							ConflictsWith: []string{"tier"},
-							ExactlyOneOf:  []string{"scaling_config.0.instance_size", "scaling_config.0.scaling_factor"},
+							ExactlyOneOf:  []string{"scaling_config.0.instance_size", "scaling_config.0.scaling_factor", "scaling_config.0.autoscaling_config"},
 						},
 						"scaling_factor": {
 							Type:        schema.TypeFloat,
 							Optional:    true,
 							Description: `Scaling factor, in increments of 0.1 for values less than 1.0, and increments of 1.0 for values greater than 1.0.`,
+						},
+					},
+				},
+			},
+			"scheduled_backup": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `The configuration of scheduled backup for the metastore service.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"backup_location": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `A Cloud Storage URI of a folder, in the format gs://<bucket_name>/<path_inside_bucket>. A sub-folder <backup_folder> containing backup files will be stored below it.`,
+						},
+						"cron_schedule": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The scheduled interval in Cron format, see https://en.wikipedia.org/wiki/Cron The default is empty: scheduled backup is not enabled. Must be specified to enable scheduled backups.`,
+						},
+						"enabled": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Optional:    true,
+							Description: `Defines whether the scheduled backup is enabled. The default value is false.`,
+						},
+						"time_zone": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: `Specifies the time zone to be used when interpreting cronSchedule. Must be a time zone name from the time zone database (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. America/Los_Angeles or Africa/Abidjan. If left unspecified, the default is UTC.`,
 						},
 					},
 				},
@@ -450,6 +521,12 @@ func resourceDataprocMetastoreServiceCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("scaling_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(scalingConfigProp)) && (ok || !reflect.DeepEqual(v, scalingConfigProp)) {
 		obj["scalingConfig"] = scalingConfigProp
 	}
+	scheduledBackupProp, err := expandDataprocMetastoreServiceScheduledBackup(d.Get("scheduled_backup"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scheduled_backup"); !tpgresource.IsEmptyValue(reflect.ValueOf(scheduledBackupProp)) && (ok || !reflect.DeepEqual(v, scheduledBackupProp)) {
+		obj["scheduledBackup"] = scheduledBackupProp
+	}
 	maintenanceWindowProp, err := expandDataprocMetastoreServiceMaintenanceWindow(d.Get("maintenance_window"), d, config)
 	if err != nil {
 		return err
@@ -524,6 +601,7 @@ func resourceDataprocMetastoreServiceCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -532,6 +610,7 @@ func resourceDataprocMetastoreServiceCreate(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Service: %s", err)
@@ -584,12 +663,14 @@ func resourceDataprocMetastoreServiceRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataprocMetastoreService %q", d.Id()))
@@ -627,6 +708,9 @@ func resourceDataprocMetastoreServiceRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("scaling_config", flattenDataprocMetastoreServiceScalingConfig(res["scalingConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("scheduled_backup", flattenDataprocMetastoreServiceScheduledBackup(res["scheduledBackup"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("maintenance_window", flattenDataprocMetastoreServiceMaintenanceWindow(res["maintenanceWindow"], d, config)); err != nil {
@@ -700,6 +784,12 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("scaling_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, scalingConfigProp)) {
 		obj["scalingConfig"] = scalingConfigProp
 	}
+	scheduledBackupProp, err := expandDataprocMetastoreServiceScheduledBackup(d.Get("scheduled_backup"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scheduled_backup"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, scheduledBackupProp)) {
+		obj["scheduledBackup"] = scheduledBackupProp
+	}
 	maintenanceWindowProp, err := expandDataprocMetastoreServiceMaintenanceWindow(d.Get("maintenance_window"), d, config)
 	if err != nil {
 		return err
@@ -743,6 +833,7 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Updating Service %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("port") {
@@ -755,6 +846,10 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 
 	if d.HasChange("scaling_config") {
 		updateMask = append(updateMask, "scalingConfig")
+	}
+
+	if d.HasChange("scheduled_backup") {
+		updateMask = append(updateMask, "scheduledBackup")
 	}
 
 	if d.HasChange("maintenance_window") {
@@ -802,6 +897,7 @@ func resourceDataprocMetastoreServiceUpdate(d *schema.ResourceData, meta interfa
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -843,13 +939,15 @@ func resourceDataprocMetastoreServiceDelete(d *schema.ResourceData, meta interfa
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Service %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Service %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -858,6 +956,7 @@ func resourceDataprocMetastoreServiceDelete(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Service")
@@ -968,6 +1067,8 @@ func flattenDataprocMetastoreServiceScalingConfig(v interface{}, d *schema.Resou
 		flattenDataprocMetastoreServiceScalingConfigInstanceSize(original["instanceSize"], d, config)
 	transformed["scaling_factor"] =
 		flattenDataprocMetastoreServiceScalingConfigScalingFactor(original["scalingFactor"], d, config)
+	transformed["autoscaling_config"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfig(original["autoscalingConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenDataprocMetastoreServiceScalingConfigInstanceSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -975,6 +1076,83 @@ func flattenDataprocMetastoreServiceScalingConfigInstanceSize(v interface{}, d *
 }
 
 func flattenDataprocMetastoreServiceScalingConfigScalingFactor(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["autoscaling_enabled"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(original["autoscalingEnabled"], d, config)
+	transformed["limit_config"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(original["limitConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["min_scaling_factor"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMinScalingFactor(original["minScalingFactor"], d, config)
+	transformed["max_scaling_factor"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMaxScalingFactor(original["maxScalingFactor"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMinScalingFactor(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMaxScalingFactor(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScheduledBackup(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenDataprocMetastoreServiceScheduledBackupEnabled(original["enabled"], d, config)
+	transformed["cron_schedule"] =
+		flattenDataprocMetastoreServiceScheduledBackupCronSchedule(original["cronSchedule"], d, config)
+	transformed["time_zone"] =
+		flattenDataprocMetastoreServiceScheduledBackupTimeZone(original["timeZone"], d, config)
+	transformed["backup_location"] =
+		flattenDataprocMetastoreServiceScheduledBackupBackupLocation(original["backupLocation"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDataprocMetastoreServiceScheduledBackupEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScheduledBackupCronSchedule(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScheduledBackupTimeZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScheduledBackupBackupLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1289,6 +1467,13 @@ func expandDataprocMetastoreServiceScalingConfig(v interface{}, d tpgresource.Te
 		transformed["scalingFactor"] = transformedScalingFactor
 	}
 
+	transformedAutoscalingConfig, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfig(original["autoscaling_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAutoscalingConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["autoscalingConfig"] = transformedAutoscalingConfig
+	}
+
 	return transformed, nil
 }
 
@@ -1297,6 +1482,126 @@ func expandDataprocMetastoreServiceScalingConfigInstanceSize(v interface{}, d tp
 }
 
 func expandDataprocMetastoreServiceScalingConfigScalingFactor(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAutoscalingEnabled, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(original["autoscaling_enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAutoscalingEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["autoscalingEnabled"] = transformedAutoscalingEnabled
+	}
+
+	transformedLimitConfig, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(original["limit_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedLimitConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["limitConfig"] = transformedLimitConfig
+	}
+
+	return transformed, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMinScalingFactor, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMinScalingFactor(original["min_scaling_factor"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMinScalingFactor); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["minScalingFactor"] = transformedMinScalingFactor
+	}
+
+	transformedMaxScalingFactor, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMaxScalingFactor(original["max_scaling_factor"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxScalingFactor); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxScalingFactor"] = transformedMaxScalingFactor
+	}
+
+	return transformed, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMinScalingFactor(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMaxScalingFactor(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScheduledBackup(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandDataprocMetastoreServiceScheduledBackupEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	transformedCronSchedule, err := expandDataprocMetastoreServiceScheduledBackupCronSchedule(original["cron_schedule"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCronSchedule); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["cronSchedule"] = transformedCronSchedule
+	}
+
+	transformedTimeZone, err := expandDataprocMetastoreServiceScheduledBackupTimeZone(original["time_zone"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTimeZone); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["timeZone"] = transformedTimeZone
+	}
+
+	transformedBackupLocation, err := expandDataprocMetastoreServiceScheduledBackupBackupLocation(original["backup_location"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBackupLocation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["backupLocation"] = transformedBackupLocation
+	}
+
+	return transformed, nil
+}
+
+func expandDataprocMetastoreServiceScheduledBackupEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScheduledBackupCronSchedule(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScheduledBackupTimeZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScheduledBackupBackupLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

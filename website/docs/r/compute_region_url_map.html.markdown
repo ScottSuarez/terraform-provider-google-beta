@@ -18,7 +18,7 @@ description: |-
   that you define for the host and path of an incoming URL.
 ---
 
-# google\_compute\_region\_url\_map
+# google_compute_region_url_map
 
 UrlMaps are used to route requests to a backend service based on rules
 that you define for the host and path of an incoming URL.
@@ -26,7 +26,7 @@ that you define for the host and path of an incoming URL.
 
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -104,7 +104,7 @@ resource "google_compute_region_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_default_route_action&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_default_route_action&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -283,7 +283,7 @@ resource "google_compute_region_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_l7_ilb_path&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_l7_ilb_path&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -394,7 +394,7 @@ resource "google_compute_region_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_l7_ilb_path_partial&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_l7_ilb_path_partial&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -473,7 +473,7 @@ resource "google_compute_region_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_l7_ilb_route&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_l7_ilb_route&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -565,7 +565,7 @@ resource "google_compute_region_health_check" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_url_map_l7_ilb_route_partial&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_l7_ilb_route_partial&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -679,7 +679,7 @@ resource "google_compute_forwarding_rule" "default" {
   region                = "europe-west1"
   depends_on            = [google_compute_subnetwork.proxy_subnet]
   ip_protocol           = "TCP"
-  ip_address            = google_compute_address.default.id
+  ip_address            = google_compute_address.default.address
   load_balancing_scheme = "INTERNAL_MANAGED"
   port_range            = "443"
   target                = google_compute_region_target_https_proxy.default.id
@@ -774,7 +774,7 @@ resource "google_compute_instance_template" "default" {
     }
   }
   disk {
-    source_image = "debian-cloud/debian-10"
+    source_image = "debian-cloud/debian-12"
     auto_delete  = true
     boot         = true
   }
@@ -867,7 +867,7 @@ resource "google_compute_instance" "default" {
   }
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "debian-cloud/debian-12"
     }
   }
 }
@@ -879,7 +879,7 @@ resource "google_compute_forwarding_rule" "redirect" {
   name                  = "l7-ilb-redirect"
   region                = "europe-west1"
   ip_protocol           = "TCP"
-  ip_address            = google_compute_address.default.id # Same as HTTPS load balancer
+  ip_address            = google_compute_address.default.address # Same as HTTPS load balancer
   load_balancing_scheme = "INTERNAL_MANAGED"
   port_range            = "80"
   target                = google_compute_region_target_http_proxy.default.id
@@ -917,6 +917,103 @@ resource "google_compute_region_url_map" "redirect" {
         strip_query            = true
       }
     }
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_url_map_path_template_match&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Url Map Path Template Match
+
+
+```hcl
+resource "google_compute_region_url_map" "urlmap" {
+  region = "us-central1"
+
+  name        = "urlmap"
+  description = "a description"
+
+  default_service = google_compute_region_backend_service.home-backend.id
+
+  host_rule {
+    hosts        = ["mysite.com"]
+    path_matcher = "mysite"
+  }
+
+  path_matcher {
+    name            = "mysite"
+    default_service = google_compute_region_backend_service.home-backend.id
+
+    route_rules {
+      match_rules {
+        path_template_match = "/xyzwebservices/v2/xyz/users/{username=*}/carts/{cartid=**}"
+      }
+      service = google_compute_region_backend_service.cart-backend.id
+      priority = 1
+      route_action {
+        url_rewrite {
+          path_template_rewrite = "/{username}-{cartid}/"
+        }
+      }
+    }
+
+    route_rules {
+      match_rules {
+        path_template_match = "/xyzwebservices/v2/xyz/users/*/accountinfo/*"
+      }
+      service = google_compute_region_backend_service.user-backend.id
+      priority = 2
+    }
+  }
+}
+
+resource "google_compute_region_backend_service" "home-backend" {
+  region = "us-central1"
+
+  name        = "home-service"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_backend_service" "cart-backend" {
+  region = "us-central1"
+
+  name        = "cart-service"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_backend_service" "user-backend" {
+  region = "us-central1"
+
+  name        = "user-service"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_health_check" "default" {
+  region = "us-central1"
+
+  name               = "health-check"
+  check_interval_sec = 1
+  timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
   }
 }
 ```
@@ -1230,6 +1327,17 @@ The following arguments are supported:
   see en.cppreference.com/w/cpp/regex/ecmascript  Only one of prefixMatch,
   fullPathMatch or regexMatch must be specified.
 
+* `path_template_match` -
+  (Optional)
+  For satisfying the matchRule condition, the path of the request
+  must match the wildcard pattern specified in pathTemplateMatch
+  after removing any query parameters and anchor that may be part
+  of the original URL.
+  pathTemplateMatch must be between 1 and 255 characters
+  (inclusive).  The pattern specified by pathTemplateMatch may
+  have at most 5 wildcard operators and at most 5 variable
+  captures in total.
+
 
 <a name="nested_header_matches"></a>The `header_matches` block supports:
 
@@ -1537,7 +1645,7 @@ The following arguments are supported:
   Specifies one or more conditions when this retry rule applies. Valid values are:
   * 5xx: Loadbalancer will attempt a retry if the backend service responds with
     any 5xx response code, or if the backend service does not respond at all,
-    example: disconnects, reset, read timeout, connection failure, and refused
+    for example: disconnects, reset, read timeout, connection failure, and refused
     streams.
   * gateway-error: Similar to 5xx, but only applies to response codes
     502, 503 or 504.
@@ -1596,6 +1704,20 @@ The following arguments are supported:
   Prior to forwarding the request to the selected backend service, the matching
   portion of the request's path is replaced by pathPrefixRewrite. The value must
   be between 1 and 1024 characters.
+
+* `path_template_rewrite` -
+  (Optional)
+  Prior to forwarding the request to the selected origin, if the
+  request matched a pathTemplateMatch, the matching portion of the
+  request's path is replaced re-written using the pattern specified
+  by pathTemplateRewrite.
+  pathTemplateRewrite must be between 1 and 255 characters
+  (inclusive), must start with a '/', and must only use variables
+  captured by the route's pathTemplate matchers.
+  pathTemplateRewrite may only be used when all of a route's
+  MatchRules specify pathTemplate.
+  Only one of pathPrefixRewrite and pathTemplateRewrite may be
+  specified.
 
 <a name="nested_weighted_backend_services"></a>The `weighted_backend_services` block supports:
 
@@ -1941,7 +2063,7 @@ The following arguments are supported:
   Specifies one or more conditions when this retry rule applies. Valid values are:
   - 5xx: Loadbalancer will attempt a retry if the backend service responds with
   any 5xx response code, or if the backend service does not respond at all,
-  example: disconnects, reset, read timeout, connection failure, and refused
+  for example: disconnects, reset, read timeout, connection failure, and refused
   streams.
   - gateway-error: Similar to 5xx, but only applies to response codes
   502, 503 or 504.

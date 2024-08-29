@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccVertexAIIndex_vertexAiIndexExample(t *testing.T) {
 				ResourceName:            "google_vertex_ai_index.index",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "region", "metadata.0.contents_delta_uri", "metadata.0.is_complete_overwrite", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "labels", "metadata.0.config.0.feature_norm_type", "metadata.0.contents_delta_uri", "metadata.0.is_complete_overwrite", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -123,7 +123,7 @@ func TestAccVertexAIIndex_vertexAiIndexStreamingExample(t *testing.T) {
 				ResourceName:            "google_vertex_ai_index.index",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "region", "metadata.0.contents_delta_uri", "metadata.0.is_complete_overwrite", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"etag", "labels", "metadata.0.config.0.feature_norm_type", "metadata.0.contents_delta_uri", "metadata.0.is_complete_overwrite", "region", "terraform_labels"},
 			},
 		},
 	})

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
 
@@ -96,6 +96,9 @@ func TestAccPubsubTopic_schema(t *testing.T) {
 				Config: testAccPubsubTopic_updateWithNewSchema(topic, schema2),
 			},
 			{
+				Config: testAccPubsubTopic_updateWithNewSchema(topic, ""),
+			},
+			{
 				ResourceName:      "google_pubsub_topic.bar",
 				ImportStateId:     topic,
 				ImportState:       true,
@@ -137,6 +140,38 @@ func TestAccPubsubTopic_migration(t *testing.T) {
 				ImportState:              true,
 				ImportStateVerify:        true,
 				ImportStateVerifyIgnore:  []string{"labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func TestAccPubsubTopic_kinesisIngestionUpdate(t *testing.T) {
+	t.Parallel()
+
+	topic := fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckPubsubTopicDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPubsubTopic_updateWithKinesisIngestionSettings(topic),
+			},
+			{
+				ResourceName:      "google_pubsub_topic.foo",
+				ImportStateId:     topic,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccPubsubTopic_updateWithUpdatedKinesisIngestionSettings(topic),
+			},
+			{
+				ResourceName:      "google_pubsub_topic.foo",
+				ImportStateId:     topic,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -198,7 +233,8 @@ resource "google_pubsub_topic" "bar" {
 }
 
 func testAccPubsubTopic_updateWithNewSchema(topic, schema string) string {
-	return fmt.Sprintf(`
+	if schema != "" {
+		return fmt.Sprintf(`
 resource "google_pubsub_schema" "foo" {
 	name = "%s"
 	type = "PROTOCOL_BUFFER"
@@ -213,4 +249,47 @@ resource "google_pubsub_topic" "bar" {
   }
 }
 `, schema, topic)
+	} else {
+		return fmt.Sprintf(`
+		resource "google_pubsub_topic" "bar" {
+			name = "%s"
+		}
+		`, topic)
+	}
+}
+
+func testAccPubsubTopic_updateWithKinesisIngestionSettings(topic string) string {
+	return fmt.Sprintf(`
+resource "google_pubsub_topic" "foo" {
+  name = "%s"
+
+  # Outside of automated terraform-provider-google CI tests, these values must be of actual AWS resources for the test to pass.
+  ingestion_data_source_settings {
+    aws_kinesis {
+        stream_arn = "arn:aws:kinesis:us-west-2:111111111111:stream/fake-stream-name"
+        consumer_arn = "arn:aws:kinesis:us-west-2:111111111111:stream/fake-stream-name/consumer/consumer-1:1111111111"
+        aws_role_arn = "arn:aws:iam::111111111111:role/fake-role-name"
+        gcp_service_account = "fake-service-account@fake-gcp-project.iam.gserviceaccount.com"
+    }
+  }
+}
+`, topic)
+}
+
+func testAccPubsubTopic_updateWithUpdatedKinesisIngestionSettings(topic string) string {
+	return fmt.Sprintf(`
+resource "google_pubsub_topic" "foo" {
+  name = "%s"
+
+  # Outside of automated terraform-provider-google CI tests, these values must be of actual AWS resources for the test to pass.
+  ingestion_data_source_settings {
+    aws_kinesis {
+        stream_arn = "arn:aws:kinesis:us-west-2:111111111111:stream/updated-fake-stream-name"
+        consumer_arn = "arn:aws:kinesis:us-west-2:111111111111:stream/updated-fake-stream-name/consumer/consumer-1:1111111111"
+        aws_role_arn = "arn:aws:iam::111111111111:role/updated-fake-role-name"
+        gcp_service_account = "updated-fake-service-account@fake-gcp-project.iam.gserviceaccount.com"
+    }
+  }
+}
+`, topic)
 }

@@ -24,15 +24,14 @@ Retrieves the current IAM policy data for repository
 See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 
-
 ## example
 
 ```hcl
 data "google_dataform_repository_iam_policy" "policy" {
   provider = google-beta
-  project = google_dataform_repository.dataform_respository.project
-  region = google_dataform_repository.dataform_respository.region
-  repository = google_dataform_repository.dataform_respository.name
+  project = google_dataform_repository.dataform_repository.project
+  region = google_dataform_repository.dataform_repository.region
+  repository = google_dataform_repository.dataform_repository.name
 }
 ```
 

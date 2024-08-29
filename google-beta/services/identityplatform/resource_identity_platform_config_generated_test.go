@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -32,8 +32,8 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigBasicExample(t *testing
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":           envvar.GetTestOrgFromEnv(t),
 		"billing_acct":     envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
 		"quota_start_time": time.Now().AddDate(0, 0, 1).Format(time.RFC3339),
 		"random_suffix":    acctest.RandString(t, 10),
 	}
@@ -46,9 +46,10 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigBasicExample(t *testing
 				Config: testAccIdentityPlatformConfig_identityPlatformConfigBasicExample(context),
 			},
 			{
-				ResourceName:      "google_identity_platform_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_identity_platform_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client.0.api_key", "client.0.firebase_subdomain"},
 			},
 		},
 	})
@@ -61,6 +62,7 @@ resource "google_project" "default" {
   name       = "tf-test-my-project%{random_suffix}"
   org_id     = "%{org_id}"
   billing_account =  "%{billing_acct}"
+  deletion_policy = "DELETE"
   labels = {
     firebase = "enabled"
   }
@@ -130,8 +132,8 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigMinimalExample(t *testi
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"billing_acct":  envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -143,9 +145,10 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigMinimalExample(t *testi
 				Config: testAccIdentityPlatformConfig_identityPlatformConfigMinimalExample(context),
 			},
 			{
-				ResourceName:      "google_identity_platform_config.default",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_identity_platform_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client.0.api_key", "client.0.firebase_subdomain"},
 			},
 		},
 	})
@@ -158,6 +161,7 @@ resource "google_project" "default" {
   name       = "tf-test-my-project-1%{random_suffix}"
   org_id     = "%{org_id}"
   billing_account =  "%{billing_acct}"
+  deletion_policy = "DELETE"
   labels = {
     firebase = "enabled"
   }
@@ -171,7 +175,33 @@ resource "google_project_service" "identitytoolkit" {
 
 resource "google_identity_platform_config" "default" {
   project = google_project.default.project_id
-  
+  client {
+    permissions {
+      disabled_user_deletion = false
+      disabled_user_signup   = true
+    }
+  }
+
+  mfa {
+    enabled_providers = ["PHONE_SMS"]
+    provider_configs {
+      state = "ENABLED"
+      totp_provider_config {
+        adjacent_intervals = 3
+      }
+    }
+    state = "ENABLED"
+  }
+  monitoring {
+    request_logging {
+      enabled = true
+    }
+  }
+  multi_tenant {
+    allow_tenants           = true
+    default_tenant_location = "organizations/%{org_id}"
+  }
+
   depends_on = [
     google_project_service.identitytoolkit
   ]

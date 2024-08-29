@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -36,8 +36,8 @@ func TestAccApigeeInstance_apigeeInstanceBasicTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -66,6 +66,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -128,8 +129,8 @@ func TestAccApigeeInstance_apigeeInstanceCidrRangeTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -158,6 +159,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -221,8 +223,8 @@ func TestAccApigeeInstance_apigeeInstanceIpRangeTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -251,6 +253,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -314,8 +317,8 @@ func TestAccApigeeInstance_apigeeInstanceFullTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -346,6 +349,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -433,7 +437,7 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   crypto_key_id = google_kms_crypto_key.apigee_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  member = "serviceAccount:${google_project_service_identity.apigee_sa.email}"
+  member = google_project_service_identity.apigee_sa.member
 }
 
 resource "google_apigee_organization" "apigee_org" {
@@ -470,8 +474,8 @@ func TestAccApigeeInstance_apigeeInstanceServiceAttachmentBasicTestExample(t *te
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -500,6 +504,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -557,7 +562,7 @@ resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
   target                = google_compute_service_attachment.psc_ilb_service_attachment.id
   load_balancing_scheme = "" # need to override EXTERNAL default when target is a service attachment
   network               = "default"
-  ip_address            = google_compute_address.psc_ilb_consumer_address.id
+  ip_address            = google_compute_address.psc_ilb_consumer_address.address
 
   project = google_project.project.project_id
 }

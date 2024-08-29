@@ -17,7 +17,7 @@ description: |-
   Google Cloud Armor network edge security service resource.
 ---
 
-# google\_compute\_network\_edge\_security\_service
+# google_compute_network_edge_security_service
 
 Google Cloud Armor network edge security service resource.
 
@@ -28,7 +28,7 @@ To get more information about NetworkEdgeSecurityService, see:
 
 * [API documentation](https://cloud.google.com/compute/docs/reference/rest/v1/networkEdgeSecurityServices)
 * How-to Guides
-    * [Official Documentation](https://cloud.google.com/armor/docs/advanced-network-ddos?hl=pt-br#activate_advanced_network_ddos_protection)
+    * [Official Documentation](https://cloud.google.com/armor/docs/advanced-network-ddos)
 
 ## Example Usage - Compute Network Edge Security Service Basic
 

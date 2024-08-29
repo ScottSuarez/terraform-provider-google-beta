@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -59,7 +59,7 @@ func TestAccDefaultUniverseDomain_doesNotMatchExplicit(t *testing.T) {
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config:      testAccUniverseDomain_basic_disk(universeDomainFake),
-				ExpectError: regexp.MustCompile("supplied directly to Terraform with no matching universe domain in credentials"),
+				ExpectError: regexp.MustCompile("Universe domain mismatch"),
 			},
 		},
 	})

@@ -17,7 +17,7 @@ description: |-
   A Cloud Function that contains user computation executed in response to an event.
 ---
 
-# google\_cloudfunctions2\_function
+# google_cloudfunctions2_function
 
 A Cloud Function that contains user computation executed in response to an event.
 
@@ -67,10 +67,6 @@ resource "google_cloudfunctions2_function" "function" {
     available_memory    = "256M"
     timeout_seconds     = 60
   }
-}
-
-output "function_uri" { 
-  value = google_cloudfunctions2_function.function.service_config[0].uri
 }
 ```
 ## Example Usage - Cloudfunctions2 Full
@@ -129,7 +125,8 @@ resource "google_cloudfunctions2_function" "function" {
     max_instance_request_concurrency = 80
     available_cpu = "4"
     environment_variables = {
-        SERVICE_CONFIG_TEST = "config_test"
+        SERVICE_CONFIG_TEST      = "config_test"
+        SERVICE_CONFIG_DIFF_TEST = google_service_account.account.email
     }
     ingress_settings = "ALLOW_INTERNAL_ONLY"
     all_traffic_on_latest_revision = true
@@ -323,7 +320,6 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   event_trigger {
-    trigger_region = "us-central1" # The trigger must be in the same location as the bucket
     event_type = "google.cloud.storage.object.v1.finalized"
     retry_policy = "RETRY_POLICY_RETRY"
     service_account_email = google_service_account.account.email
@@ -445,6 +441,86 @@ resource "google_cloudfunctions2_function" "function" {
       operator = "match-path-pattern" # This allows path patterns to be used in the value field
     }
   }
+}
+```
+## Example Usage - Cloudfunctions2 Basic Builder
+
+
+```hcl
+locals {
+  project = "my-project-name" # Google Cloud Platform Project ID
+}
+
+resource "google_service_account" "account" {
+  account_id = "gcf-sa"
+  display_name = "Test Service Account"
+}
+
+resource "google_project_iam_member" "log_writer" {
+  project = google_service_account.account.project
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_project_iam_member" "artifact_registry_writer" {
+  project = google_service_account.account.project
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_project_iam_member" "storage_object_admin" {
+  project = google_service_account.account.project
+  role    = "roles/storage.objectAdmin"
+  member  = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_storage_bucket" "bucket" {
+  name     = "${local.project}-gcf-source"  # Every bucket name must be globally unique
+  location = "US"
+  uniform_bucket_level_access = true
+}
+ 
+resource "google_storage_bucket_object" "object" {
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "function-source.zip"  # Add path to the zipped function source code
+}
+
+# builder permissions need to stablize before it can pull the source zip
+resource "time_sleep" "wait_60s" {
+  create_duration = "60s"
+
+  depends_on = [
+    google_project_iam_member.log_writer,
+    google_project_iam_member.artifact_registry_writer,
+    google_project_iam_member.storage_object_admin,
+  ]
+}
+ 
+resource "google_cloudfunctions2_function" "function" {
+  name = "function-v2"
+  location = "us-central1"
+  description = "a new function"
+ 
+  build_config {
+    runtime = "nodejs16"
+    entry_point = "helloHttp"  # Set the entry point 
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+    service_account = google_service_account.account.id
+  }
+ 
+  service_config {
+    max_instance_count  = 1
+    available_memory    = "256M"
+    timeout_seconds     = 60
+  }
+
+  depends_on = [time_sleep.wait_60s]
 }
 ```
 ## Example Usage - Cloudfunctions2 Secret Env
@@ -705,7 +781,7 @@ resource "google_kms_crypto_key_iam_binding" "gcf_cmek_keyuser" {
     "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
     "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
     "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com",
-    "serviceAccount:${google_project_service_identity.ea_sa.email}",
+    google_project_service_identity.ea_sa.member,
   ]
 
   depends_on = [
@@ -756,6 +832,160 @@ resource "google_cloudfunctions2_function" "function" {
     google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
   ]
 
+}
+```
+## Example Usage - Cloudfunctions2 Abiu
+
+
+```hcl
+locals {
+  project = "my-project-name" # Google Cloud Platform Project ID
+}
+
+resource "google_service_account" "account" {
+  provider = google-beta
+  account_id = "gcf-sa"
+  display_name = "Test Service Account"
+}
+
+resource "google_pubsub_topic" "topic" {
+  provider = google-beta
+  name = "functions2-topic"
+}
+
+resource "google_storage_bucket" "bucket" {
+  provider = google-beta
+  name     = "${local.project}-gcf-source"  # Every bucket name must be globally unique
+  location = "US"
+  uniform_bucket_level_access = true
+}
+ 
+resource "google_storage_bucket_object" "object" {
+  provider = google-beta
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "function-source.zip"  # Add path to the zipped function source code
+}
+ 
+resource "google_cloudfunctions2_function" "function" {
+  provider = google-beta
+  name = "gcf-function"
+  location = "europe-west6"
+  description = "a new function"
+ 
+  build_config {
+    runtime = "nodejs16"
+    entry_point = "helloPubSub"  # Set the entry point 
+    environment_variables = {
+        BUILD_CONFIG_TEST = "build_test"
+    }
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+    automatic_update_policy {}
+  }
+ 
+  service_config {
+    max_instance_count  = 3
+    min_instance_count = 1
+    available_memory    = "4Gi"
+    timeout_seconds     = 60
+    max_instance_request_concurrency = 80
+    available_cpu = "4"
+    environment_variables = {
+        SERVICE_CONFIG_TEST = "config_test"
+    }
+    ingress_settings = "ALLOW_INTERNAL_ONLY"
+    all_traffic_on_latest_revision = true
+    service_account_email = google_service_account.account.email
+  }
+
+  event_trigger {
+    trigger_region = "us-central1"
+    event_type = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic = google_pubsub_topic.topic.id
+    retry_policy = "RETRY_POLICY_RETRY"
+  }
+}
+```
+## Example Usage - Cloudfunctions2 Abiu On Deploy
+
+
+```hcl
+locals {
+  project = "my-project-name" # Google Cloud Platform Project ID
+}
+
+resource "google_service_account" "account" {
+  provider = google-beta
+  account_id = "gcf-sa"
+  display_name = "Test Service Account"
+}
+
+resource "google_pubsub_topic" "topic" {
+  provider = google-beta
+  name = "functions2-topic"
+}
+
+resource "google_storage_bucket" "bucket" {
+  provider = google-beta
+  name     = "${local.project}-gcf-source"  # Every bucket name must be globally unique
+  location = "US"
+  uniform_bucket_level_access = true
+}
+ 
+resource "google_storage_bucket_object" "object" {
+  provider = google-beta
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "function-source.zip"  # Add path to the zipped function source code
+}
+ 
+resource "google_cloudfunctions2_function" "function" {
+  provider = google-beta
+  name = "gcf-function"
+  location = "europe-west6"
+  description = "a new function"
+ 
+  build_config {
+    runtime = "nodejs16"
+    entry_point = "helloPubSub"  # Set the entry point 
+    environment_variables = {
+        BUILD_CONFIG_TEST = "build_test"
+    }
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+    on_deploy_update_policy {}
+  }
+ 
+  service_config {
+    max_instance_count  = 3
+    min_instance_count = 1
+    available_memory    = "4Gi"
+    timeout_seconds     = 60
+    max_instance_request_concurrency = 80
+    available_cpu = "4"
+    environment_variables = {
+        SERVICE_CONFIG_TEST = "config_test"
+    }
+    ingress_settings = "ALLOW_INTERNAL_ONLY"
+    all_traffic_on_latest_revision = true
+    service_account_email = google_service_account.account.email
+  }
+
+  event_trigger {
+    trigger_region = "us-central1"
+    event_type = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic = google_pubsub_topic.topic.id
+    retry_policy = "RETRY_POLICY_RETRY"
+  }
 }
 ```
 
@@ -851,6 +1081,20 @@ The following arguments are supported:
   (Optional)
   User managed repository created in Artifact Registry optionally with a customer managed encryption key.
 
+* `service_account` -
+  (Optional)
+  The fully-qualified name of the service account to be used for building the container.
+
+* `automatic_update_policy` -
+  (Optional)
+  Security patches are applied automatically to the runtime without requiring
+  the function to be redeployed.
+
+* `on_deploy_update_policy` -
+  (Optional)
+  Security patches are only applied when a function is redeployed.
+  Structure is [documented below](#nested_on_deploy_update_policy).
+
 
 <a name="nested_source"></a>The `source` block supports:
 
@@ -911,6 +1155,12 @@ The following arguments are supported:
   (Optional)
   Only trigger a build if the revision regex does
   NOT match the revision regex.
+
+<a name="nested_on_deploy_update_policy"></a>The `on_deploy_update_policy` block supports:
+
+* `runtime_version` -
+  (Output)
+  The runtime version which was used during latest function deployment.
 
 <a name="nested_service_config"></a>The `service_config` block supports:
 

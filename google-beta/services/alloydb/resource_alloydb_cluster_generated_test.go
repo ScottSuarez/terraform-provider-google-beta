@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccAlloydbCluster_alloydbClusterBasicExample(t *testing.T) {
 				ResourceName:            "google_alloydb_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"initial_user", "restore_backup_source", "restore_continuous_backup_source", "cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "cluster_id", "initial_user", "labels", "location", "restore_backup_source", "restore_continuous_backup_source", "terraform_labels"},
 			},
 		},
 	})
@@ -60,7 +60,9 @@ func testAccAlloydbCluster_alloydbClusterBasicExample(context map[string]interfa
 resource "google_alloydb_cluster" "default" {
   cluster_id = "tf-test-alloydb-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
 }
 
 data "google_project" "project" {}
@@ -90,7 +92,7 @@ func TestAccAlloydbCluster_alloydbClusterFullExample(t *testing.T) {
 				ResourceName:            "google_alloydb_cluster.full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"initial_user", "restore_backup_source", "restore_continuous_backup_source", "cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "cluster_id", "initial_user", "labels", "location", "restore_backup_source", "restore_continuous_backup_source", "terraform_labels"},
 			},
 		},
 	})
@@ -99,9 +101,11 @@ func TestAccAlloydbCluster_alloydbClusterFullExample(t *testing.T) {
 func testAccAlloydbCluster_alloydbClusterFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_alloydb_cluster" "full" {
-  cluster_id   = "tf-test-alloydb-cluster-full%{random_suffix}"
-  location     = "us-central1"
-  network      = google_compute_network.default.id
+  cluster_id = "tf-test-alloydb-cluster-full%{random_suffix}"
+  location   = "us-central1"
+  network_config {
+    network = google_compute_network.default.id
+  }
   database_version = "POSTGRES_15"
 
   initial_user {
@@ -172,7 +176,7 @@ func TestAccAlloydbCluster_alloydbSecondaryClusterBasicTestExample(t *testing.T)
 				ResourceName:            "google_alloydb_cluster.secondary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"initial_user", "restore_backup_source", "restore_continuous_backup_source", "cluster_id", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "cluster_id", "initial_user", "labels", "location", "restore_backup_source", "restore_continuous_backup_source", "terraform_labels"},
 			},
 		},
 	})
@@ -183,7 +187,9 @@ func testAccAlloydbCluster_alloydbSecondaryClusterBasicTestExample(context map[s
 resource "google_alloydb_cluster" "primary" {
   cluster_id = "tf-test-alloydb-primary-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = data.google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
 }
 
 resource "google_alloydb_instance" "primary" {
@@ -199,7 +205,9 @@ resource "google_alloydb_instance" "primary" {
 resource "google_alloydb_cluster" "secondary" {
   cluster_id   = "tf-test-alloydb-secondary-cluster%{random_suffix}"
   location     = "us-east1"
-  network      = data.google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   cluster_type = "SECONDARY"
 
   continuous_backup_config {

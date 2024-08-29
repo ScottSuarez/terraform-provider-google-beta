@@ -35,8 +35,7 @@ A data source can be used to retrieve policy data in advent you do not need crea
 ~> **Note:**  This resource supports IAM Conditions but they have some known limitations which can be found [here](https://cloud.google.com/iam/docs/conditions-overview#limitations). Please review this article if you are having issues with IAM Conditions.
 
 
-
-## google\_privateca\_ca\_pool\_iam\_policy
+## google_privateca_ca_pool_iam_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
@@ -77,7 +76,7 @@ resource "google_privateca_ca_pool_iam_policy" "policy" {
   policy_data = data.google_iam_policy.admin.policy_data
 }
 ```
-## google\_privateca\_ca\_pool\_iam\_binding
+## google_privateca_ca_pool_iam_binding
 
 ```hcl
 resource "google_privateca_ca_pool_iam_binding" "binding" {
@@ -106,7 +105,7 @@ resource "google_privateca_ca_pool_iam_binding" "binding" {
   }
 }
 ```
-## google\_privateca\_ca\_pool\_iam\_member
+## google_privateca_ca_pool_iam_member
 
 ```hcl
 resource "google_privateca_ca_pool_iam_member" "member" {
@@ -137,9 +136,11 @@ resource "google_privateca_ca_pool_iam_member" "member" {
 The following arguments are supported:
 
 * `ca_pool` - (Required) Used to find the parent resource to bind the IAM policy to
-* `location` - (Required) Location of the CaPool. A full list of valid locations can be found by
+* `location` - (Optional) Location of the CaPool. A full list of valid locations can be found by
 running `gcloud privateca locations list`.
- Used to find the parent resource to bind the IAM policy to
+ Used to find the parent resource to bind the IAM policy to. If not specified,
+  the value will be parsed from the identifier of the parent resource. If no location is provided in the parent identifier and no
+  location is specified, it is taken from the provider configuration.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the project will be parsed from the identifier of the parent resource. If no project is provided in the parent identifier and no project is specified, the provider project is used.

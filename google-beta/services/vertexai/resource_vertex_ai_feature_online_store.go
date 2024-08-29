@@ -20,6 +20,7 @@ package vertexai
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -101,7 +102,7 @@ func ResourceVertexAIFeatureOnlineStore() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
-				Description: `The dedicated serving endpoint for this FeatureOnlineStore, which is different from common vertex service endpoint. Only need to set when you choose Optimized storage type or enable EmbeddingManagement. Will use public endpoint by default.`,
+				Description: `The dedicated serving endpoint for this FeatureOnlineStore, which is different from common vertex service endpoint. Only need to be set when you choose Optimized storage type or enable EmbeddingManagement. Will use public endpoint by default.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -143,8 +144,10 @@ func ResourceVertexAIFeatureOnlineStore() *schema.Resource {
 			},
 			"embedding_management": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
-				Description: `The settings for embedding management in FeatureOnlineStore. Embedding management can only be used with BigTable.`,
+				Deprecated:  "`embedding_management` is deprecated. This field is no longer needed anymore and embedding management is automatically enabled when specifying Optimized storage type",
+				Description: `The settings for embedding management in FeatureOnlineStore. Embedding management can only be set for BigTable. It is enabled by default for optimized storagetype.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -221,8 +224,8 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"force_destroy": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
 				Description: `If set to true, any FeatureViews and Features for this FeatureOnlineStore will also be deleted.`,
+				Default:     false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -293,6 +296,7 @@ func resourceVertexAIFeatureOnlineStoreCreate(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -301,6 +305,7 @@ func resourceVertexAIFeatureOnlineStoreCreate(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating FeatureOnlineStore: %s", err)
@@ -363,12 +368,14 @@ func resourceVertexAIFeatureOnlineStoreRead(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("VertexAIFeatureOnlineStore %q", d.Id()))
@@ -471,6 +478,7 @@ func resourceVertexAIFeatureOnlineStoreUpdate(d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Updating FeatureOnlineStore %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("bigtable") {
@@ -514,6 +522,7 @@ func resourceVertexAIFeatureOnlineStoreUpdate(d *schema.ResourceData, meta inter
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -556,19 +565,21 @@ func resourceVertexAIFeatureOnlineStoreDelete(d *schema.ResourceData, meta inter
 
 	var obj map[string]interface{}
 
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
+
 	if v, ok := d.GetOk("force_destroy"); ok {
 		url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": fmt.Sprintf("%v", v)})
 		if err != nil {
 			return err
 		}
 	}
+
 	log.Printf("[DEBUG] Deleting FeatureOnlineStore %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -577,6 +588,7 @@ func resourceVertexAIFeatureOnlineStoreDelete(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "FeatureOnlineStore")

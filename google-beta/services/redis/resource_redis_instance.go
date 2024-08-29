@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -278,6 +279,12 @@ resolution and up to nine fractional digits.`,
 						},
 					},
 				},
+			},
+			"maintenance_version": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				Description: `The self service update maintenance version.`,
 			},
 			"persistence_config": {
 				Type:        schema.TypeList,
@@ -645,6 +652,12 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("maintenance_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(maintenancePolicyProp)) && (ok || !reflect.DeepEqual(v, maintenancePolicyProp)) {
 		obj["maintenancePolicy"] = maintenancePolicyProp
 	}
+	maintenanceVersionProp, err := expandRedisInstanceMaintenanceVersion(d.Get("maintenance_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(maintenanceVersionProp)) && (ok || !reflect.DeepEqual(v, maintenanceVersionProp)) {
+		obj["maintenanceVersion"] = maintenanceVersionProp
+	}
 	memorySizeGbProp, err := expandRedisInstanceMemorySizeGb(d.Get("memory_size_gb"), d, config)
 	if err != nil {
 		return err
@@ -730,6 +743,7 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -738,6 +752,7 @@ func resourceRedisInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Instance: %s", err)
@@ -790,12 +805,14 @@ func resourceRedisInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("RedisInstance %q", d.Id()))
@@ -868,6 +885,9 @@ func resourceRedisInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("maintenance_schedule", flattenRedisInstanceMaintenanceSchedule(res["maintenanceSchedule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("maintenance_version", flattenRedisInstanceMaintenanceVersion(res["maintenanceVersion"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("memory_size_gb", flattenRedisInstanceMemorySizeGb(res["memorySizeGb"], d, config)); err != nil {
@@ -968,6 +988,12 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("maintenance_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maintenancePolicyProp)) {
 		obj["maintenancePolicy"] = maintenancePolicyProp
 	}
+	maintenanceVersionProp, err := expandRedisInstanceMaintenanceVersion(d.Get("maintenance_version"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("maintenance_version"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maintenanceVersionProp)) {
+		obj["maintenanceVersion"] = maintenanceVersionProp
+	}
 	memorySizeGbProp, err := expandRedisInstanceMemorySizeGb(d.Get("memory_size_gb"), d, config)
 	if err != nil {
 		return err
@@ -1010,6 +1036,7 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Instance %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("auth_enabled") {
@@ -1030,6 +1057,10 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 
 	if d.HasChange("maintenance_policy") {
 		updateMask = append(updateMask, "maintenancePolicy")
+	}
+
+	if d.HasChange("maintenance_version") {
+		updateMask = append(updateMask, "maintenanceVersion")
 	}
 
 	if d.HasChange("memory_size_gb") {
@@ -1073,6 +1104,7 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -1106,6 +1138,8 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -1119,6 +1153,7 @@ func resourceRedisInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating Instance %q: %s", d.Id(), err)
@@ -1160,13 +1195,15 @@ func resourceRedisInstanceDelete(d *schema.ResourceData, meta interface{}) error
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Instance %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1175,6 +1212,7 @@ func resourceRedisInstanceDelete(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Instance")
@@ -1479,6 +1517,10 @@ func flattenRedisInstanceMaintenanceScheduleEndTime(v interface{}, d *schema.Res
 }
 
 func flattenRedisInstanceMaintenanceScheduleScheduleDeadlineTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenRedisInstanceMaintenanceVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1923,6 +1965,10 @@ func expandRedisInstanceMaintenancePolicyWeeklyMaintenanceWindowStartTimeSeconds
 }
 
 func expandRedisInstanceMaintenancePolicyWeeklyMaintenanceWindowStartTimeNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandRedisInstanceMaintenanceVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

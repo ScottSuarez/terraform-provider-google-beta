@@ -17,7 +17,7 @@ description: |-
   Gives dataset access for a single entity.
 ---
 
-# google\_bigquery\_dataset\_access
+# google_bigquery_dataset_access
 
 Gives dataset access for a single entity. This resource is intended to be used in cases where
 it is not possible to compile a full list of access blocks to include in a
@@ -195,13 +195,9 @@ The following arguments are supported:
 * `special_group` -
   (Optional)
   A special group to grant access to. Possible values include:
-
   * `projectOwners`: Owners of the enclosing project.
-
   * `projectReaders`: Readers of the enclosing project.
-
   * `projectWriters`: Writers of the enclosing project.
-
   * `allAuthenticatedUsers`: All authenticated BigQuery users.
 
 * `iam_member` -

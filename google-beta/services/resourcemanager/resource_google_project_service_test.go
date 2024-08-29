@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 // Test that services can be enabled and disabled on a project
@@ -39,13 +39,13 @@ func TestAccProjectService_basic(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy"},
 			},
 			{
 				ResourceName:            "google_project_service.test2",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy", "project"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "project", "check_if_service_has_usage_on_destroy"},
 			},
 			// Use a separate TestStep rather than a CheckDestroy because we need the project to still exist.
 			{
@@ -93,7 +93,7 @@ func TestAccProjectService_disableDependentServices(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy"},
 			},
 			{
 				Config:      testAccProjectService_dependencyRemoved(services, pid, org, billingId),
@@ -106,7 +106,7 @@ func TestAccProjectService_disableDependentServices(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy"},
 			},
 			{
 				Config:             testAccProjectService_dependencyRemoved(services, pid, org, billingId),
@@ -166,7 +166,7 @@ func TestAccProjectService_renamedService(t *testing.T) {
 				ResourceName:            "google_project_service.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"disable_on_destroy", "disable_dependent_services"},
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy", "disable_dependent_services"},
 			},
 		},
 	})
@@ -199,12 +199,40 @@ func testAccCheckProjectService(t *testing.T, services []string, pid string, exp
 	}
 }
 
+func TestAccProjectService_checkUsageOfServices(t *testing.T) {
+	t.Parallel()
+
+	org := envvar.GetTestOrgFromEnv(t)
+	pid := fmt.Sprintf("tf-test-%d", acctest.RandInt(t))
+	services := "bigquerystorage.googleapis.com"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectService_checkUsage(services, pid, org, "false"),
+			},
+			{
+				ResourceName:            "google_project_service.test",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"disable_on_destroy", "check_if_service_has_usage_on_destroy", "disable_dependent_services"},
+			},
+			{
+				Config: testAccProjectService_checkUsage(services, pid, org, "true"),
+			},
+		},
+	})
+}
+
 func testAccProjectService_basic(services []string, pid, org string) string {
 	return fmt.Sprintf(`
 resource "google_project" "acceptance" {
   project_id = "%s"
   name       = "%s"
   org_id     = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "test" {
@@ -226,6 +254,7 @@ resource "google_project" "acceptance" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "test" {
@@ -248,6 +277,7 @@ resource "google_project" "acceptance" {
   name            = "%s"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "test" {
@@ -263,6 +293,7 @@ resource "google_project" "acceptance" {
   project_id = "%s"
   name       = "%s"
   org_id     = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "test" {
@@ -285,6 +316,7 @@ resource "google_project" "acceptance" {
   project_id = "%s"
   name       = "%s"
   org_id     = "%s"
+  deletion_policy = "DELETE"
 }
 
 // by passing through locals, we break the dependency chain
@@ -315,6 +347,7 @@ resource "google_project" "acceptance" {
   project_id = "%s"
   name       = "%s"
   org_id     = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "test" {
@@ -324,4 +357,24 @@ resource "google_project_service" "test" {
   disable_dependent_services = true
 }
 `, pid, pid, org, service)
+}
+
+func testAccProjectService_checkUsage(service string, pid, org string, checkIfServiceHasUsage string) string {
+	return fmt.Sprintf(`
+resource "google_project" "acceptance" {
+  provider = google-beta
+  project_id = "%s"
+  name       = "%s"
+  org_id     = "%s"
+  deletion_policy = "DELETE"
+}
+
+resource "google_project_service" "test" {
+  provider = google-beta
+  project = google_project.acceptance.project_id
+  service = "%s"
+
+  check_if_service_has_usage_on_destroy = %s
+}
+`, pid, pid, org, service, checkIfServiceHasUsage)
 }

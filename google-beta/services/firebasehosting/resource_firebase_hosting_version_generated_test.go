@@ -20,7 +20,7 @@ package firebasehosting_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -45,7 +45,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})
@@ -80,12 +80,66 @@ resource "google_firebase_hosting_release" "default" {
 `, context)
 }
 
-func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *testing.T) {
+func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseHostingVersion_firebasehostingVersionPathExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_hosting_version.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+			},
+		},
+	})
+}
+
+func testAccFirebaseHostingVersion_firebasehostingVersionPathExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_hosting_site" "default" {
+  provider = google-beta
+  project  = "%{project_id}"
+  site_id  = "tf-test-site-id%{random_suffix}"
+}
+
+resource "google_firebase_hosting_version" "default" {
+  provider = google-beta
+  site_id  = google_firebase_hosting_site.default.site_id
+  config {
+    rewrites {
+      glob = "**"
+      path = "/index.html"
+    }
+  }
+}
+
+resource "google_firebase_hosting_release" "default" {
+  provider     = google-beta
+  site_id      = google_firebase_hosting_site.default.site_id
+  version_name = google_firebase_hosting_version.default.name
+  message      = "Path Rewrite"
+}
+`, context)
+}
+
+func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":          envvar.GetTestProjectFromEnv(),
+		"deletion_protection": false,
+		"random_suffix":       acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -99,7 +153,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"deletion_protection", "site_id", "version_id"},
 			},
 		},
 	})
@@ -127,6 +181,8 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  deletion_protection = "%{deletion_protection}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -172,7 +228,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"version_id", "site_id"},
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
 			},
 		},
 	})

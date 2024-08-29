@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobBasicExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -60,11 +60,12 @@ func testAccCloudRunV2Job_cloudrunv2JobBasicExample(context map[string]interface
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }
@@ -91,7 +92,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobLimitsExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -102,11 +103,12 @@ func testAccCloudRunV2Job_cloudrunv2JobLimitsExample(context map[string]interfac
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
         resources {
           limits = {
             cpu    = "2"
@@ -146,7 +148,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobSqlExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -157,7 +159,7 @@ func testAccCloudRunV2Job_cloudrunv2JobSqlExample(context map[string]interface{}
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
-  
+  deletion_protection = false
   template {
     template{
       volumes {
@@ -168,7 +170,7 @@ resource "google_cloud_run_v2_job" "default" {
       }
 
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
 
         env {
           name = "FOO"
@@ -246,7 +248,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobVpcaccessExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -257,11 +259,12 @@ func testAccCloudRunV2Job_cloudrunv2JobVpcaccessExample(context map[string]inter
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template{
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
       vpc_access{
         connector = google_vpc_access_connector.connector.id
@@ -313,7 +316,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobDirectvpcExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -324,7 +327,8 @@ func testAccCloudRunV2Job_cloudrunv2JobDirectvpcExample(context map[string]inter
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
-  launch_stage = "BETA"
+  deletion_protection = false
+  launch_stage = "GA"
   template {
     template{
       containers {
@@ -336,7 +340,6 @@ resource "google_cloud_run_v2_job" "default" {
           subnetwork = "default"
           tags = ["tag1", "tag2", "tag3"]
         }
-        egress = "ALL_TRAFFIC"
       }
     }
   }
@@ -363,7 +366,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobSecretExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -374,6 +377,7 @@ func testAccCloudRunV2Job_cloudrunv2JobSecretExample(context map[string]interfac
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
 
   template {
     template {
@@ -390,7 +394,7 @@ resource "google_cloud_run_v2_job" "default" {
         }
       }
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
         volume_mounts {
           name = "a-volume"
           mount_path = "/secrets"
@@ -448,7 +452,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobEmptydirExample(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -460,11 +464,12 @@ resource "google_cloud_run_v2_job" "default" {
   provider = google-beta
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
   launch_stage = "BETA"
   template {
     template {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "us-docker.pkg.dev/cloudrun/container/job"
 	volume_mounts {
 	  name = "empty-dir-volume"
 	  mount_path = "/mnt"
@@ -476,6 +481,50 @@ resource "google_cloud_run_v2_job" "default" {
 	  medium = "MEMORY"
 	  size_limit = "128Mi"
 	}
+      }
+    }
+  }
+}
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobRunJobExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobRunJobExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobRunJobExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
+  name     = "tf-test-cloudrun-job%{random_suffix}"
+  location = "us-central1"
+  deletion_protection = false
+  start_execution_token = "start-once-created"
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/job"
       }
     }
   }

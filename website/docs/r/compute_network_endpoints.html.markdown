@@ -17,7 +17,7 @@ description: |-
   A set of network endpoints belonging to a network endpoint group (NEG).
 ---
 
-# google\_compute\_network\_endpoints
+# google_compute_network_endpoints
 
 A set of network endpoints belonging to a network endpoint group (NEG). A
 single network endpoint represents a IP address and port combination that is
@@ -27,6 +27,10 @@ Network endpoints cannot be created outside of a network endpoint group.
 
 This resource is authoritative for a single NEG. Any endpoints not specified
 by this resource will be deleted when the resource configuration is applied.
+
+-> **NOTE** In case the Endpoint's Instance is recreated, it's needed to
+perform `apply` twice. To avoid situations like this, please use this resource
+with the lifecycle `replace_triggered_by` method, with the passed Instance's ID.
 
 
 To get more information about NetworkEndpoints, see:
@@ -166,7 +170,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
-* `id` - an identifier for the resource with format `{{project}}/{{zone}}/{{network_endpoint_group}}/endpoints`
+* `id` - an identifier for the resource with format `{{project}}/{{zone}}/{{network_endpoint_group}}`
 
 
 ## Timeouts

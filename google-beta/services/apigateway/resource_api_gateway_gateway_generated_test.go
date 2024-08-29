@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccApiGatewayGateway_apigatewayGatewayBasicExample(t *testing.T) {
 				ResourceName:            "google_api_gateway_gateway.api_gw",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "gateway_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"gateway_id", "labels", "region", "terraform_labels"},
 			},
 		},
 	})
@@ -105,7 +105,7 @@ func TestAccApiGatewayGateway_apigatewayGatewayFullExample(t *testing.T) {
 				ResourceName:            "google_api_gateway_gateway.api_gw",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region", "gateway_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"gateway_id", "labels", "region", "terraform_labels"},
 			},
 		},
 	})

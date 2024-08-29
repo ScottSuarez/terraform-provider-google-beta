@@ -33,15 +33,11 @@ A data source can be used to retrieve policy data in advent you do not need crea
 ~> **Note:** `google_dataproc_metastore_federation_iam_binding` resources **can be** used in conjunction with `google_dataproc_metastore_federation_iam_member` resources **only if** they do not grant privilege to the same role.
 
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
-
-## google\_dataproc\_metastore\_federation\_iam\_policy
+## google_dataproc_metastore_federation_iam_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
-  provider = google-beta
   binding {
     role = "roles/viewer"
     members = [
@@ -51,7 +47,6 @@ data "google_iam_policy" "admin" {
 }
 
 resource "google_dataproc_metastore_federation_iam_policy" "policy" {
-  provider = google-beta
   project = google_dataproc_metastore_federation.default.project
   location = google_dataproc_metastore_federation.default.location
   federation_id = google_dataproc_metastore_federation.default.federation_id
@@ -59,11 +54,10 @@ resource "google_dataproc_metastore_federation_iam_policy" "policy" {
 }
 ```
 
-## google\_dataproc\_metastore\_federation\_iam\_binding
+## google_dataproc_metastore_federation_iam_binding
 
 ```hcl
 resource "google_dataproc_metastore_federation_iam_binding" "binding" {
-  provider = google-beta
   project = google_dataproc_metastore_federation.default.project
   location = google_dataproc_metastore_federation.default.location
   federation_id = google_dataproc_metastore_federation.default.federation_id
@@ -74,11 +68,10 @@ resource "google_dataproc_metastore_federation_iam_binding" "binding" {
 }
 ```
 
-## google\_dataproc\_metastore\_federation\_iam\_member
+## google_dataproc_metastore_federation_iam_member
 
 ```hcl
 resource "google_dataproc_metastore_federation_iam_member" "member" {
-  provider = google-beta
   project = google_dataproc_metastore_federation.default.project
   location = google_dataproc_metastore_federation.default.location
   federation_id = google_dataproc_metastore_federation.default.federation_id
@@ -92,8 +85,10 @@ resource "google_dataproc_metastore_federation_iam_member" "member" {
 
 The following arguments are supported:
 
-* `location` - (Required) The location where the metastore federation should reside.
- Used to find the parent resource to bind the IAM policy to
+* `location` - (Optional) The location where the metastore federation should reside.
+ Used to find the parent resource to bind the IAM policy to. If not specified,
+  the value will be parsed from the identifier of the parent resource. If no location is provided in the parent identifier and no
+  location is specified, it is taken from the provider configuration.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the project will be parsed from the identifier of the parent resource. If no project is provided in the parent identifier and no project is specified, the provider project is used.

@@ -17,7 +17,7 @@ description: |-
   A Firebase Realtime Database instance.
 ---
 
-# google\_firebase\_database\_instance
+# google_firebase_database_instance
 
 A Firebase Realtime Database instance.
 
@@ -63,6 +63,7 @@ resource "google_project" "default" {
   project_id = "rtdb-project"
   name       = "rtdb-project"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
   labels     = {
     "firebase" = "enabled"
   }
@@ -120,7 +121,8 @@ The following arguments are supported:
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
-* `desired_state` - (Optional) The intended database state.
+* `desired_state` - (Optional) The intended database state. Possible values: ACTIVE, DISABLED.
+
 
 ## Attributes Reference
 
@@ -129,8 +131,8 @@ In addition to the arguments listed above, the following computed attributes are
 * `id` - an identifier for the resource with format `projects/{{project}}/locations/{{region}}/instances/{{instance_id}}`
 
 * `name` -
-  The fully-qualified resource name of the Firebase Realtime Database, in the
-  format: projects/PROJECT_NUMBER/locations/REGION_IDENTIFIER/instances/INSTANCE_ID
+  The fully-qualified resource name of the Firebase Realtime Database, in
+  the format: projects/PROJECT_NUMBER/locations/REGION_IDENTIFIER/instances/INSTANCE_ID
   PROJECT_NUMBER: The Firebase project's [`ProjectNumber`](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects#FirebaseProject.FIELDS.project_number)
   Learn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510).
 

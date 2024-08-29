@@ -3,7 +3,10 @@
 package compute_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"google.golang.org/api/googleapi"
+	"net/http"
 	"reflect"
 	"regexp"
 	"sort"
@@ -12,13 +15,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/stretchr/testify/assert"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -88,6 +93,60 @@ func TestMinCpuPlatformDiffSuppress(t *testing.T) {
 		if tpgcompute.ComputeInstanceMinCpuPlatformEmptyOrAutomaticDiffSuppress("min_cpu_platform", tc.Old, tc.New, nil) != tc.ExpectDiffSuppress {
 			t.Errorf("bad: %s, %q => %q expect DiffSuppress to return %t", tn, tc.Old, tc.New, tc.ExpectDiffSuppress)
 		}
+	}
+}
+
+func TestCheckForCommonAliasIp(t *testing.T) {
+	type testCase struct {
+		old, new []*compute.AliasIpRange
+		expected []*compute.AliasIpRange
+	}
+
+	testCases := []testCase{
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.2.0/24"},
+			},
+			expected: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+			},
+		},
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+				{IpCidrRange: "10.0.2.0/24"},
+			},
+			expected: []*compute.AliasIpRange{
+				{IpCidrRange: "172.16.0.0/24"},
+			},
+		},
+		{
+			old: []*compute.AliasIpRange{
+				{IpCidrRange: "10.0.0.0/24"},
+				{IpCidrRange: "10.0.1.0/24"},
+			},
+			new: []*compute.AliasIpRange{
+				{IpCidrRange: "192.168.0.0/24"},
+				{IpCidrRange: "172.17.0.0/24"},
+			},
+			expected: []*compute.AliasIpRange{},
+		},
+	}
+
+	for _, tc := range testCases {
+		oldInterface := &compute.NetworkInterface{AliasIpRanges: tc.old}
+		newInterface := &compute.NetworkInterface{AliasIpRanges: tc.new}
+		result := tpgcompute.CheckForCommonAliasIp(oldInterface, newInterface)
+		assert.Equal(t, tc.expected, result)
 	}
 }
 
@@ -268,6 +327,30 @@ func TestAccComputeInstance_resourceManagerTags(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance)),
+			},
+		},
+	})
+}
+
+func TestAccComputeInstance_machineTypeUrl(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var machineTypeUrl = "zones/us-central1-a/machineTypes/e2-medium"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_machineType(instanceName, machineTypeUrl),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					resource.TestCheckResourceAttr("google_compute_instance.foobar", "description", "old_desc"),
+				),
 			},
 		},
 	})
@@ -1077,6 +1160,54 @@ func TestAccComputeInstance_serviceAccount(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstance_noServiceAccount(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_noServiceAccount(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_serviceAccountEmail_0scopes(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_serviceAccountEmail_0scopes(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
 func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 	t.Parallel()
 
@@ -1093,6 +1224,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1102,6 +1234,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1111,6 +1244,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1120,6 +1254,7 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 3),
 				),
 			},
@@ -1144,6 +1279,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1153,6 +1289,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 1),
 				),
 			},
@@ -1162,6 +1299,7 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
 				),
 			},
@@ -1568,7 +1706,7 @@ func TestAccComputeInstance_guestAccelerator(t *testing.T) {
 				Config: testAccComputeInstance_guestAccelerator(instanceName, 1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceHasGuestAccelerator(&instance, "nvidia-tesla-k80", 1),
+					testAccCheckComputeInstanceHasGuestAccelerator(&instance, "nvidia-tesla-t4", 1),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"metadata.baz", "metadata.foo"}),
@@ -1730,7 +1868,7 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-secondary", "172.16.0.0/24"),
 				),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_secondaryAliasIpRangeUpdate(networkName, subnetName, instanceName),
 				Check: resource.ComposeTestCheckFunc(
@@ -1738,7 +1876,51 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "", "10.0.1.0/24"),
 				),
 			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
+		},
+	})
+}
+
+func TestAccComputeInstance_aliasIpRangeCommonAddresses(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	networkName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	subnetName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeTwoAliasIps(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.2.0/24"),
+				),
+			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddress(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.3.0/24"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddressDifferentRanges(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-secondary", "172.16.1.0/24"),
+					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.3.0/24"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 		},
 	})
 }
@@ -1801,9 +1983,9 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 	t.Parallel()
 
 	var instance compute.Instance
-
 	var instance2 compute.Instance
-
+	var instance3 compute.Instance
+	var instance4 compute.Instance
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1816,19 +1998,28 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, true, "SEV"),
-
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar2", &instance2),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, true, ""),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar3", &instance3),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance3, true, "SEV"),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar4", &instance4),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance4, true, ""),
 				),
 			},
-
 			{
 				Config: testAccComputeInstanceConfidentialInstanceConfigNoEnable(instanceName, "AMD Milan", "SEV_SNP"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar3", &instance),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "SEV_SNP"),
-					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar4", &instance2),
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar6", &instance2),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance2, false, "SEV_SNP"),
+				),
+			},
+			{
+				Config: testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instanceName, "TDX"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
+					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "TDX"),
 				),
 			},
 		},
@@ -1836,6 +2027,8 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 }
 
 func TestAccComputeInstance_confidentialHyperDiskBootDisk(t *testing.T) {
+	// Currently failing
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 	kms := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "tf-bootstrap-hyperdisk-key1")
 
@@ -1845,6 +2038,7 @@ func TestAccComputeInstance_confidentialHyperDiskBootDisk(t *testing.T) {
 		"key_ring":             kms.KeyRing.Name,
 		"key_name":             kms.CryptoKey.Name,
 		"zone":                 "us-central1-a",
+		"machine_type":         "n2-standard-16",
 	}
 
 	context_2 := map[string]interface{}{
@@ -1853,6 +2047,7 @@ func TestAccComputeInstance_confidentialHyperDiskBootDisk(t *testing.T) {
 		"key_ring":             context_1["key_ring"],
 		"key_name":             context_1["key_name"],
 		"zone":                 context_1["zone"],
+		"machine_type":         "c3d-standard-16",
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -2463,15 +2658,55 @@ func TestAccComputeInstance_subnetworkUpdate(t *testing.T) {
 			{
 				Config: testAccComputeInstance_subnetworkUpdate(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_subnetworkUpdateTwo(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_subnetworkUpdate(suffix, instanceName),
 			},
-			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
+		},
+	})
+}
+
+func TestAccComputeInstance_networkIpUpdate(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	suffix := fmt.Sprintf("%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_networkIpUpdate(suffix, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasNetworkIP(&instance, "10.3.0.3"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_networkIpUpdateByHand(suffix, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasNetworkIP(&instance, "10.3.0.4"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
+			{
+				Config: testAccComputeInstance_networkIpUpdateWithComputeAddress(suffix, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasNetworkIP(&instance, "10.3.0.5"),
+				),
+			},
+			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
 		},
 	})
 }
@@ -2545,14 +2780,14 @@ func TestAccComputeInstance_spotVM_update(t *testing.T) {
 	})
 }
 
-func TestAccComputeInstance_spotVM_maxRunDration(t *testing.T) {
+func TestAccComputeInstance_maxRunDuration_update(t *testing.T) {
 	t.Parallel()
 
 	var instance compute.Instance
-	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var instanceName = fmt.Sprintf("tf-test-mrd-%s", acctest.RandString(t, 10))
 	var expectedMaxRunDuration = compute.Duration{}
-	// Define in testAccComputeInstance_spotVM_maxRunDuration
-	expectedMaxRunDuration.Nanos = 123
+	// Define in testAccComputeInstance_standardVM_maxRunDurationUpdated
+	expectedMaxRunDuration.Nanos = 456
 	expectedMaxRunDuration.Seconds = 60
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -2561,11 +2796,135 @@ func TestAccComputeInstance_spotVM_maxRunDration(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstance_spotVM_maxRunDuration(instanceName),
+				Config: testAccComputeInstance_standardVM_maxRunDuration(instanceName, "STOP"),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			{
+				Config: testAccComputeInstance_standardVM_maxRunDurationUpdated(instanceName, "STOP"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceTerminationAction(&instance, "DELETE"),
+					testAccCheckComputeInstanceTerminationAction(&instance, "STOP"),
+					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+		},
+	})
+}
+
+func TestAccComputeInstance_standardVM_maxRunDuration_stopTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstance_standardVM_maxRunDuration
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "STOP"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_standardVM_maxRunDuration(instanceName, instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
+					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_localSsdVM_maxRunDuration_stopTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstance_localSsdVM_maxRunDuration
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 180
+	var instanceTerminationAction = "STOP"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_localSsdVM_maxRunDuration(instanceName, instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
+					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_spotVM_maxRunDuration_deleteTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstance_spotVM_maxRunDuration
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "DELETE"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_spotVM_maxRunDuration(instanceName, instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
+					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_standardVM_maxRunDuration_deleteTerminationAction(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var expectedMaxRunDuration = compute.Duration{}
+	// Define in testAccComputeInstance_standardVM_maxRunDuration
+	expectedMaxRunDuration.Nanos = 123
+	expectedMaxRunDuration.Seconds = 60
+	var instanceTerminationAction = "DELETE"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_standardVM_maxRunDuration(instanceName, instanceTerminationAction),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
 				),
 			},
@@ -2597,7 +2956,7 @@ func TestAccComputeInstance_spotVM_maxRunDuration_update(t *testing.T) {
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
 			{
-				Config: testAccComputeInstance_spotVM_maxRunDuration(instanceName),
+				Config: testAccComputeInstance_spotVM_maxRunDuration(instanceName, "DELETE"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
@@ -2668,6 +3027,106 @@ func TestAccComputeInstance_localSsdRecoveryTimeout_update(t *testing.T) {
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+		},
+	})
+}
+
+func TestAccComputeInstance_partnerMetadata(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var namespace = "test.compute.googleapis.com"
+	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
+	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
+		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	}
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_partnerMetadata(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstancePartnerMetadata(&instance, expectedPartnerMetadata),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
+		},
+	})
+}
+
+func TestAccComputeInstance_partnerMetadata_update(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var namespace = "test.compute.googleapis.com"
+	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
+	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
+		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	}
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_partnerMetadata_empty(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+				),
+			},
+
+			{
+				Config: testAccComputeInstance_partnerMetadata(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstancePartnerMetadata(&instance, expectedPartnerMetadata),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
+		},
+	})
+}
+
+func TestAccComputeInstance_partnerMetadata_deletePartnerMetadata(t *testing.T) {
+	t.Parallel()
+
+	var instance compute.Instance
+	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	var namespace = "test.compute.googleapis.com"
+	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
+	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
+		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	}
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_partnerMetadata(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstancePartnerMetadata(&instance, expectedPartnerMetadata),
+				),
+			},
+
+			{
+				Config: testAccComputeInstance_partnerMetadata_empty(instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(
+						t, "google_compute_instance.foobar", &instance),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
 		},
 	})
 }
@@ -2832,6 +3291,8 @@ func TestAccComputeInstance_proactiveAttributionLabel(t *testing.T) {
 // The tests related to security_policy use network_edge_security_service resource
 // which can only exist one per region. Because of that, all the following tests must run serially.
 func TestAccComputeInstanceNetworkIntefaceWithSecurityPolicy(t *testing.T) {
+	// Consistently failing - https://github.com/hashicorp/terraform-provider-google/issues/17838
+	acctest.SkipIfVcr(t)
 	testCases := map[string]func(t *testing.T){
 		"two_access_config": testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigs,
 		"two_nics_access_config_with_empty_nil_security_policy":   testAccComputeInstance_nic_securityPolicyCreateWithEmptyAndNullSecurityPolicies,
@@ -3262,6 +3723,33 @@ func TestAccComputeInstance_NetworkAttachmentUpdate(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstance_NicStackTypeUpdate(t *testing.T) {
+	t.Parallel()
+	suffix := acctest.RandString(t, 10)
+	envRegion := envvar.GetTestRegionFromEnv()
+	instanceName := fmt.Sprintf("tf-test-compute-instance-%s", suffix)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_nicStackTypeUpdate(suffix, envRegion, "IPV4_ONLY", instanceName),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			{
+				Config: testAccComputeInstance_nicStackTypeUpdate(suffix, envRegion, "IPV4_IPV6", instanceName),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			{
+				Config: testAccComputeInstance_nicStackTypeUpdate(suffix, envRegion, "IPV4_ONLY", instanceName),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+		},
+	})
+}
+
 func testAccCheckComputeInstanceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := acctest.GoogleProviderConfig(t)
@@ -3302,9 +3790,8 @@ func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, insta
 		}
 
 		config := acctest.GoogleProviderConfig(t)
-
 		found, err := config.NewComputeClient(config.UserAgent).Instances.Get(
-			p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
+			p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).View("FULL").Do()
 		if err != nil {
 			return err
 		}
@@ -3455,6 +3942,34 @@ func testAccCheckComputeInstanceLocalSsdRecoveryTimeout(instance *compute.Instan
 		}
 
 		return nil
+	}
+}
+
+func testAccCheckComputeInstancePartnerMetadata(instance *compute.Instance, expectedPartnerMetadata map[string]compute.StructuredEntries) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if instance == nil {
+			return fmt.Errorf("instance is nil")
+		}
+		if instance.PartnerMetadata == nil {
+			return fmt.Errorf("no partner metadata")
+		}
+		expectedPartnerMetadataMap := make(map[string]interface{})
+		acutalPartnerMetadataMap := make(map[string]interface{})
+		for key, value := range instance.PartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			acutalPartnerMetadataMap[key] = jsonMap
+		}
+		for key, value := range expectedPartnerMetadata {
+			var jsonMap map[string]interface{}
+			json.Unmarshal(value.Entries, jsonMap)
+			expectedPartnerMetadataMap[key] = jsonMap
+		}
+		if !reflect.DeepEqual(acutalPartnerMetadataMap, expectedPartnerMetadataMap) {
+			return fmt.Errorf("got the wrong instance partne metadata action: have: %+v; want: %+v", acutalPartnerMetadataMap, expectedPartnerMetadataMap)
+		}
+		return nil
+
 	}
 }
 
@@ -3745,6 +4260,30 @@ func testAccCheckComputeInstanceServiceAccount(instance *compute.Instance, scope
 	}
 }
 
+func testAccCheckComputeInstanceNoServiceAccount(instance *compute.Instance) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if count := len(instance.ServiceAccounts); count != 0 {
+			return fmt.Errorf("Wrong number of ServiceAccounts: expected 0, got %d", count)
+		}
+		return nil
+	}
+}
+
+func testAccCheckComputeInstanceMatchServiceAccount(instance *compute.Instance, serviceAcctRegexp string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if count := len(instance.ServiceAccounts); count != 1 {
+			return fmt.Errorf("Wrong number of ServiceAccounts: expected 1, got %d", count)
+		}
+
+		email := instance.ServiceAccounts[0].Email
+		if !regexp.MustCompile(serviceAcctRegexp).MatchString(email) {
+			return fmt.Errorf("ServiceAccount email didn't match:\"%s\", got \"%s\"", serviceAcctRegexp, email)
+		}
+
+		return nil
+	}
+}
+
 func testAccCheckComputeInstanceScopes(instance *compute.Instance, scopeCount int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
@@ -3891,7 +4430,7 @@ func testAccCheckComputeInstanceHasAliasIpRange(instance *compute.Instance, subn
 	return func(s *terraform.State) error {
 		for _, networkInterface := range instance.NetworkInterfaces {
 			for _, aliasIpRange := range networkInterface.AliasIpRanges {
-				if aliasIpRange.SubnetworkRangeName == subnetworkRangeName && (aliasIpRange.IpCidrRange == iPCidrRange || tpgresource.IpCidrRangeDiffSuppress("ip_cidr_range", aliasIpRange.IpCidrRange, iPCidrRange, nil)) {
+				if aliasIpRange.SubnetworkRangeName == subnetworkRangeName && (aliasIpRange.IpCidrRange == iPCidrRange || tpgcompute.IpCidrRangeDiffSuppress("ip_cidr_range", aliasIpRange.IpCidrRange, iPCidrRange, nil)) {
 					return nil
 				}
 			}
@@ -3976,7 +4515,6 @@ func testAccCheckComputeInstanceHasConfidentialInstanceConfig(instance *compute.
 		if instance.ConfidentialInstanceConfig.EnableConfidentialCompute != EnableConfidentialCompute {
 			return fmt.Errorf("Wrong ConfidentialInstanceConfig EnableConfidentialCompute: expected %t, got, %t", EnableConfidentialCompute, instance.ConfidentialInstanceConfig.EnableConfidentialCompute)
 		}
-
 		if instance.ConfidentialInstanceConfig.ConfidentialInstanceType != ConfidentialInstanceType {
 			return fmt.Errorf("Wrong ConfidentialInstanceConfig ConfidentialInstanceType: expected %s, got, %s", ConfidentialInstanceType, instance.ConfidentialInstanceConfig.ConfidentialInstanceType)
 		}
@@ -4208,6 +4746,32 @@ resource "google_compute_instance" "foobar" {
   }
 }
 `, instance)
+}
+
+func testAccComputeInstance_machineType(instance string, machineType string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "%s"
+  zone         = "us-central1-a"
+  description  = "old_desc"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+}
+`, instance, machineType)
 }
 
 func testAccComputeInstance_description(instance string) string {
@@ -5746,6 +6310,70 @@ resource "google_compute_instance" "foobar" {
 `, instance)
 }
 
+func testAccComputeInstance_noServiceAccount(instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  service_account {
+	  scopes = []
+  }
+}
+`, instance)
+}
+
+func testAccComputeInstance_serviceAccountEmail_0scopes(instance string) string {
+	return fmt.Sprintf(`
+data "google_project" "project" {}
+
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  service_account {
+    email = data.google_compute_default_service_account.default.email
+    scopes = []
+  }
+}
+
+data "google_compute_default_service_account" "default" {
+}
+`, instance)
+}
+
 func testAccComputeInstance_serviceAccount_update0(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
@@ -5964,7 +6592,7 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstance_advancedMachineFeatures(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-10"
+  family  = "debian-12"
   project = "debian-cloud"
 }
 
@@ -5992,7 +6620,7 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstance_advancedMachineFeaturesUpdated(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-10"
+  family  = "debian-12"
   project = "debian-cloud"
 }
 
@@ -6105,6 +6733,7 @@ resource "google_project" "host_project" {
   project_id      = "%s-host"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "host_project" {
@@ -6121,6 +6750,7 @@ resource "google_project" "service_project" {
   project_id      = "%s-service"
   org_id          = "%s"
   billing_account = "%s"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "service_project" {
@@ -6469,7 +7099,7 @@ resource "google_compute_instance" "foobar" {
 
   guest_accelerator {
     count = %d
-    type  = "nvidia-tesla-k80"
+    type  = "nvidia-tesla-t4"
   }
 }
 `, instance, count)
@@ -6655,6 +7285,162 @@ resource "google_compute_instance" "foobar" {
     subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
     alias_ip_range {
       ip_cidr_range = "10.0.1.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_secondaryAliasIpRangeTwoAliasIps(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.2.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddress(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.3.0/24"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddressDifferentRanges(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "inst-test-network" {
+  name = "%s"
+}
+
+resource "google_compute_subnetwork" "inst-test-subnetwork" {
+  name          = "%s"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-east1"
+  network       = google_compute_network.inst-test-network.self_link
+  secondary_ip_range {
+    range_name    = "inst-test-secondary"
+    ip_cidr_range = "172.16.0.0/20"
+  }
+  secondary_ip_range {
+    range_name    = "inst-test-tertiary"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-east1-d"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.inst-test-subnetwork.self_link
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-secondary"  
+      ip_cidr_range = "172.16.1.0/24"
+    }
+    alias_ip_range {
+      subnetwork_range_name = "inst-test-tertiary"
+      ip_cidr_range = "10.1.3.0/24"
     }
   }
 }
@@ -7115,8 +7901,8 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstance_shieldedVmConfig(instance string, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_instance" "foobar" {
@@ -7169,9 +7955,7 @@ resource "google_compute_instance" "foobar" {
 
   confidential_instance_config {
     enable_confidential_compute       = true
-    
     confidential_instance_type        = %q
-    
   }
 
   scheduling {
@@ -7205,9 +7989,57 @@ resource "google_compute_instance" "foobar2" {
 
 }
 
+resource "google_compute_instance" "foobar3" {
+  name         = "%s3"
+  machine_type = "c3d-standard-4"
+  zone         = "us-central1-a"
 
-`, instance, confidentialInstanceType, instance)
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
 
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute       = true
+    confidential_instance_type        = %q
+  }
+
+  scheduling {
+	  on_host_maintenance = "TERMINATE"
+  }
+
+}
+
+resource "google_compute_instance" "foobar4" {
+  name         = "%s4"
+  machine_type = "c3d-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute       = true
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, instance, confidentialInstanceType, instance, instance, confidentialInstanceType, instance)
 }
 
 func testAccComputeInstanceConfidentialInstanceConfigNoEnable(instance string, minCpuPlatform, confidentialInstanceType string) string {
@@ -7217,8 +8049,8 @@ data "google_compute_image" "my_image2" {
   project   = "ubuntu-os-cloud"
 }
 
-resource "google_compute_instance" "foobar3" {
-  name         = "%s3"
+resource "google_compute_instance" "foobar5" {
+  name         = "%s5"
   machine_type = "n2d-standard-2"
   zone         = "us-central1-a"
 
@@ -7244,8 +8076,8 @@ resource "google_compute_instance" "foobar3" {
   }
 
 }
-resource "google_compute_instance" "foobar4" {
-  name         = "%s4"
+resource "google_compute_instance" "foobar6" {
+  name         = "%s6"
   machine_type = "n2d-standard-2"
   zone         = "us-central1-a"
 
@@ -7271,6 +8103,40 @@ resource "google_compute_instance" "foobar4" {
 
 }
 `, instance, minCpuPlatform, confidentialInstanceType, instance, minCpuPlatform, confidentialInstanceType)
+}
+
+func testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instance string, confidentialInstanceType string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image3" {
+  family    = "ubuntu-2204-lts"
+  project   = "tdx-guest-images"
+}
+
+resource "google_compute_instance" "foobar5" {
+  name         = "%s"
+  machine_type = "c3-standard-4"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image3.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  confidential_instance_config {
+    confidential_instance_type = %q
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+}
+`, instance, confidentialInstanceType)
 }
 
 func testAccComputeInstance_attributionLabelCreate(instance, add, strategy string) string {
@@ -7364,7 +8230,7 @@ resource "google_kms_crypto_key_iam_member" "crypto_key" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%{instance_name}"
-  machine_type = "h3-standard-88"
+  machine_type = "%{machine_type}"
   zone         = "%{zone}"
 
   boot_disk {
@@ -7421,8 +8287,8 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstance_enableDisplay(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_instance" "foobar" {
@@ -7450,8 +8316,8 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeInstance_enableDisplayUpdated(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "centos-7"
-  project = "centos-cloud"
+  family  = "debian-12"
+  project = "debian-cloud"
 }
 
 resource "google_compute_instance" "foobar" {
@@ -7786,6 +8652,144 @@ func testAccComputeInstance_subnetworkUpdateTwo(suffix, instance string) string 
 `, suffix, suffix, suffix, suffix, instance)
 }
 
+func testAccComputeInstance_networkIpUpdate(suffix, instance string) string {
+	return fmt.Sprintf(`
+	data "google_compute_image" "my_image" {
+		family  = "debian-11"
+		project = "debian-cloud"
+	}
+
+	resource "google_compute_network" "inst-test-network" {
+		name = "tf-test-network-%s"
+		auto_create_subnetworks = false
+	}
+
+	resource "google_compute_subnetwork" "inst-test-subnetwork" {
+		name          = "tf-test-compute-subnet-%s"
+		ip_cidr_range = "10.3.0.0/16"
+		region        = "us-east1"
+		network       = google_compute_network.inst-test-network.id
+	}
+
+	resource "google_compute_address" "inst-test-address" {
+  		name    = "tf-test-compute-address-%s"
+  		region  = "us-east1"
+  		subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+		address_type = "INTERNAL"
+  		address = "10.3.0.5"
+	}
+
+	resource "google_compute_instance" "foobar" {
+		name         = "%s"
+		machine_type = "e2-medium"
+		zone         = "us-east1-d"
+
+		boot_disk {
+			initialize_params {
+				image = data.google_compute_image.my_image.id
+			}
+		}
+
+		network_interface {
+			subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+			network_ip = "10.3.0.3"
+		}
+	}
+`, suffix, suffix, suffix, instance)
+}
+
+func testAccComputeInstance_networkIpUpdateByHand(suffix, instance string) string {
+	return fmt.Sprintf(`
+	data "google_compute_image" "my_image" {
+		family  = "debian-11"
+		project = "debian-cloud"
+	}
+
+	resource "google_compute_network" "inst-test-network" {
+		name = "tf-test-network-%s"
+		auto_create_subnetworks = false
+	}
+
+	resource "google_compute_subnetwork" "inst-test-subnetwork" {
+		name          = "tf-test-compute-subnet-%s"
+		ip_cidr_range = "10.3.0.0/16"
+		region        = "us-east1"
+		network       = google_compute_network.inst-test-network.id
+	}
+
+	resource "google_compute_address" "inst-test-address" {
+  		name    = "tf-test-compute-address-%s"
+  		region  = "us-east1"
+  		subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+		address_type = "INTERNAL"
+  		address = "10.3.0.5"
+	}
+
+	resource "google_compute_instance" "foobar" {
+		name         = "%s"
+		machine_type = "e2-medium"
+		zone         = "us-east1-d"
+
+		boot_disk {
+			initialize_params {
+				image = data.google_compute_image.my_image.id
+			}
+		}
+
+		network_interface {
+			subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+			network_ip = "10.3.0.4"
+		}
+	}
+`, suffix, suffix, suffix, instance)
+}
+
+func testAccComputeInstance_networkIpUpdateWithComputeAddress(suffix, instance string) string {
+	return fmt.Sprintf(`
+	data "google_compute_image" "my_image" {
+		family  = "debian-11"
+		project = "debian-cloud"
+	}
+
+	resource "google_compute_network" "inst-test-network" {
+		name = "tf-test-network-%s"
+		auto_create_subnetworks = false
+	}
+
+	resource "google_compute_subnetwork" "inst-test-subnetwork" {
+		name          = "tf-test-compute-subnet-%s"
+		ip_cidr_range = "10.3.0.0/16"
+		region        = "us-east1"
+		network       = google_compute_network.inst-test-network.id
+	}
+
+	resource "google_compute_address" "inst-test-address" {
+  		name    = "tf-test-compute-address-%s"
+  		region  = "us-east1"
+  		subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+		address_type = "INTERNAL"
+  		address = "10.3.0.5"
+	}
+
+	resource "google_compute_instance" "foobar" {
+		name         = "%s"
+		machine_type = "e2-medium"
+		zone         = "us-east1-d"
+
+		boot_disk {
+			initialize_params {
+				image = data.google_compute_image.my_image.id
+			}
+		}
+
+		network_interface {
+			subnetwork = google_compute_subnetwork.inst-test-subnetwork.id
+			network_ip = google_compute_address.inst-test-address.address
+		}
+	}
+`, suffix, suffix, suffix, instance)
+}
+
 func testAccComputeInstance_queueCountSet(instance string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
@@ -7845,7 +8849,118 @@ resource "google_compute_instance" "foobar" {
 `, instance)
 }
 
-func testAccComputeInstance_spotVM_maxRunDuration(instance string) string {
+func testAccComputeInstance_standardVM_maxRunDuration(instance string, instanceTerminationAction string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2004-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    provisioning_model = "STANDARD"
+    automatic_restart = false
+    instance_termination_action = "%s"
+    max_run_duration {
+        nanos = 123
+        seconds = 60
+    }
+  }
+}
+`, instance, instanceTerminationAction)
+}
+
+func testAccComputeInstance_standardVM_maxRunDurationUpdated(instance string, instanceTerminationAction string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2004-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    provisioning_model = "STANDARD"
+    automatic_restart = false
+    instance_termination_action = "%s"
+    max_run_duration {
+        nanos = 456
+        seconds = 60
+    }
+  }
+}
+`, instance, instanceTerminationAction)
+}
+
+func testAccComputeInstance_localSsdVM_maxRunDuration(instance string, instanceTerminationAction string) string {
+	return fmt.Sprintf(`
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "n2-standard-8"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  # Local SSD interface type; NVME for image with optimized NVMe drivers or SCSI
+  # Local SSD are 375 GiB in size
+  scratch_disk {
+    interface = "SCSI"
+  }
+
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+
+  scheduling {
+    provisioning_model = "STANDARD"
+    automatic_restart = false
+    instance_termination_action = "%s"
+    max_run_duration {
+        nanos = 123
+        seconds = 180
+    }
+	on_instance_stop_action {
+		discard_local_ssd = true
+	}
+  }
+}
+`, instance, instanceTerminationAction)
+}
+
+func testAccComputeInstance_spotVM_maxRunDuration(instance string, instanceTerminationAction string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family    = "ubuntu-2004-lts"
@@ -7871,14 +8986,14 @@ resource "google_compute_instance" "foobar" {
     provisioning_model = "SPOT"
     automatic_restart = false
     preemptible = true
-    instance_termination_action = "DELETE"
+    instance_termination_action = "%s"
     max_run_duration {
         nanos = 123
         seconds = 60
     }
   }
 }
-`, instance)
+`, instance, instanceTerminationAction)
 }
 
 func testAccComputeInstance_localSsdRecoveryTimeout(instance string) string {
@@ -7912,6 +9027,66 @@ resource "google_compute_instance" "foobar" {
 
 }
 `, instance)
+}
+
+func testAccComputeInstance_partnerMetadata_empty(instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2004-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+}`, instance)
+}
+
+func testAccComputeInstance_partnerMetadata(instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2004-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  partner_metadata = {
+  	"test.compute.googleapis.com" = jsonencode({
+  		entries = {
+  			key1 = "value1"
+  			key2 = 2
+  			key3 = {
+  				key31 = "value31"
+  			}
+  		}
+  	})
+  }
+}`, instance)
 }
 
 func testAccComputeInstance_metadataStartupScript(instance, machineType, metadata string) string {
@@ -8252,7 +9427,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -8267,7 +9442,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
@@ -8424,7 +9599,7 @@ resource "google_compute_subnetwork" "subnet2" {
   stack_type                 = "IPV4_ONLY"
   network                    = google_compute_network.net2.id
 }
-  
+
 resource "google_compute_subnetwork" "subnet-ipv62" {
   region                     = "europe-west1"
   name                       = "tf-test-subnet-ip62-%s"
@@ -8439,7 +9614,7 @@ resource "google_compute_address" "normal-address2" {
   region   = "europe-west1"
   name     = "tf-test-addr-normal2-%s"
 }
-  
+
 resource "google_compute_address" "ipv6-address2" {
   region             = "europe-west1"
   name               = "tf-test-addr-ipv62-%s"
@@ -8925,4 +10100,151 @@ resource "google_compute_instance" "foobar" {
 	}
 }
 `, suffix, suffix, suffix, region, suffix, region, suffix, region, suffix, region, suffix, region, networkAttachment)
+}
+
+func testAccComputeInstance_nicStackTypeUpdate(suffix, region, stack_type, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "net" {
+  name                    = "tf-test-network-%s"
+  enable_ula_internal_ipv6 = true
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnet-ipv6" {
+  region                     = "%s"
+  name                       = "tf-test-subnet-ip6-%s"
+  ip_cidr_range              = "10.0.0.0/22"
+  purpose                    = "PRIVATE"
+  stack_type                 = "IPV4_IPV6"
+  ipv6_access_type           = "INTERNAL"
+  network                    = google_compute_network.net.id
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "%s-a"
+  tags         = ["foo", "bar"]
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.net.self_link
+    subnetwork = google_compute_subnetwork.subnet-ipv6.self_link
+    stack_type = "%s"
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+}
+`, suffix, region, suffix, instance, region, stack_type)
+}
+
+func TestAccComputeInstance_bootDisk_storagePoolSpecified(t *testing.T) {
+	// Currently failing
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	instanceName := fmt.Sprintf("tf-test-instance-%s", acctest.RandString(t, 10))
+	storagePoolName := fmt.Sprintf("tf-test-storage-pool-%s", acctest.RandString(t, 10))
+	storagePoolUrl := fmt.Sprintf("/projects/%s/zones/%s/storagePools/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestZoneFromEnv(), storagePoolName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: setupTestingStoragePool_HyperdiskBalanced(t, storagePoolName),
+				Config:    testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, storagePoolUrl, envvar.GetTestZoneFromEnv()),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.initialize_params.0.storage_pool", storagePoolName),
+				),
+			},
+			{
+				ResourceName:      "google_compute_instance.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+
+	cleanupTestingStoragePool(t, storagePoolName)
+}
+
+func setupTestingStoragePool_HyperdiskBalanced(t *testing.T, storagePoolName string) func() {
+	return func() {
+		config := acctest.GoogleProviderConfig(t)
+		headers := make(http.Header)
+		project := envvar.GetTestProjectFromEnv()
+		zone := envvar.GetTestZoneFromEnv()
+		url := fmt.Sprintf("%sprojects/%s/zones/%s/storagePools", config.ComputeBasePath, project, zone)
+		storagePoolTypeUrl := fmt.Sprintf("/projects/%s/zones/%s/storagePoolTypes/hyperdisk-balanced", project, zone)
+		defaultTimeout := 20 * time.Minute
+		obj := make(map[string]interface{})
+		obj["name"] = storagePoolName
+		obj["poolProvisionedCapacityGb"] = 10240
+		obj["poolProvisionedIops"] = 10000
+		obj["poolProvisionedThroughput"] = 1024
+		obj["storagePoolType"] = storagePoolTypeUrl
+		obj["capacityProvisioningType"] = "ADVANCED"
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   project,
+			RawURL:    url,
+			UserAgent: config.UserAgent,
+			Body:      obj,
+			Timeout:   defaultTimeout,
+			Headers:   headers,
+		})
+		if err != nil {
+			t.Errorf("Error creating StoragePool: %s", err)
+		}
+
+		err = tpgcompute.ComputeOperationWaitTime(config, res, project, "Creating StoragePool", config.UserAgent, defaultTimeout)
+		if err != nil {
+			t.Errorf("Error waiting to create StoragePool: %s", err)
+		}
+	}
+}
+
+func testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, storagePoolUrl, zone string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2204-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+data "google_project" "project" {}
+
+resource "google_compute_instance" "foobar" {
+	name = "%s"
+	machine_type= "h3-standard-88"
+	zone = "%s"
+
+	boot_disk {
+		initialize_params {
+			image = data.google_compute_image.my_image.self_link
+			type = "hyperdisk-balanced"
+			size = 500
+			storage_pool = "%s"
+		}
+	}
+	
+	network_interface {
+		network = "default"
+	}
+}
+`, instanceName, zone, storagePoolUrl)
 }

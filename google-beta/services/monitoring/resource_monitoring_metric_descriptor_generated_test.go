@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccMonitoringMetricDescriptor_monitoringMetricDescriptorBasicExample(t 
 				ResourceName:            "google_monitoring_metric_descriptor.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"metadata", "launch_stage"},
+				ImportStateVerifyIgnore: []string{"launch_stage", "metadata"},
 			},
 		},
 	})
@@ -97,7 +97,7 @@ func TestAccMonitoringMetricDescriptor_monitoringMetricDescriptorAlertExample(t 
 				ResourceName:            "google_monitoring_metric_descriptor.with_alert",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"metadata", "launch_stage"},
+				ImportStateVerifyIgnore: []string{"launch_stage", "metadata"},
 			},
 		},
 	})

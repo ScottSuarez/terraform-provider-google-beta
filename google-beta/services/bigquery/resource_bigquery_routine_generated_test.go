@@ -22,15 +22,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccBigQueryRoutine_bigQueryRoutineBasicExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutineBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -43,7 +43,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineBasicExample(t *testing.T) {
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutineBasicExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutineBasicExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.sproc",
@@ -54,7 +54,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineBasicExample(t *testing.T) {
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutineBasicExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutineBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
 	dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -70,7 +70,7 @@ resource "google_bigquery_routine" "sproc" {
 `, context)
 }
 
-func TestAccBigQueryRoutine_bigQueryRoutineJsonExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutineJsonExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -83,7 +83,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineJsonExample(t *testing.T) {
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutineJsonExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutineJsonExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.sproc",
@@ -94,7 +94,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineJsonExample(t *testing.T) {
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutineJsonExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutineJsonExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
 	dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -120,7 +120,7 @@ resource "google_bigquery_routine" "sproc" {
 `, context)
 }
 
-func TestAccBigQueryRoutine_bigQueryRoutineTvfExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutineTvfExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -133,7 +133,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineTvfExample(t *testing.T) {
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutineTvfExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutineTvfExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.sproc",
@@ -144,7 +144,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineTvfExample(t *testing.T) {
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutineTvfExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutineTvfExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
 	dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -170,7 +170,7 @@ resource "google_bigquery_routine" "sproc" {
 `, context)
 }
 
-func TestAccBigQueryRoutine_bigQueryRoutinePysparkExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutinePysparkExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -183,7 +183,7 @@ func TestAccBigQueryRoutine_bigQueryRoutinePysparkExample(t *testing.T) {
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutinePysparkExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutinePysparkExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.pyspark",
@@ -194,7 +194,7 @@ func TestAccBigQueryRoutine_bigQueryRoutinePysparkExample(t *testing.T) {
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutinePysparkExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutinePysparkExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
   dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -240,7 +240,7 @@ resource "google_bigquery_routine" "pyspark" {
 `, context)
 }
 
-func TestAccBigQueryRoutine_bigQueryRoutinePysparkMainfileExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutinePysparkMainfileExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -253,7 +253,7 @@ func TestAccBigQueryRoutine_bigQueryRoutinePysparkMainfileExample(t *testing.T) 
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutinePysparkMainfileExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutinePysparkMainfileExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.pyspark_mainfile",
@@ -264,7 +264,7 @@ func TestAccBigQueryRoutine_bigQueryRoutinePysparkMainfileExample(t *testing.T) 
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutinePysparkMainfileExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutinePysparkMainfileExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
   dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -294,7 +294,7 @@ resource "google_bigquery_routine" "pyspark_mainfile" {
 `, context)
 }
 
-func TestAccBigQueryRoutine_bigQueryRoutineSparkJarExample(t *testing.T) {
+func TestAccBigQueryRoutine_bigqueryRoutineSparkJarExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -307,7 +307,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineSparkJarExample(t *testing.T) {
 		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccBigQueryRoutine_bigQueryRoutineSparkJarExample(context),
+				Config: testAccBigQueryRoutine_bigqueryRoutineSparkJarExample(context),
 			},
 			{
 				ResourceName:      "google_bigquery_routine.spark_jar",
@@ -318,7 +318,7 @@ func TestAccBigQueryRoutine_bigQueryRoutineSparkJarExample(t *testing.T) {
 	})
 }
 
-func testAccBigQueryRoutine_bigQueryRoutineSparkJarExample(context map[string]interface{}) string {
+func testAccBigQueryRoutine_bigqueryRoutineSparkJarExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
   dataset_id = "tf_test_dataset_id%{random_suffix}"
@@ -348,6 +348,53 @@ resource "google_bigquery_routine" "spark_jar" {
     }
   }
 }
+`, context)
+}
+
+func TestAccBigQueryRoutine_bigqueryRoutineDataGovernanceTypeExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigQueryRoutine_bigqueryRoutineDataGovernanceTypeExample(context),
+			},
+			{
+				ResourceName:      "google_bigquery_routine.custom_masking_routine",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccBigQueryRoutine_bigqueryRoutineDataGovernanceTypeExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_dataset" "test" {
+	dataset_id = "tf_test_dataset_id%{random_suffix}"
+}
+
+resource "google_bigquery_routine" "custom_masking_routine" {
+	dataset_id = google_bigquery_dataset.test.dataset_id
+	routine_id     = "custom_masking_routine"
+	routine_type = "SCALAR_FUNCTION"
+	language = "SQL"
+	data_governance_type = "DATA_MASKING"
+	definition_body = "SAFE.REGEXP_REPLACE(ssn, '[0-9]', 'X')"
+	arguments {
+	  name = "ssn"
+	  data_type = "{\"typeKind\" :  \"STRING\"}"
+	} 
+	return_type = "{\"typeKind\" :  \"STRING\"}"
+  }
+  
 `, context)
 }
 

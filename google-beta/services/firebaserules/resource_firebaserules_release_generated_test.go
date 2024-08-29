@@ -23,8 +23,8 @@ import (
 	"fmt"
 	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	firebaserules "github.com/GoogleCloudPlatform/declarative-resource-client-library/services/google/firebaserules/beta"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"strings"
 	"testing"
 
@@ -87,7 +87,7 @@ func TestAccFirebaserulesRelease_StorageReleaseHandWritten(t *testing.T) {
 func testAccFirebaserulesRelease_FirestoreReleaseHandWritten(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_firebaserules_release" "primary" {
-  name         = "cloud.firestore"
+  name         = "cloud.firestore/tf-test-database%{random_suffix}"
   ruleset_name = "projects/%{project_name}/rulesets/${google_firebaserules_ruleset.firestore.name}"
   project      = "%{project_name}"
 

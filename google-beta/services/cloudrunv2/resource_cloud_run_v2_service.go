@@ -20,6 +20,7 @@ package cloudrunv2
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -100,7 +101,7 @@ This field follows Kubernetes annotations' namespacing, limits, and rules.`,
 									"args": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: `Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell`,
+										Description: `Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references are not supported in Cloud Run.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -122,57 +123,14 @@ This field follows Kubernetes annotations' namespacing, limits, and rules.`,
 										},
 									},
 									"env": {
-										Type:        schema.TypeList,
+										Type:        schema.TypeSet,
 										Optional:    true,
 										Description: `List of environment variables to set in the container.`,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"name": {
-													Type:        schema.TypeString,
-													Required:    true,
-													Description: `Name of the environment variable. Must be a C_IDENTIFIER, and mnay not exceed 32768 characters.`,
-												},
-												"value": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Description: `Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "", and the maximum length is 32768 bytes`,
-												},
-												"value_source": {
-													Type:        schema.TypeList,
-													Optional:    true,
-													Description: `Source for the environment variable's value.`,
-													MaxItems:    1,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"secret_key_ref": {
-																Type:        schema.TypeList,
-																Optional:    true,
-																Description: `Selects a secret and a specific version from Cloud Secret Manager.`,
-																MaxItems:    1,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"secret": {
-																			Type:        schema.TypeString,
-																			Required:    true,
-																			Description: `The name of the secret in Cloud Secret Manager. Format: {secretName} if the secret is in the same project. projects/{project}/secrets/{secretName} if the secret is in a different project.`,
-																		},
-																		"version": {
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																			Description: `The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version.`,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
+										Elem:        cloudrunv2ServiceTemplateContainersContainersEnvSchema(),
+										// Default schema.HashSchema is used.
 									},
 									"liveness_probe": {
 										Type:        schema.TypeList,
-										Computed:    true,
 										Optional:    true,
 										Description: `Periodic probe of container liveness. Container will be restarted if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes`,
 										MaxItems:    1,
@@ -301,6 +259,7 @@ is the value of container.ports[0].containerPort.`,
 										Description: `List of ports to expose from the container. Only a single port can be specified. The specified ports must be listening on all interfaces (0.0.0.0) within the container to be accessible.
 
 If omitted, a port number will be chosen and passed to the container through the PORT environment variable for the container to listen on`,
+										MaxItems: 1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"container_port": {
@@ -326,9 +285,10 @@ If omitted, a port number will be chosen and passed to the container through the
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"cpu_idle": {
-													Type:        schema.TypeBool,
-													Optional:    true,
-													Description: `Determines whether CPU should be throttled or not outside of requests.`,
+													Type:     schema.TypeBool,
+													Optional: true,
+													Description: `Determines whether CPU is only allocated during requests. True by default if the parent 'resources' field is not set. However, if
+'resources' is set, this field must be explicitly set to true to preserve the default behavior.`,
 												},
 												"limits": {
 													Type:        schema.TypeMap,
@@ -513,10 +473,11 @@ All system labels in v1 now have a corresponding field in v2 RevisionTemplate.`,
 							Elem: &schema.Schema{Type: schema.TypeString},
 						},
 						"max_instance_request_concurrency": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Optional:    true,
-							Description: `Sets the maximum number of requests that each serving instance can receive.`,
+							Type:     schema.TypeInt,
+							Computed: true,
+							Optional: true,
+							Description: `Sets the maximum number of requests that each serving instance can receive.
+If not specified or 0, defaults to 80 when requested CPU >= 1 and defaults to 1 when requested CPU < 1.`,
 						},
 						"revision": {
 							Type:        schema.TypeString,
@@ -556,9 +517,10 @@ All system labels in v1 now have a corresponding field in v2 RevisionTemplate.`,
 							Description: `Enables session affinity. For more information, go to https://cloud.google.com/run/docs/configuring/session-affinity`,
 						},
 						"timeout": {
-							Type:     schema.TypeString,
-							Computed: true,
-							Optional: true,
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: verify.ValidateRegexp(`^[0-9]+(?:\.[0-9]{1,9})?s$`),
 							Description: `Max allowed time for an instance to respond to a request.
 
 A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".`,
@@ -618,7 +580,7 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 									"gcs": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: `Represents a GCS Bucket mounted as a volume.`,
+										Description: `Cloud Storage bucket mounted as a volume using GCSFuse. This feature is only supported in the gen2 execution environment and requires launch-stage to be set to ALPHA or BETA.`,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -791,10 +753,17 @@ Please refer to the field 'effective_annotations' for all of the annotations pre
 							Optional:    true,
 							Description: `If present, indicates to use Breakglass using this justification. If useDefault is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass`,
 						},
+						"policy": {
+							Type:          schema.TypeString,
+							Optional:      true,
+							Description:   `The path to a binary authorization policy. Format: projects/{project}/platforms/cloudRun/{policy-name}`,
+							ConflictsWith: []string{},
+						},
 						"use_default": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: `If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.`,
+							Type:          schema.TypeBool,
+							Optional:      true,
+							Description:   `If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.`,
+							ConflictsWith: []string{},
 						},
 					},
 				},
@@ -817,6 +786,11 @@ For more information, see https://cloud.google.com/run/docs/configuring/custom-a
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"default_uri_disabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Disables public resolution of the default URI of this service.`,
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -852,6 +826,21 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 If no value is specified, GA is assumed. Set the launch stage to a preview stage on input to allow use of preview features in that stage. On read (or output), describes whether the resource uses preview features.
 
 For example, if ALPHA is provided as input, but only BETA and GA-level features are used, this field will be BETA on output. Possible values: ["UNIMPLEMENTED", "PRELAUNCH", "EARLY_ACCESS", "ALPHA", "BETA", "GA", "DEPRECATED"]`,
+			},
+			"scaling": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Scaling settings that apply to the whole service`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"min_instance_count": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Minimum number of instances for the service, to be divided among all revisions receiving traffic.`,
+						},
+					},
+				},
 			},
 			"traffic": {
 				Type:        schema.TypeList,
@@ -1114,6 +1103,17 @@ If reconciliation failed, trafficStatuses, observedGeneration, and latestReadyRe
 				Computed:    true,
 				Description: `The main URI in which this Service is serving traffic.`,
 			},
+			"deletion_protection": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Whether Terraform will be prevented from destroying the service. Defaults to true.
+When a'terraform destroy' or 'terraform apply' would delete the service,
+the command will fail if this field is not set to false in Terraform state.
+When the field is set to true or unset in Terraform state, a 'terraform apply'
+or 'terraform destroy' that would delete the service will fail.
+When the field is set to false, deleting the service is allowed.`,
+				Default: true,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -1122,6 +1122,53 @@ If reconciliation failed, trafficStatuses, observedGeneration, and latestReadyRe
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func cloudrunv2ServiceTemplateContainersContainersEnvSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `Name of the environment variable. Must be a C_IDENTIFIER, and may not exceed 32768 characters.`,
+			},
+			"value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Literal value of the environment variable. Defaults to "" and the maximum allowed length is 32768 characters. Variable references are not supported in Cloud Run.`,
+			},
+			"value_source": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Source for the environment variable's value.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"secret_key_ref": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Selects a secret and a specific version from Cloud Secret Manager.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"secret": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The name of the secret in Cloud Secret Manager. Format: {secretName} if the secret is in the same project. projects/{project}/secrets/{secretName} if the secret is in a different project.`,
+									},
+									"version": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -1175,6 +1222,18 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(customAudiencesProp)) && (ok || !reflect.DeepEqual(v, customAudiencesProp)) {
 		obj["customAudiences"] = customAudiencesProp
 	}
+	scalingProp, err := expandCloudRunV2ServiceScaling(d.Get("scaling"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scaling"); !tpgresource.IsEmptyValue(reflect.ValueOf(scalingProp)) && (ok || !reflect.DeepEqual(v, scalingProp)) {
+		obj["scaling"] = scalingProp
+	}
+	defaultUriDisabledProp, err := expandCloudRunV2ServiceDefaultUriDisabled(d.Get("default_uri_disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_uri_disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(defaultUriDisabledProp)) && (ok || !reflect.DeepEqual(v, defaultUriDisabledProp)) {
+		obj["defaultUriDisabled"] = defaultUriDisabledProp
+	}
 	templateProp, err := expandCloudRunV2ServiceTemplate(d.Get("template"), d, config)
 	if err != nil {
 		return err
@@ -1219,6 +1278,7 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1227,6 +1287,7 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Service: %s", err)
@@ -1246,9 +1307,6 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 		config, res, &opRes, project, "Creating Service", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-
 		return fmt.Errorf("Error waiting to create Service: %s", err)
 	}
 
@@ -1289,17 +1347,25 @@ func resourceCloudRunV2ServiceRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("CloudRunV2Service %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("deletion_protection"); !ok {
+		if err := d.Set("deletion_protection", true); err != nil {
+			return fmt.Errorf("Error setting deletion_protection: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
@@ -1353,6 +1419,12 @@ func resourceCloudRunV2ServiceRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("custom_audiences", flattenCloudRunV2ServiceCustomAudiences(res["customAudiences"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("scaling", flattenCloudRunV2ServiceScaling(res["scaling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err := d.Set("default_uri_disabled", flattenCloudRunV2ServiceDefaultUriDisabled(res["defaultUriDisabled"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err := d.Set("template", flattenCloudRunV2ServiceTemplate(res["template"], d, config)); err != nil {
@@ -1459,6 +1531,18 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("custom_audiences"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, customAudiencesProp)) {
 		obj["customAudiences"] = customAudiencesProp
 	}
+	scalingProp, err := expandCloudRunV2ServiceScaling(d.Get("scaling"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scaling"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, scalingProp)) {
+		obj["scaling"] = scalingProp
+	}
+	defaultUriDisabledProp, err := expandCloudRunV2ServiceDefaultUriDisabled(d.Get("default_uri_disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_uri_disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, defaultUriDisabledProp)) {
+		obj["defaultUriDisabled"] = defaultUriDisabledProp
+	}
 	templateProp, err := expandCloudRunV2ServiceTemplate(d.Get("template"), d, config)
 	if err != nil {
 		return err
@@ -1490,6 +1574,7 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Updating Service %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -1504,6 +1589,7 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1544,13 +1630,18 @@ func resourceCloudRunV2ServiceDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Service %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	if d.Get("deletion_protection").(bool) {
+		return fmt.Errorf("cannot destroy service without setting deletion_protection=false and running `terraform apply`")
+	}
+
+	log.Printf("[DEBUG] Deleting Service %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1559,6 +1650,7 @@ func resourceCloudRunV2ServiceDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Service")
@@ -1592,6 +1684,11 @@ func resourceCloudRunV2ServiceImport(d *schema.ResourceData, meta interface{}) (
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("deletion_protection", true); err != nil {
+		return nil, fmt.Errorf("Error setting deletion_protection: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -1691,6 +1788,8 @@ func flattenCloudRunV2ServiceBinaryAuthorization(v interface{}, d *schema.Resour
 		flattenCloudRunV2ServiceBinaryAuthorizationBreakglassJustification(original["breakglassJustification"], d, config)
 	transformed["use_default"] =
 		flattenCloudRunV2ServiceBinaryAuthorizationUseDefault(original["useDefault"], d, config)
+	transformed["policy"] =
+		flattenCloudRunV2ServiceBinaryAuthorizationPolicy(original["policy"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceBinaryAuthorizationBreakglassJustification(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1701,7 +1800,45 @@ func flattenCloudRunV2ServiceBinaryAuthorizationUseDefault(v interface{}, d *sch
 	return v
 }
 
+func flattenCloudRunV2ServiceBinaryAuthorizationPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceCustomAudiences(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceScaling(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["min_instance_count"] =
+		flattenCloudRunV2ServiceScalingMinInstanceCount(original["minInstanceCount"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2ServiceScalingMinInstanceCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenCloudRunV2ServiceDefaultUriDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1918,14 +2055,14 @@ func flattenCloudRunV2ServiceTemplateContainersEnv(v interface{}, d *schema.Reso
 		return v
 	}
 	l := v.([]interface{})
-	transformed := make([]interface{}, 0, len(l))
+	transformed := schema.NewSet(schema.HashResource(cloudrunv2ServiceTemplateContainersContainersEnvSchema()), []interface{}{})
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
 			continue
 		}
-		transformed = append(transformed, map[string]interface{}{
+		transformed.Add(map[string]interface{}{
 			"name":         flattenCloudRunV2ServiceTemplateContainersEnvName(original["name"], d, config),
 			"value":        flattenCloudRunV2ServiceTemplateContainersEnvValue(original["value"], d, config),
 			"value_source": flattenCloudRunV2ServiceTemplateContainersEnvValueSource(original["valueSource"], d, config),
@@ -3059,6 +3196,13 @@ func expandCloudRunV2ServiceBinaryAuthorization(v interface{}, d tpgresource.Ter
 		transformed["useDefault"] = transformedUseDefault
 	}
 
+	transformedPolicy, err := expandCloudRunV2ServiceBinaryAuthorizationPolicy(original["policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["policy"] = transformedPolicy
+	}
+
 	return transformed, nil
 }
 
@@ -3070,7 +3214,38 @@ func expandCloudRunV2ServiceBinaryAuthorizationUseDefault(v interface{}, d tpgre
 	return v, nil
 }
 
+func expandCloudRunV2ServiceBinaryAuthorizationPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandCloudRunV2ServiceCustomAudiences(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceScaling(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedMinInstanceCount, err := expandCloudRunV2ServiceScalingMinInstanceCount(original["min_instance_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMinInstanceCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["minInstanceCount"] = transformedMinInstanceCount
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2ServiceScalingMinInstanceCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceDefaultUriDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -3450,6 +3625,7 @@ func expandCloudRunV2ServiceTemplateContainersArgs(v interface{}, d tpgresource.
 }
 
 func expandCloudRunV2ServiceTemplateContainersEnv(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {

@@ -17,7 +17,7 @@ description: |-
   A Lien represents an encumbrance on the actions that can be performed on a resource.
 ---
 
-# google\_resource\_manager\_lien
+# google_resource_manager_lien
 
 A Lien represents an encumbrance on the actions that can be performed on a resource.
 
@@ -37,6 +37,7 @@ resource "google_resource_manager_lien" "lien" {
 resource "google_project" "project" {
   project_id = "staging-project"
   name       = "A very important project!"
+  deletion_policy = "DELETE"
 }
 ```
 

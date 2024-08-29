@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_target_https_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"ssl_policy", "url_map", "server_tls_policy"},
+				ImportStateVerifyIgnore: []string{"server_tls_policy", "ssl_policy", "url_map"},
 			},
 		},
 	})
@@ -128,7 +128,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(
 				ResourceName:            "google_compute_target_https_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"ssl_policy", "url_map", "server_tls_policy"},
+				ImportStateVerifyIgnore: []string{"server_tls_policy", "ssl_policy", "url_map"},
 			},
 		},
 	})
@@ -209,7 +209,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyMtlsExample(t *testing.T) {
 				ResourceName:            "google_compute_target_https_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"ssl_policy", "url_map", "server_tls_policy"},
+				ImportStateVerifyIgnore: []string{"server_tls_policy", "ssl_policy", "url_map"},
 			},
 		},
 	})
@@ -330,7 +330,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyCertificateManagerCertificat
 				ResourceName:            "google_compute_target_https_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"ssl_policy", "url_map", "server_tls_policy"},
+				ImportStateVerifyIgnore: []string{"server_tls_policy", "ssl_policy", "url_map"},
 			},
 		},
 	})

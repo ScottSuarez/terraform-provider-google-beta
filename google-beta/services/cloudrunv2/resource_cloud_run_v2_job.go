@@ -20,6 +20,7 @@ package cloudrunv2
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -97,7 +98,7 @@ func ResourceCloudRunV2Job() *schema.Resource {
 												"args": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: `Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references $(VAR_NAME) are expanded using the container's environment. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. More info: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell`,
+													Description: `Arguments to the entrypoint. The docker image's CMD is used if this is not provided. Variable references are not supported in Cloud Run.`,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -111,53 +112,11 @@ func ResourceCloudRunV2Job() *schema.Resource {
 													},
 												},
 												"env": {
-													Type:        schema.TypeList,
+													Type:        schema.TypeSet,
 													Optional:    true,
 													Description: `List of environment variables to set in the container.`,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"name": {
-																Type:        schema.TypeString,
-																Required:    true,
-																Description: `Name of the environment variable. Must be a C_IDENTIFIER, and mnay not exceed 32768 characters.`,
-															},
-															"value": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Description: `Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "", and the maximum length is 32768 bytes`,
-															},
-															"value_source": {
-																Type:        schema.TypeList,
-																Optional:    true,
-																Description: `Source for the environment variable's value.`,
-																MaxItems:    1,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"secret_key_ref": {
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Description: `Selects a secret and a specific version from Cloud Secret Manager.`,
-																			MaxItems:    1,
-																			Elem: &schema.Resource{
-																				Schema: map[string]*schema.Schema{
-																					"secret": {
-																						Type:        schema.TypeString,
-																						Required:    true,
-																						Description: `The name of the secret in Cloud Secret Manager. Format: {secretName} if the secret is in the same project. projects/{project}/secrets/{secretName} if the secret is in a different project.`,
-																					},
-																					"version": {
-																						Type:        schema.TypeString,
-																						Required:    true,
-																						Description: `The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version.`,
-																					},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
+													Elem:        cloudrunv2JobTemplateTemplateContainersContainersEnvSchema(),
+													// Default schema.HashSchema is used.
 												},
 												"name": {
 													Type:        schema.TypeString,
@@ -255,9 +214,10 @@ If omitted, a port number will be chosen and passed to the container through the
 										Description: `Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project's default service account.`,
 									},
 									"timeout": {
-										Type:     schema.TypeString,
-										Computed: true,
-										Optional: true,
+										Type:         schema.TypeString,
+										Computed:     true,
+										Optional:     true,
+										ValidateFunc: verify.ValidateRegexp(`^[0-9]+(?:\.[0-9]{1,9})?s$`),
 										Description: `Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout.
 
 A duration in seconds with up to nine fractional digits, ending with 's'. Example: "3.5s".`,
@@ -309,6 +269,51 @@ A duration in seconds with up to nine fractional digits, ending with 's'. Exampl
 																Type:        schema.TypeString,
 																Optional:    true,
 																Description: `Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. This field's values are of the 'Quantity' k8s type: https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/. The default is nil which means that the limit is undefined. More info: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir.`,
+															},
+														},
+													},
+												},
+												"gcs": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Cloud Storage bucket mounted as a volume using GCSFuse. This feature requires the launch stage to be set to ALPHA or BETA.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"bucket": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Name of the cloud storage bucket to back the volume. The resource service account must have permission to access the bucket.`,
+															},
+															"read_only": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																Description: `If true, mount this volume as read-only in all mounts. If false, mount this volume as read-write.`,
+															},
+														},
+													},
+												},
+												"nfs": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `NFS share mounted as a volume. This feature requires the launch stage to be set to ALPHA or BETA.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"server": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Hostname or IP address of the NFS server.`,
+															},
+															"path": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `Path that is exported by the NFS server.`,
+															},
+															"read_only": {
+																Type:        schema.TypeBool,
+																Optional:    true,
+																Description: `If true, mount this volume as read-only in all mounts.`,
 															},
 														},
 													},
@@ -481,10 +486,17 @@ Please refer to the field 'effective_annotations' for all of the annotations pre
 							Optional:    true,
 							Description: `If present, indicates to use Breakglass using this justification. If useDefault is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass`,
 						},
+						"policy": {
+							Type:          schema.TypeString,
+							Optional:      true,
+							Description:   `The path to a binary authorization policy. Format: projects/{project}/platforms/cloudRun/{policy-name}`,
+							ConflictsWith: []string{},
+						},
 						"use_default": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: `If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.`,
+							Type:          schema.TypeBool,
+							Optional:      true,
+							Description:   `If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.`,
+							ConflictsWith: []string{},
 						},
 					},
 				},
@@ -521,6 +533,20 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 If no value is specified, GA is assumed. Set the launch stage to a preview stage on input to allow use of preview features in that stage. On read (or output), describes whether the resource uses preview features.
 
 For example, if ALPHA is provided as input, but only BETA and GA-level features are used, this field will be BETA on output. Possible values: ["UNIMPLEMENTED", "PRELAUNCH", "EARLY_ACCESS", "ALPHA", "BETA", "GA", "DEPRECATED"]`,
+			},
+			"run_execution_token": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `A unique string used as a suffix creating a new execution upon job create or update. The Job will become ready when the execution is successfully completed.
+The sum of job name and token length must be fewer than 63 characters.`,
+				ConflictsWith: []string{"start_execution_token"},
+			},
+			"start_execution_token": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `A unique string used as a suffix creating a new execution upon job create or update. The Job will become ready when the execution is successfully started.
+The sum of job name and token length must be fewer than 63 characters.`,
+				ConflictsWith: []string{"run_execution_token"},
 			},
 			"conditions": {
 				Type:        schema.TypeList,
@@ -737,6 +763,17 @@ A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to n
 				Computed:    true,
 				Description: `The last-modified time.`,
 			},
+			"deletion_protection": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Whether Terraform will be prevented from destroying the job. Defaults to true.
+When a'terraform destroy' or 'terraform apply' would delete the job,
+the command will fail if this field is not set to false in Terraform state.
+When the field is set to true or unset in Terraform state, a 'terraform apply'
+or 'terraform destroy' that would delete the job will fail.
+When the field is set to false, deleting the job is allowed.`,
+				Default: true,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -745,6 +782,53 @@ A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to n
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func cloudrunv2JobTemplateTemplateContainersContainersEnvSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `Name of the environment variable. Must be a C_IDENTIFIER, and mnay not exceed 32768 characters.`,
+			},
+			"value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Literal value of the environment variable. Defaults to "" and the maximum allowed length is 32768 characters. Variable references are not supported in Cloud Run.`,
+			},
+			"value_source": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Source for the environment variable's value.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"secret_key_ref": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Selects a secret and a specific version from Cloud Secret Manager.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"secret": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The name of the secret in Cloud Secret Manager. Format: {secretName} if the secret is in the same project. projects/{project}/secrets/{secretName} if the secret is in a different project.`,
+									},
+									"version": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: `The Cloud Secret Manager secret version. Can be 'latest' for the latest value or an integer for a specific version.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -779,6 +863,18 @@ func resourceCloudRunV2JobCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	} else if v, ok := d.GetOkExists("binary_authorization"); !tpgresource.IsEmptyValue(reflect.ValueOf(binaryAuthorizationProp)) && (ok || !reflect.DeepEqual(v, binaryAuthorizationProp)) {
 		obj["binaryAuthorization"] = binaryAuthorizationProp
+	}
+	startExecutionTokenProp, err := expandCloudRunV2JobStartExecutionToken(d.Get("start_execution_token"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("start_execution_token"); !tpgresource.IsEmptyValue(reflect.ValueOf(startExecutionTokenProp)) && (ok || !reflect.DeepEqual(v, startExecutionTokenProp)) {
+		obj["startExecutionToken"] = startExecutionTokenProp
+	}
+	runExecutionTokenProp, err := expandCloudRunV2JobRunExecutionToken(d.Get("run_execution_token"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("run_execution_token"); !tpgresource.IsEmptyValue(reflect.ValueOf(runExecutionTokenProp)) && (ok || !reflect.DeepEqual(v, runExecutionTokenProp)) {
+		obj["runExecutionToken"] = runExecutionTokenProp
 	}
 	templateProp, err := expandCloudRunV2JobTemplate(d.Get("template"), d, config)
 	if err != nil {
@@ -818,6 +914,7 @@ func resourceCloudRunV2JobCreate(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -826,6 +923,7 @@ func resourceCloudRunV2JobCreate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Job: %s", err)
@@ -845,9 +943,6 @@ func resourceCloudRunV2JobCreate(d *schema.ResourceData, meta interface{}) error
 		config, res, &opRes, project, "Creating Job", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-
 		return fmt.Errorf("Error waiting to create Job: %s", err)
 	}
 
@@ -888,17 +983,25 @@ func resourceCloudRunV2JobRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("CloudRunV2Job %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("deletion_protection"); !ok {
+		if err := d.Set("deletion_protection", true); err != nil {
+			return fmt.Errorf("Error setting deletion_protection: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Job: %s", err)
 	}
@@ -943,6 +1046,12 @@ func resourceCloudRunV2JobRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Job: %s", err)
 	}
 	if err := d.Set("binary_authorization", flattenCloudRunV2JobBinaryAuthorization(res["binaryAuthorization"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Job: %s", err)
+	}
+	if err := d.Set("start_execution_token", flattenCloudRunV2JobStartExecutionToken(res["startExecutionToken"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Job: %s", err)
+	}
+	if err := d.Set("run_execution_token", flattenCloudRunV2JobRunExecutionToken(res["runExecutionToken"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Job: %s", err)
 	}
 	if err := d.Set("template", flattenCloudRunV2JobTemplate(res["template"], d, config)); err != nil {
@@ -1022,6 +1131,18 @@ func resourceCloudRunV2JobUpdate(d *schema.ResourceData, meta interface{}) error
 	} else if v, ok := d.GetOkExists("binary_authorization"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, binaryAuthorizationProp)) {
 		obj["binaryAuthorization"] = binaryAuthorizationProp
 	}
+	startExecutionTokenProp, err := expandCloudRunV2JobStartExecutionToken(d.Get("start_execution_token"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("start_execution_token"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, startExecutionTokenProp)) {
+		obj["startExecutionToken"] = startExecutionTokenProp
+	}
+	runExecutionTokenProp, err := expandCloudRunV2JobRunExecutionToken(d.Get("run_execution_token"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("run_execution_token"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, runExecutionTokenProp)) {
+		obj["runExecutionToken"] = runExecutionTokenProp
+	}
 	templateProp, err := expandCloudRunV2JobTemplate(d.Get("template"), d, config)
 	if err != nil {
 		return err
@@ -1047,6 +1168,7 @@ func resourceCloudRunV2JobUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Job %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -1061,6 +1183,7 @@ func resourceCloudRunV2JobUpdate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1101,13 +1224,18 @@ func resourceCloudRunV2JobDelete(d *schema.ResourceData, meta interface{}) error
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Job %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	if d.Get("deletion_protection").(bool) {
+		return fmt.Errorf("cannot destroy job without setting deletion_protection=false and running `terraform apply`")
+	}
+
+	log.Printf("[DEBUG] Deleting Job %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1116,6 +1244,7 @@ func resourceCloudRunV2JobDelete(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Job")
@@ -1149,6 +1278,11 @@ func resourceCloudRunV2JobImport(d *schema.ResourceData, meta interface{}) ([]*s
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("deletion_protection", true); err != nil {
+		return nil, fmt.Errorf("Error setting deletion_protection: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -1240,6 +1374,8 @@ func flattenCloudRunV2JobBinaryAuthorization(v interface{}, d *schema.ResourceDa
 		flattenCloudRunV2JobBinaryAuthorizationBreakglassJustification(original["breakglassJustification"], d, config)
 	transformed["use_default"] =
 		flattenCloudRunV2JobBinaryAuthorizationUseDefault(original["useDefault"], d, config)
+	transformed["policy"] =
+		flattenCloudRunV2JobBinaryAuthorizationPolicy(original["policy"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2JobBinaryAuthorizationBreakglassJustification(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1247,6 +1383,18 @@ func flattenCloudRunV2JobBinaryAuthorizationBreakglassJustification(v interface{
 }
 
 func flattenCloudRunV2JobBinaryAuthorizationUseDefault(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobBinaryAuthorizationPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobStartExecutionToken(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobRunExecutionToken(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1387,14 +1535,14 @@ func flattenCloudRunV2JobTemplateTemplateContainersEnv(v interface{}, d *schema.
 		return v
 	}
 	l := v.([]interface{})
-	transformed := make([]interface{}, 0, len(l))
+	transformed := schema.NewSet(schema.HashResource(cloudrunv2JobTemplateTemplateContainersContainersEnvSchema()), []interface{}{})
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
 			continue
 		}
-		transformed = append(transformed, map[string]interface{}{
+		transformed.Add(map[string]interface{}{
 			"name":         flattenCloudRunV2JobTemplateTemplateContainersEnvName(original["name"], d, config),
 			"value":        flattenCloudRunV2JobTemplateTemplateContainersEnvValue(original["value"], d, config),
 			"value_source": flattenCloudRunV2JobTemplateTemplateContainersEnvValueSource(original["valueSource"], d, config),
@@ -1551,6 +1699,8 @@ func flattenCloudRunV2JobTemplateTemplateVolumes(v interface{}, d *schema.Resour
 			"secret":             flattenCloudRunV2JobTemplateTemplateVolumesSecret(original["secret"], d, config),
 			"cloud_sql_instance": flattenCloudRunV2JobTemplateTemplateVolumesCloudSqlInstance(original["cloudSqlInstance"], d, config),
 			"empty_dir":          flattenCloudRunV2JobTemplateTemplateVolumesEmptyDir(original["emptyDir"], d, config),
+			"gcs":                flattenCloudRunV2JobTemplateTemplateVolumesGcs(original["gcs"], d, config),
+			"nfs":                flattenCloudRunV2JobTemplateTemplateVolumesNfs(original["nfs"], d, config),
 		})
 	}
 	return transformed
@@ -1679,6 +1829,58 @@ func flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(v interface{}, d 
 }
 
 func flattenCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesGcs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["bucket"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesGcsBucket(original["bucket"], d, config)
+	transformed["read_only"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(original["readOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2JobTemplateTemplateVolumesGcsBucket(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesNfs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["server"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesNfsServer(original["server"], d, config)
+	transformed["path"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesNfsPath(original["path"], d, config)
+	transformed["read_only"] =
+		flattenCloudRunV2JobTemplateTemplateVolumesNfsReadOnly(original["readOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2JobTemplateTemplateVolumesNfsServer(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesNfsPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2JobTemplateTemplateVolumesNfsReadOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2004,6 +2206,13 @@ func expandCloudRunV2JobBinaryAuthorization(v interface{}, d tpgresource.Terrafo
 		transformed["useDefault"] = transformedUseDefault
 	}
 
+	transformedPolicy, err := expandCloudRunV2JobBinaryAuthorizationPolicy(original["policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["policy"] = transformedPolicy
+	}
+
 	return transformed, nil
 }
 
@@ -2012,6 +2221,18 @@ func expandCloudRunV2JobBinaryAuthorizationBreakglassJustification(v interface{}
 }
 
 func expandCloudRunV2JobBinaryAuthorizationUseDefault(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobBinaryAuthorizationPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobStartExecutionToken(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobRunExecutionToken(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -2255,6 +2476,7 @@ func expandCloudRunV2JobTemplateTemplateContainersArgs(v interface{}, d tpgresou
 }
 
 func expandCloudRunV2JobTemplateTemplateContainersEnv(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2497,6 +2719,20 @@ func expandCloudRunV2JobTemplateTemplateVolumes(v interface{}, d tpgresource.Ter
 			transformed["emptyDir"] = transformedEmptyDir
 		}
 
+		transformedGcs, err := expandCloudRunV2JobTemplateTemplateVolumesGcs(original["gcs"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGcs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["gcs"] = transformedGcs
+		}
+
+		transformedNfs, err := expandCloudRunV2JobTemplateTemplateVolumesNfs(original["nfs"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedNfs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["nfs"] = transformedNfs
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -2649,6 +2885,85 @@ func expandCloudRunV2JobTemplateTemplateVolumesEmptyDirMedium(v interface{}, d t
 }
 
 func expandCloudRunV2JobTemplateTemplateVolumesEmptyDirSizeLimit(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesGcs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedBucket, err := expandCloudRunV2JobTemplateTemplateVolumesGcsBucket(original["bucket"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBucket); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["bucket"] = transformedBucket
+	}
+
+	transformedReadOnly, err := expandCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesGcsBucket(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesGcsReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesNfs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedServer, err := expandCloudRunV2JobTemplateTemplateVolumesNfsServer(original["server"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServer); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["server"] = transformedServer
+	}
+
+	transformedPath, err := expandCloudRunV2JobTemplateTemplateVolumesNfsPath(original["path"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["path"] = transformedPath
+	}
+
+	transformedReadOnly, err := expandCloudRunV2JobTemplateTemplateVolumesNfsReadOnly(original["read_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReadOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["readOnly"] = transformedReadOnly
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesNfsServer(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesNfsPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateVolumesNfsReadOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

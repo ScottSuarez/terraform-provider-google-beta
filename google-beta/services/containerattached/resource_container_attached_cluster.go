@@ -20,6 +20,7 @@ package containerattached
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -71,7 +72,8 @@ func ResourceContainerAttachedCluster() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				Description: `The Kubernetes distribution of the underlying attached cluster. Supported values:
-"eks", "aks".`,
+"eks", "aks", "generic". The generic distribution provides the ability to register
+or migrate any CNCF conformant cluster.`,
 			},
 			"fleet": {
 				Type:        schema.TypeList,
@@ -394,8 +396,8 @@ the Workload Identity Pool.`,
 			"deletion_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Description: `Policy to determine what flags to send on delete. Possible values: DELETE, DELETE_IGNORE_ERRORS`,
 				Default:     "DELETE",
-				Description: `Policy to determine what flags to send on delete.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -508,6 +510,7 @@ func resourceContainerAttachedClusterCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -516,6 +519,7 @@ func resourceContainerAttachedClusterCreate(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Cluster: %s", err)
@@ -582,12 +586,14 @@ func resourceContainerAttachedClusterRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ContainerAttachedCluster %q", d.Id()))
@@ -756,6 +762,7 @@ func resourceContainerAttachedClusterUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Updating Cluster %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -852,6 +859,7 @@ func resourceContainerAttachedClusterUpdate(d *schema.ResourceData, meta interfa
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -893,6 +901,13 @@ func resourceContainerAttachedClusterDelete(d *schema.ResourceData, meta interfa
 	}
 
 	var obj map[string]interface{}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
 	if v, ok := d.GetOk("deletion_policy"); ok {
 		if v == "DELETE_IGNORE_ERRORS" {
 			url, err = transport_tpg.AddQueryParams(url, map[string]string{"ignore_errors": "true"})
@@ -901,13 +916,8 @@ func resourceContainerAttachedClusterDelete(d *schema.ResourceData, meta interfa
 			}
 		}
 	}
+
 	log.Printf("[DEBUG] Deleting Cluster %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -916,6 +926,7 @@ func resourceContainerAttachedClusterDelete(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Cluster")

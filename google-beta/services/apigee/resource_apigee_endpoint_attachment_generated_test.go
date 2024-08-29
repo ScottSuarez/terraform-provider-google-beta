@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -36,8 +36,8 @@ func TestAccApigeeEndpointAttachment_apigeeEndpointAttachmentBasicTestExample(t 
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -53,7 +53,7 @@ func TestAccApigeeEndpointAttachment_apigeeEndpointAttachmentBasicTestExample(t 
 				ResourceName:            "google_apigee_endpoint_attachment.apigee_endpoint_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"org_id", "endpoint_attachment_id"},
+				ImportStateVerifyIgnore: []string{"endpoint_attachment_id", "org_id"},
 			},
 		},
 	})
@@ -66,6 +66,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -123,7 +124,7 @@ resource "google_compute_forwarding_rule" "psc_ilb_consumer" {
   target                = google_compute_service_attachment.psc_ilb_service_attachment.id
   load_balancing_scheme = "" # need to override EXTERNAL default when target is a service attachment
   network               = "default"
-  ip_address            = google_compute_address.psc_ilb_consumer_address.id
+  ip_address            = google_compute_address.psc_ilb_consumer_address.address
 
   project = google_project.project.project_id
 }

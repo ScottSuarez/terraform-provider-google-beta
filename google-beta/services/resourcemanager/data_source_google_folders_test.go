@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
@@ -42,6 +42,7 @@ func testAccCheckGoogleFoldersConfig(parent string, displayName string) string {
 resource "google_folder" "foobar" {
 		parent       = "%s"
 		display_name = "%s"
+		deletion_protection = false
 }
 
 data "google_folders" "root-test" {

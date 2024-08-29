@@ -7,8 +7,8 @@ import (
 	"path"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
@@ -160,6 +160,7 @@ func testGoogleHealthcareHl7V2Store_basic(hl7_v2StoreName, datasetName string) s
 resource "google_healthcare_hl7_v2_store" "default" {
   name     = "%s"
   dataset  = google_healthcare_dataset.dataset.id
+  reject_duplicate_message = true
 }
 
 resource "google_healthcare_dataset" "dataset" {

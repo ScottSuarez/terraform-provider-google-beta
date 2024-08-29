@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"regexp"
 	"time"
@@ -661,14 +662,19 @@ For internal load balancing, a URL to a HealthCheck resource must be specified i
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Whether the serving infrastructure will authenticate and authorize all incoming requests.`,
+						},
 						"oauth2_client_id": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: `OAuth2 Client ID for IAP`,
 						},
 						"oauth2_client_secret": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: `OAuth2 Client Secret for IAP`,
 							Sensitive:   true,
 						},
@@ -833,7 +839,6 @@ The possible values are:
                      UNAVAILABLE_WEIGHT. Otherwise, Load Balancing remains
                      equal-weight.
 
-
 This field is applicable to either:
 
 * A regional backend service with the service_protocol set to HTTP, HTTPS, or HTTP2,
@@ -842,7 +847,6 @@ This field is applicable to either:
 * A regional backend service with loadBalancingScheme set to EXTERNAL (External Network
   Load Balancing). Only MAGLEV and WEIGHTED_MAGLEV values are possible for External
   Network Load Balancing. The default is MAGLEV.
-
 
 If session_affinity is not NONE, and this field is not set to MAGLEV, WEIGHTED_MAGLEV,
 or RING_HASH, session affinity settings will not take effect.
@@ -921,7 +925,6 @@ less than one second are represented with a 0 'seconds' field and a positive
 							Description: `Number of errors before a host is ejected from the connection pool. When the
 backend host is accessed over HTTP, a 5xx return code qualifies as an error.
 Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"consecutive_gateway_failure": {
@@ -930,7 +933,6 @@ Defaults to 5.`,
 							Description: `The number of consecutive gateway failures (502, 503, 504 status or connection
 errors that are mapped to one of those status codes) before a consecutive
 gateway failure ejection occurs. Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_errors": {
@@ -939,7 +941,6 @@ gateway failure ejection occurs. Defaults to 5.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive 5xx. This setting can be used to disable
 ejection or to ramp it up slowly. Defaults to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_consecutive_gateway_failure": {
@@ -948,7 +949,6 @@ ejection or to ramp it up slowly. Defaults to 100.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through consecutive gateway failures. This setting can be
 used to disable ejection or to ramp it up slowly. Defaults to 0.`,
-							Default:      0,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"enforcing_success_rate": {
@@ -957,7 +957,6 @@ used to disable ejection or to ramp it up slowly. Defaults to 0.`,
 							Description: `The percentage chance that a host will be actually ejected when an outlier
 status is detected through success rate statistics. This setting can be used to
 disable ejection or to ramp it up slowly. Defaults to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"interval": {
@@ -990,7 +989,6 @@ less than one second are represented with a 0 'seconds' field and a positive
 							Optional: true,
 							Description: `Maximum percentage of hosts in the load balancing pool for the backend service
 that can be ejected. Defaults to 10%.`,
-							Default:      10,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_minimum_hosts": {
@@ -1000,7 +998,6 @@ that can be ejected. Defaults to 10%.`,
 success rate outliers. If the number of hosts is less than this setting, outlier
 detection via success rate statistics is not performed for any host in the
 cluster. Defaults to 5.`,
-							Default:      5,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_request_volume": {
@@ -1011,7 +1008,6 @@ defined by the interval duration above) to include this host in success rate
 based outlier detection. If the volume is lower than this setting, outlier
 detection via success rate statistics is not performed for that host. Defaults
 to 100.`,
-							Default:      100,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 						"success_rate_stdev_factor": {
@@ -1023,7 +1019,6 @@ rate, and the product of this factor and the standard deviation of the mean
 success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
 by a thousand to get a double. That is, if the desired factor is 1.9, the
 runtime value should be 1900. Defaults to 1900.`,
-							Default:      1900,
 							AtLeastOneOf: []string{"outlier_detection.0.base_ejection_time", "outlier_detection.0.consecutive_errors", "outlier_detection.0.consecutive_gateway_failure", "outlier_detection.0.enforcing_consecutive_errors", "outlier_detection.0.enforcing_consecutive_gateway_failure", "outlier_detection.0.enforcing_success_rate", "outlier_detection.0.interval", "outlier_detection.0.max_ejection_percent", "outlier_detection.0.success_rate_minimum_hosts", "outlier_detection.0.success_rate_request_volume", "outlier_detection.0.success_rate_stdev_factor"},
 						},
 					},
@@ -1064,17 +1059,51 @@ load_balancing_scheme set to INTERNAL_SELF_MANAGED.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"aws_v4_authentication": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `The configuration needed to generate a signature for access to private storage buckets that support AWS's Signature Version 4 for authentication.
+Allowed only for INTERNET_IP_PORT and INTERNET_FQDN_PORT NEG backends.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"access_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The access key used for s3 bucket authentication.
+Required for updating or creating a backend that uses AWS v4 signature authentication, but will not be returned as part of the configuration when queried with a REST API GET request.`,
+										Sensitive: true,
+									},
+									"access_key_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `The identifier of an access key used for s3 bucket authentication.`,
+									},
+									"access_key_version": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `The optional version identifier for the access key. You can use this to keep track of different iterations of your access key.`,
+									},
+									"origin_region": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The name of the cloud region of your origin. This is a free-form field with the name of the region your cloud uses to host your origin.
+For example, "us-east-1" for AWS or "us-ashburn-1" for OCI.`,
+									},
+								},
+							},
+						},
 						"client_tls_policy": {
 							Type:             schema.TypeString,
-							Required:         true,
-							DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+							Optional:         true,
+							DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
 							Description: `ClientTlsPolicy is a resource that specifies how a client should authenticate
 connections to backends of a service. This resource itself does not affect
 configuration unless it is attached to a backend service resource.`,
 						},
 						"subject_alt_names": {
 							Type:     schema.TypeList,
-							Required: true,
+							Optional: true,
 							Description: `A list of alternate names to verify the subject identity in the certificate.
 If specified, the client will verify that the server certificate's subject
 alt name matches one of the specified values.`,
@@ -1084,6 +1113,12 @@ alt name matches one of the specified values.`,
 						},
 					},
 				},
+			},
+			"service_lb_policy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `URL to networkservices.ServiceLbPolicy resource.
+Can only be set if load balancing scheme is EXTERNAL, EXTERNAL_MANAGED, INTERNAL_MANAGED or INTERNAL_SELF_MANAGED and the scope is global.`,
 			},
 			"session_affinity": {
 				Type:         schema.TypeString,
@@ -1097,8 +1132,10 @@ not applicable if the protocol is UDP. Possible values: ["NONE", "CLIENT_IP", "C
 				Type:     schema.TypeInt,
 				Computed: true,
 				Optional: true,
-				Description: `How many seconds to wait for the backend before considering it a
-failed request. Default is 30 seconds. Valid range is [1, 86400].`,
+				Description: `The backend service timeout has a different meaning depending on the type of load balancer.
+For more information see, [Backend service settings](https://cloud.google.com/compute/docs/reference/rest/v1/backendServices).
+The default is 30 seconds.
+The full range of timeout values allowed goes from 1 through 2,147,483,647 seconds.`,
 			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
@@ -1433,6 +1470,12 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("log_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(logConfigProp)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
 		obj["logConfig"] = logConfigProp
 	}
+	serviceLbPolicyProp, err := expandComputeBackendServiceServiceLbPolicy(d.Get("service_lb_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_lb_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceLbPolicyProp)) && (ok || !reflect.DeepEqual(v, serviceLbPolicyProp)) {
+		obj["serviceLbPolicy"] = serviceLbPolicyProp
+	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
 	if err != nil {
@@ -1458,6 +1501,7 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1466,6 +1510,7 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating BackendService: %s", err)
@@ -1557,12 +1602,14 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeBackendService %q", d.Id()))
@@ -1681,6 +1728,9 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
 	if err := d.Set("log_config", flattenComputeBackendServiceLogConfig(res["logConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
+	if err := d.Set("service_lb_policy", flattenComputeBackendServiceServiceLbPolicy(res["serviceLbPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -1868,6 +1918,12 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("log_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, logConfigProp)) {
 		obj["logConfig"] = logConfigProp
 	}
+	serviceLbPolicyProp, err := expandComputeBackendServiceServiceLbPolicy(d.Get("service_lb_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_lb_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serviceLbPolicyProp)) {
+		obj["serviceLbPolicy"] = serviceLbPolicyProp
+	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
 	if err != nil {
@@ -1880,6 +1936,7 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Updating BackendService %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -1894,6 +1951,7 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1972,13 +2030,15 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting BackendService %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting BackendService %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -1987,6 +2047,7 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "BackendService")
@@ -2792,6 +2853,8 @@ func flattenComputeBackendServiceIap(v interface{}, d *schema.ResourceData, conf
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeBackendServiceIapEnabled(original["enabled"], d, config)
 	transformed["oauth2_client_id"] =
 		flattenComputeBackendServiceIapOauth2ClientId(original["oauth2ClientId"], d, config)
 	transformed["oauth2_client_secret"] =
@@ -2800,6 +2863,10 @@ func flattenComputeBackendServiceIap(v interface{}, d *schema.ResourceData, conf
 		flattenComputeBackendServiceIapOauth2ClientSecretSha256(original["oauth2ClientSecretSha256"], d, config)
 	return []interface{}{transformed}
 }
+func flattenComputeBackendServiceIapEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeBackendServiceIapOauth2ClientId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -3196,6 +3263,8 @@ func flattenComputeBackendServiceSecuritySettings(v interface{}, d *schema.Resou
 		flattenComputeBackendServiceSecuritySettingsClientTlsPolicy(original["clientTlsPolicy"], d, config)
 	transformed["subject_alt_names"] =
 		flattenComputeBackendServiceSecuritySettingsSubjectAltNames(original["subjectAltNames"], d, config)
+	transformed["aws_v4_authentication"] =
+		flattenComputeBackendServiceSecuritySettingsAwsV4Authentication(original["awsV4Authentication"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeBackendServiceSecuritySettingsClientTlsPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3206,6 +3275,41 @@ func flattenComputeBackendServiceSecuritySettingsClientTlsPolicy(v interface{}, 
 }
 
 func flattenComputeBackendServiceSecuritySettingsSubjectAltNames(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceSecuritySettingsAwsV4Authentication(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["access_key_id"] =
+		flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyId(original["accessKeyId"], d, config)
+	transformed["access_key"] =
+		flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKey(original["accessKey"], d, config)
+	transformed["access_key_version"] =
+		flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyVersion(original["accessKeyVersion"], d, config)
+	transformed["origin_region"] =
+		flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationOriginRegion(original["originRegion"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return d.Get("security_settings.0.aws_v4_authentication.0.access_key")
+}
+
+func flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceSecuritySettingsAwsV4AuthenticationOriginRegion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3250,6 +3354,10 @@ func flattenComputeBackendServiceLogConfigEnable(v interface{}, d *schema.Resour
 }
 
 func flattenComputeBackendServiceLogConfigSampleRate(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceServiceLbPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3938,6 +4046,13 @@ func expandComputeBackendServiceIap(v interface{}, d tpgresource.TerraformResour
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedEnabled, err := expandComputeBackendServiceIapEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
 	transformedOauth2ClientId, err := expandComputeBackendServiceIapOauth2ClientId(original["oauth2_client_id"], d, config)
 	if err != nil {
 		return nil, err
@@ -3960,6 +4075,10 @@ func expandComputeBackendServiceIap(v interface{}, d tpgresource.TerraformResour
 	}
 
 	return transformed, nil
+}
+
+func expandComputeBackendServiceIapEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeBackendServiceIapOauth2ClientId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -4304,18 +4423,77 @@ func expandComputeBackendServiceSecuritySettings(v interface{}, d tpgresource.Te
 		transformed["subjectAltNames"] = transformedSubjectAltNames
 	}
 
+	transformedAwsV4Authentication, err := expandComputeBackendServiceSecuritySettingsAwsV4Authentication(original["aws_v4_authentication"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAwsV4Authentication); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["awsV4Authentication"] = transformedAwsV4Authentication
+	}
+
 	return transformed, nil
 }
 
 func expandComputeBackendServiceSecuritySettingsClientTlsPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	f, err := tpgresource.ParseGlobalFieldValue("regions", v.(string), "project", d, config, true)
-	if err != nil {
-		return nil, fmt.Errorf("Invalid value for client_tls_policy: %s", err)
-	}
-	return f.RelativeLink(), nil
+	return v, nil
 }
 
 func expandComputeBackendServiceSecuritySettingsSubjectAltNames(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceSecuritySettingsAwsV4Authentication(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAccessKeyId, err := expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyId(original["access_key_id"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAccessKeyId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["accessKeyId"] = transformedAccessKeyId
+	}
+
+	transformedAccessKey, err := expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKey(original["access_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["accessKey"] = transformedAccessKey
+	}
+
+	transformedAccessKeyVersion, err := expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyVersion(original["access_key_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAccessKeyVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["accessKeyVersion"] = transformedAccessKeyVersion
+	}
+
+	transformedOriginRegion, err := expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationOriginRegion(original["origin_region"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedOriginRegion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["originRegion"] = transformedOriginRegion
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationAccessKeyVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceSecuritySettingsAwsV4AuthenticationOriginRegion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -4361,25 +4539,11 @@ func expandComputeBackendServiceLogConfigSampleRate(v interface{}, d tpgresource
 	return v, nil
 }
 
+func expandComputeBackendServiceServiceLbPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func resourceComputeBackendServiceEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
-	// The BackendService API's Update / PUT API is badly formed and behaves like
-	// a PATCH field for at least IAP. When sent a `null` `iap` field, the API
-	// doesn't disable an existing field. To work around this, we need to emulate
-	// the old Terraform behaviour of always sending the block (at both update and
-	// create), and force sending each subfield as empty when the block isn't
-	// present in config.
-
-	iapVal := obj["iap"]
-	if iapVal == nil {
-		data := map[string]interface{}{}
-		data["enabled"] = false
-		obj["iap"] = data
-	} else {
-		iap := iapVal.(map[string]interface{})
-		iap["enabled"] = true
-		obj["iap"] = iap
-	}
-
 	backendsRaw, ok := obj["backends"]
 	if !ok {
 		return obj, nil
@@ -4438,18 +4602,6 @@ func resourceComputeBackendServiceEncoder(d *schema.ResourceData, meta interface
 }
 
 func resourceComputeBackendServiceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	// We need to pretend IAP isn't there if it's disabled for Terraform to maintain
-	// BC behaviour with the handwritten resource.
-	v, ok := res["iap"]
-	if !ok || v == nil {
-		delete(res, "iap")
-		return res, nil
-	}
-	m := v.(map[string]interface{})
-	if ok && m["enabled"] == false {
-		delete(res, "iap")
-	}
-
 	// Requests with consistentHash will error for specific values of
 	// localityLbPolicy. However, the API will not remove it if the backend
 	// service is updated to from supporting to non-supporting localityLbPolicy

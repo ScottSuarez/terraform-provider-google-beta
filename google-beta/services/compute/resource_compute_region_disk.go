@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -165,7 +166,7 @@ Applicable only for bootable disks.`,
 				Optional:         true,
 				Deprecated:       "`interface` is deprecated and will be removed in a future major release. This field is no longer used and can be safely removed from your configurations; disk interfaces are automatically determined on attachment.",
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.AlwaysDiffSuppress,
+				DiffSuppressFunc: AlwaysDiffSuppress,
 				Description:      `Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.`,
 				Default:          "SCSI",
 			},
@@ -349,8 +350,7 @@ used.`,
 				Description: `Links to the users of the disk (attached instances) in form:
 project/zones/zone/instances/instance`,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+					Type: schema.TypeString,
 				},
 			},
 			"project": {
@@ -511,6 +511,7 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -519,6 +520,7 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionDisk: %s", err)
@@ -571,12 +573,14 @@ func resourceComputeRegionDiskRead(d *schema.ResourceData, meta interface{}) err
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionDisk %q", d.Id()))
@@ -715,6 +719,8 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -728,6 +734,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating RegionDisk %q: %s", d.Id(), err)
@@ -757,6 +764,8 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 
+		headers := make(http.Header)
+
 		// err == nil indicates that the billing_project value was found
 		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 			billingProject = bp
@@ -770,6 +779,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating RegionDisk %q: %s", d.Id(), err)
@@ -811,6 +821,13 @@ func resourceComputeRegionDiskDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var obj map[string]interface{}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
 	readRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -872,13 +889,8 @@ func resourceComputeRegionDiskDelete(d *schema.ResourceData, meta interface{}) e
 			}
 		}
 	}
+
 	log.Printf("[DEBUG] Deleting RegionDisk %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -887,6 +899,7 @@ func resourceComputeRegionDiskDelete(d *schema.ResourceData, meta interface{}) e
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionDisk")

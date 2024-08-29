@@ -23,8 +23,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -70,6 +70,7 @@ resource "google_project" "basic" {
   project_id = "tf-test-m-id%{random_suffix}"
   name       = "tf-test-m-id%{random_suffix}-display"
   org_id     = "%{org_id}"
+  deletion_policy = "DELETE"
 }
 `, context)
 }
@@ -112,6 +113,7 @@ resource "google_project" "basic" {
   project_id = "tf-test-m-id%{random_suffix}"
   name       = "tf-test-m-id%{random_suffix}-display"
   org_id     = "%{org_id}"
+  deletion_policy = "DELETE"
 }
 `, context)
 }

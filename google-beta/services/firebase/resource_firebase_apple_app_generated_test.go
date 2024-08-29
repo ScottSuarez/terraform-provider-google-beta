@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -74,8 +74,8 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"app_store_id":  12345,
-		"team_id":       9987654321,
 		"display_name":  "tf-test Display Name Full",
+		"team_id":       9987654321,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -91,7 +91,7 @@ func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 				ResourceName:            "google_firebase_apple_app.full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
 		},
 	})

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -31,6 +31,7 @@ import (
 )
 
 func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -49,7 +50,7 @@ func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
 				ResourceName:            "google_tpu_v2_vm.tpu",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"zone", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
 			},
 		},
 	})
@@ -73,6 +74,7 @@ resource "google_tpu_v2_vm" "tpu" {
 }
 
 func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -95,7 +97,7 @@ func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
 				ResourceName:            "google_tpu_v2_vm.tpu",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"zone", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
 			},
 		},
 	})

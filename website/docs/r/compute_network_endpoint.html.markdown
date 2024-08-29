@@ -18,13 +18,17 @@ description: |-
   part of a specific network endpoint group (NEG).
 ---
 
-# google\_compute\_network\_endpoint
+# google_compute_network_endpoint
 
 A Network endpoint represents a IP address and port combination that is
 part of a specific network endpoint group (NEG). NEGs are zonal
 collections of these endpoints for GCP resources within a
 single subnet. **NOTE**: Network endpoints cannot be created outside of a
 network endpoint group.
+
+-> **NOTE** In case the Endpoint's Instance is recreated, it's needed to
+perform `apply` twice. To avoid situations like this, please use this resource
+with the lifecycle `replace_triggered_by` method, with the passed Instance's ID.
 
 
 To get more information about NetworkEndpoint, see:

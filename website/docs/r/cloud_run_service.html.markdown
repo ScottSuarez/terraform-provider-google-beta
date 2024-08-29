@@ -17,7 +17,7 @@ description: |-
   A Cloud Run service has a unique endpoint and autoscales containers.
 ---
 
-# google\_cloud\_run\_service
+# google_cloud_run_service
 
 A Cloud Run service has a unique endpoint and autoscales containers.
 
@@ -54,7 +54,7 @@ resource "google_cloud_run_service" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=cloud_run_service_sql&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=cloud_run_service_sql&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -186,6 +186,7 @@ resource "google_cloud_run_service" "default" {
       "run.googleapis.com/launch-stage" = "BETA"
     }
   }
+
   template {
     metadata {
       annotations = {
@@ -194,39 +195,39 @@ resource "google_cloud_run_service" "default" {
     }
     spec {
       containers {
-	name = "hello-1"
-	ports {
-	  container_port = 8080
-	}
-	image = "us-docker.pkg.dev/cloudrun/container/hello"
-	volume_mounts {
-	  name = "shared-volume"
-	  mount_path = "/mnt/shared"
-	}
+        name = "hello-1"
+        ports {
+          container_port = 8080
+        }
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        volume_mounts {
+          name = "shared-volume"
+          mount_path = "/mnt/shared"
+          }
       }
       containers {
-	name = "hello-2"
-	image = "us-docker.pkg.dev/cloudrun/container/hello"
-	env {
-	  name = "PORT"
-	  value = "8081"
-	}
-	startup_probe {
-	  http_get {
-	    port = 8081
-	  }
-	}
-	volume_mounts {
-	  name = "shared-volume"
-	  mount_path = "/mnt/shared"
-	}
+        name = "hello-2"
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        env {
+          name = "PORT"
+          value = "8081"
+        }
+        startup_probe {
+          http_get {
+            port = 8081
+          }
+        }
+        volume_mounts {
+          name = "shared-volume"
+          mount_path = "/mnt/shared"
+        }
       }
       volumes {
-	name = "shared-volume"
-	empty_dir {
-	  medium = "Memory"
-	  size_limit = "128Mi"
-	}
+          name = "shared-volume"
+          empty_dir {
+          medium = "Memory"
+          size_limit = "128Mi"
+        }
       }
     }
   }
@@ -339,8 +340,8 @@ The following arguments are supported:
 * `annotations` -
   (Optional)
   Annotations is a key value map stored with a resource that
-  may be set by external tools to store and retrieve arbitrary metadata. More
-  info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+  may be set by external tools to store and retrieve arbitrary metadata.
+  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
   **Note**: The Cloud Run API may add additional annotations that were not provided in your config.
   If terraform plan shows a diff where a server-side annotation is added, you can add it to your config
   or apply the lifecycle.ignore_changes rule to the metadata.0.annotations field.
@@ -393,11 +394,8 @@ The following arguments are supported:
 * `container_concurrency` -
   (Optional)
   ContainerConcurrency specifies the maximum allowed in-flight (concurrent)
-  requests per container of the Revision. Values are:
-  - `0` thread-safe, the system should manage the max concurrency. This is
-      the default value.
-  - `1` not-thread-safe. Single concurrency
-  - `2-N` thread-safe, max concurrency of N
+  requests per container of the Revision. If not specified or 0, defaults to 80 when
+  requested CPU >= 1 and defaults to 1 when requested CPU < 1.
 
 * `timeout_seconds` -
   (Optional)
@@ -817,6 +815,13 @@ The following arguments are supported:
   A filesystem specified by the Container Storage Interface (CSI).
   Structure is [documented below](#nested_csi).
 
+* `nfs` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  A filesystem backed by a Network File System share. This filesystem requires the
+  run.googleapis.com/execution-environment annotation to be set to "gen2" and
+  run.googleapis.com/launch-stage set to "BETA" or "ALPHA".
+  Structure is [documented below](#nested_nfs).
+
 
 <a name="nested_secret"></a>The `secret` block supports:
 
@@ -899,6 +904,20 @@ The following arguments are supported:
     * gcsfuse.run.googleapis.com
       * bucketName: The name of the Cloud Storage Bucket that backs this volume. The Cloud Run Service identity must have access to this bucket.
 
+<a name="nested_nfs"></a>The `nfs` block supports:
+
+* `server` -
+  (Required)
+  IP address or hostname of the NFS server
+
+* `path` -
+  (Required)
+  Path exported by the NFS server
+
+* `read_only` -
+  (Optional)
+  If true, mount the NFS volume as read only in all mounts. Defaults to false.
+
 - - -
 
 
@@ -976,8 +995,8 @@ this field is set to false, the revision name will still autogenerate.)
 * `annotations` -
   (Optional)
   Annotations is a key value map stored with a resource that
-  may be set by external tools to store and retrieve arbitrary metadata. More
-  info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+  may be set by external tools to store and retrieve arbitrary metadata.
+  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
   **Note**: The Cloud Run API may add additional annotations that were not provided in your config.
   If terraform plan shows a diff where a server-side annotation is added, you can add it to your config
   or apply the lifecycle.ignore_changes rule to the metadata.0.annotations field.

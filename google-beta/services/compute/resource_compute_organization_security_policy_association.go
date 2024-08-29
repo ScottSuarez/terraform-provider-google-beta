@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -107,6 +108,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -115,6 +117,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationCreate(d *schema.Resour
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicyAssociation: %s", err)
@@ -181,12 +184,14 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(transformSecurityPolicyAssociationReadError(err), d, fmt.Sprintf("ComputeOrganizationSecurityPolicyAssociation %q", d.Id()))
@@ -220,13 +225,15 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicyAssociation %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting OrganizationSecurityPolicyAssociation %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -235,6 +242,7 @@ func resourceComputeOrganizationSecurityPolicyAssociationDelete(d *schema.Resour
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "OrganizationSecurityPolicyAssociation")

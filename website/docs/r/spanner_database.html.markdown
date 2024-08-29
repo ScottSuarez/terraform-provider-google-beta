@@ -17,7 +17,7 @@ description: |-
   A Cloud Spanner Database which is hosted on a Spanner instance.
 ---
 
-# google\_spanner\_database
+# google_spanner_database
 
 A Cloud Spanner Database which is hosted on a Spanner instance.
 
@@ -37,7 +37,7 @@ on databases in order to prevent accidental data loss. See
 for more information on lifecycle parameters.
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=spanner_database_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=spanner_database_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -120,8 +120,12 @@ The following arguments are supported:
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the provider project is used.
 
-* `deletion_protection` - (Optional) Whether or not to allow Terraform to destroy the database. Defaults to true. Unless this field is set to false
-in Terraform state, a `terraform destroy` or `terraform apply` that would delete the database will fail.
+* `deletion_protection` - (Optional) Whether Terraform will be prevented from destroying the database. Defaults to true.
+When a`terraform destroy` or `terraform apply` would delete the database,
+the command will fail if this field is not set to false in Terraform state.
+When the field is set to true or unset in Terraform state, a `terraform apply`
+or `terraform destroy` that would delete the database will fail.
+When the field is set to false, deleting the database is allowed.
 
 
 <a name="nested_encryption_config"></a>The `encryption_config` block supports:

@@ -20,7 +20,7 @@ package gkeonprem_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -43,7 +43,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name"},
 			},
 		},
 	})
@@ -130,7 +130,7 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 				ResourceName:            "google_gkeonprem_bare_metal_admin_cluster.admin-cluster-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name"},
 			},
 		},
 	})

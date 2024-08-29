@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -196,6 +197,12 @@ A base64-encoded string.`,
 					},
 				},
 			},
+			"reject_duplicate_message": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Determines whether duplicate messages are allowed.`,
+				Default:     false,
+			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
 				Computed:    true,
@@ -232,6 +239,12 @@ func resourceHealthcareHl7V2StoreCreate(d *schema.ResourceData, meta interface{}
 		return err
 	} else if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
+	}
+	rejectDuplicateMessageProp, err := expandHealthcareHl7V2StoreRejectDuplicateMessage(d.Get("reject_duplicate_message"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("reject_duplicate_message"); !tpgresource.IsEmptyValue(reflect.ValueOf(rejectDuplicateMessageProp)) && (ok || !reflect.DeepEqual(v, rejectDuplicateMessageProp)) {
+		obj["rejectDuplicateMessage"] = rejectDuplicateMessageProp
 	}
 	parserConfigProp, err := expandHealthcareHl7V2StoreParserConfig(d.Get("parser_config"), d, config)
 	if err != nil {
@@ -271,6 +284,7 @@ func resourceHealthcareHl7V2StoreCreate(d *schema.ResourceData, meta interface{}
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -279,6 +293,7 @@ func resourceHealthcareHl7V2StoreCreate(d *schema.ResourceData, meta interface{}
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Hl7V2Store: %s", err)
@@ -315,12 +330,14 @@ func resourceHealthcareHl7V2StoreRead(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("HealthcareHl7V2Store %q", d.Id()))
@@ -339,6 +356,9 @@ func resourceHealthcareHl7V2StoreRead(d *schema.ResourceData, meta interface{}) 
 	}
 
 	if err := d.Set("name", flattenHealthcareHl7V2StoreName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
+	}
+	if err := d.Set("reject_duplicate_message", flattenHealthcareHl7V2StoreRejectDuplicateMessage(res["rejectDuplicateMessage"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hl7V2Store: %s", err)
 	}
 	if err := d.Set("parser_config", flattenHealthcareHl7V2StoreParserConfig(res["parserConfig"], d, config)); err != nil {
@@ -373,6 +393,12 @@ func resourceHealthcareHl7V2StoreUpdate(d *schema.ResourceData, meta interface{}
 	billingProject := ""
 
 	obj := make(map[string]interface{})
+	rejectDuplicateMessageProp, err := expandHealthcareHl7V2StoreRejectDuplicateMessage(d.Get("reject_duplicate_message"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("reject_duplicate_message"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rejectDuplicateMessageProp)) {
+		obj["rejectDuplicateMessage"] = rejectDuplicateMessageProp
+	}
 	parserConfigProp, err := expandHealthcareHl7V2StoreParserConfig(d.Get("parser_config"), d, config)
 	if err != nil {
 		return err
@@ -404,7 +430,12 @@ func resourceHealthcareHl7V2StoreUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	log.Printf("[DEBUG] Updating Hl7V2Store %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("reject_duplicate_message") {
+		updateMask = append(updateMask, "rejectDuplicateMessage")
+	}
 
 	if d.HasChange("parser_config") {
 		updateMask = append(updateMask, "parser_config.allow_null_header",
@@ -445,6 +476,7 @@ func resourceHealthcareHl7V2StoreUpdate(d *schema.ResourceData, meta interface{}
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -473,13 +505,15 @@ func resourceHealthcareHl7V2StoreDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Hl7V2Store %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Hl7V2Store %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -488,6 +522,7 @@ func resourceHealthcareHl7V2StoreDelete(d *schema.ResourceData, meta interface{}
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Hl7V2Store")
@@ -517,6 +552,10 @@ func resourceHealthcareHl7V2StoreImport(d *schema.ResourceData, meta interface{}
 }
 
 func flattenHealthcareHl7V2StoreName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenHealthcareHl7V2StoreRejectDuplicateMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -642,6 +681,10 @@ func flattenHealthcareHl7V2StoreEffectiveLabels(v interface{}, d *schema.Resourc
 }
 
 func expandHealthcareHl7V2StoreName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandHealthcareHl7V2StoreRejectDuplicateMessage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -61,6 +61,7 @@ resource "google_folder" "security_policy_target" {
   provider     = google-beta
   display_name = "tf-test-secpol-%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 
 resource "google_compute_organization_security_policy" "policy" {

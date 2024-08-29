@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(t *tes
 				ResourceName:            "google_service_directory_endpoint.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service", "endpoint_id"},
+				ImportStateVerifyIgnore: []string{"endpoint_id", "service"},
 			},
 		},
 	})
@@ -104,7 +104,7 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointWithNetworkExample(
 				ResourceName:            "google_service_directory_endpoint.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"service", "endpoint_id"},
+				ImportStateVerifyIgnore: []string{"endpoint_id", "service"},
 			},
 		},
 	})

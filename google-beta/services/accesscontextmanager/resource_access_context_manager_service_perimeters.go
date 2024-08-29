@@ -20,6 +20,7 @@ package accesscontextmanager
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -896,6 +897,7 @@ func resourceAccessContextManagerServicePerimetersCreate(d *schema.ResourceData,
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -904,6 +906,7 @@ func resourceAccessContextManagerServicePerimetersCreate(d *schema.ResourceData,
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating ServicePerimeters: %s", err)
@@ -950,12 +953,14 @@ func resourceAccessContextManagerServicePerimetersRead(d *schema.ResourceData, m
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("AccessContextManagerServicePerimeters %q", d.Id()))
@@ -997,6 +1002,7 @@ func resourceAccessContextManagerServicePerimetersUpdate(d *schema.ResourceData,
 	}
 
 	log.Printf("[DEBUG] Updating ServicePerimeters %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -1011,6 +1017,7 @@ func resourceAccessContextManagerServicePerimetersUpdate(d *schema.ResourceData,
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -1092,14 +1099,13 @@ func flattenAccessContextManagerServicePerimetersServicePerimeters(v interface{}
 		return v
 	}
 	l := v.([]interface{})
-	transformed := make([]interface{}, 0, len(l))
+	apiData := make([]map[string]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
-			// Do not include empty json objects coming back from the api
 			continue
 		}
-		transformed = append(transformed, map[string]interface{}{
+		apiData = append(apiData, map[string]interface{}{
 			"name":                      flattenAccessContextManagerServicePerimetersServicePerimetersName(original["name"], d, config),
 			"title":                     flattenAccessContextManagerServicePerimetersServicePerimetersTitle(original["title"], d, config),
 			"description":               flattenAccessContextManagerServicePerimetersServicePerimetersDescription(original["description"], d, config),
@@ -1111,8 +1117,19 @@ func flattenAccessContextManagerServicePerimetersServicePerimeters(v interface{}
 			"use_explicit_dry_run_spec": flattenAccessContextManagerServicePerimetersServicePerimetersUseExplicitDryRunSpec(original["useExplicitDryRunSpec"], d, config),
 		})
 	}
-	return transformed
+	configData := []map[string]interface{}{}
+	for _, item := range d.Get("service_perimeters").([]interface{}) {
+		configData = append(configData, item.(map[string]interface{}))
+	}
+	sorted, err := tpgresource.SortMapsByConfigOrder(configData, apiData, "name")
+	if err != nil {
+		log.Printf("[ERROR] Could not sort API response value: %s", err)
+		return v
+	}
+
+	return sorted
 }
+
 func flattenAccessContextManagerServicePerimetersServicePerimetersName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }

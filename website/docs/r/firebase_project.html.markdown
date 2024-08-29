@@ -17,7 +17,7 @@ description: |-
   A Google Cloud Firebase instance.
 ---
 
-# google\_firebase\_project
+# google_firebase_project
 
 A Google Cloud Firebase instance. This enables Firebase resources on a given google project.
 Since a FirebaseProject is actually also a GCP Project, a FirebaseProject uses underlying GCP
@@ -31,7 +31,11 @@ To get more information about Project, see:
 
 * [API documentation](https://firebase.google.com/docs/reference/firebase-management/rest/v1beta1/projects)
 * How-to Guides
-    * [Official Documentation](https://firebase.google.com/)
+    * [Official Documentation](https://firebase.google.com/docs/projects/terraform/get-started)
+
+~> **Note:** This resource should usually be used with a provider configuration
+with `user_project_override = true` unless you wish for your quota
+project to be different from the Firebase project.
 
 ## Example Usage - Firebase Project Basic
 
@@ -43,6 +47,7 @@ resource "google_project" "default" {
   project_id = "my-project"
   name       = "my-project"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 
   labels = {
     "firebase" = "enabled"

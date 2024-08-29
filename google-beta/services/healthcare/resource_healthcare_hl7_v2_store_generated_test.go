@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(t *testing.T) 
 				ResourceName:            "google_healthcare_hl7_v2_store.store",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -60,6 +60,7 @@ func testAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(context map[st
 resource "google_healthcare_hl7_v2_store" "store" {
   name    = "tf-test-example-hl7-v2-store%{random_suffix}"
   dataset = google_healthcare_dataset.dataset.id
+  reject_duplicate_message = true
 
   notification_configs {
     pubsub_topic = google_pubsub_topic.topic.id
@@ -100,7 +101,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(t *test
 				ResourceName:            "google_healthcare_hl7_v2_store.store",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})
@@ -226,7 +227,7 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(t *tes
 				ResourceName:            "google_healthcare_hl7_v2_store.store",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_link", "dataset", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
 		},
 	})

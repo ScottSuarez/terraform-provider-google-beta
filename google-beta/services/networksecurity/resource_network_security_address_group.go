@@ -20,6 +20,7 @@ package networksecurity
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -106,6 +107,16 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				ForceNew:    true,
 				Description: `The name of the parent this address group belongs to. Format: organizations/{organization_id} or projects/{project_id}.`,
 			},
+			"purpose": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `List of supported purposes of the Address Group. Possible values: ["DEFAULT", "CLOUD_ARMOR"]`,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: verify.ValidateEnum([]string{"DEFAULT", "CLOUD_ARMOR"}),
+				},
+			},
 			"create_time": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -171,6 +182,12 @@ func resourceNetworkSecurityAddressGroupCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("capacity"); !tpgresource.IsEmptyValue(reflect.ValueOf(capacityProp)) && (ok || !reflect.DeepEqual(v, capacityProp)) {
 		obj["capacity"] = capacityProp
 	}
+	purposeProp, err := expandNetworkSecurityAddressGroupPurpose(d.Get("purpose"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("purpose"); !tpgresource.IsEmptyValue(reflect.ValueOf(purposeProp)) && (ok || !reflect.DeepEqual(v, purposeProp)) {
+		obj["purpose"] = purposeProp
+	}
 	labelsProp, err := expandNetworkSecurityAddressGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -191,6 +208,7 @@ func resourceNetworkSecurityAddressGroupCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -199,6 +217,7 @@ func resourceNetworkSecurityAddressGroupCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating AddressGroup: %s", err)
@@ -245,12 +264,14 @@ func resourceNetworkSecurityAddressGroupRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityAddressGroup %q", d.Id()))
@@ -275,6 +296,9 @@ func resourceNetworkSecurityAddressGroupRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading AddressGroup: %s", err)
 	}
 	if err := d.Set("capacity", flattenNetworkSecurityAddressGroupCapacity(res["capacity"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AddressGroup: %s", err)
+	}
+	if err := d.Set("purpose", flattenNetworkSecurityAddressGroupPurpose(res["purpose"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AddressGroup: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityAddressGroupTerraformLabels(res["labels"], d, config)); err != nil {
@@ -322,6 +346,12 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("capacity"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, capacityProp)) {
 		obj["capacity"] = capacityProp
 	}
+	purposeProp, err := expandNetworkSecurityAddressGroupPurpose(d.Get("purpose"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("purpose"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, purposeProp)) {
+		obj["purpose"] = purposeProp
+	}
 	labelsProp, err := expandNetworkSecurityAddressGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -335,6 +365,7 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 	}
 
 	log.Printf("[DEBUG] Updating AddressGroup %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("description") {
@@ -351,6 +382,10 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 
 	if d.HasChange("capacity") {
 		updateMask = append(updateMask, "capacity")
+	}
+
+	if d.HasChange("purpose") {
+		updateMask = append(updateMask, "purpose")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -378,6 +413,7 @@ func resourceNetworkSecurityAddressGroupUpdate(d *schema.ResourceData, meta inte
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -414,13 +450,15 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting AddressGroup %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting AddressGroup %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -429,6 +467,7 @@ func resourceNetworkSecurityAddressGroupDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "AddressGroup")
@@ -516,6 +555,10 @@ func flattenNetworkSecurityAddressGroupCapacity(v interface{}, d *schema.Resourc
 	return v // let terraform core handle it otherwise
 }
 
+func flattenNetworkSecurityAddressGroupPurpose(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkSecurityAddressGroupTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -548,6 +591,10 @@ func expandNetworkSecurityAddressGroupItems(v interface{}, d tpgresource.Terrafo
 }
 
 func expandNetworkSecurityAddressGroupCapacity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecurityAddressGroupPurpose(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

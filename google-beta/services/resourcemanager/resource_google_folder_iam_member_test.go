@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -129,6 +129,7 @@ func testAccFolderAssociateMemberBasic(org, fname string) string {
 resource "google_folder" "acceptance" {
   parent       = "organizations/%s"
   display_name = "%s"
+  deletion_protection = false
 }
 
 resource "google_folder_iam_member" "acceptance" {
@@ -144,6 +145,7 @@ func testAccFolderAssociateMemberMultiple(org, fname string) string {
 resource "google_folder" "acceptance" {
   parent       = "organizations/%s"
   display_name = "%s"
+  deletion_protection = false
 }
 
 resource "google_folder_iam_member" "acceptance" {

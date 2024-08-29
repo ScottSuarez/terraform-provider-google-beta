@@ -17,7 +17,7 @@ description: |-
   This message configures which resources and services to monitor for availability.
 ---
 
-# google\_monitoring\_uptime\_check\_config
+# google_monitoring_uptime_check_config
 
 This message configures which resources and services to monitor for availability.
 
@@ -134,6 +134,9 @@ resource "google_monitoring_uptime_check_config" "https" {
     port = "443"
     use_ssl = true
     validate_ssl = true
+    service_agent_authentication {
+      type = "OIDC_TOKEN"
+    }
   }
 
   monitored_resource {
@@ -155,7 +158,7 @@ resource "google_monitoring_uptime_check_config" "https" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=uptime_check_tcp&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=uptime_check_tcp&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -297,7 +300,7 @@ The following arguments are supported:
   uptime checks:
   * `aws_ec2_instance`
   * `aws_elb_load_balancer`
-  * `gae_app
+  * `gae_app`
   * `gce_instance`
   * `k8s_service`
   * `servicedirectory_service`
@@ -362,8 +365,13 @@ The following arguments are supported:
 
 * `auth_info` -
   (Optional)
-  The authentication information. Optional when creating an HTTP check; defaults to empty.
+  The authentication information using username and password. Optional when creating an HTTP check; defaults to empty. Do not use with other authentication fields.
   Structure is [documented below](#nested_auth_info).
+
+* `service_agent_authentication` -
+  (Optional)
+  The authentication information using the Monitoring Service Agent. Optional when creating an HTTPS check; defaults to empty. Do not use with other authentication fields.
+  Structure is [documented below](#nested_service_agent_authentication).
 
 * `port` -
   (Optional)
@@ -414,6 +422,13 @@ The following arguments are supported:
 * `username` -
   (Required)
   The username to authenticate.
+
+<a name="nested_service_agent_authentication"></a>The `service_agent_authentication` block supports:
+
+* `type` -
+  (Optional)
+  The type of authentication to use.
+  Possible values are: `SERVICE_AGENT_AUTHENTICATION_TYPE_UNSPECIFIED`, `OIDC_TOKEN`.
 
 <a name="nested_accepted_response_status_codes"></a>The `accepted_response_status_codes` block supports:
 

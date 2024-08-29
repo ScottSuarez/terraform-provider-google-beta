@@ -17,7 +17,7 @@ description: |-
   A Google Cloud Looker instance.
 ---
 
-# google\_looker\_instance
+# google_looker_instance
 
 A Google Cloud Looker instance.
 
@@ -26,11 +26,11 @@ To get more information about Instance, see:
 
 * [API documentation](https://cloud.google.com/looker/docs/reference/rest/v1/projects.locations.instances)
 * How-to Guides
-    * [Create a Looker (Google Cloud core) instance](https://cloud.google.com/looker/docs/looker-core-instance-create)
     * [Configure a Looker (Google Cloud core) instance](https://cloud.google.com/looker/docs/looker-core-instance-setup)
+    * [Create a Looker (Google Cloud core) instance](https://cloud.google.com/looker/docs/looker-core-instance-create)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=looker_instance_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=looker_instance_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -40,7 +40,7 @@ To get more information about Instance, see:
 ```hcl
 resource "google_looker_instance" "looker-instance" {
   name              = "my-instance"
-  platform_edition  = "LOOKER_CORE_STANDARD"
+  platform_edition  = "LOOKER_CORE_STANDARD_ANNUAL"
   region            = "us-central1"
   oauth_config {
     client_id = "my-client-id"
@@ -49,7 +49,7 @@ resource "google_looker_instance" "looker-instance" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=looker_instance_full&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=looker_instance_full&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -59,17 +59,11 @@ resource "google_looker_instance" "looker-instance" {
 ```hcl
 resource "google_looker_instance" "looker-instance" {
   name               = "my-instance"
-  platform_edition   = "LOOKER_CORE_STANDARD"
+  platform_edition   = "LOOKER_CORE_STANDARD_ANNUAL"
   region             = "us-central1"
   public_ip_enabled  = true
   admin_settings {
     allowed_email_domains = ["google.com"]
-  }
-  // User metadata config is only available when platform edition is LOOKER_CORE_STANDARD.
-  user_metadata {
-    additional_developer_user_count = 10 
-    additional_standard_user_count  = 10
-    additional_viewer_user_count    = 10
   }
   maintenance_window {
     day_of_week = "THURSDAY"
@@ -184,6 +178,30 @@ resource "google_kms_crypto_key_iam_member" "crypto_key" {
   member        = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-looker.iam.gserviceaccount.com"
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=looker_instance_custom_domain&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Looker Instance Custom Domain
+
+
+```hcl
+resource "google_looker_instance" "looker-instance" {
+  name              = "my-instance"
+  platform_edition  = "LOOKER_CORE_STANDARD_ANNUAL"
+  region            = "us-central1"
+  oauth_config {
+    client_id = "my-client-id"
+    client_secret = "my-client-secret"
+  }
+  // After your Looker (Google Cloud core) instance has been created, you can set up, view information about, or delete a custom domain for your instance. 
+  // Therefore 2 terraform applies, one to create the instance, then another to set up the custom domain. 
+  custom_domain {
+    domain = "my-custom-domain.com"
+  }
+}
+```
 
 ## Argument Reference
 
@@ -237,8 +255,8 @@ The following arguments are supported:
 * `platform_edition` -
   (Optional)
   Platform editions for a Looker instance. Each edition maps to a set of instance features, like its size. Must be one of these values:
-  - LOOKER_CORE_TRIAL: trial instance
-  - LOOKER_CORE_STANDARD: pay as you go standard instance
+  - LOOKER_CORE_TRIAL: trial instance (Currently Unavailable)
+  - LOOKER_CORE_STANDARD: pay as you go standard instance (Currently Unavailable)
   - LOOKER_CORE_STANDARD_ANNUAL: subscription standard instance
   - LOOKER_CORE_ENTERPRISE_ANNUAL: subscription enterprise instance
   - LOOKER_CORE_EMBED_ANNUAL: subscription embed instance
@@ -268,6 +286,11 @@ The following arguments are supported:
   With the Standard edition of Looker (Google Cloud core), you can provision up to 50
   total users, distributed across Viewer, Standard, and Developer.
   Structure is [documented below](#nested_user_metadata).
+
+* `custom_domain` -
+  (Optional)
+  Custom domain settings for a Looker instance.
+  Structure is [documented below](#nested_custom_domain).
 
 * `region` -
   (Optional)
@@ -432,6 +455,16 @@ The following arguments are supported:
 * `additional_developer_user_count` -
   (Optional)
   Number of additional Developer Users to allocate to the Looker Instance.
+
+<a name="nested_custom_domain"></a>The `custom_domain` block supports:
+
+* `domain` -
+  (Optional)
+  Domain name
+
+* `state` -
+  (Output)
+  Status of the custom domain.
 
 ## Attributes Reference
 

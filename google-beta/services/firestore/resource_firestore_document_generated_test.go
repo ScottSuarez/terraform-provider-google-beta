@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -55,7 +55,7 @@ func TestAccFirestoreDocument_firestoreDocumentBasicExample(t *testing.T) {
 				ResourceName:            "google_firestore_document.mydoc",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection", "document_id"},
+				ImportStateVerifyIgnore: []string{"collection", "database", "document_id"},
 			},
 		},
 	})
@@ -67,6 +67,7 @@ resource "google_project" "project" {
   project_id = "tf-test-project-id%{random_suffix}"
   name       = "tf-test-project-id%{random_suffix}"
   org_id     = "%{org_id}"
+  deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {
@@ -126,7 +127,7 @@ func TestAccFirestoreDocument_firestoreDocumentNestedDocumentExample(t *testing.
 				ResourceName:            "google_firestore_document.mydoc",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection", "document_id"},
+				ImportStateVerifyIgnore: []string{"collection", "database", "document_id"},
 			},
 		},
 	})
@@ -138,6 +139,7 @@ resource "google_project" "project" {
   project_id      = "tf-test-project-id%{random_suffix}"
   name            = "tf-test-project-id%{random_suffix}"
   org_id          = "%{org_id}"
+  deletion_policy = "DELETE"
 }
 
 resource "time_sleep" "wait_60_seconds" {

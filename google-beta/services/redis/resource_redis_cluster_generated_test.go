@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -34,8 +34,8 @@ func TestAccRedisCluster_redisClusterHaExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"prevent_destroy": false,
-		"random_suffix":   acctest.RandString(t, 10),
+		"deletion_protection_enabled": false,
+		"random_suffix":               acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -50,7 +50,7 @@ func TestAccRedisCluster_redisClusterHaExample(t *testing.T) {
 				ResourceName:            "google_redis_cluster.cluster-ha",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"psc_configs", "name", "region"},
+				ImportStateVerifyIgnore: []string{"name", "psc_configs", "region"},
 			},
 		},
 	})
@@ -66,15 +66,91 @@ resource "google_redis_cluster" "cluster-ha" {
   }
   region = "us-central1"
   replica_count = 1
+  node_type = "REDIS_SHARED_CORE_NANO"
   transit_encryption_mode = "TRANSIT_ENCRYPTION_MODE_DISABLED"
   authorization_mode = "AUTH_MODE_DISABLED"
+  redis_configs = {
+    maxmemory-policy	= "volatile-ttl"
+  }
+  deletion_protection_enabled = false
+
+  zone_distribution_config {
+    mode = "MULTI_ZONE"
+  }
+  depends_on = [
+    google_network_connectivity_service_connection_policy.default
+  ]
+}
+
+resource "google_network_connectivity_service_connection_policy" "default" {
+  name = "mypolicy%{random_suffix}"
+  location = "us-central1"
+  service_class = "gcp-memorystore-redis"
+  description   = "my basic service connection policy"
+  network = google_compute_network.producer_net.id
+  psc_config {
+    subnetworks = [google_compute_subnetwork.producer_subnet.id]
+  }
+}
+
+resource "google_compute_subnetwork" "producer_subnet" {
+  name          = "mysubnet%{random_suffix}"
+  ip_cidr_range = "10.0.0.248/29"
+  region        = "us-central1"
+  network       = google_compute_network.producer_net.id
+}
+
+resource "google_compute_network" "producer_net" {
+  name                    = "mynetwork%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
+func TestAccRedisCluster_redisClusterHaSingleZoneExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"deletion_protection_enabled": false,
+		"random_suffix":               acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRedisCluster_redisClusterHaSingleZoneExample(context),
+			},
+			{
+				ResourceName:            "google_redis_cluster.cluster-ha-single-zone",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "psc_configs", "region"},
+			},
+		},
+	})
+}
+
+func testAccRedisCluster_redisClusterHaSingleZoneExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_redis_cluster" "cluster-ha-single-zone" {
+  name           = "tf-test-ha-cluster-single-zone%{random_suffix}"
+  shard_count    = 3
+  psc_configs {
+    network = google_compute_network.producer_net.id
+  }
+  region = "us-central1"
+  zone_distribution_config {
+    mode = "SINGLE_ZONE"
+    zone = "us-central1-f"
+  }
+  deletion_protection_enabled = false
   depends_on = [
     google_network_connectivity_service_connection_policy.default
   ]
 
-  lifecycle {
-    prevent_destroy = %{prevent_destroy}
-  }
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {

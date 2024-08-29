@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -52,7 +52,7 @@ func TestAccFirestoreDatabase_firestoreDatabaseExample(t *testing.T) {
 				ResourceName:            "google_firestore_database.database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})
@@ -70,6 +70,79 @@ resource "google_firestore_database" "database" {
   point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
   delete_protection_state           = "%{delete_protection_state}"
   deletion_policy                   = "DELETE"
+}
+`, context)
+}
+
+func TestAccFirestoreDatabase_firestoreCmekDatabaseExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":              envvar.GetTestProjectFromEnv(),
+		"delete_protection_state": "DELETE_PROTECTION_DISABLED",
+		"random_suffix":           acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirestoreDatabase_firestoreCmekDatabaseExample(context),
+			},
+			{
+				ResourceName:            "google_firestore_database.database",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
+			},
+		},
+	})
+}
+
+func testAccFirestoreDatabase_firestoreCmekDatabaseExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+}
+
+resource "google_firestore_database" "database" {
+  project                           = "%{project_id}"
+  name                              = "tf-test-cmek-database-id%{random_suffix}"
+  location_id                       = "nam5"
+  type                              = "FIRESTORE_NATIVE"
+  concurrency_mode                  = "OPTIMISTIC"
+  app_engine_integration_mode       = "DISABLED"
+  point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
+  delete_protection_state           = "%{delete_protection_state}"
+  deletion_policy                   = "DELETE"
+  cmek_config {
+    kms_key_name                    = google_kms_crypto_key.crypto_key.id
+  }
+
+  depends_on = [
+    google_kms_crypto_key_iam_binding.firestore_cmek_keyuser
+  ]
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  name     = "tf-test-kms-key%{random_suffix}"
+  key_ring = google_kms_key_ring.key_ring.id
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  name     = "tf-test-kms-key-ring%{random_suffix}"
+  location = "us"
+}
+
+resource "google_kms_crypto_key_iam_binding" "firestore_cmek_keyuser" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-firestore.iam.gserviceaccount.com",
+  ]
 }
 `, context)
 }
@@ -95,7 +168,7 @@ func TestAccFirestoreDatabase_firestoreDatabaseInDatastoreModeExample(t *testing
 				ResourceName:            "google_firestore_database.datastore_mode_database",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"project", "etag", "deletion_policy"},
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
 			},
 		},
 	})
@@ -113,6 +186,79 @@ resource "google_firestore_database" "datastore_mode_database" {
   point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
   delete_protection_state           = "%{delete_protection_state}"
   deletion_policy                   = "DELETE"
+}
+`, context)
+}
+
+func TestAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":              envvar.GetTestProjectFromEnv(),
+		"delete_protection_state": "DELETE_PROTECTION_DISABLED",
+		"random_suffix":           acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirestoreDatabaseDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(context),
+			},
+			{
+				ResourceName:            "google_firestore_database.database",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_policy", "etag", "project"},
+			},
+		},
+	})
+}
+
+func testAccFirestoreDatabase_firestoreCmekDatabaseInDatastoreModeExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+}
+
+resource "google_firestore_database" "database" {
+  project                           = "%{project_id}"
+  name                              = "tf-test-cmek-database-id%{random_suffix}"
+  location_id                       = "nam5"
+  type                              = "DATASTORE_MODE"
+  concurrency_mode                  = "OPTIMISTIC"
+  app_engine_integration_mode       = "DISABLED"
+  point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_ENABLED"
+  delete_protection_state           = "%{delete_protection_state}"
+  deletion_policy                   = "DELETE"
+  cmek_config {
+    kms_key_name                    = google_kms_crypto_key.crypto_key.id
+  }
+
+  depends_on = [
+    google_kms_crypto_key_iam_binding.firestore_cmek_keyuser
+  ]
+}
+
+resource "google_kms_crypto_key" "crypto_key" {
+  name     = "tf-test-kms-key%{random_suffix}"
+  key_ring = google_kms_key_ring.key_ring.id
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  name     = "tf-test-kms-key-ring%{random_suffix}"
+  location = "us"
+}
+
+resource "google_kms_crypto_key_iam_binding" "firestore_cmek_keyuser" {
+  crypto_key_id = google_kms_crypto_key.crypto_key.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-firestore.iam.gserviceaccount.com",
+  ]
 }
 `, context)
 }

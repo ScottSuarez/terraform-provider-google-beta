@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExam
 				ResourceName:            "google_network_services_endpoint_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -101,7 +101,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatc
 				ResourceName:            "google_network_services_endpoint_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "terraform_labels"},
 			},
 		},
 	})

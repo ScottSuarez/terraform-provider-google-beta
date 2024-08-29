@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -751,6 +751,123 @@ resource "google_compute_region_health_check" "default" {
   name               = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
+  }
+}
+`, context)
+}
+
+func TestAccComputeRegionUrlMap_regionUrlMapPathTemplateMatchExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionUrlMapDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionUrlMap_regionUrlMapPathTemplateMatchExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_url_map.urlmap",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"default_service", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionUrlMap_regionUrlMapPathTemplateMatchExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_url_map" "urlmap" {
+  region = "us-central1"
+
+  name        = "urlmap%{random_suffix}"
+  description = "a description"
+
+  default_service = google_compute_region_backend_service.home-backend.id
+
+  host_rule {
+    hosts        = ["mysite.com"]
+    path_matcher = "mysite"
+  }
+
+  path_matcher {
+    name            = "mysite"
+    default_service = google_compute_region_backend_service.home-backend.id
+
+    route_rules {
+      match_rules {
+        path_template_match = "/xyzwebservices/v2/xyz/users/{username=*}/carts/{cartid=**}"
+      }
+      service = google_compute_region_backend_service.cart-backend.id
+      priority = 1
+      route_action {
+        url_rewrite {
+          path_template_rewrite = "/{username}-{cartid}/"
+        }
+      }
+    }
+
+    route_rules {
+      match_rules {
+        path_template_match = "/xyzwebservices/v2/xyz/users/*/accountinfo/*"
+      }
+      service = google_compute_region_backend_service.user-backend.id
+      priority = 2
+    }
+  }
+}
+
+resource "google_compute_region_backend_service" "home-backend" {
+  region = "us-central1"
+
+  name        = "tf-test-home-service%{random_suffix}"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_backend_service" "cart-backend" {
+  region = "us-central1"
+
+  name        = "tf-test-cart-service%{random_suffix}"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_backend_service" "user-backend" {
+  region = "us-central1"
+
+  name        = "tf-test-user-service%{random_suffix}"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_health_check" "default" {
+  region = "us-central1"
+
+  name               = "tf-test-health-check%{random_suffix}"
+  check_interval_sec = 1
+  timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
   }
 }
 `, context)

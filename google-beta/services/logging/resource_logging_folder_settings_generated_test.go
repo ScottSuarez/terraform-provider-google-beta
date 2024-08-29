@@ -20,7 +20,7 @@ package logging_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -65,6 +65,7 @@ resource "google_logging_folder_settings" "example" {
 resource "google_folder" "my_folder" {
   display_name = "tf-test-folder-name%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  deletion_protection = false
 }
 
 data "google_logging_folder_settings" "settings" {

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDialogflowCXAgent_dialogflowcxAgentFullExample(t *testing.T) {
 				ResourceName:            "google_dialogflow_cx_agent.full_agent",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "git_integration_settings.0.github_settings.0.access_token"},
+				ImportStateVerifyIgnore: []string{"git_integration_settings.0.github_settings.0.access_token", "git_integration_settings.0.github_settings.0.access_token", "location"},
 			},
 		},
 	})

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -31,17 +31,19 @@ func TestAccIdentityPlatformConfig_update(t *testing.T) {
 				Config: testAccIdentityPlatformConfig_basic(context),
 			},
 			{
-				ResourceName:      "google_identity_platform_config.basic",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_identity_platform_config.basic",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client.0.api_key", "client.0.firebase_subdomain"},
 			},
 			{
 				Config: testAccIdentityPlatformConfig_update(context),
 			},
 			{
-				ResourceName:      "google_identity_platform_config.basic",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_identity_platform_config.basic",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client.0.api_key", "client.0.firebase_subdomain"},
 			},
 		},
 	})
@@ -54,6 +56,7 @@ resource "google_project" "basic" {
   name       = "tf-test-my-project%{random_suffix}"
   org_id     = "%{org_id}"
   billing_account =  "%{billing_acct}"
+  deletion_policy = "DELETE"
   labels = {
     firebase = "enabled"
   }
@@ -92,6 +95,35 @@ resource "google_identity_platform_config" "basic" {
       ]
     }
   }
+
+  client {
+    permissions {
+      disabled_user_deletion = true
+      disabled_user_signup   = true
+    }
+  }
+
+  mfa {
+    enabled_providers = ["PHONE_SMS"]
+    provider_configs {
+      state = "ENABLED"
+      totp_provider_config {
+        adjacent_intervals = 3
+      }
+    }
+    state = "ENABLED"
+  }
+
+  monitoring {
+    request_logging {
+      enabled = true
+    }
+  }
+
+  multi_tenant {
+    allow_tenants           = true
+    default_tenant_location = "organizations/%{org_id}"
+  }
 }
 `, context)
 }
@@ -103,6 +135,7 @@ resource "google_project" "basic" {
   name       = "tf-test-my-project%{random_suffix}"
   org_id     = "%{org_id}"
   billing_account =  "%{billing_acct}"
+  deletion_policy = "DELETE"
   labels = {
     firebase = "enabled"
   }
@@ -138,6 +171,23 @@ resource "google_identity_platform_config" "basic" {
         "AU",
         "NZ",
       ]
+    }
+  }
+
+  client {
+    permissions {
+      disabled_user_deletion = false
+      disabled_user_signup   = false
+    }
+  }
+
+  mfa {
+    enabled_providers = ["PHONE_SMS"]
+    state = "DISABLED"
+  }
+  monitoring {
+    request_logging {
+      enabled = false
     }
   }
 }

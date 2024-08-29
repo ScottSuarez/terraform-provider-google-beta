@@ -17,7 +17,7 @@ description: |-
   An Environment Keystore Alias for Self Signed Certificate Format in Apigee
 ---
 
-# google\_apigee\_keystores\_aliases\_self\_signed\_cert
+# google_apigee_keystores_aliases_self_signed_cert
 
 An Environment Keystore Alias for Self Signed Certificate Format in Apigee
 
@@ -37,6 +37,7 @@ resource "google_project" "project" {
   name            = "my-project"
   org_id          = "123456789"
   billing_account = "000000-0000000-0000000-000000"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {

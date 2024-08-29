@@ -20,6 +20,7 @@ package dataform
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -115,6 +116,12 @@ func ResourceDataformRepository() *schema.Resource {
 						},
 					},
 				},
+			},
+			"kms_key_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Optional. The reference to a KMS encryption key. If provided, it will be used to encrypt user data in the repository and all child resources.
+It is not possible to add or update the encryption key after the repository is created. Example projects/[kms_project_id]/locations/[region]/keyRings/[key_region]/cryptoKeys/[key]`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -236,6 +243,12 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
+	kmsKeyNameProp, err := expandDataformRepositoryKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(kmsKeyNameProp)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
+	}
 	labelsProp, err := expandDataformRepositoryEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -262,6 +275,7 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -270,6 +284,7 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Repository: %s", err)
@@ -312,12 +327,14 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataformRepository %q", d.Id()))
@@ -343,6 +360,9 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
 	if err := d.Set("display_name", flattenDataformRepositoryDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Repository: %s", err)
+	}
+	if err := d.Set("kms_key_name", flattenDataformRepositoryKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
 	if err := d.Set("labels", flattenDataformRepositoryLabels(res["labels"], d, config)); err != nil {
@@ -404,6 +424,12 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
+	kmsKeyNameProp, err := expandDataformRepositoryKmsKeyName(d.Get("kms_key_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, kmsKeyNameProp)) {
+		obj["kmsKeyName"] = kmsKeyNameProp
+	}
 	labelsProp, err := expandDataformRepositoryEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -417,6 +443,7 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Updating Repository %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -431,6 +458,7 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -463,13 +491,15 @@ func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Repository %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Repository %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -478,6 +508,7 @@ func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) 
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Repository")
@@ -613,6 +644,10 @@ func flattenDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(v interface
 }
 
 func flattenDataformRepositoryDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -805,6 +840,10 @@ func expandDataformRepositoryNpmrcEnvironmentVariablesSecretVersion(v interface{
 }
 
 func expandDataformRepositoryDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

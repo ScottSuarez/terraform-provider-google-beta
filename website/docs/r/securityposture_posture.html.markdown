@@ -18,7 +18,7 @@ description: |-
   and policy sets.
 ---
 
-# google\_securityposture\_posture
+# google_securityposture_posture
 
 A Posture represents a collection of policy set including its name, state, description
 and policy sets. A policy set includes set of policies along with their definition.
@@ -36,7 +36,7 @@ To get more information about Posture, see:
 
 ```hcl
 resource "google_securityposture_posture" "posture1"{
-  posture_id  = "posture_1"
+  posture_id  = "posture_example"
   parent      = "organizations/123456789"
   location    = "global"
   state       = "ACTIVE"
@@ -51,6 +51,11 @@ resource "google_securityposture_posture" "posture1"{
           canned_constraint_id = "storage.uniformBucketLevelAccess"
           policy_rules {
             enforce = true
+            condition {
+            	description = "condition description"
+            	expression  = "resource.matchTag('org_id/tag_key_short_name,'tag_value_short_name')"
+            	title       = "a CEL condition"
+            }
           }
         }
       }
@@ -60,9 +65,9 @@ resource "google_securityposture_posture" "posture1"{
       constraint {
         org_policy_constraint_custom {
           custom_constraint {
-            name         = "organizations/123456789/customConstraints/custom.disableGkeAutoUpgrade"
-            display_name = "Disable GKE auto upgrade"
-            description  = "Only allow GKE NodePool resource to be created or updated if AutoUpgrade is not enabled where this custom constraint is enforced."
+            name           = "organizations/123456789/customConstraints/custom.disableGkeAutoUpgrade"
+            display_name   = "Disable GKE auto upgrade"
+            description    = "Only allow GKE NodePool resource to be created or updated if AutoUpgrade is not enabled where this custom constraint is enforced."
             action_type    = "ALLOW"
             condition      = "resource.management.autoUpgrade == false"
             method_types   = ["CREATE", "UPDATE"]
@@ -70,6 +75,11 @@ resource "google_securityposture_posture" "posture1"{
           }
           policy_rules {
             enforce = true
+            condition {
+            	description = "condition description"
+            	expression = "resource.matchTagId('tagKeys/key_id','tagValues/value_id')"
+            	title = "a CEL condition"
+            }
           }
         }
       }
@@ -92,7 +102,7 @@ resource "google_securityposture_posture" "posture1"{
       policy_id = "sha_custom_module"
       constraint {
         security_health_analytics_custom_module {
-          display_name = "custom SHA policy"
+          display_name = "custom_SHA_policy"
           config {
             predicate {
               expression = "resource.rotationPeriod > duration('2592000s')"
@@ -131,6 +141,11 @@ The following arguments are supported:
   with other field updates.
   Possible values are: `DEPRECATED`, `DRAFT`, `ACTIVE`.
 
+* `policy_sets` -
+  (Required)
+  List of policy sets for the posture.
+  Structure is [documented below](#nested_policy_sets).
+
 * `parent` -
   (Required)
   The parent of the resource, an organization. Format should be `organizations/{organization_id}`.
@@ -144,19 +159,6 @@ The following arguments are supported:
   Id of the posture. It is an immutable field.
 
 
-- - -
-
-
-* `description` -
-  (Optional)
-  Description of the posture.
-
-* `policy_sets` -
-  (Optional)
-  List of policy sets for the posture.
-  Structure is [documented below](#nested_policy_sets).
-
-
 <a name="nested_policy_sets"></a>The `policy_sets` block supports:
 
 * `policy_set_id` -
@@ -168,7 +170,7 @@ The following arguments are supported:
   Description of the policy set.
 
 * `policies` -
-  (Optional)
+  (Required)
   List of security policy
   Structure is [documented below](#nested_policies).
 
@@ -259,12 +261,12 @@ The following arguments are supported:
   If `true`, then the policy is enforced. If `false`, then any configuration is acceptable.
   This field can be set only in policies for boolean constraints.
 
-* `expr` -
+* `condition` -
   (Optional)
   Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.
   This page details the objects and attributes that are used to the build the CEL expressions for
   custom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.
-  Structure is [documented below](#nested_expr).
+  Structure is [documented below](#nested_condition).
 
 
 <a name="nested_values"></a>The `values` block supports:
@@ -277,7 +279,7 @@ The following arguments are supported:
   (Optional)
   List of values denied at this resource.
 
-<a name="nested_expr"></a>The `expr` block supports:
+<a name="nested_condition"></a>The `condition` block supports:
 
 * `expression` -
   (Required)
@@ -359,12 +361,12 @@ The following arguments are supported:
   If `true`, then the policy is enforced. If `false`, then any configuration is acceptable.
   This field can be set only in policies for boolean constraints.
 
-* `expr` -
+* `condition` -
   (Optional)
   Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.
   This page details the objects and attributes that are used to the build the CEL expressions for
   custom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.
-  Structure is [documented below](#nested_expr).
+  Structure is [documented below](#nested_condition).
 
 
 <a name="nested_values"></a>The `values` block supports:
@@ -377,7 +379,7 @@ The following arguments are supported:
   (Optional)
   List of values denied at this resource.
 
-<a name="nested_expr"></a>The `expr` block supports:
+<a name="nested_condition"></a>The `condition` block supports:
 
 * `expression` -
   (Required)
@@ -530,6 +532,14 @@ The following arguments are supported:
 * `resource_types` -
   (Required)
   The resource types to run the detector on.
+
+- - -
+
+
+* `description` -
+  (Optional)
+  Description of the posture.
+
 
 ## Attributes Reference
 

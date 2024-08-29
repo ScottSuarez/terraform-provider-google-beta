@@ -17,7 +17,7 @@ description: |-
   Represents a Router resource.
 ---
 
-# google\_compute\_router
+# google_compute_router
 
 Represents a Router resource.
 
@@ -29,7 +29,7 @@ To get more information about Router, see:
     * [Google Cloud Router](https://cloud.google.com/router/docs/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=router_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=router_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -59,7 +59,7 @@ resource "google_compute_network" "foobar" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=compute_router_encrypted_interconnect&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=compute_router_encrypted_interconnect&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -170,6 +170,14 @@ The following arguments are supported:
   peer's hold time value as the hold time for the BGP connection
   between the two peers. If set, this value must be between 20 and 60.
   The default is 20.
+
+* `identifier_range` -
+  (Optional)
+  Explicitly specifies a range of valid BGP Identifiers for this Router.
+  It is provided as a link-local IPv4 range (from 169.254.0.0/16), of
+  size at least /30, even if the BGP sessions are over IPv6. It must
+  not overlap with any IPv4 BGP session ranges. Other vendors commonly
+  call this router ID.
 
 
 <a name="nested_advertised_ip_ranges"></a>The `advertised_ip_ranges` block supports:

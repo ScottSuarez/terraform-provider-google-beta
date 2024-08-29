@@ -34,8 +34,7 @@ A data source can be used to retrieve policy data in advent you do not need crea
 
 
 
-
-## google\_secure\_source\_manager\_instance\_iam\_policy
+## google_secure_source_manager_instance_iam_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
@@ -55,7 +54,7 @@ resource "google_secure_source_manager_instance_iam_policy" "policy" {
 }
 ```
 
-## google\_secure\_source\_manager\_instance\_iam\_binding
+## google_secure_source_manager_instance_iam_binding
 
 ```hcl
 resource "google_secure_source_manager_instance_iam_binding" "binding" {
@@ -69,7 +68,7 @@ resource "google_secure_source_manager_instance_iam_binding" "binding" {
 }
 ```
 
-## google\_secure\_source\_manager\_instance\_iam\_member
+## google_secure_source_manager_instance_iam_member
 
 ```hcl
 resource "google_secure_source_manager_instance_iam_member" "member" {
@@ -86,8 +85,10 @@ resource "google_secure_source_manager_instance_iam_member" "member" {
 
 The following arguments are supported:
 
-* `location` - (Required) The location for the Instance.
- Used to find the parent resource to bind the IAM policy to
+* `location` - (Optional) The location for the Instance.
+ Used to find the parent resource to bind the IAM policy to. If not specified,
+  the value will be parsed from the identifier of the parent resource. If no location is provided in the parent identifier and no
+  location is specified, it is taken from the provider configuration.
 * `instance_id` - (Required) The name for the Instance.
  Used to find the parent resource to bind the IAM policy to
 

@@ -22,11 +22,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -45,22 +47,22 @@ func extractError(d *schema.ResourceData) error {
 // waitForPrivateConnectionReady waits for a private connection state to become
 // CREATED, if the state is FAILED propegate the error to the user.
 func waitForPrivateConnectionReady(d *schema.ResourceData, config *transport_tpg.Config, timeout time.Duration) error {
-	return resource.Retry(timeout, func() *resource.RetryError {
+	return retry.Retry(timeout, func() *retry.RetryError {
 		if err := resourceDatastreamPrivateConnectionRead(d, config); err != nil {
-			return resource.NonRetryableError(err)
+			return retry.NonRetryableError(err)
 		}
 
 		name := d.Get("name").(string)
 		state := d.Get("state").(string)
 		if state == "CREATING" {
-			return resource.RetryableError(fmt.Errorf("PrivateConnection %q has state %q.", name, state))
+			return retry.RetryableError(fmt.Errorf("PrivateConnection %q has state %q.", name, state))
 		} else if state == "CREATED" {
 			log.Printf("[DEBUG] PrivateConnection %q has state %q.", name, state)
 			return nil
 		} else if state == "FAILED" {
-			return resource.NonRetryableError(extractError(d))
+			return retry.NonRetryableError(extractError(d))
 		} else {
-			return resource.NonRetryableError(fmt.Errorf("PrivateConnection %q has state %q.", name, state))
+			return retry.NonRetryableError(fmt.Errorf("PrivateConnection %q has state %q.", name, state))
 		}
 	})
 }
@@ -139,6 +141,13 @@ Format: projects/{project}/global/{networks}/{name}`,
 						},
 					},
 				},
+			},
+			"create_without_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `If set to true, will skip validations.`,
+				Default:     false,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -231,7 +240,7 @@ func resourceDatastreamPrivateConnectionCreate(d *schema.ResourceData, meta inte
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DatastreamBasePath}}projects/{{project}}/locations/{{location}}/privateConnections?privateConnectionId={{private_connection_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{DatastreamBasePath}}projects/{{project}}/locations/{{location}}/privateConnections?privateConnectionId={{private_connection_id}}&force={{create_without_validation}}")
 	if err != nil {
 		return err
 	}
@@ -250,6 +259,7 @@ func resourceDatastreamPrivateConnectionCreate(d *schema.ResourceData, meta inte
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -258,6 +268,7 @@ func resourceDatastreamPrivateConnectionCreate(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating PrivateConnection: %s", err)
@@ -328,12 +339,14 @@ func resourceDatastreamPrivateConnectionRead(d *schema.ResourceData, meta interf
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DatastreamPrivateConnection %q", d.Id()))
@@ -397,13 +410,20 @@ func resourceDatastreamPrivateConnectionDelete(d *schema.ResourceData, meta inte
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting PrivateConnection %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	// Add force=true query param to force deletion of private connection sub resources like Routes
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": strconv.FormatBool(true)})
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Deleting PrivateConnection %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -412,6 +432,7 @@ func resourceDatastreamPrivateConnectionDelete(d *schema.ResourceData, meta inte
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "PrivateConnection")

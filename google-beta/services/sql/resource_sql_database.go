@@ -20,6 +20,7 @@ package sql
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -90,11 +91,11 @@ a value of 'en_US.UTF8' at creation time.`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `The deletion policy for the database. Setting ABANDON allows the resource
 to be abandoned rather than deleted. This is useful for Postgres, where databases cannot be
 deleted from the API if there are users other than cloudsqlsuperuser with access. Possible
 values are: "ABANDON", "DELETE". Defaults to "DELETE".`,
+				Default: "DELETE",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -170,6 +171,7 @@ func resourceSQLDatabaseCreate(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -178,6 +180,7 @@ func resourceSQLDatabaseCreate(d *schema.ResourceData, meta interface{}) error {
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Database: %s", err)
@@ -230,12 +233,14 @@ func resourceSQLDatabaseRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(transformSQLDatabaseReadError(err), d, fmt.Sprintf("SQLDatabase %q", d.Id()))
@@ -324,6 +329,7 @@ func resourceSQLDatabaseUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Updating Database %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -338,6 +344,7 @@ func resourceSQLDatabaseUpdate(d *schema.ResourceData, meta interface{}) error {
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -385,18 +392,20 @@ func resourceSQLDatabaseDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	var obj map[string]interface{}
-	if deletionPolicy := d.Get("deletion_policy"); deletionPolicy == "ABANDON" {
-		// Allows for database to be abandoned without deletion to avoid deletion failing
-		// for Postgres databases in some circumstances due to existing SQL users
-		return nil
-	}
-	log.Printf("[DEBUG] Deleting Database %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+	if deletionPolicy := d.Get("deletion_policy"); deletionPolicy == "ABANDON" {
+		// Allows for database to be abandoned without deletion to avoid deletion failing
+		// for Postgres databases in some circumstances due to existing SQL users
+		return nil
+	}
+
+	log.Printf("[DEBUG] Deleting Database %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -405,6 +414,7 @@ func resourceSQLDatabaseDelete(d *schema.ResourceData, meta interface{}) error {
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Database")

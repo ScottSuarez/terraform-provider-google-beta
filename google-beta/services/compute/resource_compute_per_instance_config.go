@@ -20,6 +20,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -173,39 +174,39 @@ func ResourceComputePerInstanceConfig() *schema.Resource {
 			"minimal_action": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "NONE",
 				Description: `The minimal action to perform on the instance during an update.
 Default is 'NONE'. Possible values are:
 * REPLACE
 * RESTART
 * REFRESH
 * NONE`,
+				Default: "NONE",
 			},
 			"most_disruptive_allowed_action": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "REPLACE",
 				Description: `The most disruptive action to perform on the instance during an update.
 Default is 'REPLACE'. Possible values are:
 * REPLACE
 * RESTART
 * REFRESH
 * NONE`,
+				Default: "REPLACE",
 			},
 			"remove_instance_on_destroy": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 				Description: `When true, deleting this config will immediately remove the underlying instance.
 When false, deleting this config will use the behavior as determined by remove_instance_on_destroy.`,
+				Default: false,
 			},
 			"remove_instance_state_on_destroy": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 				Description: `When true, deleting this config will immediately remove any specified state from the underlying instance.
 When false, deleting this config will *not* immediately remove any state from the underlying instance.
 State will be removed on the next instance recreation or update.`,
+				Default: false,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -306,6 +307,7 @@ func resourceComputePerInstanceConfigCreate(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -314,6 +316,7 @@ func resourceComputePerInstanceConfigCreate(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating PerInstanceConfig: %s", err)
@@ -366,12 +369,14 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputePerInstanceConfig %q", d.Id()))
@@ -479,6 +484,7 @@ func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Updating PerInstanceConfig %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -493,6 +499,7 @@ func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interfa
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {

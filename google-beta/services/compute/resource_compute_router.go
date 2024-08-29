@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -153,6 +154,16 @@ CIDR-formatted string.`,
 								},
 							},
 						},
+						"identifier_range": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							Description: `Explicitly specifies a range of valid BGP Identifiers for this Router.
+It is provided as a link-local IPv4 range (from 169.254.0.0/16), of
+size at least /30, even if the BGP sessions are over IPv6. It must
+not overlap with any IPv4 BGP session ranges. Other vendors commonly
+call this router ID.`,
+						},
 						"keepalive_interval": {
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -282,6 +293,7 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -290,6 +302,7 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Router: %s", err)
@@ -342,12 +355,14 @@ func resourceComputeRouterRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRouter %q", d.Id()))
@@ -427,6 +442,7 @@ func resourceComputeRouterUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Updating Router %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -441,6 +457,7 @@ func resourceComputeRouterUpdate(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
 	})
 
 	if err != nil {
@@ -488,13 +505,15 @@ func resourceComputeRouterDelete(d *schema.ResourceData, meta interface{}) error
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Router %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Router %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -503,6 +522,7 @@ func resourceComputeRouterDelete(d *schema.ResourceData, meta interface{}) error
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Router")
@@ -579,6 +599,8 @@ func flattenComputeRouterBgp(v interface{}, d *schema.ResourceData, config *tran
 		flattenComputeRouterBgpAdvertisedIpRanges(original["advertisedIpRanges"], d, config)
 	transformed["keepalive_interval"] =
 		flattenComputeRouterBgpKeepaliveInterval(original["keepaliveInterval"], d, config)
+	transformed["identifier_range"] =
+		flattenComputeRouterBgpIdentifierRange(original["identifierRange"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeRouterBgpAsn(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -611,26 +633,30 @@ func flattenComputeRouterBgpAdvertisedIpRanges(v interface{}, d *schema.Resource
 		return v
 	}
 	l := v.([]interface{})
-	transformed := make([]interface{}, 0, len(l))
+	apiData := make([]map[string]interface{}, 0, len(l))
 	for _, raw := range l {
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
 			continue
 		}
-		transformed = append(transformed, map[string]interface{}{
-			"range":       flattenComputeRouterBgpAdvertisedIpRangesRange(original["range"], d, config),
-			"description": flattenComputeRouterBgpAdvertisedIpRangesDescription(original["description"], d, config),
+		apiData = append(apiData, map[string]interface{}{
+			"description": original["description"],
+			"range":       original["range"],
 		})
 	}
-	return transformed
-}
-func flattenComputeRouterBgpAdvertisedIpRangesRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenComputeRouterBgpAdvertisedIpRangesDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	configData := []map[string]interface{}{}
+	if v, ok := d.GetOk("bgp.0.advertised_ip_ranges"); ok {
+		for _, item := range v.([]interface{}) {
+			configData = append(configData, item.(map[string]interface{}))
+		}
+	}
+	sorted, err := tpgresource.SortMapsByConfigOrder(configData, apiData, "range")
+	if err != nil {
+		log.Printf("[ERROR] Could not support API response for advertisedIpRanges.0.range: %s", err)
+		return apiData
+	}
+	return sorted
 }
 
 func flattenComputeRouterBgpKeepaliveInterval(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -648,6 +674,10 @@ func flattenComputeRouterBgpKeepaliveInterval(v interface{}, d *schema.ResourceD
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRouterBgpIdentifierRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenComputeRouterEncryptedInterconnectRouter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -721,6 +751,13 @@ func expandComputeRouterBgp(v interface{}, d tpgresource.TerraformResourceData, 
 		transformed["keepaliveInterval"] = transformedKeepaliveInterval
 	}
 
+	transformedIdentifierRange, err := expandComputeRouterBgpIdentifierRange(original["identifier_range"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIdentifierRange); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["identifierRange"] = transformedIdentifierRange
+	}
+
 	return transformed, nil
 }
 
@@ -774,6 +811,10 @@ func expandComputeRouterBgpAdvertisedIpRangesDescription(v interface{}, d tpgres
 }
 
 func expandComputeRouterBgpKeepaliveInterval(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRouterBgpIdentifierRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

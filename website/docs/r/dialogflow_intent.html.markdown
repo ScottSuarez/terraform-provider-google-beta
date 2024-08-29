@@ -17,7 +17,7 @@ description: |-
   Represents a Dialogflow intent.
 ---
 
-# google\_dialogflow\_intent
+# google_dialogflow_intent
 
 Represents a Dialogflow intent. Intents convert a number of user expressions or patterns into an action. An action
 is an extraction of a user command or sentence semantics.
@@ -52,6 +52,7 @@ resource "google_project" "agent_project" {
   project_id = "my-project"
   name = "my-project"
   org_id = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "agent_project" {

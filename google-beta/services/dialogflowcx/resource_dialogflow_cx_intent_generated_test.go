@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDialogflowCXIntent_dialogflowcxIntentFullExample(t *testing.T) {
 				ResourceName:            "google_dialogflow_cx_intent.basic_intent",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"parent", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "parent", "terraform_labels"},
 			},
 		},
 	})
@@ -126,7 +126,7 @@ func TestAccDialogflowCXIntent_dialogflowcxIntentDefaultNegativeIntentExample(t 
 				ResourceName:            "google_dialogflow_cx_intent.default_negative_intent",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"parent", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "parent", "terraform_labels"},
 			},
 		},
 	})
@@ -177,7 +177,7 @@ func TestAccDialogflowCXIntent_dialogflowcxIntentDefaultWelcomeIntentExample(t *
 				ResourceName:            "google_dialogflow_cx_intent.default_welcome_intent",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"parent", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "parent", "terraform_labels"},
 			},
 		},
 	})

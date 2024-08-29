@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayBasicExample(t *testing
 				ResourceName:            "google_network_services_gateway.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -85,7 +85,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayAdvancedExample(t *test
 				ResourceName:            "google_network_services_gateway.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -125,7 +125,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewaySecureWebProxyExample(t
 				ResourceName:            "google_network_services_gateway.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "delete_swg_autogen_router_on_destroy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"delete_swg_autogen_router_on_destroy", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -217,7 +217,7 @@ func TestAccNetworkServicesGateway_networkServicesGatewayMultipleSwpSameNetworkE
 				ResourceName:            "google_network_services_gateway.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "delete_swg_autogen_router_on_destroy", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"delete_swg_autogen_router_on_destroy", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})

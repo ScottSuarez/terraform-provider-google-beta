@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedCertifi
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -110,7 +110,7 @@ func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedCertifi
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -213,7 +213,7 @@ func TestAccCertificateManagerCertificate_certificateManagerSelfManagedCertifica
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -252,7 +252,7 @@ func TestAccCertificateManagerCertificate_certificateManagerSelfManagedCertifica
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -291,7 +291,7 @@ func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedCertifi
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -394,7 +394,7 @@ func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedCertifi
 				ResourceName:            "google_certificate_manager_certificate.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"self_managed", "name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
 			},
 		},
 	})
@@ -429,6 +429,55 @@ resource "google_certificate_manager_dns_authorization" "instance2" {
   name        = "tf-test-dns-auth2%{random_suffix}"
   description = "The default dnss"
   domain      = "subdomain2%{random_suffix}.hashicorptest.com"
+}
+`, context)
+}
+
+func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedRegionalCertificateDnsAuthExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCertificateManagerCertificateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCertificateManagerCertificate_certificateManagerGoogleManagedRegionalCertificateDnsAuthExample(context),
+			},
+			{
+				ResourceName:            "google_certificate_manager_certificate.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "self_managed", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCertificateManagerCertificate_certificateManagerGoogleManagedRegionalCertificateDnsAuthExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_certificate_manager_certificate" "default" {
+  name        = "tf-test-dns-cert%{random_suffix}"
+  description = "regional managed certs"
+  location = "us-central1"
+  managed {
+    domains = [
+      google_certificate_manager_dns_authorization.instance.domain,
+      ]
+    dns_authorizations = [
+      google_certificate_manager_dns_authorization.instance.id,
+      ]
+  }
+}
+resource "google_certificate_manager_dns_authorization" "instance" {
+  name        = "tf-test-dns-auth%{random_suffix}"
+  location    = "us-central1"
+  description = "The default dnss"
+  domain      = "subdomain%{random_suffix}.hashicorptest.com"
 }
 `, context)
 }

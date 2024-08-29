@@ -17,7 +17,7 @@ description: |-
   A [project being monitored](https://cloud.
 ---
 
-# google\_monitoring\_monitored\_project
+# google_monitoring_monitored_project
 
 A [project being monitored](https://cloud.google.com/monitoring/settings/multiple-projects#create-multi) by a Metrics Scope.
 
@@ -41,6 +41,7 @@ resource "google_project" "basic" {
   project_id = "m-id"
   name       = "m-id-display"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 ```
 

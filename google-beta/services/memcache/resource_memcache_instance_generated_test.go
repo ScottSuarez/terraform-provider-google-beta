@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -50,7 +50,7 @@ func TestAccMemcacheInstance_memcacheInstanceBasicTestExample(t *testing.T) {
 				ResourceName:            "google_memcache_instance.instance",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "reserved_ip_range_id", "region", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "name", "region", "reserved_ip_range_id", "terraform_labels"},
 			},
 		},
 	})

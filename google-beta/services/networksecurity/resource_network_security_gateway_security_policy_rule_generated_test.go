@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 				ResourceName:            "google_network_security_gateway_security_policy_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "gateway_security_policy"},
+				ImportStateVerifyIgnore: []string{"gateway_security_policy", "location", "name"},
 			},
 		},
 	})
@@ -95,7 +95,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicyRule_networkSecurityGatewaySecur
 				ResourceName:            "google_network_security_gateway_security_policy_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "gateway_security_policy"},
+				ImportStateVerifyIgnore: []string{"gateway_security_policy", "location", "name"},
 			},
 		},
 	})

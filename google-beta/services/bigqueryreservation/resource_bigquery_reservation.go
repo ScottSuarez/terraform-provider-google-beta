@@ -20,6 +20,7 @@ package bigqueryreservation
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -114,12 +115,6 @@ capacity specified above at most.`,
 Examples: US, EU, asia-northeast1. The default value is US.`,
 				Default: "US",
 			},
-			"multi_region_auxiliary": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Description: `Applicable only for reservations located within one of the BigQuery multi-regions (US or EU).
-If set to true, this reservation is placed in the organization's secondary region which is designated for disaster recovery purposes. If false, this reservation is placed in the organization's default region.`,
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -157,12 +152,6 @@ func resourceBigqueryReservationReservationCreate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("concurrency"); !tpgresource.IsEmptyValue(reflect.ValueOf(concurrencyProp)) && (ok || !reflect.DeepEqual(v, concurrencyProp)) {
 		obj["concurrency"] = concurrencyProp
 	}
-	multiRegionAuxiliaryProp, err := expandBigqueryReservationReservationMultiRegionAuxiliary(d.Get("multi_region_auxiliary"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("multi_region_auxiliary"); !tpgresource.IsEmptyValue(reflect.ValueOf(multiRegionAuxiliaryProp)) && (ok || !reflect.DeepEqual(v, multiRegionAuxiliaryProp)) {
-		obj["multiRegionAuxiliary"] = multiRegionAuxiliaryProp
-	}
 	editionProp, err := expandBigqueryReservationReservationEdition(d.Get("edition"), d, config)
 	if err != nil {
 		return err
@@ -195,6 +184,7 @@ func resourceBigqueryReservationReservationCreate(d *schema.ResourceData, meta i
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -203,6 +193,7 @@ func resourceBigqueryReservationReservationCreate(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Reservation: %s", err)
@@ -245,12 +236,14 @@ func resourceBigqueryReservationReservationRead(d *schema.ResourceData, meta int
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigqueryReservationReservation %q", d.Id()))
@@ -267,9 +260,6 @@ func resourceBigqueryReservationReservationRead(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error reading Reservation: %s", err)
 	}
 	if err := d.Set("concurrency", flattenBigqueryReservationReservationConcurrency(res["concurrency"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Reservation: %s", err)
-	}
-	if err := d.Set("multi_region_auxiliary", flattenBigqueryReservationReservationMultiRegionAuxiliary(res["multiRegionAuxiliary"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Reservation: %s", err)
 	}
 	if err := d.Set("edition", flattenBigqueryReservationReservationEdition(res["edition"], d, config)); err != nil {
@@ -316,12 +306,6 @@ func resourceBigqueryReservationReservationUpdate(d *schema.ResourceData, meta i
 	} else if v, ok := d.GetOkExists("concurrency"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, concurrencyProp)) {
 		obj["concurrency"] = concurrencyProp
 	}
-	multiRegionAuxiliaryProp, err := expandBigqueryReservationReservationMultiRegionAuxiliary(d.Get("multi_region_auxiliary"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("multi_region_auxiliary"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, multiRegionAuxiliaryProp)) {
-		obj["multiRegionAuxiliary"] = multiRegionAuxiliaryProp
-	}
 	autoscaleProp, err := expandBigqueryReservationReservationAutoscale(d.Get("autoscale"), d, config)
 	if err != nil {
 		return err
@@ -335,6 +319,7 @@ func resourceBigqueryReservationReservationUpdate(d *schema.ResourceData, meta i
 	}
 
 	log.Printf("[DEBUG] Updating Reservation %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("slot_capacity") {
@@ -347,10 +332,6 @@ func resourceBigqueryReservationReservationUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("concurrency") {
 		updateMask = append(updateMask, "concurrency")
-	}
-
-	if d.HasChange("multi_region_auxiliary") {
-		updateMask = append(updateMask, "multiRegionAuxiliary")
 	}
 
 	if d.HasChange("autoscale") {
@@ -378,6 +359,7 @@ func resourceBigqueryReservationReservationUpdate(d *schema.ResourceData, meta i
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {
@@ -412,13 +394,15 @@ func resourceBigqueryReservationReservationDelete(d *schema.ResourceData, meta i
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Reservation %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Reservation %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -427,6 +411,7 @@ func resourceBigqueryReservationReservationDelete(d *schema.ResourceData, meta i
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Reservation")
@@ -494,10 +479,6 @@ func flattenBigqueryReservationReservationConcurrency(v interface{}, d *schema.R
 	return v // let terraform core handle it otherwise
 }
 
-func flattenBigqueryReservationReservationMultiRegionAuxiliary(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
 func flattenBigqueryReservationReservationEdition(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -560,10 +541,6 @@ func expandBigqueryReservationReservationIgnoreIdleSlots(v interface{}, d tpgres
 }
 
 func expandBigqueryReservationReservationConcurrency(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandBigqueryReservationReservationMultiRegionAuxiliary(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

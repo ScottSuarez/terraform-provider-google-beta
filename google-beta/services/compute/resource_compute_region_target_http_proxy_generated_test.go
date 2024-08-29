@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyBasicExample(t *te
 				ResourceName:            "google_compute_region_target_http_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"url_map", "region"},
+				ImportStateVerifyIgnore: []string{"region", "url_map"},
 			},
 		},
 	})
@@ -123,7 +123,7 @@ func TestAccComputeRegionTargetHttpProxy_regionTargetHttpProxyHttpsRedirectExamp
 				ResourceName:            "google_compute_region_target_http_proxy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"url_map", "region"},
+				ImportStateVerifyIgnore: []string{"region", "url_map"},
 			},
 		},
 	})

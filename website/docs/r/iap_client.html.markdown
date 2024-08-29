@@ -17,7 +17,7 @@ description: |-
   Contains the data that describes an Identity Aware Proxy owned client.
 ---
 
-# google\_iap\_client
+# google_iap_client
 
 Contains the data that describes an Identity Aware Proxy owned client.
 
@@ -44,6 +44,7 @@ resource "google_project" "project" {
   project_id = "my-project"
   name       = "my-project"
   org_id     = "123456789"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "project_service" {
@@ -76,7 +77,7 @@ The following arguments are supported:
   (Required)
   Identifier of the brand to which this client
   is attached to. The format is
-  `projects/{project_number}/brands/{brand_id}/identityAwareProxyClients/{client_id}`.
+  `projects/{project_number}/brands/{brand_id}`.
 
 
 - - -
@@ -96,8 +97,6 @@ In addition to the arguments listed above, the following computed attributes are
 * `client_id` -
   Output only. Unique identifier of the OAuth client.
 
-
-* `client_id`: The OAuth2 ID of the client.
 
 ## Timeouts
 

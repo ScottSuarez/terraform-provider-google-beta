@@ -17,7 +17,7 @@ description: |-
   A Google Cloud Firebase Android application instance
 ---
 
-# google\_firebase\_android\_app
+# google_firebase_android_app
 
 A Google Cloud Firebase Android application instance
 
@@ -84,14 +84,14 @@ The following arguments are supported:
   (Required)
   The user-assigned display name of the AndroidApp.
 
+* `package_name` -
+  (Required)
+  The canonical package name of the Android app as would appear in the Google Play
+  Developer Console.
+
 
 - - -
 
-
-* `package_name` -
-  (Optional)
-  Immutable. The canonical package name of the Android app as would appear in the Google Play
-  Developer Console.
 
 * `sha1_hashes` -
   (Optional)

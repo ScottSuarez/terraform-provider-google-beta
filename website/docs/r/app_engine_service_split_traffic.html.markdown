@@ -17,7 +17,7 @@ description: |-
   Traffic routing configuration for versions within a single service.
 ---
 
-# google\_app\_engine\_service\_split\_traffic
+# google_app_engine_service_split_traffic
 
 Traffic routing configuration for versions within a single service. Traffic splits define how traffic directed to the service is assigned to versions.
 
@@ -46,7 +46,7 @@ resource "google_app_engine_standard_app_version" "liveapp_v1" {
   service = "liveapp"
   delete_service_on_destroy = true
 
-  runtime = "nodejs10"
+  runtime = "nodejs20"
   entrypoint {
     shell = "node ./app.js"
   }
@@ -65,7 +65,7 @@ resource "google_app_engine_standard_app_version" "liveapp_v2" {
   service = "liveapp"
   noop_on_destroy = true
 
-  runtime = "nodejs10"
+  runtime = "nodejs20"
   entrypoint {
     shell = "node ./app.js"
   }

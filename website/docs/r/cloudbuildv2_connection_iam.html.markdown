@@ -34,8 +34,7 @@ A data source can be used to retrieve policy data in advent you do not need crea
 
 
 
-
-## google\_cloudbuildv2\_connection\_iam\_policy
+## google_cloudbuildv2_connection_iam_policy
 
 ```hcl
 data "google_iam_policy" "admin" {
@@ -55,7 +54,7 @@ resource "google_cloudbuildv2_connection_iam_policy" "policy" {
 }
 ```
 
-## google\_cloudbuildv2\_connection\_iam\_binding
+## google_cloudbuildv2_connection_iam_binding
 
 ```hcl
 resource "google_cloudbuildv2_connection_iam_binding" "binding" {
@@ -69,7 +68,7 @@ resource "google_cloudbuildv2_connection_iam_binding" "binding" {
 }
 ```
 
-## google\_cloudbuildv2\_connection\_iam\_member
+## google_cloudbuildv2_connection_iam_member
 
 ```hcl
 resource "google_cloudbuildv2_connection_iam_member" "member" {
@@ -87,6 +86,9 @@ resource "google_cloudbuildv2_connection_iam_member" "member" {
 The following arguments are supported:
 
 * `name` - (Required) Used to find the parent resource to bind the IAM policy to
+* `location` - (Optional) The location for the resource Used to find the parent resource to bind the IAM policy to. If not specified,
+  the value will be parsed from the identifier of the parent resource. If no location is provided in the parent identifier and no
+  location is specified, it is taken from the provider configuration.
 
 * `project` - (Optional) The ID of the project in which the resource belongs.
     If it is not provided, the project will be parsed from the identifier of the parent resource. If no project is provided in the parent identifier and no project is specified, the provider project is used.

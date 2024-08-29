@@ -17,7 +17,7 @@ description: |-
   A managed alloydb cluster instance.
 ---
 
-# google\_alloydb\_instance
+# google_alloydb_instance
 
 A managed alloydb cluster instance.
 
@@ -51,7 +51,9 @@ resource "google_alloydb_instance" "default" {
 resource "google_alloydb_cluster" "default" {
   cluster_id = "alloydb-cluster"
   location   = "us-central1"
-  network    = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
 
   initial_user {
     password = "alloydb-cluster"
@@ -85,7 +87,9 @@ resource "google_service_networking_connection" "vpc_connection" {
 resource "google_alloydb_cluster" "primary" {
   cluster_id = "alloydb-primary-cluster"
   location   = "us-central1"
-  network    = google_compute_network.default.id
+  network_config {
+    network = google_compute_network.default.id
+  }
 }
 
 resource "google_alloydb_instance" "primary" {
@@ -103,7 +107,9 @@ resource "google_alloydb_instance" "primary" {
 resource "google_alloydb_cluster" "secondary" {
   cluster_id   = "alloydb-secondary-cluster"
   location     = "us-east1"
-  network      = google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
   cluster_type = "SECONDARY"
 
   continuous_backup_config {
@@ -227,6 +233,11 @@ The following arguments are supported:
   Configuration for query insights.
   Structure is [documented below](#nested_query_insights_config).
 
+* `observability_config` -
+  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  Configuration for enhanced query insights.
+  Structure is [documented below](#nested_observability_config).
+
 * `read_pool_config` -
   (Optional)
   Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.
@@ -241,6 +252,16 @@ The following arguments are supported:
   (Optional)
   Client connection specific configurations.
   Structure is [documented below](#nested_client_connection_config).
+
+* `psc_instance_config` -
+  (Optional)
+  Configuration for Private Service Connect (PSC) for the instance.
+  Structure is [documented below](#nested_psc_instance_config).
+
+* `network_config` -
+  (Optional)
+  Instance level network configuration.
+  Structure is [documented below](#nested_network_config).
 
 
 <a name="nested_query_insights_config"></a>The `query_insights_config` block supports:
@@ -260,6 +281,40 @@ The following arguments are supported:
 * `query_plans_per_minute` -
   (Optional)
   Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 20 is considered valid.
+
+<a name="nested_observability_config"></a>The `observability_config` block supports:
+
+* `enabled` -
+  (Optional)
+  Observability feature status for an instance.
+
+* `preserve_comments` -
+  (Optional)
+  Preserve comments in the query string.
+
+* `track_wait_events` -
+  (Optional)
+  Record wait events during query execution for an instance.
+
+* `track_wait_event_types` -
+  (Optional)
+  Record wait event types during query execution for an instance.
+
+* `max_query_string_length` -
+  (Optional)
+  Query string length. The default value is 10240. Any integer between 1024 and 100000 is considered valid.
+
+* `record_application_tags` -
+  (Optional)
+  Record application tags for an instance. This flag is turned "on" by default.
+
+* `query_plans_per_minute` -
+  (Optional)
+  Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 200 is considered valid.
+
+* `track_active_queries` -
+  (Optional)
+  Track actively running queries. If not set, default value is "off".
 
 <a name="nested_read_pool_config"></a>The `read_pool_config` block supports:
 
@@ -292,6 +347,46 @@ The following arguments are supported:
   SSL mode. Specifies client-server SSL/TLS connection behavior.
   Possible values are: `ENCRYPTED_ONLY`, `ALLOW_UNENCRYPTED_AND_ENCRYPTED`.
 
+<a name="nested_psc_instance_config"></a>The `psc_instance_config` block supports:
+
+* `service_attachment_link` -
+  (Output)
+  The service attachment created when Private Service Connect (PSC) is enabled for the instance.
+  The name of the resource will be in the format of
+  `projects/<alloydb-tenant-project-number>/regions/<region-name>/serviceAttachments/<service-attachment-name>`
+
+* `allowed_consumer_projects` -
+  (Optional)
+  List of consumer projects that are allowed to create PSC endpoints to service-attachments to this instance.
+  These should be specified as project numbers only.
+
+* `psc_dns_name` -
+  (Output)
+  The DNS name of the instance for PSC connectivity.
+  Name convention: <uid>.<uid>.<region>.alloydb-psc.goog
+
+<a name="nested_network_config"></a>The `network_config` block supports:
+
+* `authorized_external_networks` -
+  (Optional)
+  A list of external networks authorized to access this instance. This
+  field is only allowed to be set when `enable_public_ip` is set to
+  true.
+  Structure is [documented below](#nested_authorized_external_networks).
+
+* `enable_public_ip` -
+  (Optional)
+  Enabling public ip for the instance. If a user wishes to disable this,
+  please also clear the list of the authorized external networks set on
+  the same instance.
+
+
+<a name="nested_authorized_external_networks"></a>The `authorized_external_networks` block supports:
+
+* `cidr_range` -
+  (Optional)
+  CIDR range for one authorized network of the instance.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
@@ -318,6 +413,11 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `ip_address` -
   The IP address for the Instance. This is the connection endpoint for an end-user application.
+
+* `public_ip_address` -
+  The public IP addresses for the Instance. This is available ONLY when
+  networkConfig.enablePublicIp is set to true. This is the connection
+  endpoint for an end-user application.
 
 * `terraform_labels` -
   The combination of labels configured directly on the resource

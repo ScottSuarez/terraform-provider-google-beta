@@ -20,6 +20,7 @@ package firebase
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -97,10 +98,10 @@ projects/projectId/iosApps/appId`,
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `(Optional) Set to 'ABANDON' to allow the Apple to be untracked from terraform state
 rather than deleted upon 'terraform destroy'. This is useful because the Apple may be
 serving traffic. Set to 'DELETE' to delete the Apple. Defaults to 'DELETE'.`,
+				Default: "DELETE",
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -171,6 +172,7 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -179,6 +181,7 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating AppleApp: %s", err)
@@ -248,12 +251,14 @@ func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) erro
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseAppleApp %q", d.Id()))
@@ -341,6 +346,7 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Updating AppleApp %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
 	updateMask := []string{}
 
 	if d.HasChange("display_name") {
@@ -380,6 +386,7 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 			UserAgent: userAgent,
 			Body:      obj,
 			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
 		})
 
 		if err != nil {

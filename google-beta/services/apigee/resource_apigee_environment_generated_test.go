@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -36,8 +36,8 @@ func TestAccApigeeEnvironment_apigeeEnvironmentBasicTestExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -66,6 +66,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -131,8 +132,8 @@ func TestAccApigeeEnvironment_apigeeEnvironmentBasicDeploymentApiproxyTypeTestEx
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -161,6 +162,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -223,13 +225,13 @@ resource "google_apigee_environment" "apigee_environment" {
 `, context)
 }
 
-func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
+func TestAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -239,7 +241,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
 		CheckDestroy:             testAccCheckApigeeEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context),
+				Config: testAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(context),
 			},
 			{
 				ResourceName:            "google_apigee_environment.apigee_environment",
@@ -251,7 +253,7 @@ func TestAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(t *testing.T) {
 	})
 }
 
-func testAccApigeeEnvironment_apigeeEnvironmentTypeTestExample(context map[string]interface{}) string {
+func testAccApigeeEnvironment_apigeeEnvironmentPatchUpdateTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider = google-beta
@@ -260,6 +262,7 @@ resource "google_project" "project" {
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {
@@ -347,7 +350,7 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   crypto_key_id = google_kms_crypto_key.apigee_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  member = "serviceAccount:${google_project_service_identity.apigee_sa.email}"
+  member = google_project_service_identity.apigee_sa.member
 }
 
 resource "google_apigee_organization" "apigee_org" {
@@ -374,6 +377,7 @@ resource "google_apigee_environment" "apigee_environment" {
   description  = "Apigee Environment"
   display_name = "tf-test%{random_suffix}"
   type         = "COMPREHENSIVE"
+  forward_proxy_uri = "http://test:123"
 }
 `, context)
 }

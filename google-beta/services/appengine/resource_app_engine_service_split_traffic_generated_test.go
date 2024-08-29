@@ -20,7 +20,7 @@ package appengine_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -45,7 +45,7 @@ func TestAccAppEngineServiceSplitTraffic_appEngineServiceSplitTrafficExample(t *
 				ResourceName:            "google_app_engine_service_split_traffic.liveapp",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"split", "migrate_traffic"},
+				ImportStateVerifyIgnore: []string{"migrate_traffic", "split"},
 			},
 		},
 	})
@@ -69,7 +69,7 @@ resource "google_app_engine_standard_app_version" "liveapp_v1" {
   service = "liveapp"
   delete_service_on_destroy = true
 
-  runtime = "nodejs10"
+  runtime = "nodejs20"
   entrypoint {
     shell = "node ./app.js"
   }
@@ -88,7 +88,7 @@ resource "google_app_engine_standard_app_version" "liveapp_v2" {
   service = "liveapp"
   noop_on_destroy = true
 
-  runtime = "nodejs10"
+  runtime = "nodejs20"
   entrypoint {
     shell = "node ./app.js"
   }

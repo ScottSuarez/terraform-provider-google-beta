@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolBasicExample(t *testi
 				ResourceName:            "google_gkeonprem_vmware_node_pool.nodepool-basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "vmware_cluster", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name", "vmware_cluster"},
 			},
 		},
 	})
@@ -127,7 +127,7 @@ func TestAccGkeonpremVmwareNodePool_gkeonpremVmwareNodePoolFullExample(t *testin
 				ResourceName:            "google_gkeonprem_vmware_node_pool.nodepool-full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "vmware_cluster", "location", "annotations"},
+				ImportStateVerifyIgnore: []string{"annotations", "location", "name", "vmware_cluster"},
 			},
 		},
 	})

@@ -5,7 +5,7 @@ package integrationconnectors_test
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 )
@@ -58,6 +58,7 @@ resource "google_integration_connectors_endpoint_attachment" "sampleendpointatta
   labels = {
     foo = "bar"
   }
+  endpoint_global_access = false
 }
 `, context)
 }
@@ -76,6 +77,7 @@ resource "google_integration_connectors_endpoint_attachment" "sampleendpointatta
   labels = {
     bar = "foo"
   }
+  endpoint_global_access = true
 }
 `, context)
 }

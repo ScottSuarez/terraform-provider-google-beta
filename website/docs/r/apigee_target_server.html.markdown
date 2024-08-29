@@ -17,7 +17,7 @@ description: |-
   TargetServer configuration.
 ---
 
-# google\_apigee\_target\_server
+# google_apigee_target_server
 
 TargetServer configuration. TargetServers are used to decouple a proxy TargetEndpoint HTTPTargetConnections from concrete URLs for backend services.
 
@@ -37,6 +37,7 @@ resource "google_project" "project" {
   name            = "my-project"
   org_id          = "123456789"
   billing_account = "000000-0000000-0000000-000000"
+  deletion_policy = "DELETE"
 }
 
 resource "google_project_service" "apigee" {

@@ -20,6 +20,8 @@ package compute
 import (
 	"fmt"
 	"log"
+	"net"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -30,6 +32,19 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
+
+// Use this method when the field accepts either an IP address or a
+// self_link referencing a resource (such as google_compute_route's
+// next_hop_ilb)
+func CompareIpAddressOrSelfLinkOrResourceName(_, old, new string, _ *schema.ResourceData) bool {
+	// if we can parse `new` as an IP address, then compare as strings
+	if net.ParseIP(new) != nil {
+		return new == old
+	}
+
+	// otherwise compare as self links
+	return tpgresource.CompareSelfLinkOrResourceName("", old, new, nil)
+}
 
 func ResourceComputeRoute() *schema.Resource {
 	return &schema.Resource{
@@ -103,7 +118,7 @@ partial valid URL:
 				Type:             schema.TypeString,
 				Optional:         true,
 				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareIpAddressOrSelfLinkOrResourceName,
+				DiffSuppressFunc: CompareIpAddressOrSelfLinkOrResourceName,
 				Description: `The IP address or URL to a forwarding rule of type
 loadBalancingScheme=INTERNAL that should handle matching
 packets.
@@ -302,6 +317,7 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "POST",
@@ -310,6 +326,7 @@ func resourceComputeRouteCreate(d *schema.ResourceData, meta interface{}) error 
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsPeeringOperationInProgress},
 	})
 	if err != nil {
@@ -363,12 +380,14 @@ func resourceComputeRouteRead(d *schema.ResourceData, meta interface{}) error {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "GET",
 		Project:              billingProject,
 		RawURL:               url,
 		UserAgent:            userAgent,
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsPeeringOperationInProgress},
 	})
 	if err != nil {
@@ -462,13 +481,15 @@ func resourceComputeRouteDelete(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	var obj map[string]interface{}
-	log.Printf("[DEBUG] Deleting Route %q", d.Id())
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
+
+	log.Printf("[DEBUG] Deleting Route %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:               config,
 		Method:               "DELETE",
@@ -477,6 +498,7 @@ func resourceComputeRouteDelete(d *schema.ResourceData, meta interface{}) error 
 		UserAgent:            userAgent,
 		Body:                 obj,
 		Timeout:              d.Timeout(schema.TimeoutDelete),
+		Headers:              headers,
 		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsPeeringOperationInProgress},
 	})
 	if err != nil {

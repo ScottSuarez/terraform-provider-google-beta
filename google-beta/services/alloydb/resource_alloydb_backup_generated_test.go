@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -50,7 +50,7 @@ func TestAccAlloydbBackup_alloydbBackupBasicTestExample(t *testing.T) {
 				ResourceName:            "google_alloydb_backup.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "location", "reconciling", "update_time", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "backup_id", "labels", "location", "reconciling", "terraform_labels", "update_time"},
 			},
 		},
 	})
@@ -69,7 +69,9 @@ resource "google_alloydb_backup" "default" {
 resource "google_alloydb_cluster" "default" {
   cluster_id = "tf-test-alloydb-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = data.google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
 }
 
 resource "google_alloydb_instance" "default" {
@@ -105,7 +107,7 @@ func TestAccAlloydbBackup_alloydbBackupFullTestExample(t *testing.T) {
 				ResourceName:            "google_alloydb_backup.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "location", "reconciling", "update_time", "labels", "annotations", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "backup_id", "labels", "location", "reconciling", "terraform_labels", "update_time"},
 			},
 		},
 	})
@@ -129,7 +131,9 @@ resource "google_alloydb_backup" "default" {
 resource "google_alloydb_cluster" "default" {
   cluster_id = "tf-test-alloydb-cluster%{random_suffix}"
   location   = "us-central1"
-  network    = data.google_compute_network.default.id
+  network_config {
+    network = data.google_compute_network.default.id
+  }
 }
 
 resource "google_alloydb_instance" "default" {

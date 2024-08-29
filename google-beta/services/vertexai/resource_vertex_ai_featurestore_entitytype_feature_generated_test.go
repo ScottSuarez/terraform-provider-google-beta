@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccVertexAIFeaturestoreEntitytypeFeature_vertexAiFeaturestoreEntitytype
 				ResourceName:            "google_vertex_ai_featurestore_entitytype_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "etag", "entitytype", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"entitytype", "etag", "labels", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -107,7 +107,7 @@ func TestAccVertexAIFeaturestoreEntitytypeFeature_vertexAiFeaturestoreEntitytype
 				ResourceName:            "google_vertex_ai_featurestore_entitytype_feature.feature",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "etag", "entitytype", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"entitytype", "etag", "labels", "name", "terraform_labels"},
 			},
 		},
 	})

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -39,7 +39,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -49,7 +49,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicEx
 				ResourceName:            "google_network_security_server_tls_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -58,7 +58,6 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicEx
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -76,16 +75,6 @@ resource "google_network_security_server_tls_policy" "default" {
         target_uri = "unix:mypath"
       }
     }
-    client_validation_ca {
-      grpc_endpoint {
-        target_uri = "unix:abc/mypath"
-      }
-    }
-    client_validation_ca {
-      certificate_provider_instance {
-        plugin_instance = "google_cloud_private_spiffe"
-      }
-    }
   }
 }
 `, context)
@@ -100,7 +89,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvance
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -110,7 +99,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvance
 				ResourceName:            "google_network_security_server_tls_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -119,7 +108,6 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvance
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -143,7 +131,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerC
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -153,7 +141,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerC
 				ResourceName:            "google_network_security_server_tls_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -162,7 +150,6 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerC
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyServerCertExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-server-tls-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -188,7 +175,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityServerTlsPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -198,7 +185,7 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExa
 				ResourceName:            "google_network_security_server_tls_policy.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -207,11 +194,9 @@ func TestAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExa
 func testAccNetworkSecurityServerTlsPolicy_networkSecurityServerTlsPolicyMtlsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_network_security_server_tls_policy" "default" {
-  provider = google-beta
   name     = "tf-test-my-server-tls-policy%{random_suffix}"
 
   description = "my description"
@@ -229,7 +214,6 @@ resource "google_network_security_server_tls_policy" "default" {
 }
 
 resource "google_certificate_manager_trust_config" "default" {
-  provider    = google-beta
   name        = "tf-test-my-trust-config%{random_suffix}"
   description = "sample trust config description"
   location    = "global"

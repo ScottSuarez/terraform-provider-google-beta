@@ -17,7 +17,7 @@ description: |-
   Represents a Global Address resource.
 ---
 
-# google\_compute\_global\_address
+# google_compute_global_address
 
 Represents a Global Address resource. Global addresses are used for
 HTTP(S) load balancing.
@@ -30,7 +30,7 @@ To get more information about GlobalAddress, see:
     * [Reserving a Static External IP Address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=global_address_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=global_address_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -43,7 +43,7 @@ resource "google_compute_global_address" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=global_address_private_services_connect&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=global_address_private_services_connect&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -97,7 +97,7 @@ The following arguments are supported:
   An optional description of this resource.
 
 * `labels` -
-  (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
+  (Optional)
   Labels to apply to this address.  A list of key->value pairs.
 
   **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
@@ -150,17 +150,14 @@ In addition to the arguments listed above, the following computed attributes are
   Creation timestamp in RFC3339 text format.
 
 * `label_fingerprint` -
-  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The fingerprint used for optimistic locking of this resource.  Used
   internally during updates.
 
 * `terraform_labels` -
-  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   The combination of labels configured directly on the resource
    and default labels configured on the provider.
 
 * `effective_labels` -
-  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html))
   All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
 * `self_link` - The URI of the created resource.
 

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -50,7 +50,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "ip_address", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -142,7 +142,7 @@ resource "google_compute_instance_template" "default" {
     }
   }
   disk {
-    source_image = "debian-cloud/debian-10"
+    source_image = "debian-cloud/debian-12"
     auto_delete  = true
     boot         = true
   }
@@ -223,7 +223,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "ip_address", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -315,7 +315,7 @@ resource "google_compute_instance_template" "default" {
     }
   }
   disk {
-    source_image = "debian-cloud/debian-10"
+    source_image = "debian-cloud/debian-12"
     auto_delete  = true
     boot         = true
   }
@@ -408,7 +408,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -486,7 +486,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -623,7 +623,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -694,7 +694,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -854,7 +854,7 @@ func TestAccComputeGlobalForwardingRule_globalInternalHttpLbWithMigBackendExampl
 				ResourceName:            "google_compute_global_forwarding_rule.google_compute_forwarding_rule",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "port_range", "target", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
 		},
 	})
@@ -948,7 +948,7 @@ resource "google_compute_instance_template" "instance_template" {
     }
   }
   disk {
-    source_image = "debian-cloud/debian-10"
+    source_image = "debian-cloud/debian-12"
     auto_delete  = true
     boot         = true
   }
@@ -1041,7 +1041,7 @@ resource "google_compute_instance" "vm-test" {
   }
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "debian-cloud/debian-12"
     }
   }
 }
@@ -1068,7 +1068,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "ip_address", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"ip_address", "labels", "network", "no_automate_dns_zone", "subnetwork", "terraform_labels"},
 			},
 		},
 	})
@@ -1139,7 +1139,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomat
 				ResourceName:            "google_compute_global_forwarding_rule.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "subnetwork", "no_automate_dns_zone", "ip_address", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"ip_address", "labels", "network", "no_automate_dns_zone", "subnetwork", "terraform_labels"},
 			},
 		},
 	})

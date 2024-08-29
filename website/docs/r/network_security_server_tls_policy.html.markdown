@@ -17,19 +17,17 @@ description: |-
   ClientTlsPolicy is a resource that specifies how a client should authenticate connections to backends of a service.
 ---
 
-# google\_network\_security\_server\_tls\_policy
+# google_network_security_server_tls_policy
 
 ClientTlsPolicy is a resource that specifies how a client should authenticate connections to backends of a service. This resource itself does not affect configuration unless it is attached to a backend service resource.
 
-~> **Warning:** This resource is in beta, and should be used with the terraform-provider-google-beta provider.
-See [Provider Versions](https://terraform.io/docs/providers/google/guides/provider_versions.html) for more details on beta resources.
 
 To get more information about ServerTlsPolicy, see:
 
 * [API documentation](https://cloud.google.com/traffic-director/docs/reference/network-security/rest/v1beta1/projects.locations.serverTlsPolicies)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_server_tls_policy_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_server_tls_policy_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -38,7 +36,6 @@ To get more information about ServerTlsPolicy, see:
 
 ```hcl
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "my-server-tls-policy"
   labels                 = {
     foo = "bar"
@@ -56,21 +53,11 @@ resource "google_network_security_server_tls_policy" "default" {
         target_uri = "unix:mypath"
       }
     }
-    client_validation_ca {
-      grpc_endpoint {
-        target_uri = "unix:abc/mypath"
-      }
-    }
-    client_validation_ca {
-      certificate_provider_instance {
-        plugin_instance = "google_cloud_private_spiffe"
-      }
-    }
   }
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_server_tls_policy_advanced&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_server_tls_policy_advanced&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -79,7 +66,6 @@ resource "google_network_security_server_tls_policy" "default" {
 
 ```hcl
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "my-server-tls-policy"
   labels                 = {
     foo = "bar"
@@ -93,7 +79,7 @@ resource "google_network_security_server_tls_policy" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_server_tls_policy_server_cert&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_server_tls_policy_server_cert&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -102,7 +88,6 @@ resource "google_network_security_server_tls_policy" "default" {
 
 ```hcl
 resource "google_network_security_server_tls_policy" "default" {
-  provider               = google-beta
   name                   = "my-server-tls-policy"
   labels                 = {
     foo = "bar"
@@ -118,7 +103,7 @@ resource "google_network_security_server_tls_policy" "default" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=network_security_server_tls_policy_mtls&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=network_security_server_tls_policy_mtls&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -127,11 +112,9 @@ resource "google_network_security_server_tls_policy" "default" {
 
 ```hcl
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_network_security_server_tls_policy" "default" {
-  provider = google-beta
   name     = "my-server-tls-policy"
 
   description = "my description"
@@ -149,7 +132,6 @@ resource "google_network_security_server_tls_policy" "default" {
 }
 
 resource "google_certificate_manager_trust_config" "default" {
-  provider    = google-beta
   name        = "my-trust-config"
   description = "sample trust config description"
   location    = "global"

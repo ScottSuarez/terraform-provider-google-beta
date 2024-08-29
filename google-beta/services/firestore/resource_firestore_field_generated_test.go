@@ -22,8 +22,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"google.golang.org/api/googleapi"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -52,7 +53,7 @@ func TestAccFirestoreField_firestoreFieldBasicExample(t *testing.T) {
 				ResourceName:            "google_firestore_field.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection", "field"},
+				ImportStateVerifyIgnore: []string{"collection", "database", "field"},
 			},
 		},
 	})
@@ -110,7 +111,7 @@ func TestAccFirestoreField_firestoreFieldTimestampExample(t *testing.T) {
 				ResourceName:            "google_firestore_field.timestamp",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection", "field"},
+				ImportStateVerifyIgnore: []string{"collection", "database", "field"},
 			},
 		},
 	})
@@ -164,7 +165,7 @@ func TestAccFirestoreField_firestoreFieldMatchOverrideExample(t *testing.T) {
 				ResourceName:            "google_firestore_field.match_override",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"database", "collection", "field"},
+				ImportStateVerifyIgnore: []string{"collection", "database", "field"},
 			},
 		},
 	})
@@ -231,6 +232,15 @@ func testAccCheckFirestoreFieldDestroyProducer(t *testing.T) func(s *terraform.S
 				UserAgent: config.UserAgent,
 			})
 			if err != nil {
+				e := err.(*googleapi.Error)
+				if e.Code == 403 && strings.Contains(e.Message, "Cloud Firestore API has not been used in project") {
+					// The acceptance test has provisioned the resources under test in a new project, and the destory check is seeing the
+					// effects of the project not existing. This means the service isn't enabled, and that the resource is definitely destroyed.
+					// We do not return the error in this case - destroy was successful
+					return nil
+				}
+
+				// Return err in all other cases
 				return err
 			}
 

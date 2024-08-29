@@ -21,6 +21,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
@@ -97,13 +98,13 @@ func ResourceSecretManagerSecretVersion() *schema.Resource {
 			"deletion_policy": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "DELETE",
 				Description: `The deletion policy for the secret version. Setting 'ABANDON' allows the resource
 to be abandoned rather than deleted. Setting 'DISABLE' allows the resource to be
 disabled rather than deleted. Default is 'DELETE'. Possible values are:
   * DELETE
   * DISABLE
   * ABANDON`,
+				Default: "DELETE",
 			},
 			"is_secret_data_base64": {
 				Type:        schema.TypeBool,
@@ -151,6 +152,7 @@ func resourceSecretManagerSecretVersionCreate(d *schema.ResourceData, meta inter
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -159,6 +161,7 @@ func resourceSecretManagerSecretVersionCreate(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Headers:   headers,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating SecretVersion: %s", err)
@@ -213,6 +216,7 @@ func resourceSecretManagerSecretVersionRead(d *schema.ResourceData, meta interfa
 		billingProject = bp
 	}
 
+	headers := make(http.Header)
 	// Explicitly set the field to default value if unset
 	if _, ok := d.GetOkExists("is_secret_data_base64"); !ok {
 		if err := d.Set("is_secret_data_base64", false); err != nil {
@@ -225,6 +229,7 @@ func resourceSecretManagerSecretVersionRead(d *schema.ResourceData, meta interfa
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("SecretManagerSecretVersion %q", d.Id()))
@@ -308,6 +313,13 @@ func resourceSecretManagerSecretVersionDelete(d *schema.ResourceData, meta inter
 	}
 
 	var obj map[string]interface{}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	headers := make(http.Header)
 	deletionPolicy := d.Get("deletion_policy")
 
 	if deletionPolicy == "ABANDON" {
@@ -318,13 +330,8 @@ func resourceSecretManagerSecretVersionDelete(d *schema.ResourceData, meta inter
 			return err
 		}
 	}
+
 	log.Printf("[DEBUG] Deleting SecretVersion %q", d.Id())
-
-	// err == nil indicates that the billing_project value was found
-	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-		billingProject = bp
-	}
-
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -333,6 +340,7 @@ func resourceSecretManagerSecretVersionDelete(d *schema.ResourceData, meta inter
 		UserAgent: userAgent,
 		Body:      obj,
 		Timeout:   d.Timeout(schema.TimeoutDelete),
+		Headers:   headers,
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "SecretVersion")

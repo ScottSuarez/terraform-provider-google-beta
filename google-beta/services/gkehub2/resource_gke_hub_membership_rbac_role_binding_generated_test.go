@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -54,7 +54,7 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 				ResourceName:            "google_gke_hub_membership_rbac_role_binding.membership_rbac_role_binding",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"membership_rbac_role_binding_id", "membership_id", "location"},
+				ImportStateVerifyIgnore: []string{"location", "membership_id", "membership_rbac_role_binding_id"},
 			},
 		},
 	})

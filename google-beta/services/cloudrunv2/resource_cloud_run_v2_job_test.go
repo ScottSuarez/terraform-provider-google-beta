@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccCloudRunV2Job_cloudrunv2JobFullUpdate(t *testing.T) {
@@ -38,7 +39,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobFullUpdate(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "launch_stage", "labels", "terraform_labels", "annotations"},
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "labels", "terraform_labels", "annotations", "deletion_protection"},
 			},
 		},
 	})
@@ -117,6 +118,7 @@ func testAccCloudRunV2Job_cloudrunv2JobFullUpdate(context map[string]interface{}
 resource "google_cloud_run_v2_job" "default" {
   name     = "tf-test-cloudrun-job%{random_suffix}"
   location = "us-central1"
+  deletion_protection = false
   binary_authorization {
     use_default = true
     breakglass_justification = "Some justification"
@@ -214,6 +216,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(t *testing.T) {
 	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
 	context := map[string]interface{}{
 		"job_name": jobName,
+		"project":  envvar.GetTestProjectFromEnv(),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -228,16 +231,16 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(t *testing.T) {
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "launch_stage"},
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
 			},
 			{
-				Config: testAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(context),
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithDirectVPCAndNamedBinAuthPolicyUpdate(context),
 			},
 			{
 				ResourceName:            "google_cloud_run_v2_job.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "launch_stage"},
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
 			},
 		},
 	})
@@ -248,6 +251,7 @@ func testAccCloudRunV2Job_cloudrunv2JobWithDirectVPC(context map[string]interfac
   resource "google_cloud_run_v2_job" "default" {
     name     = "%{job_name}"
     location = "us-central1"
+    deletion_protection = false
     launch_stage = "BETA"
     template {
       template {
@@ -271,12 +275,17 @@ func testAccCloudRunV2Job_cloudrunv2JobWithDirectVPC(context map[string]interfac
 `, context)
 }
 
-func testAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(context map[string]interface{}) string {
+func testAccCloudRunV2Job_cloudrunv2JobWithDirectVPCAndNamedBinAuthPolicyUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_cloud_run_v2_job" "default" {
     name     = "%{job_name}"
     location = "us-central1"
+    deletion_protection = false
     launch_stage = "BETA"
+    binary_authorization {
+      policy = "projects/%{project}/platforms/cloudRun/policies/my-policy"
+      breakglass_justification = "Some justification"
+    }
     template {
       template {
         containers {
@@ -296,6 +305,277 @@ func testAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(context map[string]in
       ignore_changes = [
         launch_stage,
       ]
+    }
+  }
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobWithGcsUpdate(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	context := map[string]interface{}{
+		"job_name": jobName,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithGcsVolume(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    name     = "%{job_name}"
+    location = "us-central1"
+    deletion_protection = false
+    launch_stage = "BETA"
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+        }
+      }
+    }
+
+    lifecycle {
+      ignore_changes = [
+        launch_stage,
+      ]
+    }
+  }
+`, context)
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithGcsVolume(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    name     = "%{job_name}"
+    location = "us-central1"
+    deletion_protection = false
+    launch_stage = "BETA"
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+          volume_mounts {
+            name = "gcs"
+            mount_path = "/mnt/gcs"
+          }
+        }
+        volumes {
+          name = "gcs"
+          gcs {
+            bucket = "gcp-public-data-landsat"
+            read_only = true
+          }
+        }
+      }
+    }
+  }
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobWithNfsUpdate(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	context := map[string]interface{}{
+		"job_name": jobName,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithNfsVolume(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithNfsVolume(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    name     = "%{job_name}"
+    location = "us-central1"
+    deletion_protection = false
+    launch_stage = "BETA"
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+          volume_mounts {
+            name = "nfs"
+            mount_path = "/mnt/nfs"
+          }
+        }
+        volumes {
+          name = "nfs"
+          nfs {
+            server = "10.0.10.10"
+            path = "/"
+            read_only = true
+          }
+        }
+      }
+    }
+  }
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobWithStartExecutionTokenUpdate(t *testing.T) {
+	t.Parallel()
+
+	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	context1 := map[string]interface{}{
+		"job_name": jobName,
+		"token":    "token1",
+	}
+	context2 := map[string]interface{}{
+		"job_name": jobName,
+		"token":    "token2",
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithStartExecutionToken(context1),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithStartExecutionToken(context2),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithStartExecutionToken(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    name     = "%{job_name}"
+    location = "us-central1"
+    deletion_protection = false
+    start_execution_token = "%{token}"
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+        }
+      }
+    }
+  }
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobWithRunExecutionTokenUpdate(t *testing.T) {
+	t.Parallel()
+
+	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	context1 := map[string]interface{}{
+		"job_name": jobName,
+		"token":    "token1",
+	}
+	context2 := map[string]interface{}{
+		"job_name": jobName,
+		"token":    "token2",
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithRunExecutionToken(context1),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithRunExecutionToken(context2),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithRunExecutionToken(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    name     = "%{job_name}"
+    location = "us-central1"
+    deletion_protection = false
+    run_execution_token = "%{token}"
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+        }
+      }
     }
   }
 `, context)

@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -49,7 +49,7 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionExample(t *te
 				ResourceName:            "google_app_engine_standard_app_version.myapp_v1",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"threadsafe", "env_variables", "deployment", "entrypoint", "service", "delete_service_on_destroy"},
+				ImportStateVerifyIgnore: []string{"delete_service_on_destroy", "deployment", "entrypoint", "env_variables", "service", "threadsafe"},
 			},
 		},
 	})
@@ -77,7 +77,7 @@ resource "google_project_iam_member" "storage_viewer" {
 resource "google_app_engine_standard_app_version" "myapp_v1" {
   version_id = "v1"
   service    = "myapp"
-  runtime    = "nodejs10"
+  runtime    = "nodejs20"
 
   entrypoint {
     shell = "node ./app.js"
@@ -114,7 +114,7 @@ resource "google_app_engine_standard_app_version" "myapp_v1" {
 resource "google_app_engine_standard_app_version" "myapp_v2" {
   version_id      = "v2"
   service         = "myapp"
-  runtime         = "nodejs10"
+  runtime         = "nodejs20"
   app_engine_apis = true
 
   entrypoint {

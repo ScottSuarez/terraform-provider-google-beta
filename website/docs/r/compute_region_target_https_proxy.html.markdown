@@ -18,7 +18,7 @@ description: |-
   forwarding rules to route incoming HTTPS requests to a URL map.
 ---
 
-# google\_compute\_region\_target\_https\_proxy
+# google_compute_region_target_https_proxy
 
 Represents a RegionTargetHttpsProxy resource, which is used by one or more
 forwarding rules to route incoming HTTPS requests to a URL map.
@@ -31,7 +31,7 @@ To get more information about RegionTargetHttpsProxy, see:
     * [Official Documentation](https://cloud.google.com/compute/docs/load-balancing/http/target-proxies)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=region_target_https_proxy_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_target_https_proxy_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -94,6 +94,155 @@ resource "google_compute_region_health_check" "default" {
   }
 }
 ```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_target_https_proxy_mtls&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Target Https Proxy Mtls
+
+
+```hcl
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_compute_region_target_https_proxy" "default" {
+  provider          = google-beta
+  region           = "us-central1"
+  name              = "test-mtls-proxy"
+  url_map           = google_compute_region_url_map.default.id
+  ssl_certificates  = [google_compute_region_ssl_certificate.default.id]
+  server_tls_policy = google_network_security_server_tls_policy.default.id
+}
+
+resource "google_certificate_manager_trust_config" "default" {
+  provider    = google-beta
+  location    = "us-central1"
+  name        = "my-trust-config"
+  description = "sample description for trust config"
+
+  trust_stores {
+    trust_anchors {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+    intermediate_cas {
+      pem_certificate = file("test-fixtures/ca_cert.pem")
+    }
+  }
+
+  labels = {
+    foo = "bar"
+  }
+}
+
+resource "google_network_security_server_tls_policy" "default" {
+  provider               = google-beta
+  location               = "us-central1"
+  name                   = "my-tls-policy"
+  description            = "my description"
+  allow_open             = "false"
+  mtls_policy {
+    client_validation_mode = "REJECT_INVALID"
+    client_validation_trust_config = "projects/${data.google_project.project.number}/locations/us-central1/trustConfigs/${google_certificate_manager_trust_config.default.name}"
+  }
+}
+
+resource "google_compute_region_ssl_certificate" "default" {
+  provider    = google-beta
+  region      = "us-central1"
+  name        = "my-certificate"
+  private_key = file("path/to/private.key")
+  certificate = file("path/to/certificate.crt")
+}
+
+resource "google_compute_region_url_map" "default" {
+  provider    = google-beta
+  region      = "us-central1"
+  name        = "url-map"
+  description = "a description"
+
+  default_service = google_compute_region_backend_service.default.id
+
+  host_rule {
+    hosts        = ["mysite.com"]
+    path_matcher = "allpaths"
+  }
+
+  path_matcher {
+    name            = "allpaths"
+    default_service = google_compute_region_backend_service.default.id
+
+    path_rule {
+      paths   = ["/*"]
+      service = google_compute_region_backend_service.default.id
+    }
+  }
+}
+
+resource "google_compute_region_backend_service" "default" {
+  provider    = google-beta
+  region      = "us-central1"
+  name        = "backend-service"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 10
+
+  load_balancing_scheme = "INTERNAL_MANAGED"
+
+  health_checks = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_health_check" "default" {
+  provider           = google-beta
+  region             = "us-central1"
+  name               = "http-health-check"
+  check_interval_sec = 1
+  timeout_sec        = 1
+
+  http_health_check {
+    port = 80
+  }
+}
+```
+<div class = "oics-button" style="float: right; margin: 0 0 -15px">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=region_target_https_proxy_certificate_manager_certificate&open_in_editor=main.tf" target="_blank">
+    <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
+  </a>
+</div>
+## Example Usage - Region Target Https Proxy Certificate Manager Certificate
+
+
+```hcl
+resource "google_compute_region_target_https_proxy" "default" {
+  name                             = "target-http-proxy"
+  url_map                          = google_compute_region_url_map.default.id
+  certificate_manager_certificates =  ["//certificatemanager.googleapis.com/${google_certificate_manager_certificate.default.id}"] # [google_certificate_manager_certificate.default.id] is also acceptable
+}
+
+resource "google_certificate_manager_certificate" "default" {
+  name              = "my-certificate"
+  location          = "us-central1"
+  self_managed {
+    pem_certificate = file("test-fixtures/cert.pem")
+    pem_private_key = file("test-fixtures/private-key.pem")                                                                                                                
+  }
+}
+
+resource "google_compute_region_url_map" "default" {
+  name            = "url-map"
+  default_service = google_compute_region_backend_service.default.id
+  region          = "us-central1"
+}
+
+resource "google_compute_region_backend_service" "default" {
+  name                  = "backend-service"
+  region                = "us-central1"
+  protocol              = "HTTPS"
+  timeout_sec           = 30
+  load_balancing_scheme = "INTERNAL_MANAGED"
+}
+```
 
 ## Argument Reference
 
@@ -110,12 +259,6 @@ The following arguments are supported:
   characters must be a dash, lowercase letter, or digit, except the last
   character, which cannot be a dash.
 
-* `ssl_certificates` -
-  (Required)
-  A list of RegionSslCertificate resources that are used to authenticate
-  connections between users and the load balancer. Currently, exactly
-  one SSL certificate must be specified.
-
 * `url_map` -
   (Required)
   A reference to the RegionUrlMap resource that defines the mapping from URL
@@ -129,11 +272,39 @@ The following arguments are supported:
   (Optional)
   An optional description of this resource.
 
+* `certificate_manager_certificates` -
+  (Optional)
+  URLs to certificate manager certificate resources that are used to authenticate connections between users and the load balancer.
+  sslCertificates and certificateManagerCertificates can't be defined together.
+  Accepted format is `//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificates/{resourceName}` or just the self_link `projects/{project}/locations/{location}/certificates/{resourceName}`
+
+* `ssl_certificates` -
+  (Optional)
+  URLs to SslCertificate resources that are used to authenticate connections between users and the load balancer.
+  At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.
+  sslCertificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.
+
 * `ssl_policy` -
   (Optional)
   A reference to the Region SslPolicy resource that will be associated with
   the TargetHttpsProxy resource. If not set, the TargetHttpsProxy
   resource will not have any SSL policy configured.
+
+* `server_tls_policy` -
+  (Optional)
+  A URL referring to a networksecurity.ServerTlsPolicy
+  resource that describes how the proxy should authenticate inbound
+  traffic. serverTlsPolicy only applies to a global TargetHttpsProxy
+  attached to globalForwardingRules with the loadBalancingScheme
+  set to INTERNAL_SELF_MANAGED or EXTERNAL or EXTERNAL_MANAGED.
+  For details which ServerTlsPolicy resources are accepted with
+  INTERNAL_SELF_MANAGED and which with EXTERNAL, EXTERNAL_MANAGED
+  loadBalancingScheme consult ServerTlsPolicy documentation.
+  If left blank, communications are not encrypted.
+  If you remove this field from your configuration at the same time as
+  deleting or recreating a referenced ServerTlsPolicy resource, you will
+  receive a resourceInUseByAnotherResource error. Use lifecycle.create_before_destroy
+  within the ServerTlsPolicy resource to avoid this.
 
 * `region` -
   (Optional)

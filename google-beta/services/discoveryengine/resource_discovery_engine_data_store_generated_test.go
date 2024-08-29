@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccDiscoveryEngineDataStore_discoveryengineDatastoreBasicExample(t *tes
 				ResourceName:            "google_discovery_engine_data_store.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "data_store_id", "create_advanced_site_search"},
+				ImportStateVerifyIgnore: []string{"create_advanced_site_search", "data_store_id", "location", "skip_default_schema_creation"},
 			},
 		},
 	})
@@ -58,6 +58,46 @@ func TestAccDiscoveryEngineDataStore_discoveryengineDatastoreBasicExample(t *tes
 func testAccDiscoveryEngineDataStore_discoveryengineDatastoreBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_discovery_engine_data_store" "basic" {
+  location                     = "global"
+  data_store_id                = "tf-test-data-store-id%{random_suffix}"
+  display_name                 = "tf-test-structured-datastore"
+  industry_vertical            = "GENERIC"
+  content_config               = "NO_CONTENT"
+  solution_types               = ["SOLUTION_TYPE_SEARCH"]
+  create_advanced_site_search  = false
+  skip_default_schema_creation = false
+}
+`, context)
+}
+
+func TestAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDiscoveryEngineDataStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigExample(context),
+			},
+			{
+				ResourceName:            "google_discovery_engine_data_store.document_processing_config",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"create_advanced_site_search", "data_store_id", "location", "skip_default_schema_creation"},
+			},
+		},
+	})
+}
+
+func testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_discovery_engine_data_store" "document_processing_config" {
   location                    = "global"
   data_store_id               = "tf-test-data-store-id%{random_suffix}"
   display_name                = "tf-test-structured-datastore"
@@ -65,6 +105,113 @@ resource "google_discovery_engine_data_store" "basic" {
   content_config              = "NO_CONTENT"
   solution_types              = ["SOLUTION_TYPE_SEARCH"]
   create_advanced_site_search = false
+  document_processing_config {
+    default_parsing_config  {
+      digital_parsing_config {}
+    }
+    parsing_config_overrides {
+      file_type = "pdf"
+      ocr_parsing_config {
+        use_native_text = true
+      }
+    }
+  }        
+}
+`, context)
+}
+
+func TestAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigOcrExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDiscoveryEngineDataStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigOcrExample(context),
+			},
+			{
+				ResourceName:            "google_discovery_engine_data_store.document_processing_config_ocr",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"create_advanced_site_search", "data_store_id", "location", "skip_default_schema_creation"},
+			},
+		},
+	})
+}
+
+func testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigOcrExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_discovery_engine_data_store" "document_processing_config_ocr" {
+  location                    = "global"
+  data_store_id               = "tf-test-data-store-id%{random_suffix}"
+  display_name                = "tf-test-structured-datastore"
+  industry_vertical           = "GENERIC"
+  content_config              = "NO_CONTENT"
+  solution_types              = ["SOLUTION_TYPE_SEARCH"]
+  create_advanced_site_search = false
+  document_processing_config {
+    default_parsing_config {
+      ocr_parsing_config {
+        use_native_text = true
+      }
+    }
+  }      
+}
+`, context)
+}
+
+func TestAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigLayoutExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDiscoveryEngineDataStoreDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigLayoutExample(context),
+			},
+			{
+				ResourceName:            "google_discovery_engine_data_store.document_processing_config_layout",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"create_advanced_site_search", "data_store_id", "location", "skip_default_schema_creation"},
+			},
+		},
+	})
+}
+
+func testAccDiscoveryEngineDataStore_discoveryengineDatastoreDocumentProcessingConfigLayoutExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_discovery_engine_data_store" "document_processing_config_layout" {
+  location                    = "global"
+  data_store_id               = "tf-test-data-store-id%{random_suffix}"
+  display_name                = "tf-test-structured-datastore"
+  industry_vertical           = "GENERIC"
+  content_config              = "CONTENT_REQUIRED"
+  solution_types              = ["SOLUTION_TYPE_SEARCH"]
+  create_advanced_site_search = true
+  document_processing_config {
+    default_parsing_config {
+      layout_parsing_config {}
+    }
+    chunking_config {
+      layout_based_chunking_config {
+        chunk_size                = 500
+        include_ancestor_headings = true
+      }
+    }
+  }      
 }
 `, context)
 }

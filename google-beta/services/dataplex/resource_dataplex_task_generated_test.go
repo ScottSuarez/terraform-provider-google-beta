@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -51,7 +51,7 @@ func TestAccDataplexTask_dataplexTaskBasicExample(t *testing.T) {
 				ResourceName:            "google_dataplex_task.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "lake", "task_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "lake", "location", "task_id", "terraform_labels"},
 			},
 		},
 	})
@@ -128,7 +128,7 @@ func TestAccDataplexTask_dataplexTaskSparkExample(t *testing.T) {
 				ResourceName:            "google_dataplex_task.example_spark",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "lake", "task_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "lake", "location", "task_id", "terraform_labels"},
 			},
 		},
 	})
@@ -220,7 +220,7 @@ func TestAccDataplexTask_dataplexTaskNotebookExample(t *testing.T) {
 				ResourceName:            "google_dataplex_task.example_notebook",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "lake", "task_id", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "lake", "location", "task_id", "terraform_labels"},
 			},
 		},
 	})

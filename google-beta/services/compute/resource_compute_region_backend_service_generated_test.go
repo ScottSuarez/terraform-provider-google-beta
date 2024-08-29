@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *test
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -96,7 +96,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalIapExample(t
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region", "iap.0.oauth2_client_secret"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -110,6 +110,7 @@ resource "google_compute_region_backend_service" "default" {
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
   iap {
+    enabled              = true
     oauth2_client_id     = "abc"
     oauth2_client_secret = "xyz"
   }
@@ -136,7 +137,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *test
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -197,7 +198,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -242,7 +243,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalExample(t *t
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -290,7 +291,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalWeightedExam
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -337,7 +338,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -398,7 +399,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})
@@ -499,7 +500,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceConnectionTrackingEx
 				ResourceName:            "google_compute_region_backend_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"network", "region"},
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
 			},
 		},
 	})

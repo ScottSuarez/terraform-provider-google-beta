@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -49,7 +49,7 @@ func TestAccComputeDisk_diskBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_disk.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"interface", "type", "zone", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "snapshot", "terraform_labels", "type", "zone"},
 			},
 		},
 	})
@@ -89,7 +89,7 @@ func TestAccComputeDisk_diskAsyncExample(t *testing.T) {
 				ResourceName:            "google_compute_disk.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"interface", "type", "zone", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "snapshot", "terraform_labels", "type", "zone"},
 			},
 		},
 	})
@@ -138,7 +138,7 @@ func TestAccComputeDisk_diskFeaturesExample(t *testing.T) {
 				ResourceName:            "google_compute_disk.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"interface", "type", "zone", "snapshot", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"interface", "labels", "snapshot", "terraform_labels", "type", "zone"},
 			},
 		},
 	})
